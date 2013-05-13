@@ -10,7 +10,7 @@ define(
 		number of calculations of gravity per tick. Adding more calculation has the effect of checking the position of bodies more often at each tick, so that the forces are not a multiplication of their values of the beginning of the tick. Since each body moves at each second, their relative position is not the same at the beginning of tick as at the end. The force they produce is'nt either. If we want to be more precise we have to "move" each body a given number of time at each tick so the forces are calculated from their new position.
 		*/
 
-		var precision = 1;
+		var calculationsPerTick = 1;
 		var secondsPerTick = 1;
 		var deltaTIncrement = 1;
 		var bodies;
@@ -46,8 +46,8 @@ define(
 		};
 		
 		setDT = function (){
-			if(!precision || !secondsPerTick) return;
-			deltaTIncrement = secondsPerTick / precision;
+			if(!calculationsPerTick || !secondsPerTick) return;
+			deltaTIncrement = secondsPerTick / calculationsPerTick;
 		};
 
 		var Algorithm = {
@@ -55,10 +55,10 @@ define(
 			tick : function(){
 				//We calculate the positions of all bodies, and thus the gravity, more than once per tick. Not efficient but more precise than approximating the whole forces to their value at the beginning of the cycle.
 				var t = 0;
-				while(t < precision){
+				while(t < calculationsPerTick){
 					calculateGForces();
 					for(var i=0; i<bodies.length; i++){
-						bodies[i].moveBody(deltaTIncrement, t == precision-1);
+						bodies[i].moveBody(deltaTIncrement, t == calculationsPerTick-1);
 					}
 					t++;
 				}
@@ -73,8 +73,8 @@ define(
 				bodies = b;
 			},
 			
-			setPrecision : function(p){
-				precision = p;
+			setCalculationsPerTick : function(n){
+				calculationsPerTick = n || calculationsPerTick;
 				setDT();
 			},
 			
@@ -82,8 +82,6 @@ define(
 				secondsPerTick = s;
 				setDT();
 			}
-			
-		
 		}
 
 		return Algorithm;

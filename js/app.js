@@ -6,7 +6,8 @@
 			'jquery' : 'vendor/jquery.min',
 			'vendor/jquery.scrollto' : 'vendor/jquery.scrollTo-1.4.2-min',
 			'three' : 'vendor/three.min',
-			'easel' : 'vendor/easeljs-0.6.0.min'
+			'easel' : 'vendor/easeljs-0.6.0.min',
+			'_' : 'vendor/underscore-min'
 		},
 		shim: {
 			'jquery': {

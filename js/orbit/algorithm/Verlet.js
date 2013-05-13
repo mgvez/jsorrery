@@ -35,6 +35,8 @@ define(
 				}
 
 				this.force = new THREE.Vector3(0, 0, 0);//reset force
+
+				this.afterMove();
 			}
 		};
 

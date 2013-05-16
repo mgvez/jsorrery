@@ -4,37 +4,41 @@ define(
 	[
 		'orbit/NameSpace',
 		'jquery',
+		'orbit/algorithm/Verlet',
+		'orbit/algorithm/OrbitalElements',
+		'orbit/graphics2d/Tracer',
 		'three'
 	], 
-	function(ns, $) {
+	function(ns, $, Verlet, OrbitalElements, Tracer) {
 
 		
-		return {
+		var CelestialBody = {
 
 			init : function() {
-				console.log('*********'+this.name+'*************');
+				//console.log('*********'+this.name+'*************');
 				this.force = new THREE.Vector3(0, 0, 0);
+				this.pixelPosition = new THREE.Vector3(0, 0, 0);
 				this.position = this.calculatePosition(ns.TimeEpoch);
 				this.velocity =  this.calculateVelocity(ns.TimeEpoch);
-				this.tracePosition = this.position.clone();
 				
-				this.isTracing = true;
 				this.year = 0;
 
 				this.perihelion = this.aphelion = 0;
 
-				this.isLog = true;
+				//this.isLog = true;
 				this.createLogger();
+
+				this.root = new createjs.Container();
+
+				this.setPlanet();
+				this.setTracer();
+
 				this.afterMove();
 			},
 
 			getDisplayObject : function() {
 
-				this.root = new createjs.Container();
-
-				this.root.addChild(this.getPlanet());
-				this.root.addChild(this.getTracer());
-
+				this.drawMove();
 				return this.root;
 
 			},
@@ -46,7 +50,6 @@ define(
 			},
 
 			afterMove : function() {
-				if(this.name == 'sun') return;
 				var angle = Math.atan2(this.position.y, this.position.x);
 				//this.logger.html(angle);
 				if (!this.originalAngle) {
@@ -55,44 +58,37 @@ define(
 				}
 
 				if(this.previousAngle && angle >= this.originalAngle && this.previousAngle < this.originalAngle) {
-					this.year++;
-					this.tracer.graphics.clear();
 
-					this.tracer.graphics.setStrokeStyle(0.5);
-					this.tracer.graphics.beginStroke(this.color);
+					//keep first orbit trace, but delete others
+					this.tracer.getNew(this.year == 0);
+					this.year++;
+				}
+
+				if(this.isLog && !this.logged && this.previousPosition){
+					var instVel = this.position.clone();
+					instVel.sub(this.previousPosition);
+					instVel.multiplyScalar(1000 / (3600*24*7));
+					//this.logger.html(this.velocity.length()+'<br>'+instVel.length());
+					this.logged = true;
 				}
 				this.previousAngle = angle;
 				
-				var dist = this.position.length();
-				var d = false;
-				if(!this.perihelion || dist < this.perihelion) {
-					this.perihelion = dist;
-					d = true;
-				}	
-				if(!this.aphelion || dist > this.aphelion) {
-					this.aphelion = dist;
-					d = true;
-				}				
-
-				if (this.isLog && d) {
-					this.logger.html(this.name + ' :: p:'+this.perihelion+ ' a:' + this.aphelion);
-					//this.logger.html(this.name + ' : ' + this.year);
-				}
 			},
 
-			getPlanet : function(){
+			setPlanet : function(){
 				this.planet = this.planet || new createjs.Shape();
 				this.planet.graphics.clear();
 				this.planet.graphics.beginFill(this.color).drawCircle(0, 0, this.pxRadius || 1);
+				this.root.addChild(this.planet);
 				return this.planet;
 			},
 
-			getTracer : function() {
-
-				this.tracer = this.tracer || new createjs.Shape();
-				this.tracer.graphics.clear();
-				this.tracer.graphics.setStrokeStyle(0.5);
-				this.tracer.graphics.beginStroke(this.color);
+			setTracer : function() {
+				this.tracer = Object.create(Tracer);
+				this.tracer.init(this.color);
+				this.root.addChild(this.tracer.getDisplayObject());
+				this.setPixelCoords();
+				this.tracer.initPos(this.pixelPosition.x, this.pixelPosition[ns.axisToShowInY]);
 				return this.tracer;
 			},
 
@@ -101,85 +97,61 @@ define(
 			},
 
 			//ajoute une reference à l'objet relativement duquel on trace
-			addTraceFrom : function(ref){
-				this.traceFrom = ref;
-	            if(this.isTracing){
-					this.tracePosition.x = this.x - this.traceFrom.x;
-					this.tracePosition.y = this.y - this.traceFrom.y;
-					this.tracer.graphics.moveTo(this.tracePosition.x, this.tracePosition.y);
-				}
+			setTraceFrom : function(centralBody){
+				this.tracer.setTraceFrom(centralBody);
 			},
 			
 			drawMove : function(tracing){
-				this.x = this.position.x / this.nmPerPix;//get position relative to the stage
-				this.y = this.position.y / this.nmPerPix;
-
-				this.planet.x = this.x;				
-				this.planet.y = this.y;	
-				this.doTrace();
+				this.setPixelCoords();
+				this.planet.x = this.pixelPosition.x;				
+				this.planet.y = this.pixelPosition[ns.axisToShowInY];	
+				this.tracer.doTrace(this.pixelPosition.x, this.pixelPosition[ns.axisToShowInY]);
+				this.displayFromElements();
 			},
 
-			getDebug : function(c, deltaT) {
-				if(!this.dg){
-					this.dg = new createjs.Shape();
-					this.dg.graphics.clear();
-					this.dg.graphics.beginFill(this.color);
-					c.addChild(this.dg)
-				}
+			displayFromElements : function(){
+				if((this.name == 'halley' || this.year == 0) && ns.curTime && !this.isCentral) {
 
-				if(this.year > 1) return;
-				
-				var curTE = TE + (deltaT / (60*60*24));
+					if (this.displayElementsDelay === undefined) {
+						//console.log(this.name, this.period);
+						var periodSeconds = (this.period * ns.day) ;
+						var periodTracing = periodSeconds - (periodSeconds % ns.curTime);
+						var nTicksPerRev = Math.abs((periodTracing / ns.curTime));
+						var nTicksPerDisplay = Math.ceil(nTicksPerRev / 20);
+						//console.log(this.name, nTicksPerRev);
+						this.displayElementsDelay = nTicksPerDisplay * ns.curTime;
+						//console.log(this.displayElementsDelay);
+						if(this.name == 'halley') this.displayElementsDelay = 5 * ns.curTime;
+					}
 
-				var pos = this.calculatePosition(curTE);
-				var x = pos.x /this.nmPerPix;
-				var y = pos.y /this.nmPerPix;
+					if ((ns.curTime % this.displayElementsDelay) == 0) {
 
-				this.dg.graphics.drawCircle(x, y, 1);
-				
-				
-				this.dg.x = 0;
-				this.dg.y = 0;
+						var computed = this.calculateElements(ns.TimeEpoch + (ns.U.curTime / ns.day));
+						var pos =  this.getPositionFromElements(computed);
+						this.tracer.spotPos(pos.x / ns.nmPerPix, pos[ns.axisToShowInY] / ns.nmPerPix);
 
-				/*
-				var i = 0;
+						var dsp = this.prevAnomlay ? computed.v - this.prevAnomaly : computed.v;
 
-				this.debugGraphics.graphics.setStrokeStyle(0.5);
-				this.debugGraphics.graphics.beginStroke(this.color);
-				
-				var dbg = function(){
+						//this.logger && this.logger.html(dsp);
+						this.prevAnomaly = computed.v;
+					}
 
-					var pos = _self.calculatePosition(TE+i);
-					var x = pos.x /_self.nmPerPix;
-					var y = pos.y /_self.nmPerPix;
-					_self.debugGraphics.graphics.lineTo(x, y);
-					ns.U.stage.update();
-					if(i < 365) setTimeout(dbg, 50);
-					i++;
-				};
-				
-				dbg();/**/
+					/*var degAngle = angle * 180 / Math.PI;
+					this.debugged = this.debugged || [];
+					var angleDiff = Math.abs(degAngle - this.debugged[this.debugged.length-1]);
+					if (this.debugged.length == 0 || angleDiff > 5){
+						this.debugged.push(degAngle);
+						var pos = this.calculatePosition(ns.TimeEpoch + (ns.U.curTime / ns.day));
+						this.tracer.spotPos(pos.x / ns.nmPerPix, pos.y / ns.nmPerPix);
+					}/**/
 
-				return this.debugGraphics;
+				} 
 			},
 
-
-
-			doTrace : function(){
-				if(this.isTracing){
-					this.setTracePos();
-					this.tracer.graphics.lineTo(this.tracePosition.x, this.tracePosition.y);
-				}
-			},
-
-			setTracePos : function(){
-				if(this.traceFrom){
-					this.tracePosition.x = this.x - this.traceFrom.x;
-					this.tracePosition.y = this.y - this.traceFrom.y;
-				} else {
-					this.tracePosition.x = this.x;
-					this.tracePosition.y = this.y;
-				}
+			setPixelCoords : function() {
+				this.pixelPosition.x = this.position.x / ns.nmPerPix;//get position relative to the stage
+				this.pixelPosition.y = this.position.y / ns.nmPerPix;
+				this.pixelPosition.z = this.position.z / ns.nmPerPix;
 			},
 
 			addVX : function(val){
@@ -190,5 +162,9 @@ define(
 				this.velocity.y += val;
 			}
 		};
+
+		$.extend(CelestialBody, Verlet);
+		$.extend(CelestialBody, OrbitalElements);
+		return CelestialBody;
 
 	});

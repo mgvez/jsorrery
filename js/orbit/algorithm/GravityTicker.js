@@ -23,6 +23,7 @@ define(
 			for(var i=0; i<bodies.length; i++){
 				//loop in following bodies and calculate forces between them and this one. No need to do previous ones, as they were done in previous iterations
 				for(var j=i+1; j<bodies.length; j++){
+					if(bodies[i].mass === 1 && bodies[j].mass === 1) continue; 
 					workVect = getGForceBetween(bodies[i], bodies[j]);
 					//add forces (for the first body, it is the reciprocal of the calculated force)
 					bodies[i].force.sub(workVect);
@@ -62,9 +63,7 @@ define(
 					}
 					t++;
 				}
-				for(var i=0; i<bodies.length; i++){
-					bodies[i].drawMove();
-				}
+				
 				return secondsPerTick;
 			},
 			

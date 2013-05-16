@@ -5,6 +5,8 @@ dist : km
 apeed : km/s
 radius: km
 
+Corrections have been added to element's altitude to compensate for imprecisions in parameters, so as to fit mechanical orbit to orbital elements.
+
 */
 
 define(
@@ -13,28 +15,91 @@ define(
 	], 
 	function(ns, $) {
 
-		
+		var earthRadius = 6371;
+
 		var system =  {
 			bodies : {
 				mercury6 : {
 					mass : 1224.7,
-					dist : 6378 + 159,
+					dist : earthRadius + 159,
 					speed : 28205/3600,
 					radius : 2,
 					color : "#ffffff",
+					orbit : {
+						base : {
+							a : (earthRadius + 48 + 159) / ns.AU,
+							e : 0.00804,
+							w : 0,
+							M : 0,
+							i : 0,//32.5,
+							N : 0
+						},
+						day : {
+							a : 0,
+							e : 0,
+							i : 0,
+							M : (360 / (88.5 * 60)) * (60 * 60 * 24),
+							w : 0,
+							N : 0
+						}	
+					}
 				},
 				hubble : {
 					mass : 11110,
-					dist : 6378 + 559,
+					dist : earthRadius + 559,
 					speed : 7500 / 1000,
 					radius : 2,
 					color : "#d5bd8d",
+					orbit: {
+						base : {
+							a : (earthRadius + 19 + 586.47) / ns.AU,
+							e : 0.00172,
+							w : 0,
+							M : 0,
+							i : 0,//28.48,
+							N : 0
+						},
+						day : {
+							a : 0,
+							e : 0,
+							i : 0,
+							M : (360 / (96.66 * 60)) * (60 * 60 * 24),
+							w : 0,
+							N : 0
+						}	
+					}
+
 				},
+				gemini6 : {
+					mass : 1,
+					dist : earthRadius + 304,
+					speed : null,
+					radius : 2,
+					color : '#ffaacc',
+					orbit: {
+						base : {
+							a : (earthRadius + 10 + 300) / ns.AU,
+							e : 0.0003,
+							w : 0,
+							M : 0,
+							i : 0,//28.89,
+							N : 0
+						},
+						day : {
+							a : 0,
+							e : 0,
+							i : 0,
+							M : (360 / (90.55 * 60)) * (60 * 60 * 24),
+							w : 0,
+							N : 0
+						}	
+					}
+				},/**/
 				earth : {
 					mass : 5.9736e24,
 					dist : 0,
 					speed : 0,
-					radius : 6378,
+					radius : earthRadius,
 					color : "#1F7CDA"
 				}
 			},

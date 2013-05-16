@@ -9,6 +9,10 @@ define(
 
 		var Verlet = {
 			moveBody : function(deltaTIncrement, isLast){
+
+				/*if (!this.previousPosition){
+					this.previousPosition = this.calculatePosition(ns.TimeEpoch -  (deltaTIncrement / ns.day));
+				}/**/
 				
 				if(this.previousPosition){
 					var beginPos = this.position.clone();
@@ -24,6 +28,9 @@ define(
 					
 				} else {//initialisation (with Euler algorithm)
 					this.previousPosition = this.position.clone();
+
+					/*console.log(this.name);
+					console.log(this.velocity.x, this.velocity.y, this.velocity.z);/**/
 					
 					this.force.multiplyScalar( 1 / this.mass);//force is in newtons, need to divide it by the mass to get number of m/s*s of accel
 					this.force.multiplyScalar(deltaTIncrement);

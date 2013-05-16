@@ -8,16 +8,14 @@ define(
 		'orbit/NameSpace',
 		'jquery',
 		'orbit/CelestialBody',
-		'orbit/algorithm/Verlet',
-		'orbit/algorithm/GravityAlgorithm',
+		'orbit/algorithm/GravityTicker',
 		//'orbit/scenario/Mercury6',
 		'orbit/scenario/SolarSystem',
 		//'orbit/scenario/EarthMoon',
 		'_'
 	], 
-	function(ns, $, CelestialBody, Verlet, GravityAlgorithm, Scenario) {
+	function(ns, $, CelestialBody, GravityTicker, Scenario) {
 
-		var debugEach;
 		var Universe = {
 			init : function(){
 
@@ -28,9 +26,9 @@ define(
 				this.calculateDimensions(Scenario.bodies);
 
 				this.createStage();
-				debugEach = Scenario.secondsPerTick * 5;
-				GravityAlgorithm.setSecondsPerTick(Scenario.secondsPerTick);
-				GravityAlgorithm.setCalculationsPerTick(Scenario.calculationsPerTick);
+				
+				GravityTicker.setSecondsPerTick(Scenario.secondsPerTick);
+				GravityTicker.setCalculationsPerTick(Scenario.calculationsPerTick);
 
 				this.bodies = this.createBodies(Scenario);
 
@@ -42,43 +40,54 @@ define(
 
 			createBodies : function(Scenario) {
 				var bodies = [];
+				this.bodies = {};
 
 				//find the largest radius in km among all bodies
 				var largestRadius = _.reduce(Scenario.bodies, function(memo, body){ return memo < body.radius ? body.radius : memo; }, 0);
 				
-				var largestPxRadius = largestRadius / this.nkmPerPix;
+				var largestPxRadius = largestRadius / ns.nkmPerPix;
 				if(largestPxRadius < Scenario.largestRadius) {
 					largestPxRadius = Scenario.largestRadius;
 				}
-
 				var radiusKmPerPix = largestRadius / largestPxRadius;
 				
 				$.each(Scenario.bodies, function(name, config){
 					var current = Object.create(CelestialBody);
 					$.extend(current, config);
 					current.name = name;
-					
-					current.nmPerPix = this.nmPerPix;
-					current.init();
 					var pxRadius = current.radius / radiusKmPerPix;
 					pxRadius = pxRadius < 1.5 ? 1.5 : pxRadius;
 					current.pxRadius = pxRadius;
-					$.extend(current, Verlet);
-
+					
+					if(current.dist == 0 && current.speed == 0 && !current.orbit) {
+						this.centralBody = current;
+						current.isCentral = true;
+					} else if(!ns.calculatePerturbations){
+						current.mass = 1;
+					}
+					current.init();
 					this.root.addChild(current.getDisplayObject());
+
+					this.bodies[current.name] = current;
 
 					bodies.push(current);
 				}.bind(this));
 
-				GravityAlgorithm.setBodies(bodies);
+				//this.bodies.jupiter.setTraceFrom(this.bodies.earth);
+				
+				GravityTicker.setBodies(bodies);
 				return bodies;
-				console.dir(bodies)
 			},
 
 			calculateDimensions : function(bodies){
 
 				this.width = $(window).width();
 				this.height = $(window).height();
+
+				this.center = {
+					x : this.width / 2,
+					y : this.height / 2
+				};
 
 				var maxDist = 0;
 				var largestMass = 0;
@@ -87,9 +96,9 @@ define(
 					if(body.mass > largestMass) largestMass = body.mass;
 				});
 
-				this.nPixPerAU = ((this.height / 2) - 20) / (maxDist / ns.AU);
-				this.nkmPerPix = ns.AU / this.nPixPerAU;
-				this.nmPerPix = this.nkmPerPix * 1000;
+				ns.nPixPerAU = ((this.height / 2) - 20) / (maxDist / ns.AU);
+				ns.nkmPerPix = ns.AU / ns.nPixPerAU;
+				ns.nmPerPix = ns.nkmPerPix * 1000;
 			},
 
 			createStage : function() {
@@ -98,8 +107,6 @@ define(
 
 				this.root = new createjs.Container();
 				this.stage.addChild(this.root);
-				this.root.x = this.width / 2;
-				this.root.y = this.height / 2;
 
 				canvas.on('click', function(){
 					this.playing = !this.playing;
@@ -110,23 +117,23 @@ define(
 			draw : function(){
 				
 				if(this.playing) {
-					var deltaT = GravityAlgorithm.tick();
+					var deltaT = GravityTicker.tick();
 					this.curTime += deltaT;
-				} 
-
-				if(this.curTime % debugEach === 0) {
-					$.each(this.bodies, function(i, b){
-
-						b.getDebug(this.root, this.curTime);
-					}.bind(this))
+					ns.curTime = this.curTime;
 				}
+				//console.log(deltaT);
+				$.each(this.bodies, function(n, b){
+					b.drawMove();
+				});
+
+				//center to central body
+				this.root.x = -this.centralBody.pixelPosition.x + this.center.x;
+				this.root.y = -this.centralBody.pixelPosition.y + this.center.y;
+
 				this.stage.update();
 				if(this.playing) setTimeout(this.draw.bind(this), 30);
 
-			},
-
-
-
+			}
 		};
 		
 		return Universe;

@@ -11,9 +11,9 @@ define(
 		var degToRad = Math.PI/180;
 		var radToDeg = 180/Math.PI;
 
-		var maxIterationsForEccentricAnomaly = 10;
+		var maxIterationsForEccentricAnomaly = 20;
 		var maxDeltaTForVelocity = 3600;//seconds
-		var maxDE = 1e-17;
+		var maxDE = 1e-19;
 
 		var DegMath ={
 			sin : function(v) {
@@ -35,24 +35,24 @@ define(
 				var t;
 				var tSign;
 				var els = [];
-				while(i < halfMaxDeltaTForVelocity && !els[0] && !els[1]){
+				while(i < halfMaxDeltaTForVelocity && (!els[0] || !els[1])){
 					for(var j=0; j<=1; j++){
 						tSign = j * -2 + 1;
-						t = timeEpoch + tSign * (i / ns.day);
+						t = timeEpoch + tSign * i;
 						els[j] = els[j] || this.calculateElements(t, true);
 					}
 					i++;
 				}
 
-				els[0] = els[0] || this.calculateElements(timeEpoch+(-halfMaxDeltaTForVelocity/ns.day));
-				els[1] = els[1] || this.calculateElements(timeEpoch+(halfMaxDeltaTForVelocity/ns.day));
+				els[0] = els[0] || this.calculateElements(timeEpoch-halfMaxDeltaTForVelocity);
+				els[1] = els[1] || this.calculateElements(timeEpoch+halfMaxDeltaTForVelocity);
 
 				var t0Pos = this.getPositionFromElements(els[1]);
 				var t1Pos = this.getPositionFromElements(els[0]);
 				var velocity = new THREE.Vector3();
 				velocity.subVectors(t1Pos, t0Pos);
-				velocity.multiplyScalar(1/Math.round((els[0].t - els[1].t)*ns.century*ns.day));
-				console.log(this.name, i, (els[0].t - els[1].t)*ns.century*ns.day, this.speed, velocity.length());
+				velocity.multiplyScalar(1/Math.round(els[0].t - els[1].t));
+				console.log(this.name, i, (els[0].t - els[1].t), this.speed, velocity.length());
 				return velocity;
 			},
 
@@ -89,24 +89,15 @@ define(
 				Pw	Argument of periapsis precession period (mean value)
 				Pn	Longitude of the ascending node precession period (mean value)
 
-			    TLElement
-				    epoch year
-				    epoch day
-
-					i
-					RA of the Asc Node
-					e
-					w
-					M
-
-
 			    */
 
 
-				var T = (timeEpoch/*-2451545/**/) / ns.century ;
+				//var T = (timeEpoch-2451545) / ns.century ;
+				var tDays = timeEpoch / ns.day;
+				var T = tDays / ns.century ;
 
 				var computed = {
-					t : T
+					t : timeEpoch
 				};
 
 				if (this.orbit.base) {

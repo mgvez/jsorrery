@@ -126,7 +126,7 @@ define(
 
 					if ((ns.curTime % this.displayElementsDelay) == 0) {
 
-						var computed = this.calculateElements(ns.TimeEpoch + (ns.U.curTime / ns.day));
+						var computed = this.calculateElements(ns.TimeEpoch + ns.U.curTime );
 						var pos =  this.getPositionFromElements(computed);
 						this.tracer.spotPos(pos.x / ns.nmPerPix, pos[ns.axisToShowInY] / ns.nmPerPix);
 
@@ -141,7 +141,7 @@ define(
 					var angleDiff = Math.abs(degAngle - this.debugged[this.debugged.length-1]);
 					if (this.debugged.length == 0 || angleDiff > 5){
 						this.debugged.push(degAngle);
-						var pos = this.calculatePosition(ns.TimeEpoch + (ns.U.curTime / ns.day));
+						var pos = this.calculatePosition(ns.TimeEpoch + ns.U.curTime );
 						this.tracer.spotPos(pos.x / ns.nmPerPix, pos.y / ns.nmPerPix);
 					}/**/
 

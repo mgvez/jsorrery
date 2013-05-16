@@ -11,7 +11,7 @@ define(
 			moveBody : function(deltaTIncrement, isLast){
 
 				/*if (!this.previousPosition){
-					this.previousPosition = this.calculatePosition(ns.TimeEpoch -  (deltaTIncrement / ns.day));
+					this.previousPosition = this.calculatePosition(ns.TimeEpoch - deltaTIncrement );
 				}/**/
 				
 				if(this.previousPosition){

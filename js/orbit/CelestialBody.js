@@ -50,7 +50,7 @@ define(
 			},
 
 			afterMove : function() {
-				var angle = Math.atan2(this.position.y, this.position.x);
+				var angle = Math.abs(Math.atan2(this.position.y, this.position.x));
 				//this.logger.html(angle);
 				if (!this.originalAngle) {
 					this.originalAngle = this.previousAngle = angle;

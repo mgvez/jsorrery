@@ -15,12 +15,15 @@ define(
 		var maxDeltaTForVelocity = 3600;//seconds
 		var maxDE = 1e-20;
 
-		var DegMath ={
+		var Deg ={
 			sin : function(v) {
 				return Math.sin(v * degToRad);
 			},
 			cos : function(v) {
 				return Math.cos(v * degToRad);
+			},
+			atan2 : function(y, x) {
+				return Math.atan2(y, x) * radToDeg;
 			}
 		};
 
@@ -63,20 +66,20 @@ define(
 				console.log(this.name, i, (els[0].t - els[1].t), this.speed, velocity.length());
 				*/
 				//test
-				console.log(this.name);
+
+				//vis viva to calculate speed (not velocity, i.e not a vector)
+				//console.log(this.name);
 				var el = this.calculateElements(timeEpoch);
-				var v2 = ns.G * ns.U.centralBody.mass * ((2 / (el.r*ns.AU*1000)) - (1 / (this.orbit.base.a*ns.AU*1000)));
-				v2 = Math.sqrt(v2);
-				//v2 = v2 / ns.AU;
-				console.log(el.r*ns.AU*1000);
-				console.log(this.orbit.base.a*ns.AU*1000);
-				console.log(velocity.length(), v2);
+				var speed = Math.sqrt(ns.G * ns.U.centralBody.mass * ((2 / (el.r)) - (1 / (el.a))));
+				//console.log(velocity.length(), speed);
+				velocity.normalize();
+				velocity.multiplyScalar(speed);
 				return velocity;
 			},
 
 			calculatePosition : function(timeEpoch) {
 				//position is set in KM, we need it in m;
-				if (!this.orbit) return new THREE.Vector3(this.dist * 1000, 0, 0);
+				if (!this.orbit) return new THREE.Vector3(this.dist, 0, 0);
 
 				var computed = this.calculateElements(timeEpoch);
 				var pos =  this.getPositionFromElements(computed);
@@ -109,8 +112,6 @@ define(
 
 			    */
 
-
-				//var T = (timeEpoch-2451545) / ns.century ;
 				var tDays = timeEpoch / ns.day;
 				var T = tDays / ns.century ;
 				//console.log(T);
@@ -132,63 +133,36 @@ define(
 				if (undefined === computed.w) {
 					computed.w = computed.lp - computed.N;
 				}
-				//computed.M = computed.L - computed.lp + (b * (T*T)) + (c * DegMath.cos(f * T)) + (s * DegMath.sin(f * T));
+
 				if (undefined === computed.M) {
 					computed.M = computed.l - computed.lp;
 				}
 
-				computed.M = (((computed.M % 360 ) + 360 ) % 360) - 180;
+				computed.a = computed.a * 1000;//was in km, ets it in m
 
-
-				var ePrime = (180/Math.PI) * computed.e;
-				computed.E = computed.M + ePrime * DegMath.sin(computed.M) * (1 + computed.e * DegMath.cos(computed.M));
+				var ePrime = radToDeg * computed.e;
+				computed.E = computed.M + ePrime * Deg.sin(computed.M) * (1 + computed.e * Deg.cos(computed.M));
 
 				var En = computed.E;
-				var dE;
-				var dETotal = 0;
+				var dE = 0;
 				var dM;
 				var i = 0;
-				var units;
-				var dec;
-				units = computed.E > 0 ? Math.floor(computed.E) : Math.ceil(computed.E); 
-				dec = computed.E % units;
-				//if(forVelocity)console.log(this.name);
 				do{
-					/*dM = computed.M - (En - ePrime * DegMath.sin(En));
-					dE = dM / (1 - (computed.e * DegMath.cos(En)));
-
-					units = En > 0 ? Math.floor(En) : Math.ceil(En); 
-					dec = En % units;
-
-					En = units + (dec+dE);
-					console.log(dE, dM, En);/**/
-					//decompose number to account for floating imprecision
-
-					En = units + (dETotal+dec);
-					dM = computed.M - (En - ePrime * DegMath.sin(En));
-					dE = dM / (1 - (computed.e * DegMath.cos(En)));
-					dETotal = dETotal + dE;
-					//if(forVelocity)console.log(dE, dM, En);/**/
+					En = En + dE;
+					dM = computed.M - (En - ePrime * Deg.sin(En));
+					dE = dM / (1 - (computed.e * Deg.cos(En)));
 					i++;
 				} while(Math.abs(dE) > maxDE && i <= maxIterationsForEccentricAnomaly);
 
-				if(Math.abs(dE) > maxDE && forVelocity){
-					console.log(i, dE);
-					return false;
-				}
-				computed.E = En;
+				computed.E = En % 360;
 
 				//in the plane of the orbit
-				computed.xPlane = computed.a * (DegMath.cos(computed.E) - computed.e);
-				computed.yPlane = computed.a * (Math.sqrt(1 - (computed.e*computed.e))) * DegMath.sin(computed.E);/**/
+				computed.xPlane = computed.a * (Deg.cos(computed.E) - computed.e);
+				computed.yPlane = computed.a * (Math.sqrt(1 - (computed.e*computed.e))) * Deg.sin(computed.E);
 
 				computed.r = Math.sqrt(computed.xPlane*computed.xPlane + computed.yPlane*computed.yPlane);
-    			computed.v = Math.atan2(computed.yPlane, computed.xPlane) * radToDeg;
+    			computed.v = Deg.atan2(computed.yPlane, computed.xPlane);
 
-    			/*if(!this.hasLoggedPos) {
-	    			console.log(this.name+'	'+computed.N+'	'+computed.i+'	'+computed.w+'	'+computed.a+'	'+computed.e+'	'+(((computed.M%360)+360)%360));
-	    			this.hasLoggedPos=true;
-	    		}/**/
 				this.calculatePeriod(computed);
 
 				return computed;
@@ -196,13 +170,16 @@ define(
 
 			getPositionFromElements : function(computed) {
 
-    			var x = computed.r * ( DegMath.cos(computed.N) * DegMath.cos(computed.v+computed.w) - DegMath.sin(computed.N) * DegMath.sin(computed.v+computed.w) * DegMath.cos(computed.i) )
-			    var y = computed.r * ( DegMath.sin(computed.N) * DegMath.cos(computed.v+computed.w) + DegMath.cos(computed.N) * DegMath.sin(computed.v+computed.w) * DegMath.cos(computed.i) )
-			    var z = computed.r * DegMath.sin(computed.v+computed.w) * DegMath.sin(computed.i)
-
-				//console.dir(computed);
-				//var pos = new THREE.Vector3(computed.xPlane * ns.AU * 1000, computed.yPlane * ns.AU * 1000, 0);
-				var pos = new THREE.Vector3(x * ns.AU * 1000, y * ns.AU * 1000, z * ns.AU * 1000);
+    			var x = 
+    			computed.r * ( Deg.cos(computed.N) * Deg.cos(computed.v+computed.w) -
+    			Deg.sin(computed.N) * Deg.sin(computed.v+computed.w) * Deg.cos(computed.i) )
+			    var y =
+			     computed.r * ( Deg.sin(computed.N) * Deg.cos(computed.v+computed.w) +
+			     Deg.cos(computed.N) * Deg.sin(computed.v+computed.w) * Deg.cos(computed.i) )
+			    var z = computed.r * Deg.sin(computed.v+computed.w) * Deg.sin(computed.i);/**/
+ 
+				//invert y axis for 2d canvas (0 is top left, not bottom left as in cartesian systems)
+				var pos = new THREE.Vector3(x, -y, z);
 
 				return pos;
 			},
@@ -210,8 +187,9 @@ define(
 			calculatePeriod : function(elements) {
 				if(this.period || !ns.U.centralBody || !ns.U.centralBody.k) return;
 
-				this.period = 2 * Math.PI * Math.sqrt(Math.pow(elements.a, 3)) / ns.U.centralBody.k;
+				this.period = 2 * Math.PI * Math.sqrt(Math.pow(elements.a/(ns.AU*1000), 3)) / ns.U.centralBody.k;
 			}
 		};
 	}
 );
+

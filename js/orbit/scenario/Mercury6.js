@@ -27,7 +27,7 @@ define(
 					color : "#ffffff",
 					orbit : {
 						base : {
-							a : (earthRadius + 48 + 159) / ns.AU,
+							a : (earthRadius + 48 + 159) ,
 							e : 0.00804,
 							w : 0,
 							M : 0,
@@ -52,7 +52,7 @@ define(
 					color : "#d5bd8d",
 					orbit: {
 						base : {
-							a : (earthRadius + 19 + 586.47) / ns.AU,
+							a : (earthRadius + 19 + 586.47) ,
 							e : 0.00172,
 							w : 0,
 							M : 0,
@@ -78,7 +78,7 @@ define(
 					color : '#ffaacc',
 					orbit: {
 						base : {
-							a : (earthRadius + 10 + 300) / ns.AU,
+							a : (earthRadius + 10 + 300) ,
 							e : 0.0003,
 							w : 0,
 							M : 0,

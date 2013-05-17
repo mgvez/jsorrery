@@ -88,7 +88,6 @@ define(
 					x : this.width / 2,
 					y : this.height / 2
 				};
-
 				var maxDist = 0;
 				var largestMass = 0;
 				$.each(bodies, function(i, body){

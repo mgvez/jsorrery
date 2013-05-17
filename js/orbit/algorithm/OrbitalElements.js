@@ -11,9 +11,9 @@ define(
 		var degToRad = Math.PI/180;
 		var radToDeg = 180/Math.PI;
 
-		var maxIterationsForEccentricAnomaly = 20;
+		var maxIterationsForEccentricAnomaly = 3;
 		var maxDeltaTForVelocity = 3600;//seconds
-		var maxDE = 1e-19;
+		var maxDE = 1e-20;
 
 		var DegMath ={
 			sin : function(v) {
@@ -28,13 +28,20 @@ define(
 			calculateVelocity : function(timeEpoch) {
 				
 				if (!this.orbit) return new THREE.Vector3(0, this.speed * 1000, 0);//velocity is set in km/s, we need it in m/s;
+				
+				var els = [];
+				if(this.orbit.deltaTForVelocity){
+					while(!els[0] || !els[1]){
+						els[0] = this.calculateElements(timeEpoch - this.orbit.deltaTForVelocity/2);
+						els[1] = this.calculateElements(timeEpoch + this.orbit.deltaTForVelocity/2);
+					}
+				}
 
 				var halfMaxDeltaTForVelocity = maxDeltaTForVelocity / 2;
 				var i = 1;
 				var j;
 				var t;
 				var tSign;
-				var els = [];
 				while(i < halfMaxDeltaTForVelocity && (!els[0] || !els[1])){
 					for(var j=0; j<=1; j++){
 						tSign = j * -2 + 1;
@@ -52,7 +59,18 @@ define(
 				var velocity = new THREE.Vector3();
 				velocity.subVectors(t1Pos, t0Pos);
 				velocity.multiplyScalar(1/Math.round(els[0].t - els[1].t));
+				/*console.log(this.name, this.orbit.base.e);
 				console.log(this.name, i, (els[0].t - els[1].t), this.speed, velocity.length());
+				*/
+				//test
+				console.log(this.name);
+				var el = this.calculateElements(timeEpoch);
+				var v2 = ns.G * ns.U.centralBody.mass * ((2 / (el.r*ns.AU*1000)) - (1 / (this.orbit.base.a*ns.AU*1000)));
+				v2 = Math.sqrt(v2);
+				//v2 = v2 / ns.AU;
+				console.log(el.r*ns.AU*1000);
+				console.log(this.orbit.base.a*ns.AU*1000);
+				console.log(velocity.length(), v2);
 				return velocity;
 			},
 
@@ -95,7 +113,7 @@ define(
 				//var T = (timeEpoch-2451545) / ns.century ;
 				var tDays = timeEpoch / ns.day;
 				var T = tDays / ns.century ;
-
+				//console.log(T);
 				var computed = {
 					t : timeEpoch
 				};
@@ -127,19 +145,37 @@ define(
 
 				var En = computed.E;
 				var dE;
+				var dETotal = 0;
 				var dM;
 				var i = 0;
+				var units;
+				var dec;
+				units = computed.E > 0 ? Math.floor(computed.E) : Math.ceil(computed.E); 
+				dec = computed.E % units;
+				//if(forVelocity)console.log(this.name);
 				do{
+					/*dM = computed.M - (En - ePrime * DegMath.sin(En));
+					dE = dM / (1 - (computed.e * DegMath.cos(En)));
+
+					units = En > 0 ? Math.floor(En) : Math.ceil(En); 
+					dec = En % units;
+
+					En = units + (dec+dE);
+					console.log(dE, dM, En);/**/
+					//decompose number to account for floating imprecision
+
+					En = units + (dETotal+dec);
 					dM = computed.M - (En - ePrime * DegMath.sin(En));
 					dE = dM / (1 - (computed.e * DegMath.cos(En)));
-					En = En + dE;
+					dETotal = dETotal + dE;
+					//if(forVelocity)console.log(dE, dM, En);/**/
 					i++;
-				} while(dE > maxDE && i <= maxIterationsForEccentricAnomaly);
+				} while(Math.abs(dE) > maxDE && i <= maxIterationsForEccentricAnomaly);
 
-				if(dE > maxDE && forVelocity){
+				if(Math.abs(dE) > maxDE && forVelocity){
+					console.log(i, dE);
 					return false;
 				}
-
 				computed.E = En;
 
 				//in the plane of the orbit

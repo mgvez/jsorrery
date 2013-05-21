@@ -11,9 +11,9 @@ define(
 		var degToRad = Math.PI/180;
 		var radToDeg = 180/Math.PI;
 
-		var maxIterationsForEccentricAnomaly = 3;
+		var maxIterationsForEccentricAnomaly = 10;
 		var maxDeltaTForVelocity = 3600;//seconds
-		var maxDE = 1e-20;
+		var maxDE = 1e-15;
 
 		var Deg ={
 			sin : function(v) {
@@ -24,6 +24,9 @@ define(
 			},
 			atan2 : function(y, x) {
 				return Math.atan2(y, x) * radToDeg;
+			},
+			acos : function(x) {
+				return Math.acos(x) * radToDeg;
 			}
 		};
 
@@ -33,12 +36,7 @@ define(
 				if (!this.orbit) return new THREE.Vector3(0, this.speed * 1000, 0);//velocity is set in km/s, we need it in m/s;
 				
 				var els = [];
-				if(this.orbit.deltaTForVelocity){
-					while(!els[0] || !els[1]){
-						els[0] = this.calculateElements(timeEpoch - this.orbit.deltaTForVelocity/2);
-						els[1] = this.calculateElements(timeEpoch + this.orbit.deltaTForVelocity/2);
-					}
-				}
+				/*
 
 				var halfMaxDeltaTForVelocity = maxDeltaTForVelocity / 2;
 				var i = 1;
@@ -49,31 +47,67 @@ define(
 					for(var j=0; j<=1; j++){
 						tSign = j * -2 + 1;
 						t = timeEpoch + tSign * i;
-						els[j] = els[j] || this.calculateElements(t, true);
+						els[j] = els[j] || this.calculateElements(t);
 					}
 					i++;
-				}
+				}/**/
 
-				els[0] = els[0] || this.calculateElements(timeEpoch-halfMaxDeltaTForVelocity);
-				els[1] = els[1] || this.calculateElements(timeEpoch+halfMaxDeltaTForVelocity);
+				els[0] = this.calculateElements(timeEpoch+1);
+				els[1] = this.calculateElements(timeEpoch-1);
 
 				var t0Pos = this.getPositionFromElements(els[1]);
 				var t1Pos = this.getPositionFromElements(els[0]);
-				var velocity = new THREE.Vector3();
-				velocity.subVectors(t1Pos, t0Pos);
-				velocity.multiplyScalar(1/Math.round(els[0].t - els[1].t));
-				/*console.log(this.name, this.orbit.base.e);
-				console.log(this.name, i, (els[0].t - els[1].t), this.speed, velocity.length());
-				*/
-				//test
-
+				var velocityFromDelta = new THREE.Vector3();
+				velocityFromDelta.subVectors(t1Pos, t0Pos);
+				var deltaT = 1/Math.round(els[0].t - els[1].t);
+				velocityFromDelta.multiplyScalar(deltaT);
+				/**/
 				//vis viva to calculate speed (not velocity, i.e not a vector)
-				//console.log(this.name);
 				var el = this.calculateElements(timeEpoch);
 				var speed = Math.sqrt(ns.G * ns.U.centralBody.mass * ((2 / (el.r)) - (1 / (el.a))));
 				//console.log(velocity.length(), speed);
-				velocity.normalize();
+
+				//now calculate velocity orientation, that is, a vector tangent to the orbital ellipse
+				var k = el.r / el.a;
+				var alpha = Math.acos(((2 - (2 * el.e * el.e)) / (k * (2-k)))-1);
+
+				var velocityAngle = degToRad * el.v + (Math.PI - alpha) /  2;
+
+				var xPlane = Math.cos(velocityAngle);
+				var yPlane = Math.sin(velocityAngle);
+
+
+
+				var velocityEls = $.extend(el, {
+					r : Math.sqrt(xPlane*xPlane + yPlane*yPlane),
+    				v : Deg.atan2(yPlane, xPlane)
+    			});
+
+    			var velocity = this.getPositionFromElements(velocityEls);
 				velocity.multiplyScalar(speed);
+				console.log(this.name);
+				
+				var master = new THREE.Vector3(xPlane, yPlane, 0);
+				
+
+				$.each(['x','y','z','length'], function(i, attr){
+					
+					var fromDelta = velocityFromDelta[attr];
+					var fromVV = velocity[attr];
+					if(typeof velocity[attr] == 'function'){
+						fromDelta = velocityFromDelta[attr]();
+						fromVV = velocity[attr]();
+					}
+					var absVar = fromDelta - fromVV;
+					var prcVar = ((absVar) / fromDelta) * 100;
+					if(prcVar > 0.01) {
+						console.log(deltaT);
+						console.log(master.length());
+						console.log(attr, absVar, prcVar);
+					}
+				});
+
+				//return velocityFromDelta;
 				return velocity;
 			},
 
@@ -88,7 +122,7 @@ define(
 				
 			},
 
-			calculateElements : function(timeEpoch, forVelocity) {
+			calculateElements : function(timeEpoch) {
 				/*
 	
 				Epoch : J2000
@@ -170,11 +204,9 @@ define(
 
 			getPositionFromElements : function(computed) {
 
-    			var x = 
-    			computed.r * ( Deg.cos(computed.N) * Deg.cos(computed.v+computed.w) -
+    			var x = computed.r * ( Deg.cos(computed.N) * Deg.cos(computed.v+computed.w) -
     			Deg.sin(computed.N) * Deg.sin(computed.v+computed.w) * Deg.cos(computed.i) )
-			    var y =
-			     computed.r * ( Deg.sin(computed.N) * Deg.cos(computed.v+computed.w) +
+			    var y = computed.r * ( Deg.sin(computed.N) * Deg.cos(computed.v+computed.w) +
 			     Deg.cos(computed.N) * Deg.sin(computed.v+computed.w) * Deg.cos(computed.i) )
 			    var z = computed.r * Deg.sin(computed.v+computed.w) * Deg.sin(computed.i);/**/
  

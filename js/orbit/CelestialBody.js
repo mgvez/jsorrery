@@ -33,6 +33,8 @@ define(
 				this.setPlanet();
 				this.setTracer();
 
+				this.debug();
+
 				this.afterMove();
 			},
 

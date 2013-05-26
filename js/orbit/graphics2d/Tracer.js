@@ -16,12 +16,40 @@ define(
 				this.getNew();
 			},
 
-			spotPos : function(x, y) {
+			spotPos : function(x, y, color, size) {
 				var shape = new createjs.Shape();
 				shape.graphics.clear();
-				shape.graphics.beginFill(this.color).drawCircle(x, y, 1);
+				shape.graphics.beginFill(color || this.color).drawCircle(x, y, size || 1);
 				this.root.addChild(shape);
 
+			},
+
+			drawAxis : function(){
+
+				var shape = new createjs.Shape();
+				var g = shape.graphics;
+				g.clear();
+				g.setStrokeStyle(0.2);
+				g.beginStroke('#ffffff');
+				g.moveTo(0, -400);
+				g.lineTo(0, 400);
+				g.moveTo(-800, 0);
+				g.lineTo(800, 0);
+
+				var x = -800;
+				while(x<=800){
+					g.moveTo(x, -3);
+					g.lineTo(x, 3);
+					x+= 100;
+				}
+				var y = -400;
+				while(y<=400){
+					g.moveTo(-3, y);
+					g.lineTo(3, y);
+					y+= 100;
+				}
+
+				this.root.addChild(shape);
 			},
 
 			getDisplayObject : function(){

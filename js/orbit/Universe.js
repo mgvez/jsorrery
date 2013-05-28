@@ -9,8 +9,8 @@ define(
 		'jquery',
 		'orbit/CelestialBody',
 		'orbit/algorithm/GravityTicker',
-		//'orbit/scenario/Mercury6',
-		'orbit/scenario/SolarSystem',
+		'orbit/scenario/Mercury6',
+		//'orbit/scenario/SolarSystem',
 		//'orbit/scenario/EarthMoon',
 		'_'
 	], 
@@ -58,19 +58,23 @@ define(
 					var pxRadius = current.radius / radiusKmPerPix;
 					pxRadius = pxRadius < 1.5 ? 1.5 : pxRadius;
 					current.pxRadius = pxRadius;
-					
+					console.dir(current);
 					if(current.dist == 0 && current.speed == 0 && !current.orbit) {
 						this.centralBody = current;
 						current.isCentral = true;
 					} else if(!ns.calculatePerturbations){
 						current.mass = 1;
 					}
-					current.init();
-					this.root.addChild(current.getDisplayObject());
+					
 
 					this.bodies[current.name] = current;
 
 					bodies.push(current);
+				}.bind(this));
+
+				$.each(this.bodies, function(name, current){
+					current.init();
+					this.root.addChild(current.getDisplayObject());
 				}.bind(this));
 
 				//this.bodies.jupiter.setTraceFrom(this.bodies.earth);

@@ -19,7 +19,7 @@
 
 		var J2000 = new Date(2000, 0, 1);
 		var today = new Date();
-		ns.TimeEpoch = (today - J2000) / 1000 ;// -3543;//seconds since 2000-01-01 (J2000)
+		ns.TimeEpoch =  ((today - J2000) / 1000) + 100*ns.day ;// -3543;//seconds since 2000-01-01 (J2000)
 		ns.calculatePerturbations = false;
 
 		ns.axisToShowInY = 'y';

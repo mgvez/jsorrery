@@ -41,15 +41,15 @@ define(
 				els[0] = this.calculateElements(timeEpoch+1);
 				els[1] = this.calculateElements(timeEpoch-1);
 
-				var t0Pos = this.getPositionFromElements(els[1]);
-				var t1Pos = this.getPositionFromElements(els[0]);
-				var velocityFromDelta = new THREE.Vector3();
-				velocityFromDelta.subVectors(t1Pos, t0Pos);
+				var orbitalVelocityFromDelta = new THREE.Vector3().subVectors(els[0].pos, els[1].pos);
+
 				var deltaT = 1/Math.round(els[0].t - els[1].t);
-				velocityFromDelta.multiplyScalar(deltaT);
-				/**/
+				orbitalVelocityFromDelta.multiplyScalar(deltaT);
 
-
+				var velocityElsFromDelta = $.extend({}, els[0], {pos:orbitalVelocityFromDelta});
+    			var eclipticVelocityFromDelta = this.getPositionFromElements(velocityElsFromDelta);
+				
+				
 
 
 				//vis viva to calculate speed (not velocity, i.e not a vector)
@@ -60,38 +60,60 @@ define(
 				var k = el.r / el.a;
 				var alpha = Math.acos(((2 - (2 * el.e * el.e)) / (k * (2-k)))-1);
 
-				var velocityAngle = degToRad * el.v + (Math.PI - alpha) /  2;
-				var velocityPlane = new THREE.Vector3(Math.cos(velocityAngle)*speed, Math.sin(velocityAngle)*speed);
-				//velocityPlane.setLength(speed);
-				var velocityEls = $.extend(el, {
-					r : Math.sqrt(velocityPlane.x*velocityPlane.x + velocityPlane.y*velocityPlane.y),
-    				v : Deg.atan2(velocityPlane.y, velocityPlane.x)
-    			});
+				//Vector3d vel = Quaternion.AngleAxis(alpha + ((PI - alpha) / 2.0), h) * -pos.normalized * velMag; // h is my orbit plane normal vector
+				//var q = new THREE.Quaternion();
+				//q.setFromAxisAngle();
+				alpha = el.v < 0 ? (2*Math.PI) - alpha  : alpha;
+
+				var velocityAngle = el.v + ((Math.PI - alpha) /  2);
+				velocityAngle = el.v < 0 ? Math.PI + velocityAngle  : velocityAngle;
+				//velocity vector in the plane of the orbit
+				var orbitalVelocity = new THREE.Vector3(Math.cos(velocityAngle), Math.sin(velocityAngle)).setLength(speed);
+				//orbitalVelocity.setLength(speed);
+				var velocityEls = $.extend({}, el, {pos:orbitalVelocity});
+    			var eclipticVelocity = this.getPositionFromElements(velocityEls);
 
 
-				//console.log(this.name);
-    			var velocity = this.getPositionFromElements(velocityEls);
+    			var xvect = new THREE.Vector3(1, 0, 0);
+    			var fromDeltaDiff = orbitalVelocityFromDelta.angleTo(xvect);
+    			var fromVisVivaDiff = orbitalVelocity.angleTo(xvect);
 
-				//console.log(velocity.length(), speed);
-				//velocity.setLength(speed);
-				$.each(['x','y','z','length'], function(i, attr){
-					
-					var fromDelta = velocityFromDelta[attr];
-					var fromVV = velocity[attr];
-					if(typeof velocity[attr] == 'function'){
-						fromDelta = velocityFromDelta[attr]();
-						fromVV = velocity[attr]();
-					}
-					var absVar = fromDelta - fromVV;
-					var prcVar = ((absVar) / fromDelta) * 100;
-					if(prcVar > 0.01) {
-						//console.log(attr, absVar, prcVar);
-					}
-				});
 
-				//return velocityFromDelta;
-				//return velocityFromDelta.setLength(speed);
-				return velocity;
+    			/*var angleDiff = orbitalVelocityFromDelta.angleTo(orbitalVelocity);
+    			if(this.name == 'halley') {
+
+	    			var ratio = orbitalVelocityFromDelta.length() / orbitalVelocity.length();
+	    			this.tracer.drawVector(eclipticVelocityFromDelta.clone().setLength(40), null, '#88dd88');
+	    			this.tracer.drawVector(eclipticVelocity.clone().setLength(40 / ratio), null, '#dd8888');
+    				var col = angleDiff > 0.01 ? '#ffaaaa' : '#aaffff';
+    				var v = el.v;
+    				var ha = ((Math.PI - alpha) /  2);
+    				v *= radToDeg;
+    				ha *= radToDeg;
+    				ha = Math.round(ha);
+    				v = Math.round(v);
+    				var a = Math.round(alpha*radToDeg);
+
+    				var correctAngle = orbitalVelocityFromDelta.angleTo(new THREE.Vector3(10,0,0));
+
+    				var h = 'ν: '+ v +', α: '+a + '|'+ ha + ', va: '+Math.round(velocityAngle*radToDeg)+' dt:'+Math.round(correctAngle*radToDeg);
+    				h = el.r;
+    				var d = $('<div style="color:'+col+'">').html(h);
+    				this.logger.append(d);
+	    			var x = new THREE.Vector3(100, 0, 0);
+	    			var q = new THREE.Quaternion();
+	    			q.setFromEuler(new THREE.Vector3(0, 0, velocityAngle), 'XYZ');
+	    			x.applyQuaternion(q);
+	    			var xEls = $.extend({}, el, {pos:x});
+    				var eclipticX = this.getPositionFromElements(xEls);
+    				this.tracer.drawVector(eclipticX, null, '#ffffff');
+    				//this.tracer.drawVector(eclipticX, {x:0, y:0}, '#ffffff');
+
+	    		}/**/
+
+				//return eclipticVelocityFromDelta;
+				//return eclipticVelocityFromDelta.setLength(speed);
+				return eclipticVelocity;
 			},
 
 			calculatePosition : function(timeEpoch) {
@@ -173,12 +195,17 @@ define(
 
 				computed.E = En % 360;
 
+				computed.i = degToRad * computed.i;
+				computed.o = degToRad * computed.o;
+				computed.w = degToRad * computed.w;
+				computed.M = degToRad * computed.M;
+				computed.E = degToRad * computed.E;
+
 				//in the plane of the orbit
-				computed.pos = new THREE.Vector3(computed.a * (Deg.cos(computed.E) - computed.e), computed.a * (Math.sqrt(1 - (computed.e*computed.e))) * Deg.sin(computed.E));
+				computed.pos = new THREE.Vector3(computed.a * (Math.cos(computed.E) - computed.e), computed.a * (Math.sqrt(1 - (computed.e*computed.e))) * Math.sin(computed.E));
 
-
-				computed.r = computed.pos.length();;
-    			computed.v = Deg.atan2(computed.pos.y, computed.pos.x);
+				computed.r = computed.pos.length();
+    			computed.v = Math.atan2(computed.pos.y, computed.pos.x);
 
 				this.calculatePeriod(computed);
 
@@ -187,11 +214,14 @@ define(
 
 			getPositionFromElements : function(computed) {
 
-    			var x = computed.r * ( Deg.cos(computed.o) * Deg.cos(computed.v+computed.w) -
-    			Deg.sin(computed.o) * Deg.sin(computed.v+computed.w) * Deg.cos(computed.i) )
-			    var y = computed.r * ( Deg.sin(computed.o) * Deg.cos(computed.v+computed.w) +
-			     Deg.cos(computed.o) * Deg.sin(computed.v+computed.w) * Deg.cos(computed.i) )
-			    var z = computed.r * Deg.sin(computed.v+computed.w) * Deg.sin(computed.i);/**/
+				computed.r = computed.pos.length();
+    			computed.v = Math.atan2(computed.pos.y, computed.pos.x);
+
+    			var x = computed.r * ( Math.cos(computed.o) * Math.cos(computed.v+computed.w) -
+    			Math.sin(computed.o) * Math.sin(computed.v+computed.w) * Math.cos(computed.i) )
+			    var y = computed.r * ( Math.sin(computed.o) * Math.cos(computed.v+computed.w) +
+			     Math.cos(computed.o) * Math.sin(computed.v+computed.w) * Math.cos(computed.i) )
+			    var z = computed.r * Math.sin(computed.v+computed.w) * Math.sin(computed.i);/**/
 
 
 				//invert y axis for 2d canvas (0 is top left, not bottom left as in cartesian systems)
@@ -201,6 +231,7 @@ define(
 			},
 
 			debug : function(){
+				return;
 				this.planet.graphics.clear();
 				
 				if(this.name != 'earth') return;
@@ -233,6 +264,8 @@ define(
  				computed.o *= degToRad * 1;
  				computed.w *= degToRad * 1;
  				computed.i *= degToRad * 1;/**/
+
+ 				//Vector3d vel = Quaternion.AngleAxis(alpha + ((PI - alpha) / 2.0), h) * -pos.normalized * velMag; // h is my orbit plane normal vector
 
  				/*computed.i = (computed.i) * degToRad * 1;
  				computed.o = (computed.o) * degToRad * 1;

@@ -52,6 +52,18 @@ define(
 				this.root.addChild(shape);
 			},
 
+			drawVector : function(v, zero, color){
+				var shape = new createjs.Shape();
+				zero = zero || this.tracePosition;
+				var g = shape.graphics;
+				g.clear();
+				g.setStrokeStyle(0.5);
+				g.beginStroke(color || '#ffffff');
+				g.moveTo(zero.x, zero.y);
+				g.lineTo(zero.x+v.x, zero.y+v.y);
+				this.root.addChild(shape);
+			},
+
 			getDisplayObject : function(){
 				return this.root;
 			},

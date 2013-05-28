@@ -16,10 +16,13 @@ define(
 
 			init : function() {
 				//console.log('*********'+this.name+'*************');
+
+				this.root = new createjs.Container();
+				
+
 				this.force = new THREE.Vector3(0, 0, 0);
 				this.pixelPosition = new THREE.Vector3(0, 0, 0);
 				this.position = this.calculatePosition(ns.TimeEpoch);
-				this.velocity =  this.calculateVelocity(ns.TimeEpoch);
 				
 				this.year = 0;
 
@@ -28,13 +31,13 @@ define(
 				//this.isLog = true;
 				this.createLogger();
 
-				this.root = new createjs.Container();
 
 				this.setPlanet();
 				this.setTracer();
 
 				this.debug();
 
+				this.velocity =  this.calculateVelocity(ns.TimeEpoch);
 				this.afterMove();
 			},
 
@@ -47,13 +50,13 @@ define(
 			
 			createLogger : function() {
 				if(this.isLog) {
-					this.logger = $('<div style="background:'+this.color+'" class="planetLogger">').appendTo('#logger');
+					this.logger = $('<div style="border:'+this.color+' 1px solid;color:'+this.color+'" class="planetLogger">').appendTo('#logger');
 				}
 			},
 
 			afterMove : function() {
 				var angle = Math.abs(Math.atan2(this.position.y, this.position.x));
-				//this.logger.html(angle);
+				//this.logger && this.logger.html(angle);
 				if (!this.originalAngle) {
 					this.originalAngle = this.previousAngle = angle;
 					return;
@@ -88,9 +91,9 @@ define(
 			setTracer : function() {
 				this.tracer = Object.create(Tracer);
 				this.tracer.init(this.color);
-				this.root.addChild(this.tracer.getDisplayObject());
 				this.setPixelCoords();
 				this.tracer.initPos(this.pixelPosition.x, this.pixelPosition[ns.axisToShowInY]);
+				this.root.addChild(this.tracer.getDisplayObject());
 				return this.tracer;
 			},
 
@@ -123,7 +126,7 @@ define(
 						//console.log(this.name, nTicksPerRev);
 						this.displayElementsDelay = nTicksPerDisplay * ns.curTime;
 						//console.log(this.displayElementsDelay);
-						if(this.name == 'halley') this.displayElementsDelay = 5 * ns.curTime;
+						//if(this.name == 'halley') this.displayElementsDelay = 5 * ns.curTime;
 					}
 
 					if ((ns.curTime % this.displayElementsDelay) == 0) {
@@ -132,10 +135,12 @@ define(
 						var pos =  this.getPositionFromElements(computed);
 						this.tracer.spotPos(pos.x / ns.nmPerPix, pos[ns.axisToShowInY] / ns.nmPerPix);
 
-						var dsp = this.prevAnomlay ? computed.v - this.prevAnomaly : computed.v;
+						var dsp = this.prevAnomaly ? computed.v - this.prevAnomaly : computed.v;
 
 						//this.logger && this.logger.html(dsp);
 						this.prevAnomaly = computed.v;
+
+						this.calculateVelocity(ns.TimeEpoch + ns.U.curTime);
 					}
 
 					/*var degAngle = angle * 180 / Math.PI;

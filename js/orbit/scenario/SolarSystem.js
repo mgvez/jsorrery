@@ -57,10 +57,10 @@ define(
 					dist : 1.523679 * ns.AU,
 					speed : 24.077,
 					color : '#ff3300',
-					traceFrom : 0
+					traceFrom : 0,
+					isLog : true
 				}
 				,
-				
 				jupiter : {
 					mass : 1.8986e27,
 					radius : 71492,
@@ -107,7 +107,7 @@ define(
 					radius : 50,
 					dist : 0.586 * ns.AU,
 					speed : -54.584,
-					color : '#dd8855',
+					color : '#ffffff',
 					isLog : true
 				}/**/
 			},
@@ -157,21 +157,11 @@ define(
 				cy : {a : -0.00031596 * ns.AU ,  e :  0.00005170, i:  0.00004818, l :    145.20780515, lp :  -0.04062942, o :  -0.01183482}
 			},
 			halley : {
-				/*base : {a : 17.83414429 ,  e :  0.967142908, i: 162.262691, M : 180, w : 111.332485, o : 58.420081},
-				day : {a : 0 ,  e :  0, i:  0, M : (360 / (76 * 365.25) ), w : 0, o : 0}/**/
-				//day : {a : 0 ,  e :  0, i:  0, M : (360 / (76 * 365.25) ), w : 0, o : 0}
-				base : {a : 1.5414429 ,  e :  0.967142908, i: 0, M : 50, w : 111.332485, o : 58.420081},
-				day : {a : 0 ,  e :  0, i:  0, M : (360 / (5 * 365.25) ), w : 0, o : 0}/**/
+				base : {a : 17.83414429 * ns.AU ,  e :  0.967142908, i: 162.262691, M : 0, w : 111.332485, o : 58.420081},
+				day : {a : 0 ,  e :  0, i:  0, M : (360 / (76 * 365.25) ), w : 0, o : 0}
 			}
 		};
 
-/*
-a = 17.83414429 AU
-e = 0.967142908
-i = 162.262691 degrees
-Ω = 58.420081 degrees
-ω = 111.332485 degrees
-*/
 		$.each(orbitalElements, function(planet, elements){
 			if(cnf.bodies[planet]) cnf.bodies[planet].orbit = elements;
 		});

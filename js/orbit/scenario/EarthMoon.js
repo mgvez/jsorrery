@@ -1,11 +1,4 @@
-/** 
 
-mass : kg
-dist : km
-apeed : km/s
-radius: km
-
-*/
 
 define(
 	[
@@ -20,8 +13,6 @@ define(
 					mass : 7.3477e22,
 					radius : 1738.1,
 					color : "#ffffff",
-					dist : 405410,
-					speed : 0.964,
 					orbit: {
 						base : {
 							a : 384400,
@@ -43,16 +34,13 @@ define(
 				},
 				earth : {
 					mass : 5.9736e24,
-					dist : 0,
-					speed : 0,
 					radius : 6378.1,
 					color : "#1F7CDA"
 				}
 			},
 			
 			secondsPerTick : 3600,
-			calculationsPerTick : 300,
-			largestRadius : 5,
+			calculationsPerTick : 300
 
 		};
 

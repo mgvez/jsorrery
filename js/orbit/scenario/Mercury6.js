@@ -21,8 +21,6 @@ define(
 			bodies : {
 				mercury6 : {
 					mass : 1224.7,
-					dist : earthRadius + 159,
-					speed : 28205/3600,
 					radius : 2,
 					color : "#ffffff",
 					orbit : {
@@ -46,8 +44,6 @@ define(
 				},
 				hubble : {
 					mass : 11110,
-					dist : earthRadius + 559,
-					speed : 7500 / 1000,
 					radius : 2,
 					color : "#d5bd8d",
 					orbit: {
@@ -72,8 +68,6 @@ define(
 				},
 				gemini6 : {
 					mass : 1,
-					dist : earthRadius + 304,
-					speed : null,
 					radius : 2,
 					color : '#ffaacc',
 					orbit: {
@@ -97,16 +91,13 @@ define(
 				},/**/
 				earth : {
 					mass : 5.9736e24,
-					dist : 0,
-					speed : 0,
 					radius : earthRadius,
 					color : "#1F7CDA"
 				}
 			},
 			
 			secondsPerTick : 30,
-			calculationsPerTick : 20,
-			largestRadius : 10,
+			calculationsPerTick : 20
 
 		};
 

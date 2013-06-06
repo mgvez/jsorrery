@@ -56,12 +56,17 @@ define(
 			tick : function(){
 				//We calculate the positions of all bodies, and thus the gravity, more than once per tick. Not efficient but more precise than approximating the whole forces to their value at the beginning of the cycle.
 				var t = 0;
+				var i;
 				while(t < calculationsPerTick){
 					calculateGForces();
-					for(var i=0; i<bodies.length; i++){
-						bodies[i].moveBody(deltaTIncrement, t == calculationsPerTick-1);
+					for(i=0; i<bodies.length; i++){
+						bodies[i].moveBody(deltaTIncrement);
 					}
 					t++;
+				}
+
+				for(i=0; i<bodies.length; i++){
+					bodies[i].afterTick();
 				}
 				
 				return secondsPerTick;

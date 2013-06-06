@@ -19,6 +19,13 @@ define(
 
 		var system =  {
 			bodies : {
+				earth : {
+					mass : 5.9736e24,
+					radius : earthRadius,
+					color : "#1F7CDA",
+					map : 'img/earthmap1k.jpg',
+					sideralPeriod : 23 * 60 *60 + 56 * 60 + 4
+				},
 				mercury6 : {
 					mass : 1224.7,
 					radius : 2,
@@ -36,7 +43,7 @@ define(
 							a : 0,
 							e : 0,
 							i : 0,
-							M : (360 / (88.5 * 60)) * (60 * 60 * 24),
+							M : -1 * (360 / (88.5 * 60)) * ns.day,
 							w : 0,
 							o : 0
 						}	
@@ -45,7 +52,7 @@ define(
 				hubble : {
 					mass : 11110,
 					radius : 2,
-					color : "#d5bd8d",
+					color : "#ffaa00",
 					orbit: {
 						base : {
 							a : (earthRadius + 19 + 586.47) ,
@@ -59,7 +66,7 @@ define(
 							a : 0,
 							e : 0,
 							i : 0,
-							M : (360 / (96.66 * 60)) * (60 * 60 * 24),
+							M : -1 * (360 / (96.66 * 60)) * ns.day,
 							w : 0,
 							o : 0
 						}	
@@ -69,7 +76,7 @@ define(
 				gemini6 : {
 					mass : 1,
 					radius : 2,
-					color : '#ffaacc',
+					color : '#00aaff',
 					orbit: {
 						base : {
 							a : (earthRadius + 10 + 300) ,
@@ -83,20 +90,41 @@ define(
 							a : 0,
 							e : 0,
 							i : 0,
-							M : (360 / (90.55 * 60)) * (60 * 60 * 24),
+							M : -1 * (360 / (90.55 * 60)) * ns.day,
 							w : 0,
 							o : 0
 						}	
 					}
-				},/**/
-				earth : {
-					mass : 5.9736e24,
-					radius : earthRadius,
-					color : "#1F7CDA"
-				}
+				},
+				gps : {
+					mass : 1,
+					radius : 2,
+					color : '#00aaff',
+					orbit: {
+						base : {
+							a : 26600,
+							e : 0,
+							w : 0,
+							M : 0,
+							i : 55,
+							o : 0
+						},
+						day : {
+							a : 0,
+							e : 0,
+							i : 0,
+							M : (360 / (11*3600 + 58*60)) * ns.day,
+							w : 0,
+							o : 0
+						}	
+					}
+					
+				}/**/
+
+				
 			},
 			
-			secondsPerTick : 30,
+			secondsPerTick : 5,
 			calculationsPerTick : 20
 
 		};

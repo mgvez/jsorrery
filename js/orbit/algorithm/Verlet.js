@@ -8,42 +8,34 @@ define(
 	
 
 		var Verlet = {
-			moveBody : function(deltaTIncrement, isLast){
-
-				/*if (!this.previousPosition){
-					this.previousPosition = this.calculatePosition(ns.TimeEpoch - deltaTIncrement );
-				}/**/
+			setBody : function(b){
+				this.b = b;
+			},
+			moveBody : function(deltaTIncrement){
 				
 				if(this.previousPosition){
-					var beginPos = this.position.clone();
-					
-					this.force.multiplyScalar( 1 / this.mass);//force is in newtons, need to divide it by the mass to get number of m/s*s of accel
-					this.force.multiplyScalar(deltaTIncrement * deltaTIncrement);
-					
-					var workVect = this.position.clone().sub(this.previousPosition);
-					this.position.add(workVect);
-					this.position.add(this.force);
-					this.previousPosition = beginPos;
-					
+					var beginPos = this.b.position.clone();
+					this.b.force.multiplyScalar(this.invMass);//force is in newtons, need to divide it by the mass to get number of m/s*s of accel
+					this.b.force.multiplyScalar(deltaTIncrement * deltaTIncrement);
+					this.workVect.copy(this.b.position).sub(this.previousPosition);
+					this.b.position.add(this.workVect);
+					this.b.position.add(this.b.force);
+					this.previousPosition.copy(beginPos);
 					
 				} else {//initialisation (with Euler algorithm)
-					this.previousPosition = this.position.clone();
-
-					/*console.log(this.name);
-					console.log(this.velocity.x, this.velocity.y, this.velocity.z);/**/
-					
-					this.force.multiplyScalar( 1 / this.mass);//force is in newtons, need to divide it by the mass to get number of m/s*s of accel
-					this.force.multiplyScalar(deltaTIncrement);
-					this.velocity.add(this.force);
-					
-					var correctedVel = this.velocity.clone();
+					this.previousPosition = this.b.position.clone();
+					this.workVect = new THREE.Vector3();
+					this.invMass = 1 / this.b.mass;
+					this.b.force.multiplyScalar(this.invMass);//force is in newtons, need to divide it by the mass to get number of m/s*s of accel
+					this.b.force.multiplyScalar(deltaTIncrement);
+					this.b.velocity.add(this.b.force);
+					var correctedVel = this.b.velocity.clone();
 					correctedVel.multiplyScalar(deltaTIncrement);//speed needs to take deltaT into account
-					this.position.add(correctedVel);
+					this.b.position.add(correctedVel);
 				}
 
-				this.force = new THREE.Vector3(0, 0, 0);//reset force
-
-				if(isLast) this.afterMove();
+				this.b.force.x = this.b.force.y = this.b.force.z = 0;//reset force
+				this.b.afterMove();
 			}
 		};
 

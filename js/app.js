@@ -7,9 +7,13 @@
 			'vendor/jquery.scrollto' : 'vendor/jquery.scrollTo-1.4.2-min',
 			'three' : 'vendor/three.min',
 			'easel' : 'vendor/easeljs-0.6.0.min',
-			'_' : 'vendor/underscore-min'
+			'_' : 'vendor/underscore-min',
+			'three/controls/OrbitControls' : 'vendor/three/controls/OrbitControls'
 		},
 		shim: {
+			'three': {
+				deps: []
+			},
 			'jquery': {
 				deps: []
 			},
@@ -21,6 +25,9 @@
 			},
 			'easel' : {
 				exports: 'createjs'
+			},
+			'three/controls/OrbitControls' : {
+				deps: ['three']
 			}
 		}
 	});

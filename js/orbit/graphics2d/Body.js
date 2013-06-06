@@ -76,36 +76,6 @@ define(
 				this.planet.x = pxPos.x;				
 				this.planet.y = pxPos[ns.axisToShowInY];	
 				this.tracer.doTrace(pxPos.x, pxPos[ns.axisToShowInY]);
-				this.displayFromElements();
-			},
-
-			displayFromElements : function(){
-				if(this.year == 0 && ns.curTime && this.orbit) {
-
-					if (this.displayElementsDelay === undefined) {
-						var periodTracing = this.period - (this.period % ns.curTime);
-						var nTicksPerRev = Math.abs((periodTracing / ns.curTime));
-						var nDisplayPerRev = (this.orbit.base.a / ns.AU) *  10;
-						nDisplayPerRev = nDisplayPerRev < 10 ? 10 : nDisplayPerRev;
-						var nTicksPerDisplay = Math.ceil(nTicksPerRev / nDisplayPerRev);
-						this.displayElementsDelay = nTicksPerDisplay * ns.curTime;
-					}
-
-					if ((ns.curTime % this.displayElementsDelay) == 0) {
-
-						var computed = this.calculateElements(ns.TimeEpoch + ns.U.curTime );
-						var pos =  this.getPositionFromElements(computed);
-						this.tracer.spotPos(pos.x / ns.nmPerPix, pos[ns.axisToShowInY] / ns.nmPerPix);
-
-						var dsp = this.prevAnomaly ? computed.v - this.prevAnomaly : computed.v;
-
-						//this.logger && this.logger.html(dsp);
-						this.prevAnomaly = computed.v;
-
-						this.calculateVelocity(ns.TimeEpoch + ns.U.curTime);
-					}
-
-				} 
 			},
 
 			getPixelCoords : function(pos) {

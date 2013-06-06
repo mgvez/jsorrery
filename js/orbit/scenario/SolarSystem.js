@@ -21,6 +21,7 @@ define(
 					mass : 1.9891e30,
 					radius : 6.96342e5,
 					color : '#ffff00',
+					map : 'img/sunmap.jpg',
 					traceFrom : 0,
 					k : 0.01720209895 //gravitational constant (μ)
 				},
@@ -28,6 +29,7 @@ define(
 					mass : 3.3022e23,
 					radius:2439,
 					color : '#cc9900',
+					map : 'img/mercurymap.jpg',
 					traceFrom : 0,
 					isLog : true
 				},
@@ -35,6 +37,7 @@ define(
 					mass : 4.868e24,
 					radius : 6051,
 					color : '#00cc99',
+					map : 'img/venusmap.jpg',
 					traceFrom : 0,
 					isLog : true
 				},
@@ -42,6 +45,7 @@ define(
 					mass : 5.9736e24,
 					radius : 6378.1,
 					color : '#1F7CDA',
+					map : 'img/earthmap1k.jpg',
 					traceFrom : 0,
 					isLog : true
 				},
@@ -49,6 +53,7 @@ define(
 					mass : 6.4185e23,
 					radius : 3376,
 					color : '#ff3300',
+					map : 'img/mars_1k_color.jpg',
 					traceFrom : 0,
 					isLog : true
 				}
@@ -57,6 +62,7 @@ define(
 					mass : 1.8986e27,
 					radius : 71492,
 					color : '#ff9932',
+					map : 'img/jupitermap.jpg',
 					traceFrom : 0,
 					isLog : true
 				},
@@ -64,6 +70,7 @@ define(
 					mass : 5.6846e26,
 					radius : 60268,
 					color : '#ffcc99',
+					map : 'img/saturnmap.jpg',
 					traceFrom : 0,
 					isLog : true
 				},
@@ -71,6 +78,7 @@ define(
 					mass : 8.6810e25,
 					radius : 25559,
 					color : '#99ccff',
+					map : 'img/uranusmap.jpg',
 					traceFrom : 0,
 					isLog : true
 				},
@@ -78,6 +86,7 @@ define(
 					mass : 1.0243e26,
 					radius : 24764,
 					color : '#3299ff',
+					map : 'img/neptunemap.jpg',
 					traceFrom : 0,
 					isLog : true
 				},
@@ -85,6 +94,7 @@ define(
 					mass : 1.305e22+1.52e21,
 					radius : 1153,
 					color : '#aaaaaa',
+					map : 'img/plutomap1k.jpg',
 					traceFrom : 0,
 					isLog : true
 				}
@@ -97,7 +107,7 @@ define(
 				}/**/
 			},
 			
-			secondsPerTick : 3600*24 * 7,
+			secondsPerTick : 3600 * 24 * 1,
 			calculationsPerTick : 1000
 
 		};
@@ -141,11 +151,11 @@ define(
 				cy : {a : -0.00031596 * ns.AU ,  e : 0.00005170, i: 0.00004818, l : 145.20780515, lp : -0.04062942, o : -0.01183482}
 			},
 			halley : {
-				base : {a : 17.83414429 * ns.AU ,  e : 0.967142908, i: 162.262691, M : 0, w : 111.332485, o : 58.420081},
-				day : {a : 0 ,  e : 0, i: 0, M : (360 / (76 * 365.25) ), w : 0, o : 0}
+				base : {a : 17.83414429 * ns.AU ,  e : 0.967142908, i: 162.262691, M : 360 * (438393600 / (75.1 * ns.year * ns.day)), w : 111.332485, o : 58.420081},
+				day : {a : 0 ,  e : 0, i: 0, M : (360 / (75.1 * 365.25) ), w : 0, o : 0}
 			}
 		};
-
+//-
 		$.each(orbitalElements, function(planet, elements){
 			if(cnf.bodies[planet]) cnf.bodies[planet].orbit = elements;
 		});

@@ -39,11 +39,14 @@ define(
 				//now calculate velocity orientation, that is, a vector tangent to the orbital ellipse
 				var k = el.r / el.a;
 				var alpha = Math.acos(((2 - (2 * el.e * el.e)) / (k * (2-k)))-1);
-
 				alpha = el.v < 0 ? (2*Math.PI) - alpha  : alpha;
-
 				var velocityAngle = el.v + ((Math.PI - alpha) /  2);
-				velocityAngle = el.v < 0 ? Math.PI + velocityAngle  : velocityAngle;
+
+				//default orbit is counterclockwise
+				var dir = (this.orbit.cy && this.orbit.cy.M) || (this.orbit.day && this.orbit.day.M);
+				var isInversed = dir && dir < 0 ? true : false;/**/
+				velocityAngle = (el.v < 0) != isInversed ? Math.PI + velocityAngle  : velocityAngle;
+
 				//velocity vector in the plane of the orbit
 				var orbitalVelocity = new THREE.Vector3(Math.cos(velocityAngle), Math.sin(velocityAngle)).setLength(speed);
 				var velocityEls = $.extend({}, el, {pos:orbitalVelocity, v:null, r:null});

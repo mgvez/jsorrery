@@ -11,8 +11,6 @@ define(
 		return {
 			createStage : function() {
 				this.bodies = [];
-				this.width = $(window).width();
-				this.height = $(window).height();
 
 				this.center = {
 					x : this.width / 2,
@@ -28,6 +26,10 @@ define(
 			},
 
 			setDimension : function(largestSMA, largestRadius) {
+
+				this.width = $(window).width();
+				this.height = $(window).height();
+				
 				var nPixPerAU = ((this.height / 2) - 20) / (largestSMA / ns.AU);
 				var nkmPerPix = ns.AU / nPixPerAU;
 				BodyGraphics.nmPerPix = this.nmPerPix = nkmPerPix * 1000;

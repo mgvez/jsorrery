@@ -13,6 +13,8 @@ define(
 					mass : 7.3477e22,
 					radius : 1738.1,
 					color : "#ffffff",
+					map : 'img/moonmap1k.jpg',
+					sideralPeriod : -27.321582 * ns.day,
 					orbit: {
 						base : {
 							a : 384400,
@@ -35,11 +37,13 @@ define(
 				earth : {
 					mass : 5.9736e24,
 					radius : 6378.1,
-					color : "#1F7CDA"
+					color : "#1F7CDA",
+					map : 'img/earthmap1k.jpg',
+					sideralPeriod : 23 * 60 *60 + 56 * 60 + 4
 				}
 			},
 			
-			secondsPerTick : 3600,
+			secondsPerTick : 1000,
 			calculationsPerTick : 300
 
 		};

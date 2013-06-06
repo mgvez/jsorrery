@@ -20,10 +20,24 @@ define(
 				var elements = this.calculateElements(ns.TimeEpoch);
 				this.calculatePeriod(elements);
 				this.position = this.getPositionFromElements(elements);
-				//this.isLog = true;
+				this.previousPosition = this.position.clone();
+				this.angle = 0;
+				this.isLog = true;
 				this.createLogger();
 				this.velocity =  this.calculateVelocity(ns.TimeEpoch);
 				this.afterMove();
+
+				this.verlet = Object.create(Verlet);
+				this.verlet.setBody(this);
+
+			},
+
+			moveBody : function(deltaTIncrement){
+				this.verlet.moveBody(deltaTIncrement);
+			},
+
+			calculateTracePeriod : function(universeSize, secondsPerTick) {
+				this.log(this.period / secondsPerTick);
 			},
 			
 			createLogger : function() {
@@ -35,15 +49,32 @@ define(
 			log:function(tx){
 				this.logger && this.logger.html(tx);
 			},
-
-			afterMove : function() {
-				var year = Math.floor(ns.curTime/this.period);
-				if(year && year !== this.year){
-					this.events.notify(['year']);
+			afterTick : function() {
+				return;
+				if(this.orbit){
+					this.angle += this.position.angleTo(this.previousPosition);
+					this.previousPosition.copy(this.position);
+					this.i++;
+					this.log(this.i);
+					if(this.angle > ns.CIRCLE){
+						this.year++;
+						this.angle = this.angle % ns.CIRCLE;
+						this.events.notify(['year']);
+					}
 				}
-				this.year = year;
 
+				if(this.period){
+					var year = Math.floor(Math.abs(ns.curTime/this.period));
+					if(year && year !== this.year){
+						
+					}
+					this.year = year;
+				}
 				this.displayFromElements();
+			},
+
+			afterMove : function(){
+
 			},
 
 			displayFromElements : function(){
@@ -69,21 +100,10 @@ define(
 
 			getEvents : function(){
 				return this.events.promise();
-			},
-
-			addVX : function(val){
-				this.velocity.x += val;
-			},
-
-			addVY :  function(val){
-				this.velocity.y += val;
-			},
-			addToMass : function(val){
-				this.mass += val;
 			}
 		};
 
-		$.extend(CelestialBody, Verlet);
+		//$.extend(CelestialBody, Verlet);
 		$.extend(CelestialBody, OrbitalElements);
 		return CelestialBody;
 

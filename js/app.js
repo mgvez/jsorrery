@@ -8,7 +8,8 @@
 			'three' : 'vendor/three.min',
 			'easel' : 'vendor/easeljs-0.6.0.min',
 			'_' : 'vendor/underscore-min',
-			'three/controls/OrbitControls' : 'vendor/three/controls/OrbitControls'
+			'three/controls/OrbitControls' : 'vendor/three/controls/OrbitControls',
+			'three/stats' : 'vendor/three/stats.min'
 		},
 		shim: {
 			'three': {

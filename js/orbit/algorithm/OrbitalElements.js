@@ -7,25 +7,22 @@ define(
 	],
 	function(ns, $) {
 
-		var degToRad = Math.PI/180;
-		var radToDeg = 180/Math.PI;
-
 		var maxIterationsForEccentricAnomaly = 10;
 		var maxDeltaTForVelocity = 3600;//seconds
 		var maxDE = 1e-15;
 
 		var Deg ={
 			sin : function(v) {
-				return Math.sin(v * degToRad);
+				return Math.sin(v * ns.DEG_TO_RAD);
 			},
 			cos : function(v) {
-				return Math.cos(v * degToRad);
+				return Math.cos(v * ns.DEG_TO_RAD);
 			},
 			atan2 : function(y, x) {
-				return Math.atan2(y, x) * radToDeg;
+				return Math.atan2(y, x) * ns.RAD_TO_DEG;
 			},
 			acos : function(x) {
-				return Math.acos(x) * radToDeg;
+				return Math.acos(x) * ns.RAD_TO_DEG;
 			}
 		};
 
@@ -87,8 +84,8 @@ define(
 
 			    */
 
-				var tDays = timeEpoch / ns.day;
-				var T = tDays / ns.century ;
+				var tDays = timeEpoch / ns.DAY;
+				var T = tDays / ns.CENTURY ;
 				//console.log(T);
 				var computed = {
 					t : timeEpoch
@@ -98,7 +95,7 @@ define(
 					for(var el in this.orbit.base) {
 						//cy : variation by century.
 						//day : variation by day.
-						var variation = this.orbit.cy ? this.orbit.cy[el] : (this.orbit.day[el] * ns.century);
+						var variation = this.orbit.cy ? this.orbit.cy[el] : (this.orbit.day[el] * ns.CENTURY);
 						computed[el] = this.orbit.base[el] + (variation * T);
 					}
 				} else {
@@ -115,7 +112,7 @@ define(
 
 				computed.a = computed.a * 1000;//was in km, set it in m
 
-				var ePrime = radToDeg * computed.e;
+				var ePrime = ns.RAD_TO_DEG * computed.e;
 				computed.E = computed.M + ePrime * Deg.sin(computed.M) * (1 + computed.e * Deg.cos(computed.M));
 
 				var En = computed.E;
@@ -131,11 +128,11 @@ define(
 
 				computed.E = En % 360;
 
-				computed.i = degToRad * computed.i;
-				computed.o = degToRad * computed.o;
-				computed.w = degToRad * computed.w;
-				computed.M = degToRad * computed.M;
-				computed.E = degToRad * computed.E;
+				computed.i = ns.DEG_TO_RAD * computed.i;
+				computed.o = ns.DEG_TO_RAD * computed.o;
+				computed.w = ns.DEG_TO_RAD * computed.w;
+				computed.M = ns.DEG_TO_RAD * computed.M;
+				computed.E = ns.DEG_TO_RAD * computed.E;
 
 				//in the plane of the orbit
 				computed.pos = new THREE.Vector3(computed.a * (Math.cos(computed.E) - computed.e), computed.a * (Math.sqrt(1 - (computed.e*computed.e))) * Math.sin(computed.E));
@@ -159,7 +156,7 @@ define(
 			    var z = computed.r * Math.sin(computed.v+computed.w) * Math.sin(computed.i);/**/
 
 				//invert y axis for 2d canvas (0 is top left, not bottom left as in cartesian systems)
-				var pos = new THREE.Vector3(x, -y, z);
+				var pos = new THREE.Vector3(x, y, z);
 				return pos;
 			},
 
@@ -168,10 +165,10 @@ define(
 				if(this.period) return;
 				if(this.orbit && this.orbit.day && this.orbit.day.M) {
 					this.period = 360 / this.orbit.day.M ;
-				} else if(ns.U.centralBody && ns.U.centralBody.k && elements) {
+				}else if(ns.U.centralBody && ns.U.centralBody.k && elements) {
 					this.period = 2 * Math.PI * Math.sqrt(Math.pow(elements.a/(ns.AU*1000), 3)) / ns.U.centralBody.k;
 				}
-				this.period = this.period * ns.day;//in seconds
+				this.period = this.period * ns.DAY;//in seconds
 			}
 		};
 	}

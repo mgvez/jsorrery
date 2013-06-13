@@ -18,33 +18,38 @@ define(
 		/**
 		Calculates the forces that are created by each body toward one another
 		*/
-		var calculateGForces = function(){
-			var workVect;
-			for(var i=0; i<bodies.length; i++){
-				//loop in following bodies and calculate forces between them and this one. No need to do previous ones, as they were done in previous iterations
-				for(var j=i+1; j<bodies.length; j++){
-					if(bodies[i].mass === 1 && bodies[j].mass === 1) continue; 
-					workVect = getGForceBetween(bodies[i], bodies[j]);
-					//add forces (for the first body, it is the reciprocal of the calculated force)
-					bodies[i].force.sub(workVect);
-					bodies[j].force.add(workVect);
+		var calculateGForces = (function(){
+			var workVect, i, j;
+			return function(){
+				for(i=0; i<bodies.length; i++){
+					//loop in following bodies and calculate forces between them and this one. No need to do previous ones, as they were done in previous iterations
+					for(j=i+1; j<bodies.length; j++){
+						if(bodies[i].mass === 1 && bodies[j].mass === 1) continue; 
+						workVect = getGForceBetween(bodies[i], bodies[j]);
+						//add forces (for the first body, it is the reciprocal of the calculated force)
+						bodies[i].force.sub(workVect);
+						bodies[j].force.add(workVect);
+					}
 				}
-			}
-			
-		};
+			};
+		})();
 
 		/**
 		Get the gravitational force in Newtons between two bodies (their distance in m, mass in kg)
 		*/
-		var getGForceBetween = function(a, b){
-			var workVect = a.position.clone().sub(b.position);//vector is between positions of body A and body B
-			var dstSquared = workVect.lengthSq();
-			var massPrd = a.mass * b.mass;
-			var Fg = ns.G * (massPrd / dstSquared);//in newtons (1 N = 1 kg*m / s^2)
-			workVect.normalize();
-			workVect.multiplyScalar(Fg);//vector is now force of attraction in newtons
-			return workVect;
-		};
+		var getGForceBetween = (function(){
+			var workVect, dstSquared, massPrd, Fg;
+			return function(a, b){
+				workVect = a.position.clone().sub(b.position);//vector is between positions of body A and body B
+				dstSquared = workVect.lengthSq();
+				massPrd = a.mass * b.mass;
+				Fg = ns.G * (massPrd / dstSquared);//in newtons (1 N = 1 kg*m / s^2)
+				workVect.normalize();
+				workVect.multiplyScalar(Fg);//vector is now force of attraction in newtons
+				return workVect;
+			};
+		})();
+			
 		
 		setDT = function (){
 			if(!calculationsPerTick || !secondsPerTick) return;
@@ -53,28 +58,31 @@ define(
 
 		var Algorithm = {
 			
-			tick : function(){
-				//We calculate the positions of all bodies, and thus the gravity, more than once per tick. Not efficient but more precise than approximating the whole forces to their value at the beginning of the cycle.
-				var t = 0;
-				var i;
-				while(t < calculationsPerTick){
-					calculateGForces();
-					for(i=0; i<bodies.length; i++){
-						bodies[i].moveBody(deltaTIncrement);
+			tick : (function(){
+				var t, i;
+				return function(){
+					//We calculate the positions of all bodies, and thus the gravity, more than once per tick. Not efficient but more precise than approximating the whole forces to their value at the beginning of the cycle.
+					t = 0;
+					while(t < calculationsPerTick){
+						calculateGForces();
+						for(i=0; i<bodies.length; i++){
+							bodies[i].moveBody(deltaTIncrement, i);
+						}
+						t++;
 					}
-					t++;
-				}
-
-				for(i=0; i<bodies.length; i++){
-					bodies[i].afterTick();
-				}
-				
-				return secondsPerTick;
-			},
-			
+					for(i=0; i<bodies.length; i++){
+						bodies[i].afterTick();
+					}
+					
+					return secondsPerTick;
+				};
+			})(),
 			
 			setBodies : function(b){
-				bodies = b;
+				bodies = [];
+				$.each(b, function(name, body){
+					bodies.push(body);
+				});
 			},
 			
 			setCalculationsPerTick : function(n){

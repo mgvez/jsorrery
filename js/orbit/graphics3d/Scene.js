@@ -5,15 +5,19 @@ define(
 		'jquery',
 		'_',
 		'orbit/graphics3d/Body',
-		'three/controls/OrbitControls'
+		'orbit/gui/Gui',
+		'three/controls/OrbitControls',
+		'three/stats'
 	], 
-	function(ns, $, _, BodyGraphics){
+	function(ns, $, _, BodyGraphics, Gui){
 
 		var projector;
-		var defaultCameraFov = 50;
+		var defaultCameraFov = 40;
+		var stats;
+		var lookAt = new THREE.Vector3();
 
 		return {
-			createStage : function() {
+			createStage : function(Scenario) {
 
 				projector = projector || new THREE.Projector();
 				this.bodies = {};
@@ -21,55 +25,120 @@ define(
 
 				this.container = $('<div id="universe" width="'+this.width+'" height="'+this.height+'">').appendTo('body');
 
-				this.renderer = new THREE.WebGLRenderer({antialias: true});
-				this.renderer.shadowMapEnabled = true;
-				this.camera = new THREE.PerspectiveCamera(defaultCameraFov, this.width / this.height, 0.1, 10000);
-
 				this.scene = new THREE.Scene();
+				this.renderer = new THREE.WebGLRenderer({antialias: true});
+				//this.renderer.shadowMapEnabled = true;
+				this.renderer.setSize(this.width, this.height);
 
+				this.camera = new THREE.PerspectiveCamera(Scenario.fov || defaultCameraFov, this.width / this.height, 0.1, 10000);
+				this.camera.up = new THREE.Vector3(0,0,1);
+				this.controls = new THREE.OrbitControls(this.camera, this.container.get(0));
+				this.container.on('mouseup.jsorrery', this.draw.bind(this));
 				this.scene.add(this.camera);
 
-
-				this.camera.up = new THREE.Vector3(0,0,1);
-				this.camera.position.z = this.height*0.9;
-				this.camera.position.y = -this.height*0.9;
-				this.camera.position.x = 100;
-				this.camera.lookAt(new THREE.Vector3(0,0,0));
-
-				this.renderer.setSize(this.width, this.height);
-				this.controls = new THREE.OrbitControls(this.camera);/**/
-
-				var ambiance = new THREE.DirectionalLight(0xFFffff, 0.1);
+				var ambiance = new THREE.DirectionalLight(0xFFFFFF, 0.1);
 				ambiance.position.x = 0 * this.height;
 				ambiance.position.y = 5 * this.width;
 				ambiance.position.z = 5 * this.width;
 
-				/*var sun = new THREE.DirectionalLight(0xFFFFFF, 1);
-				sun.castShadow = true;
-				sun.position.x = 5 * this.width;
-				sun.position.y = -5 * this.width;
-				sun.position.z = 0 * this.width;/**/
-				//console.log(ambiance.position);
-
-				var sun = new THREE.PointLight(0xFFFFFF);
-				sun.position.x = 0;
-				sun.position.y = 0;
-				sun.position.z = 0;/**/
+				var sun;
+				if(this.centralBody && this.centralBody.name == 'sun') {
+					sun = new THREE.PointLight(0xFFFFFF);
+					sun.position.x = 0;
+					sun.position.y = 0;
+					sun.position.z = 0;
+				} else {
+					sun = new THREE.DirectionalLight(0xFFFFFF, 1);
+					//sun.castShadow = true;
+					sun.position.x = -1 * this.width;
+					sun.position.y = 0 * this.width;
+					sun.position.z = 0 * this.width;
+					this.sun = sun;
+				}
 
 				this.scene.add(sun);
-				this.scene.add(ambiance);
 
-				/*var light = new THREE.AmbientLight( 0x404040 ); // soft white light
+				//this.scene.add(ambiance);
+
+				var light = new THREE.AmbientLight( 0x101010 ); // soft white light
 				this.scene.add( light );/***/
 
 				//this.drawAxis();
 
+				Gui.addBtn('free camera', '', function(){
+					this.toggleFreeCamera();
+				}.bind(this));
+				
+				this.trackFromSelect = Gui.addDropdown('lookFrom', 'Look from', this.toggleTrackBody.bind(this));
+				this.trackLookatSelect = Gui.addDropdown('lookAt', 'Look at', this.toggleTrackBody.bind(this));
+				Gui.addOption('lookFrom', '', '');
+				Gui.addOption('lookAt', '', '');
+
+				$.each(Scenario.bodies, function(bodyName, b){
+					Gui.addOption('lookFrom', bodyName, bodyName);
+					Gui.addOption('lookAt', bodyName, bodyName);
+				});
+				Gui.addOption('lookAt', 'vernal equinox', 'vernal');
+				if(Scenario.bodies.sun) {
+					Gui.addOption('lookAt', 'night (away from the sun)', 'night');
+				}
+				
+				Gui.addOption('lookAt', 'direction of velocity', 'front');
+				Gui.addOption('lookAt', 'inverse direction of velocity', 'back');
+
+
+				stats = new Stats();
+				$('body').append( stats.domElement );
+
 				this.container.append(this.renderer.domElement);
+
+				this.viewSettings = {};
+				this.toggleFreeCamera();
 
 			},
 
-			toggleCamera : function(){
+			toggleTrackBody : function() {
+				this.viewSettings.isFree = false;
+				this.viewSettings.lookFrom = this.trackFromSelect.val();
+				this.viewSettings.lookAt = this.trackLookatSelect.val();
 
+				$.each(this.bodies, function(i, body){
+					body.setTraceFrom(null);
+					body.removeTracerEventsListeners();
+				});
+				if(this.bodies[this.viewSettings.lookFrom] && this.bodies[this.viewSettings.lookAt]) {
+					this.bodies[this.viewSettings.lookAt].setTraceFrom(this.bodies[this.viewSettings.lookFrom]);
+					//also listen to the "from" body tracer events to trace the "at" body, as the latter's rythm might not be sufficient
+					this.bodies[this.viewSettings.lookAt].addTracerEventsListeners(this.bodies[this.viewSettings.lookFrom].celestial);
+				}
+				this.container.on('mousewheel.jsorrery', this.onMouseWheel.bind(this), false );
+				this.draw();
+			},
+
+			toggleFreeCamera : function(i){
+				this.viewSettings.isFree = true;
+				this.camera.position.z = this.height*0.9;
+				this.camera.position.y = -this.height*0.9;
+				this.camera.position.x = 0;
+				this.camera.lookAt(new THREE.Vector3(0,0,0));
+				
+				this.trackFromSelect.val('');
+				this.trackLookatSelect.val('');
+				this.container.off('mousewheel.jsorrery');
+				this.draw();
+
+			},
+
+			onMouseWheel : function(e) {
+				var delta = 0;
+				if ( e.wheelDelta ) { // WebKit / Opera / Explorer 9
+					delta = e.wheelDelta;
+				} else if ( e.detail ) { // Firefox
+					delta = - e.detail;
+				}
+				delta = delta / Math.abs(delta);
+				//console.log(delta);
+				this.camera.fov += 1 * delta;
 			},
 
 			drawAxis : function(){
@@ -104,10 +173,13 @@ define(
 			},
 
 			draw : function(){
-				
-				/*/**/
-				
-				//
+
+				//move sun, if its not a body shown. This assumes that the central body, if it has an orbit, revolves around the sun
+				if(this.sun && this.centralBody && this.centralBody.orbit){
+					var pos = this.centralBody.calculatePosition(ns.U.currentTime);
+					pos.setLength(this.width*3).negate();
+					this.sun.position.copy(pos);
+				}
 
 				$.each(this.rendrables, function(n, b){
 					b.drawMove();
@@ -116,22 +188,38 @@ define(
 						b.placeLabel(labelPos);
 					}/**/
 				}.bind(this));
-				/*
-				var coords = this.bodies.earth.getPlanet().position;
-				this.camera.position.copy(coords);
-				//var look = coords.clone().multiplyScalar(2);
-				var look = new THREE.Vector3(-1000, 0, 0);
-				this.camera.lookAt(look);
-				/**/
-				//this.camera.lookAt(this.bodies.mars.getPlanet().position);
+				
+				if(this.viewSettings.isFree && this.controls) {
+					this.controls.update();
+				} else if(this.viewSettings.lookFrom) {
+
+					var coords = this.bodies[this.viewSettings.lookFrom].getPlanet().position;
+					
+					this.camera.position.copy(coords);
+					if(this.bodies[this.viewSettings.lookAt]) {
+						lookAt.copy(this.bodies[this.viewSettings.lookAt].getPlanet().position);	
+					} else if(this.viewSettings.lookAt == 'night') {
+						lookAt.copy(coords);
+						lookAt.multiplyScalar(2);
+					} else if(this.viewSettings.lookAt && ('front,back'.indexOf(this.viewSettings.lookAt) !== -1)) {
+						var vel = this.bodies[this.viewSettings.lookFrom].celestial.movement;
+						lookAt.copy(vel).normalize();
+						if(this.viewSettings.lookAt=='back') lookAt.negate();
+						lookAt.add(coords);
+					} else {
+						//default vernal equinox
+					
+						lookAt.copy(coords);
+						lookAt.x -= 1;
+					}
+					this.camera.lookAt(lookAt);
+				}
 
 				//this.camera.updateMatrixWorld();
-				
-				this.controls && this.controls.update();
 				this.camera.updateProjectionMatrix();
 
 				this.renderer.render(this.scene, this.camera);
-				if(this.playing) setTimeout(this.draw.bind(this), 30);
+				stats.update();
 			},
 
 
@@ -156,6 +244,10 @@ define(
 			        }.bind(this);
 			        textureImg.src = celestialBody.map;
 			    }
+			},
+
+			setCentralBody : function(centralBody){
+				this.centralBody = centralBody;
 			}
 		};
 

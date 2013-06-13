@@ -2,49 +2,36 @@
 
 define(
 	[
-		'orbit/NameSpace'
+		'orbit/NameSpace',
+		'orbit/scenario/CommonCelestialBodies'
 	], 
-	function(ns, $) {
+	function(ns, common) {
 
 		
 		var system =  {
+			name : 'EarthMoon',
+			commonBodies : ['earth', 'moon'],
 			bodies : {
 				moon : {
-					mass : 7.3477e22,
-					radius : 1738.1,
-					color : "#ffffff",
-					map : 'img/moonmap1k.jpg',
-					sideralPeriod : -27.321582 * ns.day,
-					orbit: {
-						base : {
-							a : 384400,
-							e : 0.0554,
-							w : 318.15,
-							M : 135.27,
-							i : 5.16,
-							o : 125.08
-						},
-						day : {
-							a : 0,
-							e : 0,
-							i : 0,
-							M : 360 / 27.322,
-							w : (360 / 5.997) / 365.25,
-							o : (360 / 18.600) / 365.25
-						}	
+					afterInitialized : function() {
+						if(ns.U.bodies.earth) {
+							var eclPos = this.position.clone().normalize();
+							eclPos.z = 0;
+							var angleX = eclPos.angleTo(new THREE.Vector3(1, 0, 0));
+							var angleY = eclPos.angleTo(new THREE.Vector3(0, 1, 0));
+							//console.log(angleX, angleY);
+							var angle = angleX;
+							var q = Math.PI / 2;
+							if(angleY > q) angle = -angleX; 
+							this.originalMapRotation = angle + Math.PI;
+						}
 					}
-				},
-				earth : {
-					mass : 5.9736e24,
-					radius : 6378.1,
-					color : "#1F7CDA",
-					map : 'img/earthmap1k.jpg',
-					sideralPeriod : 23 * 60 *60 + 56 * 60 + 4
 				}
 			},
-			
-			secondsPerTick : 1000,
-			calculationsPerTick : 300
+			secondsPerTick : 3600 ,
+			calculationsPerTick : 1000,
+			calculatePerturbations : false,
+			fov: 3
 
 		};
 

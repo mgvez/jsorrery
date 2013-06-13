@@ -13,9 +13,10 @@ define(
 
 			init : function(celestialBody) {
 				this.celestial = celestialBody;
-				this.setEventsListeners();
 				this.setPlanet();
 				if(!this.celestial.isCentral) this.setTracer();
+				this.setEventsListeners();
+
 
 				//this.label = $('<div class="planetLabel">'+this.celestial.name+'</div>').appendTo('body');
 			},
@@ -29,6 +30,10 @@ define(
 			},
 
 			setEventsListeners:function(){
+				
+				this.celestial.addEventListener('spot', this.spotPos.bind(this));
+				this.tracer && this.celestial.addEventListener('vertex', this.tracer.changeVertex.bind(this.tracer));
+				/*
 				return;
 				var d = this.celestial.getEvents();
 				d.progress(function(args){
@@ -40,9 +45,24 @@ define(
 						case 'spot':
 							this.spotPos(args.shift());
 							break;
+						case 'vertex':
+							this.tracer && this.tracer.changeVertex();
+							break;
 					}
 
-				}.bind(this));
+				}.bind(this));/**/
+			},
+
+			addTracerEventsListeners : function(body){
+				if(!this.tracer) return;
+				this.supplementalTracer = [body, this.tracer.changeVertex.bind(this.tracer)];
+				this.supplementalTracer[0].addEventListener('vertex', this.supplementalTracer[1]);
+			},
+
+			removeTracerEventsListeners : function(){
+				if(!this.supplementalTracer) return;
+				this.supplementalTracer[0].removeEventListener('vertex', this.supplementalTracer[1]);
+				this.supplementalTracer = null;
 			},
 
 			resetTracer : function(){
@@ -51,7 +71,7 @@ define(
 
 			spotPos : function(pos){
 				var pxPos = this.getPixelCoords(pos);
-				this.tracer && this.tracer.spotPos(pxPos.x, pxPos[ns.axisToShowInY]);
+				this.tracer && this.tracer.spotPos(pxPos.x, pxPos.y);
 			},
 
 			getPlanet : function() {
@@ -74,13 +94,12 @@ define(
 				var mat = new THREE.MeshLambertMaterial(matOptions);
 
 				if(this.celestial.name==='sun'){
-					mat.emissive = new THREE.Color( 0x999933 );
+					mat.emissive = new THREE.Color( 0xdddd33 );
 				}
 
-				//this.pxRadius = 25;
 				var radius = this.pxRadius;
 				var precision = Math.round(this.pxRadius);
-				precision = precision < 10 ? 10 : (precision > 100 ? 100 : precision);
+				precision = precision < 20 ? 20 : (precision > 100 ? 100 : precision);
 				var segments = precision;
 				var rings = precision;
 				this.planet = new THREE.Mesh(
@@ -88,7 +107,9 @@ define(
 					mat
 				);
 				
-				this.planet.rotation.x = Math.PI / 2;
+				var tilt = Math.PI / 2;
+				if(this.celestial.tilt) tilt -= this.celestial.tilt * ns.DEG_TO_RAD;
+				this.planet.rotation.x = tilt;
 
 				/*
 				this.planet.castShadow = true;
@@ -99,7 +120,7 @@ define(
 
 			setTracer : function() {
 				this.tracer = Object.create(Tracer);
-				this.tracer.init(this.celestial.color, this.celestial.period, this.celestial.name);
+				this.tracer.init(this.celestial.color, this.celestial.nVertices, this.celestial.name);
 				this.tracer.initPos(this.getPixelCoords());
 				return this.tracer;
 			},
@@ -113,9 +134,9 @@ define(
 				var pxPos = this.getPixelCoords();
 				this.planet.position = pxPos.clone();
 
-				if(this.celestial.sideralPeriod){
-					var curRotation = ((ns.curTime / this.celestial.sideralPeriod) % 1) * Math.PI * 2;
-					this.planet.rotation.y = curRotation;
+				if(this.celestial.sideralDay){
+					var curRotation = (ns.U.epochTime / this.celestial.sideralDay) * ns.CIRCLE;
+					this.planet.rotation.y = (this.celestial.originalMapRotation || 0) + curRotation;
 				}
 				//console.dir(pxPos);
 				//console.log(this.planet.position.x, this.planet.position.y, this.planet.position.z);

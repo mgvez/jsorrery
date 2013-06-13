@@ -81,7 +81,7 @@ define(
 			getPixelCoords : function(pos) {
 				var pxPosition = (pos || this.celestial.position).clone();
 				pxPosition.x = pxPosition.x / this.nmPerPix;//get position relative to the stage
-				pxPosition.y = pxPosition.y / this.nmPerPix;
+				pxPosition.y = -pxPosition.y / this.nmPerPix;//y axis is inversed (origin is top of page, not bottom)
 				pxPosition.z = pxPosition.z / this.nmPerPix;
 				return pxPosition;
 			}

@@ -88,9 +88,8 @@ define(
 
 			setTraceFrom : function(centralBody) {
 				this.traceFrom = centralBody;
-	            this.tracePosition.x = this.tracePosition.x - this.traceFrom.x;
-				this.tracePosition.y = this.tracePosition.y - this.traceFrom.y;
-				this.currentTrace.graphics.moveTo(this.tracePosition.x, this.tracePosition.y);
+	            this.tracePosition.sub(this.traceFrom.getPixelCoords());
+	            this.currentTrace.graphics.moveTo(this.tracePosition.x, this.tracePosition.y);
 			},
 
 			doTrace : function(x, y){

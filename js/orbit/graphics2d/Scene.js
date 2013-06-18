@@ -44,7 +44,7 @@ define(
 			draw : function(){
 
 				//lock to central body
-				var centralPos = BodyGraphics.getPixelCoords(ns.U.centralBody.position);
+				var centralPos = BodyGraphics.getPixelCoords(ns.U.getBody().position);
 				this.root.x = -centralPos.x + this.center.x;
 				this.root.y = -centralPos.y + this.center.y;
 

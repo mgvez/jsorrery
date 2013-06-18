@@ -6,13 +6,13 @@ define(
 		'_',
 		'orbit/graphics3d/Body',
 		'orbit/gui/Gui',
+		'vendor/jquery.mousewheel',
 		'three/controls/OrbitControls',
 		'three/stats'
 	], 
 	function(ns, $, _, BodyGraphics, Gui){
-
 		var projector;
-		var defaultCameraFov = 40;
+		var defaultCameraFov = 45;
 		var stats;
 		var lookAt = new THREE.Vector3();
 
@@ -26,11 +26,13 @@ define(
 				this.container = $('<div id="universe" width="'+this.width+'" height="'+this.height+'">').appendTo('body');
 
 				this.scene = new THREE.Scene();
+				//this.scene.fog = new THREE.Fog( 0x00aaff, 100, 10000 );
+
 				this.renderer = new THREE.WebGLRenderer({antialias: true});
 				//this.renderer.shadowMapEnabled = true;
 				this.renderer.setSize(this.width, this.height);
 
-				this.camera = new THREE.PerspectiveCamera(Scenario.fov || defaultCameraFov, this.width / this.height, 0.1, 10000);
+				this.camera = new THREE.PerspectiveCamera(Scenario.fov || defaultCameraFov, this.width / this.height, 0.1, 100000);
 				this.camera.up = new THREE.Vector3(0,0,1);
 				this.controls = new THREE.OrbitControls(this.camera, this.container.get(0));
 				this.container.on('mouseup.jsorrery', this.draw.bind(this));
@@ -85,6 +87,7 @@ define(
 				
 				Gui.addOption('lookAt', 'direction of velocity', 'front');
 				Gui.addOption('lookAt', 'inverse direction of velocity', 'back');
+				Gui.addOption('lookFrom', 'above from the '+ns.U.getBody().name, 'above');
 
 
 				stats = new Stats();
@@ -102,20 +105,21 @@ define(
 				this.viewSettings.lookFrom = this.trackFromSelect.val();
 				this.viewSettings.lookAt = this.trackLookatSelect.val();
 
-				$.each(this.bodies, function(i, body){
-					body.setTraceFrom(null);
-					body.removeTracerEventsListeners();
-				});
+				this.cancelTraceFrom();
+
 				if(this.bodies[this.viewSettings.lookFrom] && this.bodies[this.viewSettings.lookAt]) {
 					this.bodies[this.viewSettings.lookAt].setTraceFrom(this.bodies[this.viewSettings.lookFrom]);
 					//also listen to the "from" body tracer events to trace the "at" body, as the latter's rythm might not be sufficient
 					this.bodies[this.viewSettings.lookAt].addTracerEventsListeners(this.bodies[this.viewSettings.lookFrom].celestial);
 				}
-				this.container.on('mousewheel.jsorrery', this.onMouseWheel.bind(this), false );
+				this.container.on('mousewheel', this.onMouseWheel.bind(this));
 				this.draw();
 			},
 
 			toggleFreeCamera : function(i){
+
+				this.cancelTraceFrom();
+
 				this.viewSettings.isFree = true;
 				this.camera.position.z = this.height*0.9;
 				this.camera.position.y = -this.height*0.9;
@@ -124,21 +128,21 @@ define(
 				
 				this.trackFromSelect.val('');
 				this.trackLookatSelect.val('');
-				this.container.off('mousewheel.jsorrery');
+				this.container.off('mousewheel');
 				this.draw();
 
 			},
 
-			onMouseWheel : function(e) {
-				var delta = 0;
-				if ( e.wheelDelta ) { // WebKit / Opera / Explorer 9
-					delta = e.wheelDelta;
-				} else if ( e.detail ) { // Firefox
-					delta = - e.detail;
-				}
+			cancelTraceFrom : function(){
+				$.each(this.bodies, function(i, body){
+					body.setTraceFrom(null);
+					body.removeTracerEventsListeners();
+				});
+			},
+
+			onMouseWheel : function(event, delta, deltaX, deltaY) {
 				delta = delta / Math.abs(delta);
-				//console.log(delta);
-				this.camera.fov += 1 * delta;
+				this.camera.fov += 0.3 * delta;
 			},
 
 			drawAxis : function(){
@@ -193,25 +197,38 @@ define(
 					this.controls.update();
 				} else if(this.viewSettings.lookFrom) {
 
-					var coords = this.bodies[this.viewSettings.lookFrom].getPlanet().position;
-					
-					this.camera.position.copy(coords);
-					if(this.bodies[this.viewSettings.lookAt]) {
-						lookAt.copy(this.bodies[this.viewSettings.lookAt].getPlanet().position);	
-					} else if(this.viewSettings.lookAt == 'night') {
-						lookAt.copy(coords);
-						lookAt.multiplyScalar(2);
-					} else if(this.viewSettings.lookAt && ('front,back'.indexOf(this.viewSettings.lookAt) !== -1)) {
-						var vel = this.bodies[this.viewSettings.lookFrom].celestial.movement;
-						lookAt.copy(vel).normalize();
-						if(this.viewSettings.lookAt=='back') lookAt.negate();
-						lookAt.add(coords);
+					var cameraPos = this.camera.position;
+					if(this.bodies[this.viewSettings.lookFrom]) {
+						cameraPos.copy(this.bodies[this.viewSettings.lookFrom].getPlanet().position);
 					} else {
-						//default vernal equinox
-					
-						lookAt.copy(coords);
-						lookAt.x -= 1;
+						cameraPos.x = cameraPos.y = cameraPos.z = 0;
 					}
+
+					if(this.viewSettings.lookAt){
+						if(this.bodies[this.viewSettings.lookAt]) {
+							lookAt.copy(this.bodies[this.viewSettings.lookAt].getPlanet().position);	
+						} else if(this.viewSettings.lookAt == 'night') {
+							lookAt.copy(cameraPos);
+							lookAt.multiplyScalar(2);
+						} else if('front,back'.indexOf(this.viewSettings.lookAt) !== -1) {
+							var vel = this.bodies[this.viewSettings.lookFrom].celestial.movement;
+							lookAt.copy(vel).normalize();
+							if(this.viewSettings.lookAt=='back') lookAt.negate();
+							lookAt.add(cameraPos);
+						} else {
+							//default vernal equinox
+							lookAt.copy(cameraPos);
+							lookAt.x -= 1;
+						}
+					} else {
+						lookAt.x = lookAt.y = lookAt.z = 0;
+					}
+
+					if(this.viewSettings.lookFrom == 'above'){
+						cameraPos.copy(lookAt);
+						cameraPos.multiplyScalar(2);
+					}
+
 					this.camera.lookAt(lookAt);
 				}
 
@@ -227,7 +244,7 @@ define(
 				var graphics = Object.create(BodyGraphics);
 
 				var pxRadius = celestialBody.radius / this.radiusKmPerPix;
-				pxRadius = pxRadius < ns.smallestBodyMinimalSize ? ns.smallestBodyMinimalSize : pxRadius;
+				//pxRadius = pxRadius < ns.smallestBodyMinimalSize ? ns.smallestBodyMinimalSize : pxRadius;
 				graphics.pxRadius = pxRadius;
 
 				graphics.init(celestialBody);

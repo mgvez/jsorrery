@@ -30,27 +30,8 @@ define(
 			},
 
 			setEventsListeners:function(){
-				
 				this.celestial.addEventListener('spot', this.spotPos.bind(this));
 				this.tracer && this.celestial.addEventListener('vertex', this.tracer.changeVertex.bind(this.tracer));
-				/*
-				return;
-				var d = this.celestial.getEvents();
-				d.progress(function(args){
-					var type = args.shift();
-					switch(type){
-						case 'year':
-							this.resetTracer();
-							break;
-						case 'spot':
-							this.spotPos(args.shift());
-							break;
-						case 'vertex':
-							this.tracer && this.tracer.changeVertex();
-							break;
-					}
-
-				}.bind(this));/**/
 			},
 
 			addTracerEventsListeners : function(body){
@@ -97,15 +78,41 @@ define(
 					mat.emissive = new THREE.Color( 0xdddd33 );
 				}
 
-				var radius = this.pxRadius;
+				var radius = (this.celestial.radius * ns.KM) / this.nmPerPix;
 				var precision = Math.round(this.pxRadius);
-				precision = precision < 20 ? 20 : (precision > 100 ? 100 : precision);
+				precision = precision < 40 ? 40 : (precision > 100 ? 100 : precision);
 				var segments = precision;
 				var rings = precision;
-				this.planet = new THREE.Mesh(
+				var sphere = new THREE.Mesh(
 					new THREE.SphereGeometry(radius, segments, rings),
 					mat
 				);
+
+				this.planet = new THREE.Object3D();
+				this.planet.add(sphere);
+
+				if(this.celestial.ring){
+					var ringSize = [
+						((this.celestial.ring.innerRadius * ns.KM) / this.nmPerPix),
+						((this.celestial.ring.outerRadius * ns.KM) / this.nmPerPix)
+					];
+					console.log(ringSize, radius);
+
+					var ringMap = THREE.ImageUtils.loadTexture( this.celestial.ring.map );
+					//ringMap.wrapS = ringMap.wrapT = THREE.RepeatWrapping;
+					ringMap.anisotropy = 16;
+
+					var ringGeometry = new THREE.RingGeometry( ringSize[0], ringSize[1], 40 );
+					var ringMaterial = new THREE.MeshLambertMaterial( {
+						map : ringMap,
+						side: THREE.DoubleSide 
+					});
+					var ring = new THREE.Mesh( ringGeometry, ringMaterial );
+					ring.position.set( 0, 0, 0 );
+					ring.rotation.x = - Math.PI / 2;
+					this.planet.add(ring);
+					ring.rotation.x = Math.PI / 3;
+				}
 				
 				var tilt = Math.PI / 2;
 				if(this.celestial.tilt) tilt -= this.celestial.tilt * ns.DEG_TO_RAD;

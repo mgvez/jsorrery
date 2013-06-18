@@ -15,24 +15,19 @@ define(
 	function(ns, common) {
 
 		var cnf = {
-			name : 'SolarSystem',
+			name : 'CentralSolarSystem',
 			commonBodies : [
 				'sun',
 				'mercury',
 				'venus',
 				'earth',
-				'mars',
-				'jupiter',
-				'saturn',
-				'uranus',
-				'neptune',
-				'pluto',
-				'halley'
+				'moon',
+				'mars'
 			],
-			secondsPerTick : 3600 * 12,//3600 * 24 * 2,
+			secondsPerTick : 3600,//3600 * 24 * 2,
 			calculationsPerTick : 500,
 			calculatePerturbations : true,
-			fov : 5
+			fov : 20
 		};
 
 		return cnf;

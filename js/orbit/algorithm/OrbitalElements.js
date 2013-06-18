@@ -31,7 +31,7 @@ define(
 				if(!this.orbit) return new THREE.Vector3(0,0,0);
 				//vis viva to calculate speed (not velocity, i.e not a vector)
 				var el = this.calculateElements(timeEpoch);
-				var speed = Math.sqrt(ns.G * ns.U.centralBody.mass * ((2 / (el.r)) - (1 / (el.a))));
+				var speed = Math.sqrt(ns.G * ns.U.getBody(this.relativeTo).mass * ((2 / (el.r)) - (1 / (el.a))));
 
 				//now calculate velocity orientation, that is, a vector tangent to the orbital ellipse
 				var k = el.r / el.a;
@@ -91,26 +91,34 @@ define(
 					t : timeEpoch
 				};
 
-				if (this.orbit.base) {
-					for(var el in this.orbit.base) {
-						//cy : variation by century.
-						//day : variation by day.
-						var variation = this.orbit.cy ? this.orbit.cy[el] : (this.orbit.day[el] * ns.CENTURY);
-						computed[el] = this.orbit.base[el] + (variation * T);
-					}
+				var oe;
+				if(this.osculatingOrbit) {
+					oe = this.osculatingOrbit(T);
+					$.extend(computed, oe);
+					//console.log(oe);
 				} else {
-					computed = $.extend({}, this.orbit);
-				}
 
-				if (undefined === computed.w) {
-					computed.w = computed.lp - computed.o;
-				}
+					if (this.orbit.base) {
+						for(var el in this.orbit.base) {
+							//cy : variation by century.
+							//day : variation by day.
+							var variation = this.orbit.cy ? this.orbit.cy[el] : (this.orbit.day[el] * ns.CENTURY);
+							computed[el] = this.orbit.base[el] + (variation * T);
+						}
+					} else {
+						computed = $.extend({}, this.orbit);
+					}
 
-				if (undefined === computed.M) {
-					computed.M = computed.l - computed.lp;
-				}
+					if (undefined === computed.w) {
+						computed.w = computed.lp - computed.o;
+					}
 
-				computed.a = computed.a * 1000;//was in km, set it in m
+					if (undefined === computed.M) {
+						computed.M = computed.l - computed.lp;
+					}
+
+					computed.a = computed.a * 1000;//was in km, set it in m
+				}
 
 				var ePrime = ns.RAD_TO_DEG * computed.e;
 				computed.E = computed.M + ePrime * Deg.sin(computed.M) * (1 + computed.e * Deg.cos(computed.M));
@@ -127,7 +135,10 @@ define(
 				} while(Math.abs(dE) > maxDE && i <= maxIterationsForEccentricAnomaly);
 
 				computed.E = En % 360;
-
+				computed.i = computed.i % 360;
+				computed.o = computed.o % 360;
+				computed.w = computed.w % 360;
+				computed.M = computed.M % 360;
 				computed.i = ns.DEG_TO_RAD * computed.i;
 				computed.o = ns.DEG_TO_RAD * computed.o;
 				computed.w = ns.DEG_TO_RAD * computed.w;
@@ -165,8 +176,8 @@ define(
 				if(this.period) return;
 				if(this.orbit && this.orbit.day && this.orbit.day.M) {
 					this.period = 360 / this.orbit.day.M ;
-				}else if(ns.U.centralBody && ns.U.centralBody.k && elements) {
-					this.period = 2 * Math.PI * Math.sqrt(Math.pow(elements.a/(ns.AU*1000), 3)) / ns.U.centralBody.k;
+				}else if(ns.U.getBody(this.relativeTo) && ns.U.getBody(this.relativeTo).k && elements) {
+					this.period = 2 * Math.PI * Math.sqrt(Math.pow(elements.a/(ns.AU*1000), 3)) / ns.U.getBody(this.relativeTo).k;
 				}
 				this.period = this.period * ns.DAY;//in seconds
 			}

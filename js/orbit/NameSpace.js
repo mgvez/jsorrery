@@ -25,9 +25,11 @@
 		var J2000 = new Date(2000, 0, 1);
 		var startDate = new Date();
 		//startDate = new Date(2012, 6, 1);
-		//startDate = new Date(1986, 1, 9);
-		startDate = new Date(2001, 1, 1);
+		startDate = new Date(2001, 11, 14);
+		//startDate = new Date(1977, 3, 10);
+		//startDate = new Date(1980, 5, 27);
 		//startDate = J2000;
+		//console.log(J2000/(ns.DAY*1000));
 		ns.startEpochTime =  ((startDate - J2000) / 1000) ;
 
 		ns.largestBodyMinimalSize = 0.1;

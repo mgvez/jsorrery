@@ -20,9 +20,18 @@ define(
 				var elements = this.calculateElements(ns.startEpochTime);
 				this.calculatePeriod(elements);
 				this.position = this.isCentral ? new THREE.Vector3() : this.getPositionFromElements(elements);
+				this.velocity = this.isCentral ? new THREE.Vector3() : this.calculateVelocity(ns.startEpochTime);
+
+				if(this.relativeTo) {
+					var central = ns.U.getBody(this.relativeTo);
+					if(central && central!==ns.U.getBody()) {
+						this.position.add(central.position);
+						this.velocity.add(central.velocity);
+					}
+				}
+
 				this.previousPosition = this.position.clone();
 				this.originalPosition = this.position.clone();
-				this.velocity = this.isCentral ? new THREE.Vector3() : this.calculateVelocity(ns.startEpochTime);
 
 				this.angle = 0;
 				this.dist = 0;

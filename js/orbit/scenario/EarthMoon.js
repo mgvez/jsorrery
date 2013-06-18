@@ -14,7 +14,8 @@ define(
 			bodies : {
 				moon : {
 					afterInitialized : function() {
-						if(ns.U.bodies.earth) {
+						var earth = ns.U.getBody('earth');
+						if(earth) {
 							var eclPos = this.position.clone().normalize();
 							eclPos.z = 0;
 							var angleX = eclPos.angleTo(new THREE.Vector3(1, 0, 0));

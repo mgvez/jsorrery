@@ -16,14 +16,12 @@ define(
 				this.setPlanet();
 				if(!this.celestial.isCentral) this.setTracer();
 				this.setEventsListeners();
-
-
 				//this.label = $('<div class="planetLabel">'+this.celestial.name+'</div>').appendTo('body');
 			},
 
 			placeLabel : function(pos){
 				if(pos.z < 1){
-					this.label.css({'left':pos.x+'px', 'top':pos.y+'px'}).show();
+					this.label.css({left : pos.x+'px', top : pos.y+'px'}).show();
 				} else {
 					this.label.hide();
 				}
@@ -50,17 +48,29 @@ define(
 				this.tracer && this.tracer.getNew(false);
 			},
 
+			getTracer : function() {
+				return this.tracer && this.tracer.getDisplayObject();
+			},
+
+			setTracer : function() {
+				this.tracer = Object.create(Tracer);
+				this.tracer.init(this.celestial.color, this.celestial.nVertices, this.celestial.name);
+				this.tracer.initPos(this.getPosition());
+				return this.tracer;
+			},
+
+			//add a reference to the object from which we trace
+			setTraceFrom : function(centralBody){
+				this.tracer && this.tracer.setTraceFrom(centralBody);
+			},
+
 			spotPos : function(pos){
-				var pxPos = this.getPixelCoords(pos);
+				var pxPos = this.getPosition(pos);
 				this.tracer && this.tracer.spotPos(pxPos.x, pxPos.y);
 			},
 
 			getPlanet : function() {
 				return this.planet;
-			},
-
-			getTracer : function() {
-				return this.tracer && this.tracer.getDisplayObject();
 			},
 
 			setPlanet : function(){
@@ -79,11 +89,9 @@ define(
 					mat.emissive = new THREE.Color( 0xdddd33 );
 				}
 
-				var radius = (this.celestial.radius * ns.KM) / this.nmPerPix;
-				var precision = Math.round(this.pxRadius);
-				precision = precision < 40 ? 40 : (precision > 100 ? 100 : precision);
-				var segments = precision;
-				var rings = precision;
+				var radius = this.celestial.radius * ns.KM;
+				var segments = 50;
+				var rings = 50;
 				var sphere = new THREE.Mesh(
 					new THREE.SphereGeometry(radius, segments, rings),
 					mat
@@ -94,8 +102,8 @@ define(
 
 				if(this.celestial.ring){
 					var ringSize = [
-						((this.celestial.ring.innerRadius * ns.KM) / this.nmPerPix),
-						((this.celestial.ring.outerRadius * ns.KM) / this.nmPerPix)
+						this.celestial.ring.innerRadius * ns.KM,
+						this.celestial.ring.outerRadius * ns.KM
 					];
 					
 					var ringMap = THREE.ImageUtils.loadTexture( this.celestial.ring.map );
@@ -121,36 +129,21 @@ define(
 				/**/
 				return this.planet;
 			},
-
-			setTracer : function() {
-				this.tracer = Object.create(Tracer);
-				this.tracer.init(this.celestial.color, this.celestial.nVertices, this.celestial.name);
-				this.tracer.initPos(this.getPixelCoords());
-				return this.tracer;
-			},
-
-			//ajoute une reference à l'objet relativement duquel on trace
-			setTraceFrom : function(centralBody){
-				this.tracer && this.tracer.setTraceFrom(centralBody);
-			},
 			
 			drawMove : function(){
-				var pxPos = this.getPixelCoords();
-				this.planet.position = pxPos.clone();
+				var pos = this.getPosition();
+				this.planet.position.copy(pos);
 
 				if(this.celestial.sideralDay){
 					var curRotation = (ns.U.epochTime / this.celestial.sideralDay) * ns.CIRCLE;
 					this.planet.rotation.y = (this.celestial.originalMapRotation || 0) + curRotation;
 				}
-				//console.dir(pxPos);
-				//console.log(this.planet.position.x, this.planet.position.y, this.planet.position.z);
-				this.tracer && this.tracer.doTrace(pxPos.clone());
+				this.tracer && this.tracer.doTrace(pos);
 			},
 
-			getPixelCoords : function(pos) {
-				var pxPosition = (pos || this.celestial.position).clone();
-				pxPosition.multiplyScalar(1 / this.nmPerPix);//get position relative to the stage
-				return pxPosition;
+			getPosition : function(pos) {
+				var curPosition = (pos || this.celestial.position).clone();
+				return curPosition;
 			}
 		};
 

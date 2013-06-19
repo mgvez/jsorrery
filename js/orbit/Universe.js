@@ -31,8 +31,8 @@ define(
 				}.bind(this));
 
 				//var scenario = ScenarioLoader.get('EarthMoon');
-				var scenario = ScenarioLoader.get('SolarSystem');
-				//var scenario = ScenarioLoader.get('CentralSolarSystem');
+				//var scenario = ScenarioLoader.get('SolarSystem');
+				var scenario = ScenarioLoader.get('CentralSolarSystem');
 				//var scenario = ScenarioLoader.get('Artificial');
 				this.createBodies(scenario);
 
@@ -66,19 +66,12 @@ define(
 
 			},
 
-			getBody : function(name) {
-				if(name === 'central' || name === undefined) {
-					return this.centralBody;
-				}
-				return this.bodies[name];
-			},
-
 			initBodies : function(scenario){
 
 				$.each(this.bodies, function(name, current){
-					/*if(!scenario.calculatePerturbations && !current.isCentral){
+					if((typeof scenario.calculateAll === 'undefined' || !scenario.calculateAll) && !current.isCentral){
 						current.mass = 1;
-					}/**/
+					}
 					current.init();
 					current.calculateTraceParams(this.size, scenario.secondsPerTick);
 					this.scene.addBody(current);
@@ -90,6 +83,13 @@ define(
 				}.bind(this));
 				
 				GravityTicker.setBodies(this.bodies);
+			},
+
+			getBody : function(name) {
+				if(name === 'central' || typeof name === 'undefined') {
+					return this.centralBody;
+				}
+				return this.bodies[name];
 			},
 
 			calculateDimensions : function(){

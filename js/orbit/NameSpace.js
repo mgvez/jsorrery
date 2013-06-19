@@ -24,8 +24,8 @@
 
 		var J2000 = new Date(2000, 0, 1);
 		var startDate = new Date();
-		//startDate = new Date(2012, 6, 1);
-		startDate = new Date(2001, 11, 14);
+		startDate = new Date(2013, 5, 23);
+		//startDate = new Date(2001, 11, 14);
 		//startDate = new Date(1977, 3, 10);
 		//startDate = new Date(1980, 5, 27);
 		//startDate = J2000;

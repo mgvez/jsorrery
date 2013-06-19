@@ -31,7 +31,7 @@ define(
 			],
 			secondsPerTick : 3600 * 12,
 			calculationsPerTick : 500,
-			calculatePerturbations : true,
+			calculateAll : false,
 			fov : 5
 		};
 

@@ -32,16 +32,16 @@ define(
 				//this.renderer.shadowMapEnabled = true;
 				this.renderer.setSize(this.width, this.height);
 
-				this.camera = new THREE.PerspectiveCamera(Scenario.fov || defaultCameraFov, this.width / this.height, 0.1, 100000);
+				this.camera = new THREE.PerspectiveCamera(Scenario.fov || defaultCameraFov, this.width / this.height, 1, this.largestDim * 2);
 				this.camera.up = new THREE.Vector3(0,0,1);
 				this.controls = new THREE.OrbitControls(this.camera, this.container.get(0));
 				this.container.on('mouseup.jsorrery', this.draw.bind(this));
 				this.scene.add(this.camera);
 
 				var ambiance = new THREE.DirectionalLight(0xFFFFFF, 0.1);
-				ambiance.position.x = 0 * this.height;
-				ambiance.position.y = 5 * this.width;
-				ambiance.position.z = 5 * this.width;
+				ambiance.position.x = 0;
+				ambiance.position.y = 5 * this.largestDim;
+				ambiance.position.z = 5 * this.largestDim;
 
 				var sun;
 				if(this.centralBody && this.centralBody.name == 'sun') {
@@ -52,18 +52,16 @@ define(
 				} else {
 					sun = new THREE.DirectionalLight(0xFFFFFF, 1);
 					//sun.castShadow = true;
-					sun.position.x = -1 * this.width;
-					sun.position.y = 0 * this.width;
-					sun.position.z = 0 * this.width;
+					sun.position.x = -1 * this.largestDim;
+					sun.position.y = 0 * this.largestDim;
+					sun.position.z = 0 * this.largestDim;
 					this.sun = sun;
 				}
 
 				this.scene.add(sun);
 
-				//this.scene.add(ambiance);
-
-				var light = new THREE.AmbientLight( 0x101010 ); // soft white light
-				this.scene.add( light );/***/
+				var light = new THREE.AmbientLight( 0x202020 );
+				this.scene.add( light );
 
 				//this.drawAxis();
 
@@ -105,12 +103,18 @@ define(
 				this.viewSettings.lookFrom = this.trackFromSelect.val();
 				this.viewSettings.lookAt = this.trackLookatSelect.val();
 
-				this.cancelTraceFrom();
+				this.resetTraceBehaviors();
 
-				if(this.bodies[this.viewSettings.lookFrom] && this.bodies[this.viewSettings.lookAt]) {
-					this.bodies[this.viewSettings.lookAt].setTraceFrom(this.bodies[this.viewSettings.lookFrom]);
-					//also listen to the "from" body tracer events to trace the "at" body, as the latter's rythm might not be sufficient
-					this.bodies[this.viewSettings.lookAt].addTracerEventsListeners(this.bodies[this.viewSettings.lookFrom].celestial);
+				if(this.bodies[this.viewSettings.lookFrom]){
+
+					var t  = this.bodies[this.viewSettings.lookFrom].getTracer();
+					if(t) this.scene.remove(t);				
+
+					if(this.bodies[this.viewSettings.lookAt]) {
+						this.bodies[this.viewSettings.lookAt].setTraceFrom(this.bodies[this.viewSettings.lookFrom]);
+						//also listen to the "from" body tracer events to trace the "at" body, as the latter's rythm might not be sufficient
+						this.bodies[this.viewSettings.lookAt].addTracerEventsListeners(this.bodies[this.viewSettings.lookFrom].celestial);
+					}
 				}
 				this.container.on('mousewheel', this.onMouseWheel.bind(this));
 				this.draw();
@@ -118,11 +122,11 @@ define(
 
 			toggleFreeCamera : function(i){
 
-				this.cancelTraceFrom();
+				this.resetTraceBehaviors();
 
 				this.viewSettings.isFree = true;
-				this.camera.position.z = this.height*0.9;
-				this.camera.position.y = -this.height*0.9;
+				this.camera.position.z = this.largestDim*0.9;
+				this.camera.position.y = -this.largestDim*0.9;
 				this.camera.position.x = 0;
 				this.camera.lookAt(new THREE.Vector3(0,0,0));
 				
@@ -133,11 +137,13 @@ define(
 
 			},
 
-			cancelTraceFrom : function(){
+			resetTraceBehaviors : function(){
 				$.each(this.bodies, function(i, body){
+					var t = body.getTracer();
+					if(t) this.scene.add(t);
 					body.setTraceFrom(null);
 					body.removeTracerEventsListeners();
-				});
+				}.bind(this));
 			},
 
 			onMouseWheel : function(event, delta, deltaX, deltaY) {
@@ -146,7 +152,7 @@ define(
 			},
 
 			drawAxis : function(){
-				var object = new THREE.AxisHelper(this.width/10);
+				var object = new THREE.AxisHelper(this.largestDim/10);
 	         	object.position.x = 0;
 	         	object.position.y = 0;
 	         	object.position.z = 0;
@@ -154,18 +160,9 @@ define(
 			},
 
 			setDimension : function(largestSMA, largestRadius) {
-
 				this.width = $(window).width();
 				this.height = $(window).height();
-
-				var nPixPerAU = ((this.height / 2) - 20) / (largestSMA / ns.AU);
-				var nkmPerPix = ns.AU / nPixPerAU;
-				BodyGraphics.nmPerPix = this.nmPerPix = nkmPerPix * 1000;
-				var largestPxRadius = largestRadius / nkmPerPix;
-				if(largestPxRadius < ns.largestBodyMinimalSize) {
-					largestPxRadius = ns.largestBodyMinimalSize;
-				}
-				this.radiusKmPerPix = largestRadius / largestPxRadius;
+				this.largestDim = largestSMA * 1000;
 			},
 
 			toXYCoords:function (pos) {
@@ -181,7 +178,7 @@ define(
 				//move sun, if its not a body shown. This assumes that the central body, if it has an orbit, revolves around the sun
 				if(this.sun && this.centralBody && this.centralBody.orbit){
 					var pos = this.centralBody.calculatePosition(ns.U.currentTime);
-					pos.setLength(this.width*3).negate();
+					pos.setLength(this.largestDim * 5).negate();
 					this.sun.position.copy(pos);
 				}
 
@@ -242,10 +239,6 @@ define(
 
 			addBody : function(celestialBody) {
 				var graphics = Object.create(BodyGraphics);
-
-				var pxRadius = celestialBody.radius / this.radiusKmPerPix;
-				//pxRadius = pxRadius < ns.smallestBodyMinimalSize ? ns.smallestBodyMinimalSize : pxRadius;
-				graphics.pxRadius = pxRadius;
 
 				graphics.init(celestialBody);
 				this.bodies[celestialBody.name] = graphics;

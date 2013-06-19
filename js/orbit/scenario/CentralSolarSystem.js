@@ -26,7 +26,7 @@ define(
 			],
 			secondsPerTick : 3600,//3600 * 24 * 2,
 			calculationsPerTick : 500,
-			calculatePerturbations : true,
+			calculateAll : true,
 			fov : 20
 		};
 

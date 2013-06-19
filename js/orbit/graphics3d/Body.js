@@ -58,6 +58,7 @@ define(
 			getPlanet : function() {
 				return this.planet;
 			},
+
 			getTracer : function() {
 				return this.tracer && this.tracer.getDisplayObject();
 			},
@@ -96,22 +97,18 @@ define(
 						((this.celestial.ring.innerRadius * ns.KM) / this.nmPerPix),
 						((this.celestial.ring.outerRadius * ns.KM) / this.nmPerPix)
 					];
-					console.log(ringSize, radius);
-
+					
 					var ringMap = THREE.ImageUtils.loadTexture( this.celestial.ring.map );
-					//ringMap.wrapS = ringMap.wrapT = THREE.RepeatWrapping;
-					ringMap.anisotropy = 16;
-
-					var ringGeometry = new THREE.RingGeometry( ringSize[0], ringSize[1], 40 );
-					var ringMaterial = new THREE.MeshLambertMaterial( {
-						map : ringMap,
-						side: THREE.DoubleSide 
-					});
-					var ring = new THREE.Mesh( ringGeometry, ringMaterial );
-					ring.position.set( 0, 0, 0 );
-					ring.rotation.x = - Math.PI / 2;
+					var ringMaterial = new THREE.MeshLambertMaterial({
+	                    map: ringMap,
+	                    transparent: true
+	                    //opacity: 0.6
+	                });
+					var ringGeometry = new THREE.TorusGeometry(ringSize[1], ringSize[1] - ringSize[0], 2, 40, ns.CIRCLE);
+	               
+	                var ring = new THREE.Mesh(ringGeometry, ringMaterial);
+	                ring.rotation.x = - Math.PI / 3;
 					this.planet.add(ring);
-					ring.rotation.x = Math.PI / 3;
 				}
 				
 				var tilt = Math.PI / 2;

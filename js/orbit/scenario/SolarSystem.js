@@ -29,7 +29,7 @@ define(
 				'pluto',
 				'halley'
 			],
-			secondsPerTick : 3600 * 12,//3600 * 24 * 2,
+			secondsPerTick : 3600 * 12,
 			calculationsPerTick : 500,
 			calculatePerturbations : true,
 			fov : 5

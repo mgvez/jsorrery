@@ -142,7 +142,7 @@ define(
 
 			onMouseWheel : function(event, delta, deltaX, deltaY) {
 				delta = delta / Math.abs(delta);
-				this.camera.fov += 0.3 * delta;
+				this.camera.fov += this.camera.fov * 0.1 * delta;
 			},
 
 			drawAxis : function(){

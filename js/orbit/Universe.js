@@ -30,8 +30,8 @@ define(
 					this.tick();
 				}.bind(this));
 
-				var scenario = ScenarioLoader.get('EarthMoon');
-				//var scenario = ScenarioLoader.get('SolarSystem');
+				//var scenario = ScenarioLoader.get('EarthMoon');
+				var scenario = ScenarioLoader.get('SolarSystem');
 				//var scenario = ScenarioLoader.get('CentralSolarSystem');
 				//var scenario = ScenarioLoader.get('Artificial');
 				this.createBodies(scenario);

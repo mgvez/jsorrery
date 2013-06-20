@@ -64,6 +64,15 @@ define(
 				this.tracer && this.tracer.setTraceFrom(centralBody);
 			},
 
+
+			attachTrace : function(){
+				this.tracer && this.tracer.attachTrace();
+			},
+
+			detachTrace : function(){
+				this.tracer && this.tracer.detachTrace();
+			},
+
 			spotPos : function(pos){
 				var pxPos = this.getPosition(pos);
 				this.tracer && this.tracer.spotPos(pxPos.x, pxPos.y);
@@ -97,6 +106,8 @@ define(
 					mat
 				);
 
+				//console.log(this.celestial.name+' size ',radius, ' m');
+
 				this.planet = new THREE.Object3D();
 				this.planet.add(sphere);
 
@@ -108,16 +119,17 @@ define(
 					
 					var ringMap = THREE.ImageUtils.loadTexture( this.celestial.ring.map );
 					var ringMaterial = new THREE.MeshLambertMaterial({
-	                    map: ringMap,
-	                    transparent: true
-	                    //opacity: 0.6
+	                   map: ringMap
 	                });
-					var ringGeometry = new THREE.TorusGeometry(ringSize[1], ringSize[1] - ringSize[0], 2, 40, ns.CIRCLE);
-	               
+					var ringGeometry = new THREE.TorusGeometry(ringSize[1], ringSize[1] - ringSize[0], 2, 40);
+					//var ringGeometry = new THREE.TorusGeometry(90000000, 10000000, 12, 40);	
+
 	                var ring = new THREE.Mesh(ringGeometry, ringMaterial);
-	                ring.rotation.x = - Math.PI / 3;
+	                ring.rotation.x = - Math.PI / 2;
 					this.planet.add(ring);
+					
 				}
+
 				
 				var tilt = Math.PI / 2;
 				if(this.celestial.tilt) tilt -= this.celestial.tilt * ns.DEG_TO_RAD;
@@ -144,6 +156,10 @@ define(
 			getPosition : function(pos) {
 				var curPosition = (pos || this.celestial.position).clone();
 				return curPosition;
+			},
+
+			getName : function(){
+				return this.celestial.name;
 			}
 		};
 

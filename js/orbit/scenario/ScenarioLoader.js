@@ -8,6 +8,7 @@ define(
 		'orbit/scenario/CentralSolarSystem',
 		'orbit/scenario/EarthMoon',
 		'orbit/scenario/ArtificialSatellites',
+		'orbit/scenario/SaturnMoon',
 	],
 	function($, ns, common){
 

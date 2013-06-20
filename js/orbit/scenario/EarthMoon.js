@@ -30,9 +30,8 @@ define(
 				}
 			},
 			secondsPerTick : 3600,
-			calculationsPerTick : 1000,
-			calculateAll : false,
-			fov: 3
+			calculationsPerTick : 500,
+			calculateAll : false
 		};
 
 

@@ -21,6 +21,7 @@ define(
 				this.calculatePeriod(elements);
 				this.position = this.isCentral ? new THREE.Vector3() : this.getPositionFromElements(elements);
 				this.velocity = this.isCentral ? new THREE.Vector3() : this.calculateVelocity(ns.startEpochTime);
+				console.log(this.name+' dist from center ',this.position.length(), ' m');
 
 				if(this.relativeTo) {
 					var central = ns.U.getBody(this.relativeTo);
@@ -34,7 +35,7 @@ define(
 				this.originalPosition = this.position.clone();
 
 				this.angle = 0;
-				this.dist = 0;
+				this.totalDist = 0;
 				//this.isLog = true;
 				this.createLogger();
 
@@ -56,7 +57,7 @@ define(
 
 			calculateTraceParams : function(universeSize, secondsPerTick) {
 
-				var defaultVertexDist = this.vertexDist = ns.KM * universeSize * ns.vertexDist;
+				var defaultVertexDist = this.vertexDist = universeSize * ns.vertexDist;
 				this.nVertices = ns.minVertexPerOrbit;
 
 				if(this.orbit){
@@ -76,7 +77,7 @@ define(
 						this.vertexDist = thisMinVertexDist;
 					}
 
-					this.nVertices = (this.circ / this.vertexDist) + 2;
+					this.nVertices = (this.circ / this.vertexDist);
 				}
 
 				
@@ -96,13 +97,13 @@ define(
 				
 				this.movement.copy(this.position).sub(this.previousPosition);
 
-				//distance based
-				this.dist += this.position.distanceTo(this.previousPosition);
+				//distance 
+				this.totalDist += this.movement.length();
 				this.previousPosition.copy(this.position);
 
-				if(this.dist > this.vertexDist) {
+				if(this.totalDist > this.vertexDist) {
 					this.dispatchEvent( {type:'vertex'} );
-					this.dist = this.dist % this.vertexDist;
+					this.totalDist = this.totalDist % this.vertexDist;
 				}
 
 			},

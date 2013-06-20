@@ -30,9 +30,7 @@ define(
 				'halley'
 			],
 			secondsPerTick : 3600 * 12,
-			calculationsPerTick : 500,
-			calculateAll : false,
-			fov : 5
+			calculateAll : false
 		};
 
 		return cnf;

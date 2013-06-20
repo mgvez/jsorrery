@@ -71,7 +71,7 @@ define(
 			},
 			saturn : {
 				mass : 5.6846e26,
-				radius : 60268,
+				radius : 58232,
 				color : '#ffcc99',
 				map : 'img/saturnmap.jpg',
 				ring : {
@@ -133,6 +133,36 @@ define(
 				tilt : 1.5424,
 				fov : 1,
 				relativeTo : 'earth',
+				osculatingOrbit : MoonOsculating,
+				orbit: {
+					base : {
+						a : 384400,
+						e : 0.0554,
+						w : 318.15,
+						M : 135.27,
+						i : 5.16,
+						o : 125.08
+					},
+					day : {
+						a : 0,
+						e : 0,
+						i : 0,
+						M : 13.176358,//360 / 27.321582,
+						w : (360 / 5.997) / 365.25,
+						o : (360 / 18.600) / 365.25
+					}	
+				}/**/
+			},
+			titan : {
+				mass : 7.3477e22,
+				radius : 1738.1,
+				color : "#ffffff",
+				map : 'img/moonmap1k.jpg',
+				//map : 'img/moonmap1k_stripe.jpg',
+				sideralDay : (27.321582 * ns.DAY) + 11000,
+				tilt : 1.5424,
+				fov : 1,
+				relativeTo : 'saturn',
 				osculatingOrbit : MoonOsculating,
 				orbit: {
 					base : {

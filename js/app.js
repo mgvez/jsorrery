@@ -9,6 +9,7 @@
 			'easel' : 'vendor/easeljs-0.6.0.min',
 			'_' : 'vendor/underscore-min',
 			'three/controls/OrbitControls' : 'vendor/three/controls/OrbitControls',
+			'three/controls/TrackballControls' : 'vendor/three/controls/TrackballControls',
 			'three/stats' : 'vendor/three/stats.min'
 		},
 		shim: {
@@ -28,6 +29,9 @@
 				exports: 'createjs'
 			},
 			'three/controls/OrbitControls' : {
+				deps: ['three']
+			},
+			'three/controls/TrackballControls' : {
 				deps: ['three']
 			}
 		}

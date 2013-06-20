@@ -38,6 +38,11 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	// internals
 
+	var axisOrder = ['x','z','y'];
+	if(object.up && object.up.z > 0){
+		axisOrder = ['x','y','z'];
+	}
+
 	var scope = this;
 
 	var EPS = 0.000001;
@@ -154,11 +159,11 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		// angle from z-axis around y-axis
 
-		var theta = Math.atan2( offset.x, offset.z );
+		var theta = Math.atan2( offset[axisOrder[0]], offset[axisOrder[1]] );
 
 		// angle from y-axis
 
-		var phi = Math.atan2( Math.sqrt( offset.x * offset.x + offset.z * offset.z ), offset.y );
+		var phi = Math.atan2( Math.sqrt( offset[axisOrder[0]] * offset[axisOrder[0]] + offset[axisOrder[1]] * offset[axisOrder[1]] ), offset[axisOrder[2]] );
 
 		if ( this.autoRotate ) {
 
@@ -180,9 +185,9 @@ THREE.OrbitControls = function ( object, domElement ) {
 		// restrict radius to be between desired limits
 		radius = Math.max( this.minDistance, Math.min( this.maxDistance, radius ) );
 
-		offset.x = radius * Math.sin( phi ) * Math.sin( theta );
-		offset.y = radius * Math.cos( phi );
-		offset.z = radius * Math.sin( phi ) * Math.cos( theta );
+		offset[axisOrder[0]] = radius * Math.sin( phi ) * Math.sin( theta );
+		offset[axisOrder[2]] = radius * Math.cos( phi );
+		offset[axisOrder[1]] = radius * Math.sin( phi ) * Math.cos( theta );
 
 		position.copy( this.center ).add( offset );
 
@@ -193,7 +198,6 @@ THREE.OrbitControls = function ( object, domElement ) {
 		scale = 1;
 
 		if ( lastPosition.distanceTo( this.object.position ) > 0 ) {
-
 			this.dispatchEvent( changeEvent );
 
 			lastPosition.copy( this.object.position );

@@ -25,9 +25,7 @@ define(
 				'mars'
 			],
 			secondsPerTick : 3600,//3600 * 24 * 2,
-			calculationsPerTick : 500,
-			calculateAll : true,
-			fov : 20
+			calculateAll : true
 		};
 
 		return cnf;

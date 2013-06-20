@@ -5,43 +5,33 @@ define(
 		'jquery',
 		'_',
 		'orbit/graphics3d/Body',
+		'orbit/graphics3d/CameraManager',
 		'orbit/gui/Gui',
 		'vendor/jquery.mousewheel',
-		'three/controls/OrbitControls',
 		'three/stats'
 	], 
-	function(ns, $, _, BodyGraphics, Gui){
+	function(ns, $, _, BodyGraphics, CameraManager, Gui){
+
 		var projector;
-		var defaultCameraFov = 45;
 		var stats;
-		var lookAt = new THREE.Vector3();
 
 		return {
-			createStage : function(Scenario) {
+			createStage : function(scenario) {
 
 				projector = projector || new THREE.Projector();
-				this.bodies = {};
-				this.rendrables = [];
+				this.renderables = [];
 
-				this.container = $('<div id="universe" width="'+this.width+'" height="'+this.height+'">').appendTo('body');
-
-				this.scene = new THREE.Scene();
-				//this.scene.fog = new THREE.Fog( 0x00aaff, 100, 10000 );
+				var container = $('<div id="universe" width="'+this.width+'" height="'+this.height+'">').appendTo('body');
+				this.root = new THREE.Scene();
 
 				this.renderer = new THREE.WebGLRenderer({antialias: true});
 				//this.renderer.shadowMapEnabled = true;
 				this.renderer.setSize(this.width, this.height);
 
-				this.camera = new THREE.PerspectiveCamera(Scenario.fov || defaultCameraFov, this.width / this.height, 1, this.largestDim * 2);
-				this.camera.up = new THREE.Vector3(0,0,1);
-				this.controls = new THREE.OrbitControls(this.camera, this.container.get(0));
-				this.container.on('mouseup.jsorrery', this.draw.bind(this));
-				this.scene.add(this.camera);
-
 				var ambiance = new THREE.DirectionalLight(0xFFFFFF, 0.1);
 				ambiance.position.x = 0;
-				ambiance.position.y = 5 * this.largestDim;
-				ambiance.position.z = 5 * this.largestDim;
+				ambiance.position.y = 5 * this.stageSize;
+				ambiance.position.z = 5 * this.stageSize;
 
 				var sun;
 				if(this.centralBody && this.centralBody.name == 'sun') {
@@ -52,137 +42,57 @@ define(
 				} else {
 					sun = new THREE.DirectionalLight(0xFFFFFF, 1);
 					//sun.castShadow = true;
-					sun.position.x = -1 * this.largestDim;
-					sun.position.y = 0 * this.largestDim;
-					sun.position.z = 0 * this.largestDim;
+					sun.position.x = -1 * this.stageSize;
+					sun.position.y = 0 * this.stageSize;
+					sun.position.z = 0 * this.stageSize;
 					this.sun = sun;
 				}
 
-				this.scene.add(sun);
+				this.root.add(sun);
 
 				var light = new THREE.AmbientLight( 0x202020 );
-				this.scene.add( light );
-
-				//this.drawAxis();
-
-				Gui.addBtn('free camera', '', function(){
-					this.toggleFreeCamera();
-				}.bind(this));
-				
-				this.trackFromSelect = Gui.addDropdown('lookFrom', 'Look from', this.toggleTrackBody.bind(this));
-				this.trackLookatSelect = Gui.addDropdown('lookAt', 'Look at', this.toggleTrackBody.bind(this));
-				Gui.addOption('lookFrom', '', '');
-				Gui.addOption('lookAt', '', '');
-
-				$.each(Scenario.bodies, function(bodyName, b){
-					Gui.addOption('lookFrom', bodyName, bodyName);
-					Gui.addOption('lookAt', bodyName, bodyName);
-				});
-				Gui.addOption('lookAt', 'vernal equinox', 'vernal');
-				if(Scenario.bodies.sun) {
-					Gui.addOption('lookAt', 'night (away from the sun)', 'night');
-				}
-				
-				Gui.addOption('lookAt', 'direction of velocity', 'front');
-				Gui.addOption('lookAt', 'inverse direction of velocity', 'back');
-				Gui.addOption('lookFrom', 'above from the '+ns.U.getBody().name, 'above');
-
+				this.root.add( light );
 
 				stats = new Stats();
 				$('body').append( stats.domElement );
 
-				this.container.append(this.renderer.domElement);
+				container.append(this.renderer.domElement);
 
-				this.viewSettings = {};
-				this.toggleFreeCamera();
+				//this.drawAxis();
+				CameraManager.init(this, this.width/this.height, scenario.fov, this.stageSize, container);
 
-			},
-
-			toggleTrackBody : function() {
-				this.viewSettings.isFree = false;
-				this.viewSettings.lookFrom = this.trackFromSelect.val();
-				this.viewSettings.lookAt = this.trackLookatSelect.val();
-
-				this.resetTraceBehaviors();
-
-				if(this.bodies[this.viewSettings.lookFrom]){
-
-					var t  = this.bodies[this.viewSettings.lookFrom].getTracer();
-					if(t) this.scene.remove(t);				
-
-					if(this.bodies[this.viewSettings.lookAt]) {
-						this.bodies[this.viewSettings.lookAt].setTraceFrom(this.bodies[this.viewSettings.lookFrom]);
-						//also listen to the "from" body tracer events to trace the "at" body, as the latter's rythm might not be sufficient
-						this.bodies[this.viewSettings.lookAt].addTracerEventsListeners(this.bodies[this.viewSettings.lookFrom].celestial);
-					}
-				}
-				this.container.on('mousewheel', this.onMouseWheel.bind(this));
-				this.draw();
-			},
-
-			toggleFreeCamera : function(i){
-
-				this.resetTraceBehaviors();
-
-				this.viewSettings.isFree = true;
-				this.camera.position.z = this.largestDim*0.9;
-				this.camera.position.y = -this.largestDim*0.9;
-				this.camera.position.x = 0;
-				this.camera.lookAt(new THREE.Vector3(0,0,0));
-				
-				this.trackFromSelect.val('');
-				this.trackLookatSelect.val('');
-				this.container.off('mousewheel');
-				this.draw();
-
-			},
-
-			resetTraceBehaviors : function(){
-				$.each(this.bodies, function(i, body){
-					var t = body.getTracer();
-					if(t) this.scene.add(t);
-					body.setTraceFrom(null);
-					body.removeTracerEventsListeners();
-				}.bind(this));
-			},
-
-			onMouseWheel : function(event, delta, deltaX, deltaY) {
-				delta = delta / Math.abs(delta);
-				this.camera.fov += this.camera.fov * 0.1 * delta;
 			},
 
 			drawAxis : function(){
-				var object = new THREE.AxisHelper(this.largestDim/10);
-	         	object.position.x = 0;
-	         	object.position.y = 0;
-	         	object.position.z = 0;
-		      	this.scene.add( object );
+				var object = new THREE.AxisHelper(this.stageSize/10);
+	         	object.position.x = 0;//r
+	         	object.position.y = 0;//g
+	         	object.position.z = 0;//b
+		      	this.root.add( object );
 			},
 
 			setDimension : function(largestSMA, largestRadius) {
 				this.width = $(window).width();
 				this.height = $(window).height();
-				this.largestDim = largestSMA * 1000;
+				this.stageSize = largestSMA;
 			},
 
 			toXYCoords:function (pos) {
-		        var vector = projector.projectVector(pos, this.camera);
+		        var vector = projector.projectVector(pos, CameraManager.getCamera());
 		        vector.x = (vector.x + 1)/2 * this.width;
 		        vector.y = -(vector.y - 1)/2 * this.height;/**/
-
 		        return vector;
 			},
 
 			draw : function(){
-
 				//move sun, if its not a body shown. This assumes that the central body, if it has an orbit, revolves around the sun
 				if(this.sun && this.centralBody && this.centralBody.orbit){
 					var pos = this.centralBody.calculatePosition(ns.U.currentTime);
-					pos.setLength(this.largestDim * 5).negate();
+					pos.setLength(this.stageSize * 5).negate();
 					this.sun.position.copy(pos);
 				}
 
-				$.each(this.rendrables, function(n, b){
+				$.each(this.renderables, function(n, b){
 					b.drawMove();
 					/*var labelPos = this.toXYCoords(b.getPlanet().position.clone());
 					if(labelPos.x>0 && labelPos.x<this.width && labelPos.y>0 && labelPos.y<this.height) {
@@ -190,50 +100,13 @@ define(
 					}/**/
 				}.bind(this));
 				
-				if(this.viewSettings.isFree && this.controls) {
-					this.controls.update();
-				} else if(this.viewSettings.lookFrom) {
-
-					var cameraPos = this.camera.position;
-					if(this.bodies[this.viewSettings.lookFrom]) {
-						cameraPos.copy(this.bodies[this.viewSettings.lookFrom].getPlanet().position);
-					} else {
-						cameraPos.x = cameraPos.y = cameraPos.z = 0;
-					}
-
-					if(this.viewSettings.lookAt){
-						if(this.bodies[this.viewSettings.lookAt]) {
-							lookAt.copy(this.bodies[this.viewSettings.lookAt].getPlanet().position);	
-						} else if(this.viewSettings.lookAt == 'night') {
-							lookAt.copy(cameraPos);
-							lookAt.multiplyScalar(2);
-						} else if('front,back'.indexOf(this.viewSettings.lookAt) !== -1) {
-							var vel = this.bodies[this.viewSettings.lookFrom].celestial.movement;
-							lookAt.copy(vel).normalize();
-							if(this.viewSettings.lookAt=='back') lookAt.negate();
-							lookAt.add(cameraPos);
-						} else {
-							//default vernal equinox
-							lookAt.copy(cameraPos);
-							lookAt.x -= 1;
-						}
-					} else {
-						lookAt.x = lookAt.y = lookAt.z = 0;
-					}
-
-					if(this.viewSettings.lookFrom == 'above'){
-						cameraPos.copy(lookAt);
-						cameraPos.multiplyScalar(2);
-					}
-
-					this.camera.lookAt(lookAt);
-				}
-
-				//this.camera.updateMatrixWorld();
-				this.camera.updateProjectionMatrix();
-
-				this.renderer.render(this.scene, this.camera);
+				this.renderer.render(this.root, CameraManager.getCamera());
 				stats.update();
+			},
+
+			updateCamera : function(){
+
+				CameraManager.updateCamera();
 			},
 
 
@@ -241,11 +114,12 @@ define(
 				var graphics = Object.create(BodyGraphics);
 
 				graphics.init(celestialBody);
-				this.bodies[celestialBody.name] = graphics;
-				this.rendrables.push(graphics);
-				this.scene.add(graphics.getPlanet());
+				this.renderables.push(graphics);
+				this.root.add(graphics.getPlanet());
 				var t = graphics.getTracer();
-				if(t) this.scene.add(t);
+				if(t) this.root.add(t);
+
+				CameraManager.addBody(graphics);
 
 				if(celestialBody.map){
 					var textureImg = new Image();

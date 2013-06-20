@@ -32,7 +32,8 @@ define(
 
 				//var scenario = ScenarioLoader.get('EarthMoon');
 				//var scenario = ScenarioLoader.get('SolarSystem');
-				var scenario = ScenarioLoader.get('CentralSolarSystem');
+				var scenario = ScenarioLoader.get('SaturnMoon');
+				//var scenario = ScenarioLoader.get('CentralSolarSystem');
 				//var scenario = ScenarioLoader.get('Artificial');
 				this.createBodies(scenario);
 
@@ -44,7 +45,7 @@ define(
 				this.initBodies(scenario);
 				
 				GravityTicker.setSecondsPerTick(scenario.secondsPerTick);
-				GravityTicker.setCalculationsPerTick(scenario.calculationsPerTick);
+				GravityTicker.setCalculationsPerTick(scenario.calculationsPerTick || ns.defaultCalculationsPerTick);
 				this.tick();
 
 			},
@@ -74,12 +75,14 @@ define(
 					}
 					current.init();
 					current.calculateTraceParams(this.size, scenario.secondsPerTick);
-					this.scene.addBody(current);
+					
 				}.bind(this));
 
 				//after all is inialized
 				$.each(this.bodies, function(name, current){
+					this.scene.addBody(current);
 					current.afterInitialized();
+					//console.log(current.name, current.isCentral);
 				}.bind(this));
 				
 				GravityTicker.setBodies(this.bodies);
@@ -102,19 +105,30 @@ define(
 				var largestSMA = _.reduce(this.bodies, function(memo, body){ 
 					return (!body.isCentral && body.orbit && body.orbit.base.a > memo) ? body.orbit.base.a : memo;
 				}, 0);
-				this.size = largestSMA;
-				this.scene.setDimension(largestSMA, largestRadius);
+				console.log('universe size', largestSMA*ns.KM, ' m');
+				this.size = largestSMA*ns.KM;
+				this.scene.setDimension(this.size, largestRadius);
 
 			},
 
 			tick : function() {
+				
 				if(this.playing) {
 					var deltaT = GravityTicker.tick();
 					this.epochTime += deltaT;
 					this.currentTime = ns.startEpochTime + this.epochTime;
-				}				
-				this.scene.draw();
-				if(this.playing) requestAnimFrame(this.tick.bind(this));
+					this.scene.updateCamera();
+					this.scene.draw();
+				} else {
+
+					this.scene.updateCamera();
+				}
+				
+				requestAnimFrame(this.tick.bind(this));
+			},
+
+			isPlaying : function() {
+				return this.playing;
 			}
 		};
 		

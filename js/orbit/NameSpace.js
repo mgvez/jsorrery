@@ -16,6 +16,8 @@
 		ns.KM = 1000;
 		ns.DEG_TO_RAD = Math.PI/180;
 		ns.RAD_TO_DEG = 180/Math.PI;
+
+		ns.SCALE_3D = 1/1000000;
 		
 		ns.DAY = 60 * 60 * 24;//duration in seconds
 		ns.YEAR = 365.25;//duration in days
@@ -31,6 +33,8 @@
 		//startDate = J2000;
 		//console.log(J2000/(ns.DAY*1000));
 		ns.startEpochTime =  ((startDate - J2000) / 1000) ;
+
+		ns.defaultCalculationsPerTick = 200;
 
 		ns.largestBodyMinimalSize = 0.1;
 		ns.smallestBodyMinimalSize = 0.01;

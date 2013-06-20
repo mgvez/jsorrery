@@ -36,7 +36,7 @@ define(
 
 			getNew : function() {
 				
-				this.line && this.root.remove(this.line);
+				this.detachTrace();
 
 				var material = new THREE.LineBasicMaterial({
 			        color: this.color
@@ -47,9 +47,16 @@ define(
 				    this.trace.vertices.push(new THREE.Vector3(0, 0, 0));
 				}
 			    this.line = new THREE.Line(this.trace, material);
-			    this.root.add(this.line);
 			    this.currentVertex = 0;
+			    this.attachTrace();
+			},
 
+			detachTrace : function() {
+				this.line && this.root.remove(this.line);
+			},
+
+			attachTrace : function() {
+				this.line && this.root.add(this.line);
 			},
 
 			setTraceFrom : function(traceFromBody) {

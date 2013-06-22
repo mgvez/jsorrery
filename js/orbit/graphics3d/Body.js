@@ -5,19 +5,22 @@ define(
 		'orbit/NameSpace',
 		'jquery',
 		'orbit/graphics3d/Tracer',
+		'orbit/graphics3d/OrbitLine',
 		'three'
 	], 
-	function(ns, $, Tracer) {
+	function(ns, $, Tracer, OrbitLine) {
 
 		var Body = {
 
 			init : function(celestialBody) {
-
 				this.root = new THREE.Object3D();
 				this.celestial = celestialBody;
+
 				if(!this.celestial.isCentral) this.setTracer();
 				this.setPlanet();
+				this.setOrbitLines();
 				this.setEventsListeners();
+				
 				//this.label = $('<div class="planetLabel">'+this.celestial.name+'</div>').appendTo('body');
 			},
 
@@ -80,13 +83,16 @@ define(
 				this.tracer && this.tracer.spotPos(pxPos.x, pxPos.y);
 			},
 
-			getPlanet : function() {
+			getDisplayObject : function() {
 				return this.root;
 			},
 
+			setParentDisplayObject : function(object3d) {
+				this.parentContainer = object3d;
+				this.parentContainer.add(this.root);
+			},
+
 			setPlanet : function(){
-
-
 				var map = this.celestial.map;
 				var matOptions = {};
 				if(map){
@@ -101,7 +107,7 @@ define(
 					mat.emissive = new THREE.Color( 0xdddd33 );
 				}
 
-				var radius = this.celestial.radius * ns.KM * ns.SCALE_3D;
+				var radius = this.getPlanetSize();
 				var segments = 50;
 				var rings = 50;
 				var sphere = new THREE.Mesh(
@@ -132,7 +138,6 @@ define(
 					this.planet.add(ring);
 					
 				}
-
 				
 				var tilt = Math.PI / 2;
 				if(this.celestial.tilt) tilt -= this.celestial.tilt * ns.DEG_TO_RAD;
@@ -140,22 +145,56 @@ define(
 
 				this.planet.scale.set(ns.SCALE_PLANETS, ns.SCALE_PLANETS, ns.SCALE_PLANETS);
 
-				/*
-				this.planet.castShadow = true;
-				this.planet.receiveShadow = true;
-				/**/
-
-				var orbitPoints = this.celestial.getOrbitPoints();
-				if(this.tracer && orbitPoints){
-					this.tracer.drawOrbit(orbitPoints);
-					var eclipticPoints = _.clone(orbitPoints);
-
-					_.map(eclipticPoints, function(val){ return val.negate();});
-					var ecliptic = this.tracer.getOrbit(eclipticPoints);
-					this.root.add(ecliptic);
-				}
 				this.root.add(this.planet);
 				return this.planet;
+			},
+
+			getPlanetSize : function(){
+				return this.celestial.radius * ns.KM * ns.SCALE_3D ;
+			},
+
+			getPlanetStageSize : function(){
+				return this.getPlanetSize() * ns.SCALE_PLANETS;
+			},
+
+			setOrbitLines : function(){
+				var orbitVertices = this.celestial.getOrbitVertices();
+				
+				if(orbitVertices){
+					this.orbitLine = Object.create(OrbitLine);
+					this.orbitLine.init(this.celestial.name, this.celestial.color, orbitVertices);
+					
+					var eclipticVertices = this.celestial.getOrbitVertices();
+					eclipticVertices = _.map(eclipticVertices, function(val){ return val.negate();});
+					this.eclipticLine =  Object.create(OrbitLine);
+					this.eclipticLine.init(this.celestial.name, ns.U.getBody().color, eclipticVertices);
+				}
+			},
+
+			showEcliptic : function(){
+				this.eclipticLine && this.root.add(this.eclipticLine.getDisplayObject());
+			},
+
+			hideEcliptic : function(){
+				this.eclipticLine && this.root.remove(this.eclipticLine.getDisplayObject());
+			},
+
+			showOrbit : function(){
+				this.orbitLine && this.parentContainer.add(this.orbitLine.getDisplayObject());
+			},
+
+			hideOrbit : function(){
+				this.orbitLine && this.parentContainer.remove(this.orbitLine.getDisplayObject());
+			},
+
+			addCamera : function(name, camera){
+				this.root.add(camera);
+				this.cameras = this.cameras || {};
+				this.cameras[name] = camera;
+			},
+
+			getCamera : function(name){
+				return this.cameras && this.cameras[name];
 			},
 			
 			drawMove : function(){
@@ -170,7 +209,7 @@ define(
 			},
 
 			getPosition : function(pos) {
-				var curPosition = (pos || this.celestial.position).clone();
+				var curPosition = (pos && pos.clone()) || this.celestial.getPosition();
 				return curPosition.multiplyScalar(ns.SCALE_3D);
 			},
 

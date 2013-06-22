@@ -8,7 +8,6 @@ define(
 	], 
 	function(ns, $, Utils) {
 		
-
 		return {
 			init : function(color, nVertices, name){
 				this.name = name;
@@ -108,8 +107,8 @@ define(
 
 			setTracePos : function(pos){
 				if(this.traceFrom){
-					this.root.position.copy(this.traceFrom.getPlanet().position);
-					pos.sub(this.traceFrom.getPlanet().position);
+					this.root.position.copy(this.traceFrom.getPosition());
+					pos.sub(this.traceFrom.getPosition());
 
 				}
 				return pos;

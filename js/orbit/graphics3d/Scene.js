@@ -115,7 +115,9 @@ define(
 
 				graphics.init(celestialBody);
 				this.renderables.push(graphics);
-				this.root.add(graphics.getPlanet());
+				
+				graphics.setParentDisplayObject(this.root);
+				
 				var t = graphics.getTracer();
 				if(t) this.root.add(t);
 

@@ -83,8 +83,19 @@ define(
 				
 			},
 
-			getOrbitPoints : function(){
-				if(!this.period) return;
+
+			getOrbitVertices : function(){
+				this.setOrbitVertices();
+				if(this.orbitVertices) {
+					var vertices = _.clone(this.orbitVertices);
+					vertices = _.map(vertices, function(val){ return val.clone();});
+					return vertices;
+				}
+
+			},
+
+			setOrbitVertices : function(){
+				if(!this.period || this.orbitVertices) return;
 				var incr = this.period / 360;
 				var points = [];
 				var lastPoint;
@@ -92,35 +103,28 @@ define(
 				var j;
 				var angle;
 				var step;
-				var nmoins=0, nplus=0;
-				for(var i=0; i <= 360; i++){
+				var total = 0;
+				for(var i=0; total < 360; i++){
 					point = this.calculatePosition(ns.startEpochTime+(incr*i));
 					if(lastPoint) {
 						angle = point.angleTo(lastPoint) * ns.RAD_TO_DEG;
 						if(angle > 1.5){
-							nplus++;
 							for(j=0; j < angle; j++){
 								step = (incr*(i-1)) + ((incr / angle) * j);
 								point = this.calculatePosition(ns.startEpochTime+ step );
 								points.push(point);
 							}
+							total += point.angleTo(lastPoint) * ns.RAD_TO_DEG;
 							lastPoint = point;
 							continue;
-						} else if( angle < 1) {
-							/*nmoins++;
-							do{
-								i++;
-								point = this.calculatePosition(ns.startEpochTime+(incr*i));
-								angle = point.angleTo(lastPoint) * ns.RAD_TO_DEG;
-								
-							} while (angle < 1);/**/
 						}
-						
+						total += angle;					
 					}
 					points.push(point);
 					lastPoint = point;
 				}
-				return points;
+				//console.log(points.length, total);
+				this.orbitVertices = points;
 			},
 			
 			createLogger : function() {
@@ -173,7 +177,7 @@ define(
 			},
 
 			getPosition : function(){
-				return this.position;
+				return this.position.clone();
 			}
 		};
 

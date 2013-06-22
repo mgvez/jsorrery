@@ -12,9 +12,11 @@ define(
 		var Body = {
 
 			init : function(celestialBody) {
+
+				this.root = new THREE.Object3D();
 				this.celestial = celestialBody;
-				this.setPlanet();
 				if(!this.celestial.isCentral) this.setTracer();
+				this.setPlanet();
 				this.setEventsListeners();
 				//this.label = $('<div class="planetLabel">'+this.celestial.name+'</div>').appendTo('body');
 			},
@@ -79,10 +81,11 @@ define(
 			},
 
 			getPlanet : function() {
-				return this.planet;
+				return this.root;
 			},
 
 			setPlanet : function(){
+
 
 				var map = this.celestial.map;
 				var matOptions = {};
@@ -98,7 +101,7 @@ define(
 					mat.emissive = new THREE.Color( 0xdddd33 );
 				}
 
-				var radius = this.celestial.radius * ns.KM;
+				var radius = this.celestial.radius * ns.KM * ns.SCALE_3D;
 				var segments = 50;
 				var rings = 50;
 				var sphere = new THREE.Mesh(
@@ -113,16 +116,16 @@ define(
 
 				if(this.celestial.ring){
 					var ringSize = [
-						this.celestial.ring.innerRadius * ns.KM,
-						this.celestial.ring.outerRadius * ns.KM
+						this.celestial.ring.innerRadius * ns.KM * ns.SCALE_3D,
+						this.celestial.ring.outerRadius * ns.KM * ns.SCALE_3D
 					];
 					
 					var ringMap = THREE.ImageUtils.loadTexture( this.celestial.ring.map );
+		
 					var ringMaterial = new THREE.MeshLambertMaterial({
 	                   map: ringMap
 	                });
 					var ringGeometry = new THREE.TorusGeometry(ringSize[1], ringSize[1] - ringSize[0], 2, 40);
-					//var ringGeometry = new THREE.TorusGeometry(90000000, 10000000, 12, 40);	
 
 	                var ring = new THREE.Mesh(ringGeometry, ringMaterial);
 	                ring.rotation.x = - Math.PI / 2;
@@ -135,16 +138,29 @@ define(
 				if(this.celestial.tilt) tilt -= this.celestial.tilt * ns.DEG_TO_RAD;
 				this.planet.rotation.x = tilt;
 
+				this.planet.scale.set(ns.SCALE_PLANETS, ns.SCALE_PLANETS, ns.SCALE_PLANETS);
+
 				/*
 				this.planet.castShadow = true;
 				this.planet.receiveShadow = true;
 				/**/
+
+				var orbitPoints = this.celestial.getOrbitPoints();
+				if(this.tracer && orbitPoints){
+					this.tracer.drawOrbit(orbitPoints);
+					var eclipticPoints = _.clone(orbitPoints);
+
+					_.map(eclipticPoints, function(val){ return val.negate();});
+					var ecliptic = this.tracer.getOrbit(eclipticPoints);
+					this.root.add(ecliptic);
+				}
+				this.root.add(this.planet);
 				return this.planet;
 			},
 			
 			drawMove : function(){
 				var pos = this.getPosition();
-				this.planet.position.copy(pos);
+				this.root.position.copy(pos);
 
 				if(this.celestial.sideralDay){
 					var curRotation = (ns.U.epochTime / this.celestial.sideralDay) * ns.CIRCLE;
@@ -155,7 +171,7 @@ define(
 
 			getPosition : function(pos) {
 				var curPosition = (pos || this.celestial.position).clone();
-				return curPosition;
+				return curPosition.multiplyScalar(ns.SCALE_3D);
 			},
 
 			getName : function(){

@@ -51,6 +51,21 @@ define(
 			    this.attachTrace();
 			},
 
+			getOrbit : function(orbitVertices){
+				var material = new THREE.LineBasicMaterial({
+			        color: this.color
+			    });
+				_.map(orbitVertices, function(val){ return val.multiplyScalar(ns.SCALE_3D);});
+			    var orbitGeom = new THREE.Geometry();
+			    orbitGeom.vertices = orbitVertices;
+			    return new THREE.Line(orbitGeom, material);
+			},
+
+			drawOrbit : function(orbitVertices){
+			    this.orbit = this.getOrbit(orbitVertices);
+			    this.root.add(this.orbit);
+			},
+
 			detachTrace : function() {
 				this.line && this.root.remove(this.line);
 			},
@@ -63,7 +78,7 @@ define(
 				if(this.traceFrom !== traceFromBody) this.getNew();
 				this.traceFrom = traceFromBody;
 				if(!traceFromBody) {
-					this.root.position.x = this.root.position.y = this.root.position.z = 0;
+					this.root.position.set(0, 0, 0);
 				}
 			},
 

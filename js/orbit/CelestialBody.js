@@ -21,7 +21,7 @@ define(
 				this.calculatePeriod(elements);
 				this.position = this.isCentral ? new THREE.Vector3() : this.getPositionFromElements(elements);
 				this.velocity = this.isCentral ? new THREE.Vector3() : this.calculateVelocity(ns.startEpochTime);
-				console.log(this.name+' dist from center ',this.position.length(), ' m');
+				//console.log(this.name+' dist from center ',this.position.length(), ' m');
 
 				if(this.relativeTo) {
 					var central = ns.U.getBody(this.relativeTo);
@@ -77,10 +77,50 @@ define(
 						this.vertexDist = thisMinVertexDist;
 					}
 
-					this.nVertices = (this.circ / this.vertexDist);
+					this.nVertices = (this.circ / this.vertexDist) + 1;
 				}
 
 				
+			},
+
+			getOrbitPoints : function(){
+				if(!this.period) return;
+				var incr = this.period / 360;
+				var points = [];
+				var lastPoint;
+				var point;
+				var j;
+				var angle;
+				var step;
+				var nmoins=0, nplus=0;
+				for(var i=0; i <= 360; i++){
+					point = this.calculatePosition(ns.startEpochTime+(incr*i));
+					if(lastPoint) {
+						angle = point.angleTo(lastPoint) * ns.RAD_TO_DEG;
+						if(angle > 1.5){
+							nplus++;
+							for(j=0; j < angle; j++){
+								step = (incr*(i-1)) + ((incr / angle) * j);
+								point = this.calculatePosition(ns.startEpochTime+ step );
+								points.push(point);
+							}
+							lastPoint = point;
+							continue;
+						} else if( angle < 1) {
+							/*nmoins++;
+							do{
+								i++;
+								point = this.calculatePosition(ns.startEpochTime+(incr*i));
+								angle = point.angleTo(lastPoint) * ns.RAD_TO_DEG;
+								
+							} while (angle < 1);/**/
+						}
+						
+					}
+					points.push(point);
+					lastPoint = point;
+				}
+				return points;
 			},
 			
 			createLogger : function() {

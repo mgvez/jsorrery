@@ -18,6 +18,7 @@
 		ns.RAD_TO_DEG = 180/Math.PI;
 
 		ns.SCALE_3D = 1/1000000;
+		ns.SCALE_PLANETS = 1;
 		
 		ns.DAY = 60 * 60 * 24;//duration in seconds
 		ns.YEAR = 365.25;//duration in days

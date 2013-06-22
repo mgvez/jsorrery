@@ -74,7 +74,7 @@ define(
 			setDimension : function(largestSMA, largestRadius) {
 				this.width = $(window).width();
 				this.height = $(window).height();
-				this.stageSize = largestSMA;
+				this.stageSize = largestSMA * ns.SCALE_3D;
 			},
 
 			toXYCoords:function (pos) {
@@ -104,9 +104,9 @@ define(
 				stats.update();
 			},
 
-			updateCamera : function(){
+			updateCamera : function(isPlaying){
 
-				CameraManager.updateCamera();
+				CameraManager.updateCamera(isPlaying);
 			},
 
 

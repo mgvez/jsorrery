@@ -31,8 +31,8 @@ define(
 				}.bind(this));
 
 				//var scenario = ScenarioLoader.get('EarthMoon');
-				//var scenario = ScenarioLoader.get('SolarSystem');
-				var scenario = ScenarioLoader.get('SaturnMoon');
+				var scenario = ScenarioLoader.get('SolarSystem');
+				//var scenario = ScenarioLoader.get('SaturnMoon');
 				//var scenario = ScenarioLoader.get('CentralSolarSystem');
 				//var scenario = ScenarioLoader.get('Artificial');
 				this.createBodies(scenario);
@@ -105,9 +105,19 @@ define(
 				var largestSMA = _.reduce(this.bodies, function(memo, body){ 
 					return (!body.isCentral && body.orbit && body.orbit.base.a > memo) ? body.orbit.base.a : memo;
 				}, 0);
-				console.log('universe size', largestSMA*ns.KM, ' m');
-				this.size = largestSMA*ns.KM;
-				this.scene.setDimension(this.size, largestRadius);
+				var smallestSMA = _.reduce(this.bodies, function(memo, body){ 
+					return (!body.isCentral && body.orbit && (!memo || body.orbit.base.a < memo)) ? body.orbit.base.a : memo;
+				}, 0);
+				smallestSMA *= ns.KM;
+				largestSMA *= ns.KM;
+				largestRadius *= ns.KM;
+				//console.log('universe size', largestSMA, ' m');
+
+				//ns.SCALE_PLANETS = (smallestSMA / largestRadius) * 0.7;
+				
+
+				this.size = largestSMA;
+				this.scene.setDimension(largestSMA, largestRadius);
 
 			},
 
@@ -117,11 +127,11 @@ define(
 					var deltaT = GravityTicker.tick();
 					this.epochTime += deltaT;
 					this.currentTime = ns.startEpochTime + this.epochTime;
-					this.scene.updateCamera();
+					this.scene.updateCamera(true);
 					this.scene.draw();
 				} else {
 
-					this.scene.updateCamera();
+					this.scene.updateCamera(false);
 				}
 				
 				requestAnimFrame(this.tick.bind(this));

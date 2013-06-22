@@ -79,9 +79,13 @@ define(
 			scene.draw();
 		};
 
-		
+		var getScaledVector = function(v){
+			var out = v.clone().multiplyScalar(ns.SCALE_3D);
+			return out;
+		};
 
-		var updateCamera = function() {
+		var updateCamera = function(isPlaying) {
+
 			if(typeof viewSettings.lookFrom == 'undefined') toggleTrackBody();
 
 			var lookFromBody = bodies[viewSettings.lookFrom];
@@ -89,9 +93,9 @@ define(
 
 			if(controls && controls.enabled) {
 				var centralBody = (lookAtBody && lookAtBody.celestial) || ns.U.getBody();
-				controls.center.copy(centralBody.position);
-				if(lookAtBody){
-					freeCamera.position.add(lookAtBody.celestial.movement);
+				controls.center.copy(getScaledVector(centralBody.position));
+				if(isPlaying && lookAtBody){
+					freeCamera.position.add(getScaledVector(lookAtBody.celestial.movement));
 				} 
 				controls.update();
 			} else if(viewSettings.lookFrom) {
@@ -159,7 +163,7 @@ define(
 			init : function(sceneParam, aspect, fov, stageSize, container){
 				scene = sceneParam;
 				domEl = container;
-				freeCamera = new THREE.PerspectiveCamera(fov || defaultCameraFov, aspect, 1, stageSize * 2);
+				freeCamera = new THREE.PerspectiveCamera(fov || defaultCameraFov, aspect, 1, stageSize * 10);
 				freeCamera.up = new THREE.Vector3(0,0,1);
 
 				setControls();
@@ -203,8 +207,8 @@ define(
 				bodies.push(b);
 			},
 
-			updateCamera : function(){
-				updateCamera();
+			updateCamera : function(isPlaying){
+				updateCamera(isPlaying);
 				return freeCamera;
 			},
 

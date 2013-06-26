@@ -20,6 +20,11 @@ define(
 				this.setPlanet();
 				this.setOrbitLines();
 				this.setEventsListeners();
+
+				//make this display object available from the celestial body
+				this.celestial.getBody3D = function(){
+					return this;
+				}.bind(this);
 				
 				//this.label = $('<div class="planetLabel">'+this.celestial.name+'</div>').appendTo('body');
 			},
@@ -66,16 +71,18 @@ define(
 
 			//add a reference to the object from which we trace
 			setTraceFrom : function(centralBody){
+				if(!this.tracer) return;
 				this.tracer && this.tracer.setTraceFrom(centralBody);
 			},
 
-
 			attachTrace : function(){
-				this.tracer && this.tracer.attachTrace();
+				if(!this.tracer) return;
+				this.parentContainer.add(this.tracer.getDisplayObject());
 			},
 
 			detachTrace : function(){
-				this.tracer && this.tracer.detachTrace();
+				if(!this.tracer) return;
+				this.parentContainer.remove(this.tracer.getDisplayObject());
 			},
 
 			spotPos : function(pos){
@@ -163,11 +170,13 @@ define(
 				if(orbitVertices){
 					this.orbitLine = Object.create(OrbitLine);
 					this.orbitLine.init(this.celestial.name, this.celestial.color, orbitVertices);
-					
-					var eclipticVertices = this.celestial.getOrbitVertices();
-					eclipticVertices = _.map(eclipticVertices, function(val){ return val.negate();});
-					this.eclipticLine =  Object.create(OrbitLine);
-					this.eclipticLine.init(this.celestial.name, ns.U.getBody().color, eclipticVertices);
+					//does this body revolves around the system's main body? If so, draw its ecliptic
+					if(!this.celestial.relativeTo || this.celestial.relativeTo == ns.U.getBody().name){
+						var eclipticVertices = this.celestial.getOrbitVertices();
+						eclipticVertices = _.map(eclipticVertices, function(val){ return val.negate();});
+						this.eclipticLine =  Object.create(OrbitLine);
+						this.eclipticLine.init(this.celestial.name, ns.U.getBody().color, eclipticVertices);
+					}
 				}
 			},
 
@@ -180,11 +189,18 @@ define(
 			},
 
 			showOrbit : function(){
-				this.orbitLine && this.parentContainer.add(this.orbitLine.getDisplayObject());
+				if(!this.orbitLine) return;
+				this.getOrbitContainer().add(this.orbitLine.getDisplayObject());
 			},
 
 			hideOrbit : function(){
-				this.orbitLine && this.parentContainer.remove(this.orbitLine.getDisplayObject());
+				if(!this.orbitLine) return;
+				this.getOrbitContainer().remove(this.orbitLine.getDisplayObject());
+			},
+
+			//the orbit is drawn around the main body
+			getOrbitContainer : function(){
+				return ns.U.getBody(this.celestial.relativeTo).getBody3D().getDisplayObject();
 			},
 
 			addCamera : function(name, camera){

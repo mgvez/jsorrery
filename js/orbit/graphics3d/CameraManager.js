@@ -30,7 +30,7 @@ define(
 		*/
 		var resetTraceBehaviors = function(){
 			$.each(bodies, function(i, body){
-				body.attachTrace();
+				body.detachTrace();
 				body.hideEcliptic();
 				body.showOrbit();
 				body.setTraceFrom(null);
@@ -152,7 +152,7 @@ define(
 		};
 
 		var disableControls = function(){
-			_.each(allCameras, function(i, cam){
+			_.each(allCameras, function(cam){
 				cam.jsorrery && cam.jsorrery.controls && (cam.jsorrery.controls.enabled = false);
 			});
 		};

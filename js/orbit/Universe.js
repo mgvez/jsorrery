@@ -33,8 +33,9 @@ define(
 				//var scenario = ScenarioLoader.get('EarthMoon');
 				//var scenario = ScenarioLoader.get('SolarSystem');
 				//var scenario = ScenarioLoader.get('SaturnMoon');
-				var scenario = ScenarioLoader.get('CentralSolarSystem');
+				//var scenario = ScenarioLoader.get('CentralSolarSystem');
 				//var scenario = ScenarioLoader.get('Artificial');
+				var scenario = ScenarioLoader.get('JupiterMoon');
 				this.createBodies(scenario);
 
 				this.scene = Object.create(Scene);
@@ -74,7 +75,7 @@ define(
 						current.mass = 1;
 					}
 					current.init();
-					current.calculateTraceParams(this.size, scenario.secondsPerTick);
+					current.calculateTraceParams(this.size);
 					
 				}.bind(this));
 
@@ -96,7 +97,7 @@ define(
 			},
 
 			calculateDimensions : function(){
-
+				var centralBodyName = this.getBody().name;
 				//find the largest radius in km among all bodies
 				var largestRadius = _.reduce(this.bodies, function(memo, body){
 					return memo < body.radius ? body.radius : memo;
@@ -106,14 +107,14 @@ define(
 					return (!body.isCentral && body.orbit && body.orbit.base.a > memo) ? body.orbit.base.a : memo;
 				}, 0);
 				var smallestSMA = _.reduce(this.bodies, function(memo, body){ 
-					return (!body.isCentral && body.orbit && (!memo || body.orbit.base.a < memo)) ? body.orbit.base.a : memo;
+					return (!body.isCentral && body.orbit && (!body.relativeTo || body.relativeTo == centralBodyName) && (!memo || body.orbit.base.a < memo)) ? body.orbit.base.a : memo;
 				}, 0);
 				smallestSMA *= ns.KM;
 				largestSMA *= ns.KM;
 				largestRadius *= ns.KM;
 				//console.log('universe size', largestSMA, ' m');
 
-				ns.SCALE_PLANETS = (smallestSMA / largestRadius) * 0.7;
+				//ns.SCALE_PLANETS = (smallestSMA / largestRadius) * 0.7;
 				
 
 				this.size = largestSMA;

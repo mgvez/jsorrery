@@ -21,14 +21,6 @@ define(
 				this.currentVertex = 0;
 			},
 
-			spotPos : function(x, y, color, size) {
-				var shape = new createjs.Shape();
-				shape.graphics.clear();
-				shape.graphics.beginFill(color || this.color).drawCircle(x, y, size || 1);
-				this.root.addChild(shape);
-
-			},
-
 			getDisplayObject : function(){
 				return this.root;
 			},
@@ -41,28 +33,13 @@ define(
 			        color: this.color
 			    });
 
-			    this.trace = new THREE.Geometry();
+			    this.geom = new THREE.Geometry();
 			    for(var i=0; i<this.nVertices; i++){
-				    this.trace.vertices.push(new THREE.Vector3(0, 0, 0));
+				    this.geom.vertices.push(new THREE.Vector3(0, 0, 0));
 				}
-			    this.line = new THREE.Line(this.trace, material);
+			    this.line = new THREE.Line(this.geom, material);
 			    this.currentVertex = 0;
 			    this.attachTrace();
-			},
-
-			getOrbit : function(orbitVertices){
-				var material = new THREE.LineBasicMaterial({
-			        color: this.color
-			    });
-				_.map(orbitVertices, function(val){ return val.multiplyScalar(ns.SCALE_3D);});
-			    var orbitGeom = new THREE.Geometry();
-			    orbitGeom.vertices = orbitVertices;
-			    return new THREE.Line(orbitGeom, material);
-			},
-
-			drawOrbit : function(orbitVertices){
-			    this.orbit = this.getOrbit(orbitVertices);
-			    this.root.add(this.orbit);
 			},
 
 			detachTrace : function() {
@@ -88,20 +65,20 @@ define(
 
 			doTrace : function(pos){
 				pos = this.setTracePos(pos);
-			    this.trace.verticesNeedUpdate = true;
+			    this.geom.verticesNeedUpdate = true;
 				if(this.currentVertex < this.nVertices) {
 					for(var i = this.currentVertex; i < this.nVertices; i++) {
-						this.trace.vertices[i].copy(pos);
+						this.geom.vertices[i].copy(pos);
 					}
 				} else {
 					var lastVertexIdx = this.nVertices - 1;
 					if(this.switchVertex){
 						for(var i = 0; i < lastVertexIdx; i++) {
-							this.trace.vertices[i].copy(this.trace.vertices[i+1]);
+							this.geom.vertices[i].copy(this.geom.vertices[i+1]);
 						}
 						this.switchVertex = false;
 					}
-					this.trace.vertices[this.trace.vertices.length-1].copy(pos);
+					this.geom.vertices[this.geom.vertices.length-1].copy(pos);
 				}
 			},
 
@@ -117,7 +94,7 @@ define(
 			initPos : function(pos) {
 
 				this.setTracePos(pos);
-				this.trace.vertices[0].copy(pos);
+				this.geom.vertices[0].copy(pos);
 				this.currentVertex = 1;
 
 			}

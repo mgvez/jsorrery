@@ -6,11 +6,12 @@ define(
 		'_',
 		'orbit/graphics3d/Body',
 		'orbit/graphics3d/CameraManager',
+		'orbit/graphics3d/TracerManager',
 		'orbit/gui/Gui',
 		'vendor/jquery.mousewheel',
 		'three/stats'
 	], 
-	function(ns, $, _, BodyGraphics, CameraManager, Gui){
+	function(ns, $, _, BodyGraphics, CameraManager, TracerManager, Gui){
 
 		var projector;
 		var stats;
@@ -60,6 +61,7 @@ define(
 
 				//this.drawAxis();
 				CameraManager.init(this, this.width/this.height, scenario.fov, this.stageSize, container);
+				TracerManager.init(container);
 
 			},
 
@@ -115,13 +117,9 @@ define(
 
 				graphics.init(celestialBody);
 				this.renderables.push(graphics);
-				
 				graphics.setParentDisplayObject(this.root);
-				
-				var t = graphics.getTracer();
-				if(t) this.root.add(t);
-
 				CameraManager.addBody(graphics);
+				TracerManager.addBody(graphics);
 
 				if(celestialBody.map){
 					var textureImg = new Image();

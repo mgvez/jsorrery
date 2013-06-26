@@ -18,7 +18,7 @@ define(
 			mercury : {
 				mass : 3.3022e23,
 				radius:2439,
-				color : '#cc9900',
+				color : '#588a7b',
 				map : 'img/mercurymap.jpg',
 				orbit : { 
 					base : {a : 0.38709927 * ns.AU ,  e : 0.20563593, i: 7.00497902, l : 252.25032350, lp : 77.45779628, o : 48.33076593},
@@ -28,7 +28,7 @@ define(
 			venus : {
 				mass : 4.868e24,
 				radius : 6051,
-				color : '#00cc99',
+				color : '#fda700',
 				map : 'img/venusmap.jpg',
 				orbit : {
 					base : {a : 0.72333566 * ns.AU ,  e : 0.00677672, i: 3.39467605, l : 181.97909950, lp : 131.60246718, o : 76.67984255},

@@ -55,7 +55,8 @@ define(
 
 			},
 
-			calculateTraceParams : function(universeSize, secondsPerTick) {
+			//calculate the number of vertices it takes to have a trace that makes one orbit, with the configured distance between each vertex
+			calculateTraceParams : function(universeSize) {
 
 				var defaultVertexDist = this.vertexDist = universeSize * ns.vertexDist;
 				this.nVertices = ns.minVertexPerOrbit;
@@ -77,9 +78,11 @@ define(
 						this.vertexDist = thisMinVertexDist;
 					}
 
-					this.nVertices = (this.circ / this.vertexDist) + 1;
+					this.nVertices = Math.round((this.circ / this.vertexDist));
+					this.vertexDist = this.circ / this.nVertices;
+					this.nVertices++;
 				}
-
+				//console.log(this.name, this.nVertices, this.vertexDist);
 				
 			},
 

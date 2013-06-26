@@ -15,7 +15,7 @@ define(
 	function(ns, common) {
 
 		var cnf = {
-			name : 'CentralSolarSystem',
+			name : 'InnerSolarSystem',
 			commonBodies : [
 				'sun',
 				'mercury',

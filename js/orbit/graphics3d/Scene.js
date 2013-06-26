@@ -61,7 +61,7 @@ define(
 
 				//this.drawAxis();
 				CameraManager.init(this, this.width/this.height, scenario.fov, this.stageSize, container);
-				TracerManager.init(container);
+				TracerManager.init(this.root);
 
 			},
 

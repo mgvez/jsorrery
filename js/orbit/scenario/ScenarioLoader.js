@@ -5,7 +5,7 @@ define(
 		'orbit/NameSpace',
 		'orbit/scenario/CommonCelestialBodies',
 		'orbit/scenario/SolarSystem',
-		'orbit/scenario/CentralSolarSystem',
+		'orbit/scenario/InnerSolarSystem',
 		'orbit/scenario/EarthMoon',
 		'orbit/scenario/ArtificialSatellites',
 		'orbit/scenario/SaturnMoon',

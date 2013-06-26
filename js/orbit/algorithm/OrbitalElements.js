@@ -8,7 +8,6 @@ define(
 	function(ns, $) {
 
 		var maxIterationsForEccentricAnomaly = 10;
-		var maxDeltaTForVelocity = 3600;//seconds
 		var maxDE = 1e-15;
 
 		var Deg ={
@@ -17,12 +16,6 @@ define(
 			},
 			cos : function(v) {
 				return Math.cos(v * ns.DEG_TO_RAD);
-			},
-			atan2 : function(y, x) {
-				return Math.atan2(y, x) * ns.RAD_TO_DEG;
-			},
-			acos : function(x) {
-				return Math.acos(x) * ns.RAD_TO_DEG;
 			}
 		};
 
@@ -35,14 +28,9 @@ define(
 
 				//now calculate velocity orientation, that is, a vector tangent to the orbital ellipse
 				var k = el.r / el.a;
-				var alpha = Math.acos(((2 - (2 * el.e * el.e)) / (k * (2-k)))-1);
-				alpha = el.v < 0 ? (2*Math.PI) - alpha  : alpha;
-				var velocityAngle = el.v + ((Math.PI - alpha) /  2);
-
-				//default orbit is counterclockwise
-				var dir = (this.orbit.cy && this.orbit.cy.M) || (this.orbit.day && this.orbit.day.M);
-				var isInversed = dir && dir < 0 ? true : false;/**/
-				velocityAngle = (el.v < 0) != isInversed ? Math.PI + velocityAngle  : velocityAngle;
+				var alpha = Math.PI - Math.acos(((2 - (2 * el.e * el.e)) / (k * (2-k)))-1);
+				alpha = el.v < 0 ? (2 * Math.PI) - alpha  : alpha;
+				var velocityAngle = el.v + (alpha / 2);
 
 				//velocity vector in the plane of the orbit
 				var orbitalVelocity = new THREE.Vector3(Math.cos(velocityAngle), Math.sin(velocityAngle)).setLength(speed);
@@ -117,7 +105,7 @@ define(
 						computed.M = computed.l - computed.lp;
 					}
 
-					computed.a = computed.a * 1000;//was in km, set it in m
+					computed.a = computed.a * ns.KM;//was in km, set it in m
 				}
 
 				var ePrime = ns.RAD_TO_DEG * computed.e;

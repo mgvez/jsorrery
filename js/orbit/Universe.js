@@ -30,12 +30,15 @@ define(
 					this.tick();
 				}.bind(this));
 
+				this.dateDisplay = Gui.addText();
+				this.date = new Date();
+
 				//var scenario = ScenarioLoader.get('EarthMoon');
 				//var scenario = ScenarioLoader.get('SolarSystem');
 				//var scenario = ScenarioLoader.get('SaturnMoon');
-				//var scenario = ScenarioLoader.get('CentralSolarSystem');
+				var scenario = ScenarioLoader.get('InnerSolarSystem');
 				//var scenario = ScenarioLoader.get('Artificial');
-				var scenario = ScenarioLoader.get('JupiterMoon');
+				//var scenario = ScenarioLoader.get('JupiterMoon');
 				this.createBodies(scenario);
 
 				this.scene = Object.create(Scene);
@@ -48,6 +51,7 @@ define(
 				GravityTicker.setSecondsPerTick(scenario.secondsPerTick);
 				GravityTicker.setCalculationsPerTick(scenario.calculationsPerTick || ns.defaultCalculationsPerTick);
 				this.tick();
+				this.showDate();
 
 			},
 
@@ -122,6 +126,11 @@ define(
 
 			},
 
+			showDate : function(){
+				this.date.setTime(ns.J2000.getTime() + (this.currentTime * 1000));
+				this.dateDisplay.text(this.date.toISOString());
+			},
+
 			tick : function() {
 				
 				if(this.playing) {
@@ -130,6 +139,8 @@ define(
 					this.currentTime = ns.startEpochTime + this.epochTime;
 					this.scene.updateCamera(true);
 					this.scene.draw();
+					this.showDate();
+
 				} else {
 
 					this.scene.updateCamera(false);

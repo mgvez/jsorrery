@@ -22,6 +22,9 @@ define(
 			},
 			addOption : function(selectName, label, val) {
 				$('<option value="'+val+'">'+label+'</option>').appendTo(this.selects[selectName]);
+			},
+			addText : function(){
+				return $('<div>').appendTo(this.root);
 			}
 		};
 	}

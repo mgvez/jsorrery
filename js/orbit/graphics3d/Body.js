@@ -4,11 +4,10 @@ define(
 	[
 		'orbit/NameSpace',
 		'jquery',
-		'orbit/graphics3d/Tracer',
 		'orbit/graphics3d/OrbitLine',
 		'three'
 	], 
-	function(ns, $, Tracer, OrbitLine) {
+	function(ns, $, OrbitLine) {
 
 		var Body = {
 
@@ -16,10 +15,8 @@ define(
 				this.root = new THREE.Object3D();
 				this.celestial = celestialBody;
 
-				if(!this.celestial.isCentral) this.setTracer();
 				this.setPlanet();
 				this.setOrbitLines();
-				this.setEventsListeners();
 
 				//make this display object available from the celestial body
 				this.celestial.getBody3D = function(){
@@ -35,59 +32,6 @@ define(
 				} else {
 					this.label.hide();
 				}
-			},
-
-			setEventsListeners:function(){
-				this.celestial.addEventListener('spot', this.spotPos.bind(this));
-				this.tracer && this.celestial.addEventListener('vertex', this.tracer.changeVertex.bind(this.tracer));
-			},
-
-			addTracerEventsListeners : function(body){
-				if(!this.tracer) return;
-				this.supplementalTracer = [body, this.tracer.changeVertex.bind(this.tracer)];
-				this.supplementalTracer[0].addEventListener('vertex', this.supplementalTracer[1]);
-			},
-
-			removeTracerEventsListeners : function(){
-				if(!this.supplementalTracer) return;
-				this.supplementalTracer[0].removeEventListener('vertex', this.supplementalTracer[1]);
-				this.supplementalTracer = null;
-			},
-
-			resetTracer : function(){
-				this.tracer && this.tracer.getNew(false);
-			},
-
-			getTracer : function() {
-				return this.tracer && this.tracer.getDisplayObject();
-			},
-
-			setTracer : function() {
-				this.tracer = Object.create(Tracer);
-				this.tracer.init(this.celestial.color, this.celestial.nVertices, this.celestial.name);
-				this.tracer.initPos(this.getPosition());
-				return this.tracer;
-			},
-
-			//add a reference to the object from which we trace
-			setTraceFrom : function(centralBody){
-				if(!this.tracer) return;
-				this.tracer && this.tracer.setTraceFrom(centralBody);
-			},
-
-			attachTrace : function(){
-				if(!this.tracer) return;
-				this.parentContainer.add(this.tracer.getDisplayObject());
-			},
-
-			detachTrace : function(){
-				if(!this.tracer) return;
-				this.parentContainer.remove(this.tracer.getDisplayObject());
-			},
-
-			spotPos : function(pos){
-				var pxPos = this.getPosition(pos);
-				this.tracer && this.tracer.spotPos(pxPos.x, pxPos.y);
 			},
 
 			getDisplayObject : function() {

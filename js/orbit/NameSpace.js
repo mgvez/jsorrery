@@ -25,28 +25,21 @@
 		ns.CENTURY = 100 * ns.YEAR;//duration in days
 		ns.SIDERAL_DAY = 3600 * 23.9344696;
 
-		var J2000 = new Date(2000, 0, 1);
-		var startDate = new Date();
-		startDate = new Date(2003, 2, 23);
-		//startDate = new Date(2001, 11, 14);
+		ns.J2000 = new Date(2000, 0, 1);
+		ns.startDate = new Date();
+		//startDate = new Date(2003, 2, 23);
+		ns.startDate = new Date(2000, 6, 6);
 		//startDate = new Date(1977, 3, 10);
 		//startDate = new Date(1980, 5, 27);
 		//startDate = J2000;
 		//console.log(J2000/(ns.DAY*1000));
-		ns.startEpochTime =  ((startDate - J2000) / 1000) ;
+		ns.startEpochTime =  ((ns.startDate - ns.J2000) / 1000) ;
 
 		ns.defaultCalculationsPerTick = 200;
-
-		ns.largestBodyMinimalSize = 0.1;
-		ns.smallestBodyMinimalSize = 0.01;
-
-		ns.axisToShowInY = 'y';
 
 		ns.minVertexPerOrbit = 50;
 		ns.vertexDist = 1/50;//in universe size (so depends on max orbit among all bodies)
 
-		/*var halley = new Date(1986, 1, 9);
-		console.log((J2000 - halley)/1000);/**/
 		return ns;
 	});
 

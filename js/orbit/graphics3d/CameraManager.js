@@ -26,15 +26,12 @@ define(
 		};
 		
 		/**
-		Reset the default behavior of every body's tracer (that is, trace from global)
+		Reset the default behavior of every body's orbit line (show the orbit, not the ecliptic)
 		*/
-		var resetTraceBehaviors = function(){
+		var resetShownOrbit = function(){
 			$.each(bodies, function(i, body){
-				body.detachTrace();
 				body.hideEcliptic();
 				body.showOrbit();
-				body.setTraceFrom(null);
-				body.removeTracerEventsListeners();
 			});
 		};
 		
@@ -42,23 +39,17 @@ define(
 			viewSettings.lookFrom = trackOptionSelectors.from.val();
 			viewSettings.lookAt = trackOptionSelectors.at.val();
 			disableControls();
-			resetTraceBehaviors();
+			resetShownOrbit();
 
 			var lookFromBody = bodies[viewSettings.lookFrom];
 			var lookAtBody = bodies[viewSettings.lookAt];
 
 			if(lookFromBody){
 				currentCamera = lookFromBody.getCamera('pov');
-				//remove current lookfrom body's tracer
-				lookFromBody.detachTrace();			
 				lookFromBody.showEcliptic();
 				lookFromBody.hideOrbit();
 
 				if(lookAtBody) {
-					lookAtBody.setTraceFrom(lookFromBody);
-					//also listen to the "from" body tracer events to trace the "at" body, as the latter's rythm might not be sufficient
-					lookAtBody.addTracerEventsListeners(lookFromBody.celestial);
-
 					lookAtBody.hideOrbit();
 					domEl.on('mousewheel', onMouseWheel);
 				}

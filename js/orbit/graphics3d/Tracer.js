@@ -17,8 +17,6 @@ define(
 				this.lastMod = 0;
 				this.root = new THREE.Object3D();
 				this.tracePosition = new THREE.Vector3();
-				this.getNew();
-				this.currentVertex = 0;
 			},
 
 			getDisplayObject : function(){
@@ -50,6 +48,25 @@ define(
 				this.line && this.root.add(this.line);
 			},
 
+			listenToVertexChange : function(celestialBody) {
+				if(!celestialBody) return;
+				this.listeners = this.listeners || [];
+				var listener = {
+					dispatcher : celestialBody,
+					event : 'vertex',
+					handler : this.changeVertex.bind(this)
+				};
+				listener.dispatcher.addEventListener(listener.event, listener.handler);
+				this.listeners.push(listener);
+			},
+			
+			unlistenToVertexChange : function() {
+				if(!this.listeners) return;
+				while(listener = this.listeners.pop()){
+					listener.dispatcher.removeEventListener(listener.event, listener.handler);
+				}
+			},
+
 			setTraceFrom : function(traceFromBody) {
 				if(this.traceFrom !== traceFromBody) this.getNew();
 				this.traceFrom = traceFromBody;
@@ -64,7 +81,9 @@ define(
 			},
 
 			doTrace : function(pos){
+				if(!this.geom) return;
 				pos = this.setTracePos(pos);
+				//console.log(pos);
 			    this.geom.verticesNeedUpdate = true;
 				if(this.currentVertex < this.nVertices) {
 					for(var i = this.currentVertex; i < this.nVertices; i++) {
@@ -86,7 +105,6 @@ define(
 				if(this.traceFrom){
 					this.root.position.copy(this.traceFrom.getPosition());
 					pos.sub(this.traceFrom.getPosition());
-
 				}
 				return pos;
 			},

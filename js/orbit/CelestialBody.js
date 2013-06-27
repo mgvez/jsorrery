@@ -17,10 +17,14 @@ define(
 				this.display = display;
 				this.force = new THREE.Vector3();
 				this.movement = new THREE.Vector3();
-				var elements = this.calculateElements(ns.startEpochTime);
-				this.calculatePeriod(elements);
-				this.position = this.isCentral ? new THREE.Vector3() : this.getPositionFromElements(elements);
-				this.velocity = this.isCentral ? new THREE.Vector3() : this.calculateVelocity(ns.startEpochTime);
+
+				this.orbitalElements = Object.create(OrbitalElements);
+				this.orbitalElements.setDefaultOrbit(this.orbit, this.orbitCalculator);
+
+				var elements = this.orbitalElements.calculateElements(ns.startEpochTime);
+				this.period = this.orbitalElements.calculatePeriod(elements, this.relativeTo);
+				this.position = this.isCentral ? new THREE.Vector3() : this.orbitalElements.getPositionFromElements(elements);
+				this.velocity = this.isCentral ? new THREE.Vector3() : this.orbitalElements.calculateVelocity(ns.startEpochTime);
 				//console.log(this.name+' dist from center ',this.position.length(), ' m');
 
 				if(this.relativeTo) {
@@ -108,13 +112,13 @@ define(
 				var step;
 				var total = 0;
 				for(var i=0; total < 360; i++){
-					point = this.calculatePosition(ns.startEpochTime+(incr*i));
+					point = this.orbitalElements.calculatePosition(ns.startEpochTime+(incr*i));
 					if(lastPoint) {
 						angle = point.angleTo(lastPoint) * ns.RAD_TO_DEG;
 						if(angle > 1.5){
 							for(j=0; j < angle; j++){
 								step = (incr*(i-1)) + ((incr / angle) * j);
-								point = this.calculatePosition(ns.startEpochTime+ step );
+								point = this.orbitalElements.calculatePosition(ns.startEpochTime+ step );
 								points.push(point);
 							}
 							total += point.angleTo(lastPoint) * ns.RAD_TO_DEG;
@@ -171,8 +175,8 @@ define(
 					}
 
 					if ((ns.U.epochTime % this.displayElementsDelay) == 0) {
-						var computed = this.calculateElements(ns.startEpochTime + ns.U.epochTime );
-						var pos =  this.getPositionFromElements(computed);
+						var computed = this.orbitalElements.calculateElements(ns.startEpochTime + ns.U.epochTime );
+						var pos =  this.orbitalElements.getPositionFromElements(computed);
 						this.dispatchEvent( {type:'spot', pos:pos} );
 					}
 
@@ -185,7 +189,6 @@ define(
 		};
 
 		CelestialBody = $.extend(Object.create( THREE.EventDispatcher.prototype ), CelestialBody);
-		$.extend(CelestialBody, OrbitalElements);
 		return CelestialBody;
 
 	});

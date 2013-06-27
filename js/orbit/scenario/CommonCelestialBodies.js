@@ -133,7 +133,7 @@ define(
 				tilt : 1.5424,
 				fov : 1,
 				relativeTo : 'earth',
-				realOrbit : MoonRealOrbit,
+				orbitCalculator : MoonRealOrbit,
 				orbit: {
 					base : {
 						a : 384400,

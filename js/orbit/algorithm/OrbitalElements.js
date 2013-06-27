@@ -20,8 +20,13 @@ define(
 		};
 
 		return {
+			setDefaultOrbit : function(orbitalElements, calculator) {
+				this.orbitalElements = orbitalElements;
+				this.calculator = calculator;
+			},
+
 			calculateVelocity : function(timeEpoch) {
-				if(!this.orbit) return new THREE.Vector3(0,0,0);
+				if(!this.orbitalElements) return new THREE.Vector3(0,0,0);
 				//vis viva to calculate speed (not velocity, i.e not a vector)
 				var el = this.calculateElements(timeEpoch);
 				var speed = Math.sqrt(ns.G * ns.U.getBody(this.relativeTo).mass * ((2 / (el.r)) - (1 / (el.a))));
@@ -41,14 +46,14 @@ define(
 			},
 
 			calculatePosition : function(timeEpoch) {
-				if(!this.orbit) return new THREE.Vector3(0,0,0);
+				if(!this.orbitalElements) return new THREE.Vector3(0,0,0);
 				var computed = this.calculateElements(timeEpoch);
 				var pos =  this.getPositionFromElements(computed);
 				return pos;
 			},
 
 			calculateElements : function(timeEpoch) {
-				if(!this.orbit) return null;
+				if(!this.orbitalElements) return null;
 				/*
 	
 				Epoch : J2000
@@ -79,22 +84,20 @@ define(
 					t : timeEpoch
 				};
 
-				var ro;
-				if(this.realOrbit) {
-					ro = this.realOrbit(T);
-					$.extend(computed, ro);
-					//console.log(oe);
+				if(this.calculator) {
+					var realorbit = this.calculator(T);
+					$.extend(computed, realorbit);
 				} else {
 
-					if (this.orbit.base) {
-						for(var el in this.orbit.base) {
+					if (this.orbitalElements.base) {
+						for(var el in this.orbitalElements.base) {
 							//cy : variation by century.
 							//day : variation by day.
-							var variation = this.orbit.cy ? this.orbit.cy[el] : (this.orbit.day[el] * ns.CENTURY);
-							computed[el] = this.orbit.base[el] + (variation * T);
+							var variation = this.orbitalElements.cy ? this.orbitalElements.cy[el] : (this.orbitalElements.day[el] * ns.CENTURY);
+							computed[el] = this.orbitalElements.base[el] + (variation * T);
 						}
 					} else {
-						computed = $.extend({}, this.orbit);
+						computed = $.extend({}, this.orbitalElements);
 					}
 
 					if (undefined === computed.w) {
@@ -159,15 +162,15 @@ define(
 				return pos;
 			},
 
-			calculatePeriod : function(elements) {
-
-				if(this.period) return;
-				if(this.orbit && this.orbit.day && this.orbit.day.M) {
-					this.period = 360 / this.orbit.day.M ;
-				}else if(ns.U.getBody(this.relativeTo) && ns.U.getBody(this.relativeTo).k && elements) {
-					this.period = 2 * Math.PI * Math.sqrt(Math.pow(elements.a/(ns.AU*1000), 3)) / ns.U.getBody(this.relativeTo).k;
+			calculatePeriod : function(elements, relativeTo) {
+				var period;
+				if(this.orbitalElements && this.orbitalElements.day && this.orbitalElements.day.M) {
+					period = 360 / this.orbitalElements.day.M ;
+				}else if(ns.U.getBody(relativeTo) && ns.U.getBody(relativeTo).k && elements) {
+					period = 2 * Math.PI * Math.sqrt(Math.pow(elements.a/(ns.AU*1000), 3)) / ns.U.getBody(relativeTo).k;
 				}
-				this.period = this.period * ns.DAY;//in seconds
+				period *= ns.DAY;//in seconds
+				return period;
 			}
 		};
 	}

@@ -31,12 +31,13 @@ define(
 				}.bind(this));
 
 				this.dateDisplay = Gui.addText();
+				
 				this.date = new Date();
 
 				//var scenario = ScenarioLoader.get('EarthMoon');
-				//var scenario = ScenarioLoader.get('SolarSystem');
+				var scenario = ScenarioLoader.get('SolarSystem');
 				//var scenario = ScenarioLoader.get('SaturnMoon');
-				var scenario = ScenarioLoader.get('InnerSolarSystem');
+				//var scenario = ScenarioLoader.get('InnerSolarSystem');
 				//var scenario = ScenarioLoader.get('Artificial');
 				//var scenario = ScenarioLoader.get('JupiterMoon');
 				this.createBodies(scenario);
@@ -52,6 +53,7 @@ define(
 				GravityTicker.setCalculationsPerTick(scenario.calculationsPerTick || ns.defaultCalculationsPerTick);
 				this.tick();
 				this.showDate();
+
 
 			},
 
@@ -120,7 +122,6 @@ define(
 
 				//ns.SCALE_PLANETS = (smallestSMA / largestRadius) * 0.7;
 				
-
 				this.size = largestSMA;
 				this.scene.setDimension(largestSMA, largestRadius);
 

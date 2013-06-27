@@ -11,7 +11,7 @@ define(
 	function(ns, $, Gui) {
 
 		var defaultCameraFov = 45;
-		var bodies;
+		var bodies3d;
 		var trackOptionSelectors;
 		var viewSettings;
 		var globalCamera;
@@ -29,9 +29,9 @@ define(
 		Reset the default behavior of every body's orbit line (show the orbit, not the ecliptic)
 		*/
 		var resetShownOrbit = function(){
-			$.each(bodies, function(i, body){
-				body.hideEcliptic();
-				body.showOrbit();
+			_.each(bodies3d, function(body3d){
+				body3d.hideEcliptic();
+				body3d.showOrbit();
 			});
 		};
 		
@@ -41,8 +41,8 @@ define(
 			disableControls();
 			resetShownOrbit();
 
-			var lookFromBody = bodies[viewSettings.lookFrom];
-			var lookAtBody = bodies[viewSettings.lookAt];
+			var lookFromBody = bodies3d[viewSettings.lookFrom];
+			var lookAtBody = bodies3d[viewSettings.lookAt];
 
 			if(lookFromBody){
 				currentCamera = lookFromBody.getCamera('pov');
@@ -74,8 +74,8 @@ define(
 
 			if(typeof viewSettings.lookFrom == 'undefined') toggleCamera();
 
-			var lookFromBody = bodies[viewSettings.lookFrom];
-			var lookAtBody = bodies[viewSettings.lookAt];
+			var lookFromBody = bodies3d[viewSettings.lookFrom];
+			var lookAtBody = bodies3d[viewSettings.lookAt];
 			var controls = currentCamera.jsorrery && currentCamera.jsorrery.controls;
 			if(controls) {
 				controls.update();
@@ -164,7 +164,7 @@ define(
 
 				scene.root.add(globalCamera);
 
-				bodies = [];
+				bodies3d = [];
 				viewSettings = {};
 
 				trackOptionSelectors = {
@@ -185,20 +185,20 @@ define(
 
 			},
 
-			addBody : function(b){				
-				Gui.addOption('lookFrom', b.getName(), bodies.length);
-				Gui.addOption('lookAt', b.getName(), bodies.length);
+			addBody : function(body3d){				
+				Gui.addOption('lookFrom', body3d.getName(), bodies3d.length);
+				Gui.addOption('lookAt', body3d.getName(), bodies3d.length);
 
 				var pov = getNewCamera();
-				b.addCamera('pov', pov);
+				body3d.addCamera('pov', pov);
 
 				var orbital = getNewCamera(true);
 
-				orbital.position.set(0, 0, b.getPlanetStageSize() * 1000);
+				orbital.position.set(0, 0, body3d.getPlanetStageSize() * 1000);
 
-				b.addCamera('orbital', orbital);
+				body3d.addCamera('orbital', orbital);
 
-				bodies.push(b);
+				bodies3d.push(body3d);
 			},
 
 			updateCamera : function(isPlaying){

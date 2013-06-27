@@ -79,10 +79,10 @@ define(
 					t : timeEpoch
 				};
 
-				var oe;
-				if(this.osculatingOrbit) {
-					oe = this.osculatingOrbit(T);
-					$.extend(computed, oe);
+				var ro;
+				if(this.realOrbit) {
+					ro = this.realOrbit(T);
+					$.extend(computed, ro);
 					//console.log(oe);
 				} else {
 

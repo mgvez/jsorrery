@@ -2,7 +2,8 @@
 define(
 	[
 		'orbit/NameSpace',
-		'jquery'
+		'jquery',
+		'ui'
 	],
 	function(){
 
@@ -25,6 +26,15 @@ define(
 			},
 			addText : function(){
 				return $('<div>').appendTo(this.root);
+			},
+
+			addSlider : function(onChange) {
+				var slider = $('<div>').appendTo(this.root).slider({
+					slide : function(evt, ui){
+						onChange(ui.value);
+					}
+				});
+				return slider;
 			}
 		};
 	}

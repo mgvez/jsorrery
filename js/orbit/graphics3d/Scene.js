@@ -3,15 +3,15 @@ define(
 	[
 		'orbit/NameSpace',
 		'jquery',
-		'_',
-		'orbit/graphics3d/Body',
+		'orbit/graphics3d/Body3d',
 		'orbit/graphics3d/CameraManager',
 		'orbit/graphics3d/TracerManager',
 		'orbit/gui/Gui',
 		'vendor/jquery.mousewheel',
-		'three/stats'
+		'three/stats',
+		'_'
 	], 
-	function(ns, $, _, BodyGraphics, CameraManager, TracerManager, Gui){
+	function(ns, $, Body3D, CameraManager, TracerManager, Gui){
 
 		var projector;
 		var stats;
@@ -20,7 +20,7 @@ define(
 			createStage : function(scenario) {
 
 				projector = projector || new THREE.Projector();
-				this.renderables = [];
+				this.bodies3d = [];
 
 				var container = $('<div id="universe" width="'+this.width+'" height="'+this.height+'">').appendTo('body');
 				this.root = new THREE.Scene();
@@ -63,6 +63,14 @@ define(
 				CameraManager.init(this, this.width/this.height, scenario.fov, this.stageSize, container);
 				TracerManager.init(this.root);
 
+				Gui.addSlider(function(val){
+					val = val < 1 ? 1 : val;
+					var correctedVal = Math.pow(val, 1.5);
+					_.each(this.bodies3d, function(body3d){
+						body3d.setScale(correctedVal);
+					});
+				}.bind(this));
+
 			},
 
 			drawAxis : function(){
@@ -94,7 +102,7 @@ define(
 					this.sun.position.copy(pos);
 				}
 
-				$.each(this.renderables, function(n, b){
+				$.each(this.bodies3d, function(n, b){
 					b.drawMove();
 					/*var labelPos = this.toXYCoords(b.getPlanet().position.clone());
 					if(labelPos.x>0 && labelPos.x<this.width && labelPos.y>0 && labelPos.y<this.height) {
@@ -113,13 +121,13 @@ define(
 
 
 			addBody : function(celestialBody) {
-				var graphics = Object.create(BodyGraphics);
+				var body3d = Object.create(Body3D);
 
-				graphics.init(celestialBody);
-				this.renderables.push(graphics);
-				graphics.setParentDisplayObject(this.root);
-				CameraManager.addBody(graphics);
-				TracerManager.addBody(graphics);
+				body3d.init(celestialBody);
+				this.bodies3d.push(body3d);
+				body3d.setParentDisplayObject(this.root);
+				CameraManager.addBody(body3d);
+				TracerManager.addBody(body3d);
 
 				if(celestialBody.map){
 					var textureImg = new Image();

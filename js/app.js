@@ -8,6 +8,7 @@
 			'three' : 'vendor/three.min',
 			'easel' : 'vendor/easeljs-0.6.0.min',
 			'_' : 'vendor/underscore-min',
+			'ui' : 'vendor/jquery-ui-1.10.3.custom.min',
 			'three/controls/OrbitControls' : 'vendor/three/controls/OrbitControls',
 			'three/controls/TrackballControls' : 'vendor/three/controls/TrackballControls',
 			'three/stats' : 'vendor/three/stats.min'
@@ -18,6 +19,9 @@
 			},
 			'jquery': {
 				deps: []
+			},
+			'ui': {
+				deps: ['jquery']
 			},
 			'vendor/jquery.autosize': {
 				deps: ['jquery']
@@ -37,7 +41,7 @@
 		}
 	});
 		
-	require(['jquery', 'orbit/Main', 'easel'], function($, Orbit){
+	require(['jquery', 'orbit/Main'], function($, Orbit){
 		$(function(){
 			ns.app = Orbit.init();
 		});

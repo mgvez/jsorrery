@@ -9,7 +9,7 @@ define(
 	], 
 	function(ns, $, OrbitLine) {
 
-		var Body = {
+		var Body3d = {
 
 			init : function(celestialBody) {
 				this.root = new THREE.Object3D();
@@ -94,10 +94,14 @@ define(
 				if(this.celestial.tilt) tilt -= this.celestial.tilt * ns.DEG_TO_RAD;
 				this.planet.rotation.x = tilt;
 
-				this.planet.scale.set(ns.SCALE_PLANETS, ns.SCALE_PLANETS, ns.SCALE_PLANETS);
+				
 
 				this.root.add(this.planet);
 				return this.planet;
+			},
+
+			setScale : function(scaleVal) {
+				this.planet.scale.set(scaleVal, scaleVal, scaleVal);
 			},
 
 			getPlanetSize : function(){
@@ -105,7 +109,7 @@ define(
 			},
 
 			getPlanetStageSize : function(){
-				return this.getPlanetSize() * ns.SCALE_PLANETS;
+				return this.getPlanetSize() * this.planet.scale.x;
 			},
 
 			setOrbitLines : function(){
@@ -178,6 +182,6 @@ define(
 			}
 		};
 
-		return Body;
+		return Body3d;
 
 	});

@@ -28,7 +28,7 @@
 		ns.J2000 = new Date(2000, 0, 1);
 		ns.startDate = new Date();
 		//startDate = new Date(2003, 2, 23);
-		ns.startDate = new Date(2000, 6, 6);
+		ns.startDate = new Date(2003, 2, 23);
 		//startDate = new Date(1977, 3, 10);
 		//startDate = new Date(1980, 5, 27);
 		//startDate = J2000;

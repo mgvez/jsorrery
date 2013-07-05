@@ -27,7 +27,6 @@ define(
 				Gui.init();
 				Gui.addBtn('start/stop', 'start', function(){
 					this.playing = !this.playing;
-					this.tick();
 				}.bind(this));
 
 				this.dateDisplay = Gui.addText();
@@ -119,11 +118,9 @@ define(
 				largestSMA *= ns.KM;
 				largestRadius *= ns.KM;
 				//console.log('universe size', largestSMA, ' m');
-
-				//ns.SCALE_PLANETS = (smallestSMA / largestRadius) * 0.7;
 				
 				this.size = largestSMA;
-				this.scene.setDimension(largestSMA, largestRadius);
+				this.scene.setDimension(largestSMA, smallestSMA, largestRadius);
 
 			},
 

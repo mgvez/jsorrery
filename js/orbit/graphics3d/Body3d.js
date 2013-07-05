@@ -22,12 +22,12 @@ define(
 				this.celestial.getBody3D = function(){
 					return this;
 				}.bind(this);
-				
-				//this.label = $('<div class="planetLabel">'+this.celestial.name+'</div>').appendTo('body');
+
+				this.label = $('<div class="planetSpot"><div class="planetLabel">'+this.celestial.name+'</div></div>').appendTo('body');
 			},
 
-			placeLabel : function(pos){
-				if(pos.z < 1){
+			placeLabel : function(pos, w, h){
+				if(pos.z<1 && pos.z>0 && pos.x>0 && pos.x<w && pos.y>0 && pos.y<h){
 					this.label.css({left : pos.x+'px', top : pos.y+'px'}).show();
 				} else {
 					this.label.hide();
@@ -92,15 +92,14 @@ define(
 				
 				var tilt = Math.PI / 2;
 				if(this.celestial.tilt) tilt -= this.celestial.tilt * ns.DEG_TO_RAD;
-				this.planet.rotation.x = tilt;
-
-				
+				this.planet.rotation.x = tilt;				
 
 				this.root.add(this.planet);
 				return this.planet;
 			},
 
 			setScale : function(scaleVal) {
+				if(this.maxScale && this.maxScale < scaleVal) return;
 				this.planet.scale.set(scaleVal, scaleVal, scaleVal);
 			},
 
@@ -113,37 +112,82 @@ define(
 			},
 
 			setOrbitLines : function(){
-				var orbitVertices = this.celestial.getOrbitVertices();
+
+				var orbitVertices = this.celestial.getOrbitVertices(false);
 				
 				if(orbitVertices){
-					this.orbitLine = Object.create(OrbitLine);
-					this.orbitLine.init(this.celestial.name, this.celestial.color, orbitVertices);
+					if(!this.perturbedOrbitLine) {
+						this.perturbedOrbitLine = Object.create(OrbitLine);
+						this.perturbedOrbitLine.init(this.celestial.name, this.celestial.color);
+					}
+					this.perturbedOrbitLine.setLine(orbitVertices);
+
+					orbitVertices = this.celestial.getOrbitVertices(true);
+					if(!this.ellipticOrbitLine) {
+						this.ellipticOrbitLine = Object.create(OrbitLine);
+						this.ellipticOrbitLine.init(this.celestial.name, this.celestial.color);
+					}
+					this.ellipticOrbitLine.setLine(orbitVertices);
+
 					//does this body revolves around the system's main body? If so, draw its ecliptic
 					if(!this.celestial.relativeTo || this.celestial.relativeTo == ns.U.getBody().name){
-						var eclipticVertices = this.celestial.getOrbitVertices();
-						eclipticVertices = _.map(eclipticVertices, function(val){ return val.negate();});
-						this.eclipticLine =  Object.create(OrbitLine);
-						this.eclipticLine.init(this.celestial.name, ns.U.getBody().color, eclipticVertices);
+						var eclipticVertices = _.clone(orbitVertices);
+						eclipticVertices = _.map(eclipticVertices, function(val){ return val.clone().negate();});
+						if(!this.eclipticLine) {
+							this.eclipticLine = Object.create(OrbitLine);
+							this.eclipticLine.init(this.celestial.name, ns.U.getBody().color);
+						}
+						this.eclipticLine.setLine(eclipticVertices);
+					}
+
+					if(this.celestial.isPerturbedOrbit) {
+						this.celestial.addEventListener('revolution', function(){
+							this.recalculateOrbitLine();
+						}.bind(this));
+					}
+
+					this.orbitLine = this.celestial.isPerturbedOrbit ? this.perturbedOrbitLine : this.ellipticOrbitLine;
+
+				}
+			},
+
+			recalculateOrbitLine : function(){
+				if(!this.perturbedOrbitLine || !this.celestial.isPerturbedOrbit) return;
+				var orbitVertices = this.celestial.getOrbitVertices(false);
+				if(orbitVertices){
+					var wasAdded = this.perturbedOrbitLine.added;
+					this.hideOrbit();
+					this.perturbedOrbitLine.setLine(orbitVertices);
+					if(wasAdded){
+						this.showOrbit();
 					}
 				}
 			},
 
 			showEcliptic : function(){
-				this.eclipticLine && this.root.add(this.eclipticLine.getDisplayObject());
+				if(!this.eclipticLine) return;
+				this.eclipticLine.added = true;
+				this.root.add(this.eclipticLine.getDisplayObject());
 			},
 
 			hideEcliptic : function(){
-				this.eclipticLine && this.root.remove(this.eclipticLine.getDisplayObject());
+				if(!this.eclipticLine) return;
+				this.eclipticLine.added = false;
+				this.root.remove(this.eclipticLine.getDisplayObject());
 			},
 
 			showOrbit : function(){
 				if(!this.orbitLine) return;
+				this.orbitLine.added = true;
 				this.getOrbitContainer().add(this.orbitLine.getDisplayObject());
+				//this.getOrbitContainer().add(this.ellipticOrbitLine.getDisplayObject());
 			},
 
 			hideOrbit : function(){
 				if(!this.orbitLine) return;
+				this.orbitLine.added = false;
 				this.getOrbitContainer().remove(this.orbitLine.getDisplayObject());
+				//this.getOrbitContainer().remove(this.ellipticOrbitLine.getDisplayObject());
 			},
 
 			//the orbit is drawn around the main body
@@ -170,6 +214,7 @@ define(
 					this.planet.rotation.y = (this.celestial.originalMapRotation || 0) + curRotation;
 				}
 				this.tracer && this.tracer.doTrace(pos);
+				return pos;
 			},
 
 			getPosition : function(pos) {

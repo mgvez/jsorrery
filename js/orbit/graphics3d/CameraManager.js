@@ -62,6 +62,7 @@ define(
 					currentCamera.jsorrery && currentCamera.jsorrery.controls && (currentCamera.jsorrery.controls.enabled = true);
 				}
 			}
+			updateCamera();
 			scene.draw();
 		};
 
@@ -75,6 +76,9 @@ define(
 			if(typeof viewSettings.lookFrom == 'undefined') toggleCamera();
 
 			var lookFromBody = bodies3d[viewSettings.lookFrom];
+			
+			Gui.toggleOptions('lookAt', ['night', 'front', 'back'], !!lookFromBody);
+
 			var lookAtBody = bodies3d[viewSettings.lookAt];
 			var controls = currentCamera.jsorrery && currentCamera.jsorrery.controls;
 			if(controls) {
@@ -92,17 +96,15 @@ define(
 						lookAt.copy(vel).normalize();
 						if(viewSettings.lookAt=='back') lookAt.negate();
 					} else {
-						//default vernal equinox
-						lookAt.set(-1, 0, 0);
+						lookAt.set(0, 0, 0);
 					}
 				} else {
-					lookAt.x = lookAt.y = lookAt.z = 0;
+					lookAt.set(0, 0, 0);
 				}
 
 				currentCamera.lookAt(lookAt);
 			}
 
-			//currentCamera.updateMatrixWorld();
 			//currentCamera.updateProjectionMatrix();
 		};
 
@@ -160,7 +162,7 @@ define(
 				};
 
 				globalCamera = getNewCamera(true);
-				globalCamera.position.set(0, 0, getDistanceFromFov(stageSize, globalCamera.fov));
+				globalCamera.position.set(0, -1, getDistanceFromFov(stageSize, globalCamera.fov));
 
 				scene.root.add(globalCamera);
 
@@ -175,7 +177,6 @@ define(
 				Gui.addOption('lookFrom', 'orbital camera', 'orbital');
 				Gui.addOption('lookAt', 'whole system', 'universe');
 
-				Gui.addOption('lookAt', 'vernal equinox', 'vernal');
 				if(ns.U.getBody().name == 'sun') {
 					Gui.addOption('lookAt', 'night (away from the sun)', 'night');
 				}
@@ -194,7 +195,7 @@ define(
 
 				var orbital = getNewCamera(true);
 
-				orbital.position.set(0, 0, body3d.getPlanetStageSize() * 1000);
+				orbital.position.set(0, -1, body3d.getPlanetStageSize() * 1000);
 
 				body3d.addCamera('orbital', orbital);
 
@@ -208,6 +209,10 @@ define(
 
 			getCamera : function(){
 				return currentCamera;
+			},
+
+			updateCameraMatrix : function(){
+				currentCamera.updateMatrixWorld();
 			}
 
 		};

@@ -69,6 +69,7 @@ define(
 					_.each(this.bodies3d, function(body3d){
 						body3d.setScale(correctedVal);
 					});
+					this.draw();
 				}.bind(this));
 
 			},
@@ -81,10 +82,11 @@ define(
 		      	this.root.add( object );
 			},
 
-			setDimension : function(largestSMA, largestRadius) {
+			setDimension : function(largestSMA, smallestSMA, largestRadius) {
 				this.width = $(window).width();
 				this.height = $(window).height();
 				this.stageSize = largestSMA * ns.SCALE_3D;
+				this.smallestSMA = smallestSMA;
 			},
 
 			toXYCoords:function (pos) {
@@ -102,15 +104,18 @@ define(
 					this.sun.position.copy(pos);
 				}
 
-				$.each(this.bodies3d, function(n, b){
+				_.each(this.bodies3d, function(b){
 					b.drawMove();
-					/*var labelPos = this.toXYCoords(b.getPlanet().position.clone());
-					if(labelPos.x>0 && labelPos.x<this.width && labelPos.y>0 && labelPos.y<this.height) {
-						b.placeLabel(labelPos);
-					}/**/
 				}.bind(this));
-				
+
 				this.renderer.render(this.root, CameraManager.getCamera());
+
+				//after all bodies have been positionned, update camera matrix (as camera might be attached to a body)
+				CameraManager.updateCameraMatrix();
+				_.each(this.bodies3d, function(b){
+					b.placeLabel(this.toXYCoords(b.getPosition()), this.width, this.height);
+				}.bind(this));
+
 				stats.update();
 			},
 
@@ -129,6 +134,13 @@ define(
 				CameraManager.addBody(body3d);
 				TracerManager.addBody(body3d);
 
+				//central body's scale is at most 80% of the nearest orbit
+				if(celestialBody.isCentral) {
+					body3d.maxScale = (this.smallestSMA / (celestialBody.radius*ns.KM)) * 0.8;
+					body3d.maxScale = body3d.maxScale < 1 ? 1 : body3d.maxScale;
+					//console.log(body3d.maxScale);
+				}
+				
 				if(celestialBody.map){
 					var textureImg = new Image();
 			        textureImg.onload = function(){

@@ -3,7 +3,8 @@ define(
 	[
 		'orbit/NameSpace',
 		'jquery',
-		'ui'
+		'ui',
+		'_'
 	],
 	function(){
 
@@ -16,14 +17,29 @@ define(
 			addBtn : function(label, elClass, callback) {
 				$('<button class="'+elClass+'">'+label+'</button>').appendTo(this.root).on('click.orrery', callback);
 			},
+			
 			addDropdown : function(name, label, callback){
 				var labelEl = $('<label>'+label+'</label>').appendTo(this.root);
-				this.selects[name] = $('<select id="'+name+'">').appendTo(labelEl).on('change.orrery', callback);
-				return this.selects[name];
+				this.selects[name] = {
+					select : $('<select id="'+name+'">').appendTo(labelEl).on('change.orrery', callback),
+					options : {}
+				};
+				
+				return this.selects[name].select;
 			},
+
 			addOption : function(selectName, label, val) {
-				$('<option value="'+val+'">'+label+'</option>').appendTo(this.selects[selectName]);
+				this.selects[selectName].options[val] = $('<option value="'+val+'">'+label+'</option>').appendTo(this.selects[selectName].select);
 			},
+
+			toggleOptions : function(selectName, toToggle, isShow){
+				var options = this.selects[selectName].options;
+				var toggleFcn = isShow ? 'show' : 'hide';
+				_.each(toToggle, function(optId){
+					options[optId] && options[optId][toggleFcn]();
+				});
+			},
+
 			addText : function(){
 				return $('<div>').appendTo(this.root);
 			},

@@ -25,24 +25,35 @@ define(
 				this.calculator = calculator;
 			},
 
-			calculateVelocity : function(timeEpoch) {
+			calculateVelocity : function(timeEpoch, relativeTo, isFromDelta) {
 				if(!this.orbitalElements) return new THREE.Vector3(0,0,0);
-				//vis viva to calculate speed (not velocity, i.e not a vector)
-				var el = this.calculateElements(timeEpoch);
-				var speed = Math.sqrt(ns.G * ns.U.getBody(this.relativeTo).mass * ((2 / (el.r)) - (1 / (el.a))));
 
-				//now calculate velocity orientation, that is, a vector tangent to the orbital ellipse
-				var k = el.r / el.a;
-				var alpha = Math.PI - Math.acos(((2 - (2 * el.e * el.e)) / (k * (2-k)))-1);
-				alpha = el.v < 0 ? (2 * Math.PI) - alpha  : alpha;
-				var velocityAngle = el.v + (alpha / 2);
+				var eclipticVelocity;
+				
+    			if ( isFromDelta ) {
+	    			var pos1 = this.calculatePosition(timeEpoch);
+    				var pos2 = this.calculatePosition(timeEpoch + 60);
+    				eclipticVelocity = pos2.sub(pos1).multiplyScalar(1/60);
+    			} else {
+    				//vis viva to calculate speed (not velocity, i.e not a vector)
+					var el = this.calculateElements(timeEpoch);
+					var speed = Math.sqrt(ns.G * ns.U.getBody(relativeTo).mass * ((2 / (el.r)) - (1 / (el.a))));
 
-				//velocity vector in the plane of the orbit
-				var orbitalVelocity = new THREE.Vector3(Math.cos(velocityAngle), Math.sin(velocityAngle)).setLength(speed);
-				var velocityEls = $.extend({}, el, {pos:orbitalVelocity, v:null, r:null});
-    			var eclipticVelocity = this.getPositionFromElements(velocityEls);
+					//now calculate velocity orientation, that is, a vector tangent to the orbital ellipse
+					var k = el.r / el.a;
+					var alpha = Math.PI - Math.acos(((2 - (2 * el.e * el.e)) / (k * (2-k)))-1);
+					alpha = el.v < 0 ? (2 * Math.PI) - alpha  : alpha;
+					var velocityAngle = el.v + (alpha / 2);
 
-				return eclipticVelocity;
+					//velocity vector in the plane of the orbit
+					var orbitalVelocity = new THREE.Vector3(Math.cos(velocityAngle), Math.sin(velocityAngle)).setLength(speed);
+					var velocityEls = $.extend({}, el, {pos:orbitalVelocity, v:null, r:null});
+	    			eclipticVelocity = this.getPositionFromElements(velocityEls);
+    			}
+
+    			//var diff = eclipticVelocityFromDelta.sub(eclipticVelocity);console.log(diff.length());
+    			return eclipticVelocity;
+				
 			},
 
 			calculatePosition : function(timeEpoch) {
@@ -52,8 +63,11 @@ define(
 				return pos;
 			},
 
-			calculateElements : function(timeEpoch) {
-				if(!this.orbitalElements) return null;
+			calculateElements : function(timeEpoch, forcedOrbitalElements) {
+				if(!forcedOrbitalElements && !this.orbitalElements) return null;
+
+				var orbitalElements = forcedOrbitalElements || this.orbitalElements;
+
 				/*
 	
 				Epoch : J2000
@@ -84,20 +98,22 @@ define(
 					t : timeEpoch
 				};
 
-				if(this.calculator) {
+				if(this.calculator && !forcedOrbitalElements) {
 					var realorbit = this.calculator(T);
 					$.extend(computed, realorbit);
 				} else {
 
-					if (this.orbitalElements.base) {
-						for(var el in this.orbitalElements.base) {
+					if (orbitalElements.base) {
+						var variation;
+						for(var el in orbitalElements.base) {
 							//cy : variation by century.
 							//day : variation by day.
-							var variation = this.orbitalElements.cy ? this.orbitalElements.cy[el] : (this.orbitalElements.day[el] * ns.CENTURY);
-							computed[el] = this.orbitalElements.base[el] + (variation * T);
+							variation = orbitalElements.cy ? orbitalElements.cy[el] : (orbitalElements.day[el] * ns.CENTURY);
+							variation = variation || 0;
+							computed[el] = orbitalElements.base[el] + (variation * T);
 						}
 					} else {
-						computed = $.extend({}, this.orbitalElements);
+						computed = $.extend({}, orbitalElements);
 					}
 
 					if (undefined === computed.w) {
@@ -157,7 +173,6 @@ define(
 			     Math.cos(computed.o) * Math.sin(computed.v+computed.w) * Math.cos(computed.i) )
 			    var z = computed.r * Math.sin(computed.v+computed.w) * Math.sin(computed.i);/**/
 
-				//invert y axis for 2d canvas (0 is top left, not bottom left as in cartesian systems)
 				var pos = new THREE.Vector3(x, y, z);
 				return pos;
 			},

@@ -9,11 +9,10 @@ define(
 	function(ns, $, Utils) {
 		
 		return {
-			init : function(name, color, vertices){
+			init : function(name, color){
 				this.name = name;
+				this.added = false;
 				this.color = Utils.rgbToHex(Utils.darken(Utils.hexToRgb(color), 0.75));
-
-				this.setLine(vertices);
 			},
 
 			setLine : function(orbitVertices){

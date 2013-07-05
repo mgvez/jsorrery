@@ -17,8 +17,7 @@
 		ns.DEG_TO_RAD = Math.PI/180;
 		ns.RAD_TO_DEG = 180/Math.PI;
 
-		ns.SCALE_3D = 1/1000000;
-		ns.SCALE_PLANETS = 1;
+		ns.SCALE_3D = 1/1000000;//THREE.js does not render right when distances are too large, as for example if the unit in three.js corresponded to one meter in the solar system
 		
 		ns.DAY = 60 * 60 * 24;//duration in seconds
 		ns.YEAR = 365.25;//duration in days
@@ -27,8 +26,8 @@
 
 		ns.J2000 = new Date(2000, 0, 1);
 		ns.startDate = new Date();
-		//startDate = new Date(2003, 2, 23);
 		ns.startDate = new Date(2003, 2, 23);
+		//ns.startDate = new Date(2003, 6, 1);
 		//startDate = new Date(1977, 3, 10);
 		//startDate = new Date(1980, 5, 27);
 		//startDate = J2000;

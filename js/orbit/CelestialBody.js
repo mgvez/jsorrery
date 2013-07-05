@@ -24,9 +24,23 @@ define(
 				var elements = this.orbitalElements.calculateElements(ns.startEpochTime);
 				this.period = this.orbitalElements.calculatePeriod(elements, this.relativeTo);
 				this.position = this.isCentral ? new THREE.Vector3() : this.orbitalElements.getPositionFromElements(elements);
-				this.velocity = this.isCentral ? new THREE.Vector3() : this.orbitalElements.calculateVelocity(ns.startEpochTime);
-				//console.log(this.name+' dist from center ',this.position.length(), ' m');
+				this.relativePosition = new THREE.Vector3();
+				this.velocity = this.isCentral ? new THREE.Vector3() : this.orbitalElements.calculateVelocity(ns.startEpochTime, this.relativeTo, this.isPerturbedOrbit);
 
+
+				this.angle = 0;
+				this.totalDist = 0;
+				//this.isLog = true;
+				//this.createLogger();
+
+				this.verlet = Object.create(Verlet);
+				this.verlet.setBody(this);
+
+				//console.log(this.name, this.position, this.velocity);
+
+			},
+
+			afterInitialized : function(){
 				if(this.relativeTo) {
 					var central = ns.U.getBody(this.relativeTo);
 					if(central && central!==ns.U.getBody()) {
@@ -34,29 +48,15 @@ define(
 						this.velocity.add(central.velocity);
 					}
 				}
-
 				this.previousPosition = this.position.clone();
 				this.originalPosition = this.position.clone();
-
-				this.angle = 0;
-				this.totalDist = 0;
-				//this.isLog = true;
-				this.createLogger();
-
-				this.verlet = Object.create(Verlet);
-				this.verlet.setBody(this);
-
 				this.afterMove(0);
-				//console.log(this.name, this.position, this.velocity);
 
+				if(this.customInitialize) this.customInitialize();
 			},
 
 			moveBody : function(deltaTIncrement, i){
 				this.verlet.moveBody(deltaTIncrement, i);
-			},
-
-			afterInitialized : function(){
-
 			},
 
 			//calculate the number of vertices it takes to have a trace that makes one orbit, with the configured distance between each vertex
@@ -90,19 +90,14 @@ define(
 				
 			},
 
+			/**
+			Calculates orbit line from orbital elements. By default, the orbital elements might not be osculating, i.e. they might account for perturbations. But the given orbit would thus be different slightly from the planet's path, as the velocity is calculated by considering that the orbit is elliptic.
+			*/
+			getOrbitVertices : function(isElliptic){
+				if(!this.period) return;
+				
+				var startTime = ns.startEpochTime + ns.U.epochTime;
 
-			getOrbitVertices : function(){
-				this.setOrbitVertices();
-				if(this.orbitVertices) {
-					var vertices = _.clone(this.orbitVertices);
-					vertices = _.map(vertices, function(val){ return val.clone();});
-					return vertices;
-				}
-
-			},
-
-			setOrbitVertices : function(){
-				if(!this.period || this.orbitVertices) return;
 				var incr = this.period / 360;
 				var points = [];
 				var lastPoint;
@@ -111,14 +106,35 @@ define(
 				var angle;
 				var step;
 				var total = 0;
+				var defaultOrbitalElements;
+
+				//if we want an elliptic orbit from the current planet's position (i.e. the ellipse from which the velocity was computed with vis-viva), setup fake orbital elements from the position
+				if(isElliptic) {
+					defaultOrbitalElements = {
+						base : this.orbitalElements.calculateElements(startTime, null, true)
+					};
+					defaultOrbitalElements.day = {M : 1};
+					defaultOrbitalElements.base.a /= 1000;
+					defaultOrbitalElements.base.i /= ns.DEG_TO_RAD;
+					defaultOrbitalElements.base.o /= ns.DEG_TO_RAD;
+					defaultOrbitalElements.base.w /= ns.DEG_TO_RAD;
+					defaultOrbitalElements.base.M /= ns.DEG_TO_RAD;
+					incr = ns.DAY;
+					startTime = 0;
+				}
+				var computed;
+				
+
 				for(var i=0; total < 360; i++){
-					point = this.orbitalElements.calculatePosition(ns.startEpochTime+(incr*i));
+					computed = this.orbitalElements.calculateElements(startTime+(incr*i), defaultOrbitalElements);
+					point = this.orbitalElements.getPositionFromElements(computed);
 					if(lastPoint) {
 						angle = point.angleTo(lastPoint) * ns.RAD_TO_DEG;
-						if(angle > 1.5){
+						if(angle > 1.3){
 							for(j=0; j < angle; j++){
 								step = (incr*(i-1)) + ((incr / angle) * j);
-								point = this.orbitalElements.calculatePosition(ns.startEpochTime+ step );
+								computed = this.orbitalElements.calculateElements(startTime + step, defaultOrbitalElements);
+								point = this.orbitalElements.getPositionFromElements(computed);
 								points.push(point);
 							}
 							total += point.angleTo(lastPoint) * ns.RAD_TO_DEG;
@@ -130,10 +146,10 @@ define(
 					points.push(point);
 					lastPoint = point;
 				}
-				//console.log(points.length, total);
-				this.orbitVertices = points;
+				return points;
 			},
 			
+			/*
 			createLogger : function() {
 				if(this.isLog) {
 					this.logger = $('<div style="border:'+this.color+' 1px solid;color:'+this.color+'" class="planetLogger">').appendTo('#logger');
@@ -143,18 +159,25 @@ define(
 			log:function(tx){
 				this.logger && this.logger.html(tx);
 			},
-
+			/**/
 			afterTick : function() {
-				
-				this.movement.copy(this.position).sub(this.previousPosition);
+				var relativeToPos = ns.U.getBody(this.relativeTo).getPosition();
+				this.relativePosition.copy(this.position).sub(relativeToPos);
+				this.movement.copy(this.relativePosition).sub(this.previousPosition);
 
 				//distance 
 				this.totalDist += this.movement.length();
-				this.previousPosition.copy(this.position);
+				this.angle += this.relativePosition.angleTo(this.previousPosition);
+				this.previousPosition.copy(this.relativePosition);
 
 				if(this.totalDist > this.vertexDist) {
 					this.dispatchEvent( {type:'vertex'} );
 					this.totalDist = this.totalDist % this.vertexDist;
+				}
+
+				if(this.angle > ns.CIRCLE){
+					this.angle = this.angle % ns.CIRCLE;
+					this.dispatchEvent( {type:'revolution'} );
 				}
 
 			},
@@ -181,6 +204,10 @@ define(
 					}
 
 				} 
+			},
+
+			calculatePosition : function(t) {
+				return this.orbitalElements.calculatePosition(t);
 			},
 
 			getPosition : function(){

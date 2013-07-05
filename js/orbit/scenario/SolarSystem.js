@@ -21,6 +21,7 @@ define(
 				'mercury',
 				'venus',
 				'earth',
+				//'moon',
 				'mars',
 				'jupiter',
 				'saturn',
@@ -29,7 +30,13 @@ define(
 				'pluto',
 				'halley'
 			],
-			secondsPerTick : 3600 * 12,
+			/*bodies : {
+				moon : {
+					isPerturbedOrbit : true,
+					isRecalculateOrbitLine : true
+				}
+			},/**/
+			secondsPerTick : 3600 * 5,
 			calculateAll : false
 		};
 

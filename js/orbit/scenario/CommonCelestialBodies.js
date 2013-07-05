@@ -151,7 +151,21 @@ define(
 						w : (360 / 5.997) / 365.25,
 						o : (360 / 18.600) / 365.25
 					}	
-				}/**/
+				},
+				customInitialize : function() {
+					var earth = ns.U.getBody('earth');
+					if(earth) {
+						var eclPos = this.position.clone().normalize();
+						eclPos.z = 0;
+						var angleX = eclPos.angleTo(new THREE.Vector3(1, 0, 0));
+						var angleY = eclPos.angleTo(new THREE.Vector3(0, 1, 0));
+						//console.log(angleX, angleY);
+						var angle = angleX;
+						var q = Math.PI / 2;
+						if(angleY > q) angle = -angleX; 
+						this.originalMapRotation = angle + Math.PI;
+					}
+				}
 			}
 		};
 

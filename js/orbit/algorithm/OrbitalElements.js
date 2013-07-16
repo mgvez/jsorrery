@@ -25,6 +25,10 @@ define(
 				this.calculator = calculator;
 			},
 
+			setName : function(name){
+				this.name = name;
+			},
+
 			calculateVelocity : function(timeEpoch, relativeTo, isFromDelta) {
 				if(!this.orbitalElements) return new THREE.Vector3(0,0,0);
 
@@ -41,10 +45,12 @@ define(
 
 					//now calculate velocity orientation, that is, a vector tangent to the orbital ellipse
 					var k = el.r / el.a;
-					var alpha = Math.PI - Math.acos(((2 - (2 * el.e * el.e)) / (k * (2-k)))-1);
+					var o = ((2 - (2 * el.e * el.e)) / (k * (2-k)))-1;
+					//floating point imprecision
+					o = o > 1 ? 1 : o;
+					var alpha = Math.PI - Math.acos(o);
 					alpha = el.v < 0 ? (2 * Math.PI) - alpha  : alpha;
 					var velocityAngle = el.v + (alpha / 2);
-
 					//velocity vector in the plane of the orbit
 					var orbitalVelocity = new THREE.Vector3(Math.cos(velocityAngle), Math.sin(velocityAngle)).setLength(speed);
 					var velocityEls = $.extend({}, el, {pos:orbitalVelocity, v:null, r:null});

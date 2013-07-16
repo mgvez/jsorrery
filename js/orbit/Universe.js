@@ -20,21 +20,34 @@ define(
 			init : function(){
 
 				ns.U = this;
-				this.playing = false;
-				this.epochTime = 0;
-				this.currentTime = ns.startEpochTime;
-
+				
 				Gui.init();
 				Gui.addBtn('start/stop', 'start', function(){
 					this.playing = !this.playing;
 				}.bind(this));
 
 				this.dateDisplay = Gui.addText();
-				
-				this.date = new Date();
 
-				//var scenario = ScenarioLoader.get('EarthMoon');
-				var scenario = ScenarioLoader.get('SolarSystem');
+				var scenarios = ScenarioLoader.getList();
+				var scenarioChanger =  Gui.addDropdown('scenario', 'Scenario', function(){
+					this.loadScenario(scenarioChanger.val());
+				}.bind(this));
+				_.each(scenarios, function(scenario){
+					Gui.addOption('scenario', scenario.title, scenario.name);
+				});
+				
+				this.loadScenario(scenarios[0].name);
+				this.tick();
+			},
+
+			loadScenario : function(name){
+				this.killScenario();
+				this.playing = false;
+				this.epochTime = 0;
+				this.currentTime = ns.startEpochTime;
+				this.date = new Date();
+				var scenario = ScenarioLoader.get(name);
+				//var scenario = ScenarioLoader.get('SolarSystem');
 				//var scenario = ScenarioLoader.get('SaturnMoon');
 				//var scenario = ScenarioLoader.get('InnerSolarSystem');
 				//var scenario = ScenarioLoader.get('Artificial');
@@ -43,17 +56,24 @@ define(
 
 				this.scene = Object.create(Scene);
 				this.calculateDimensions();
-				this.scene.setCentralBody(this.centralBody);
 				this.scene.createStage(scenario);
-
 				this.initBodies(scenario);
+				
+				this.scene.setCentralBody(this.centralBody);
 				
 				GravityTicker.setSecondsPerTick(scenario.secondsPerTick);
 				GravityTicker.setCalculationsPerTick(scenario.calculationsPerTick || ns.defaultCalculationsPerTick);
-				this.tick();
+				
 				this.showDate();
 
+			},
 
+			killScenario : function(){
+				if(!this.scene) return;
+				this.scene.kill();
+				this.centralBody = null;
+				this.scene = null;
+				this.bodies = {};
 			},
 
 			createBodies : function(scenario) {
@@ -117,6 +137,8 @@ define(
 				smallestSMA *= ns.KM;
 				largestSMA *= ns.KM;
 				largestRadius *= ns.KM;
+
+				ns.SCALE_3D = 10000 / largestSMA;
 				//console.log('universe size', largestSMA, ' m');
 				
 				this.size = largestSMA;
@@ -130,7 +152,6 @@ define(
 			},
 
 			tick : function() {
-				
 				if(this.playing) {
 					var deltaT = GravityTicker.tick();
 					this.epochTime += deltaT;
@@ -140,7 +161,6 @@ define(
 					this.showDate();
 
 				} else {
-
 					this.scene.updateCamera(false);
 				}
 				

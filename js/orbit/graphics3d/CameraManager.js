@@ -20,6 +20,9 @@ define(
 		var domEl;
 		var lookAt = new THREE.Vector3();
 
+		var LOOKAT_SEL_ID = 'lookAt';
+		var LOOKFROM_SEL_ID = 'lookFrom';
+
 
 		var onControlsUpdate = function(){
 			scene.draw();
@@ -77,7 +80,7 @@ define(
 
 			var lookFromBody = bodies3d[viewSettings.lookFrom];
 			
-			Gui.toggleOptions('lookAt', ['night', 'front', 'back'], !!lookFromBody);
+			Gui.toggleOptions(LOOKAT_SEL_ID, ['night', 'front', 'back'], !!lookFromBody);
 
 			var lookAtBody = bodies3d[viewSettings.lookAt];
 			var controls = currentCamera.jsorrery && currentCamera.jsorrery.controls;
@@ -170,25 +173,25 @@ define(
 				viewSettings = {};
 
 				trackOptionSelectors = {
-					from: Gui.addDropdown('lookFrom', 'Look from', toggleCamera),
-					at : Gui.addDropdown('lookAt', 'Look at', toggleCamera)
+					from: Gui.addDropdown(LOOKFROM_SEL_ID, 'Look from', toggleCamera),
+					at : Gui.addDropdown(LOOKAT_SEL_ID, 'Look at', toggleCamera)
 				};
 				
-				Gui.addOption('lookFrom', 'orbital camera', 'orbital');
-				Gui.addOption('lookAt', 'whole system', 'universe');
+				Gui.addOption(LOOKFROM_SEL_ID, 'orbital camera', 'orbital');
+				Gui.addOption(LOOKAT_SEL_ID, 'whole system', 'universe');
 
 				if(ns.U.getBody().name == 'sun') {
-					Gui.addOption('lookAt', 'night (away from the sun)', 'night');
+					Gui.addOption(LOOKAT_SEL_ID, 'night (away from the sun)', 'night');
 				}
 				
-				Gui.addOption('lookAt', 'direction of velocity', 'front');
-				Gui.addOption('lookAt', 'inverse direction of velocity', 'back');
+				Gui.addOption(LOOKAT_SEL_ID, 'direction of velocity', 'front');
+				Gui.addOption(LOOKAT_SEL_ID, 'inverse direction of velocity', 'back');
 
 			},
 
 			addBody : function(body3d){				
-				Gui.addOption('lookFrom', body3d.getName(), bodies3d.length);
-				Gui.addOption('lookAt', body3d.getName(), bodies3d.length);
+				Gui.addOption(LOOKFROM_SEL_ID, body3d.getName(), bodies3d.length);
+				Gui.addOption(LOOKAT_SEL_ID, body3d.getName(), bodies3d.length);
 
 				var pov = getNewCamera();
 				body3d.addCamera('pov', pov);
@@ -213,6 +216,16 @@ define(
 
 			updateCameraMatrix : function(){
 				currentCamera.updateMatrixWorld();
+			},
+
+			kill : function(){
+				Gui.remove(LOOKAT_SEL_ID);
+				Gui.remove(LOOKFROM_SEL_ID);
+				domEl && domEl.off('mousewheel');
+
+				_.each(allCameras, function(cam){
+					cam.jsorrery && cam.jsorrery.controls && cam.jsorrery.controls.removeEventListener('change', onControlsUpdate);
+				});
 			}
 
 		};

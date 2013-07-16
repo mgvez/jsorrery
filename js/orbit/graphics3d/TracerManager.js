@@ -57,6 +57,11 @@ define(
 				
 				body3d.tracer = tracer;
 				
+			},
+			kill : function(){
+				_.each(bodies3d, function(body3d){
+					body3d.tracer && body3d.tracer.unlistenToVertexChange();
+				});
 			}
 		};
 

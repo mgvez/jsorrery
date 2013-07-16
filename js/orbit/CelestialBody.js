@@ -19,6 +19,7 @@ define(
 				this.movement = new THREE.Vector3();
 
 				this.orbitalElements = Object.create(OrbitalElements);
+				this.orbitalElements.setName(this.name);
 				this.orbitalElements.setDefaultOrbit(this.orbit, this.orbitCalculator);
 
 				var elements = this.orbitalElements.calculateElements(ns.startEpochTime);

@@ -16,6 +16,7 @@ define(
 
 		var cnf = {
 			name : 'InnerSolarSystem',
+			title : 'Inner Solar System',
 			commonBodies : [
 				'sun',
 				'mercury',

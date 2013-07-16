@@ -11,6 +11,7 @@ define(
 		
 		var system =  {
 			name : 'JupiterMoon',
+			title : 'Jupiter and Gallilean satellites',
 			commonBodies : ['jupiter'],
 			bodies : {
 				io : {

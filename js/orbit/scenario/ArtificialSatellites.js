@@ -15,6 +15,7 @@ define(
 		var earthTilt = common.earth.tilt;
 		var system =  {
 			name : 'Artificial',
+			title : 'Artificial satellites around the Earth',
 			commonBodies : ['earth'],
 			bodies : {
 				mercury6 : {

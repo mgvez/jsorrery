@@ -7,6 +7,11 @@ define(
 		'_'
 	],
 	function(){
+		var elements = {};
+
+		var removeElement = function(elId){
+			elements[elId] && elements[elId].remove();
+		};
 
 		return {
 			init : function(universe){
@@ -14,18 +19,19 @@ define(
 				this.selects = {};
 			},
 
-			addBtn : function(label, elClass, callback) {
-				$('<button class="'+elClass+'">'+label+'</button>').appendTo(this.root).on('click.orrery', callback);
+			addBtn : function(label, id, callback) {
+				removeElement(id);
+				elements[id] = $('<button id="'+id+'">'+label+'</button>').appendTo(this.root).on('click.orrery', callback);
 			},
-			
-			addDropdown : function(name, label, callback){
-				var labelEl = $('<label>'+label+'</label>').appendTo(this.root);
-				this.selects[name] = {
-					select : $('<select id="'+name+'">').appendTo(labelEl).on('change.orrery', callback),
+
+			addDropdown : function(id, label, callback){
+				removeElement(id);
+				var labelEl = elements[id] = $('<label>'+label+'</label>').appendTo(this.root);
+				this.selects[id] = {
+					select : $('<select id="'+id+'">').appendTo(labelEl).on('change.orrery', callback),
 					options : {}
 				};
-				
-				return this.selects[name].select;
+				return this.selects[id].select;
 			},
 
 			addOption : function(selectName, label, val) {
@@ -44,13 +50,19 @@ define(
 				return $('<div>').appendTo(this.root);
 			},
 
-			addSlider : function(onChange) {
+			addSlider : function(id, onChange) {
+				removeElement(id);
 				var slider = $('<div>').appendTo(this.root).slider({
 					slide : function(evt, ui){
 						onChange(ui.value);
 					}
 				});
+				elements[id] = slider;
 				return slider;
+			},
+
+			remove : function(id){
+				removeElement(id);
 			}
 		};
 	}

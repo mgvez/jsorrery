@@ -140,10 +140,11 @@ define(
 						this.eclipticLine.setLine(eclipticVertices);
 					}
 
+					this.recalculateListener = function(){
+						this.recalculateOrbitLine();
+					}.bind(this);
 					if(this.celestial.isPerturbedOrbit) {
-						this.celestial.addEventListener('revolution', function(){
-							this.recalculateOrbitLine();
-						}.bind(this));
+						this.celestial.addEventListener('revolution', this.recalculateListener);
 					}
 
 					this.orbitLine = this.celestial.isPerturbedOrbit ? this.perturbedOrbitLine : this.ellipticOrbitLine;
@@ -224,6 +225,11 @@ define(
 
 			getName : function(){
 				return this.celestial.name;
+			},
+
+			kill : function(){
+				this.label.remove();
+				this.recalculateListener && this.celestial.removeEventListener('revolution', this.recalculateListener);
 			}
 		};
 

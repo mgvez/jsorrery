@@ -5,11 +5,12 @@ define(
 		'orbit/NameSpace',
 		'jquery',
 		'orbit/graphics3d/OrbitLinesManager',
+		'orbit/graphics3d/Dimensions',
 		'orbit/gui/Gui',
 		'three/controls/OrbitControls',
 		'three'
 	], 
-	function(ns, $, OrbitLinesManager, Gui) {
+	function(ns, $, OrbitLinesManager, Dimensions, Gui) {
 		'use strict';
 
 		var DEFAULT_FOV = 45;
@@ -59,8 +60,7 @@ define(
 		};
 
 		var getScaledVector = function(v){
-			var out = v.clone().multiplyScalar(ns.SCALE_3D);
-			return out;
+			return Dimensions.getScaled(v.clone());
 		};
 
 		var updateCamera = function() {

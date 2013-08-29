@@ -6,71 +6,81 @@ define(
 	[
 		'orbit/NameSpace',
 		'jquery',
+		'orbit/graphics3d/BodyOrbit',
+		'orbit/graphics3d/TracerManager',
 		'_'
 	], 
-	function(ns, $){
+	function(ns, $, BodyOrbit, TracerManager){
 		'use strict';
 
-		var bodies3d = [];
-		var container;
-		/**
-		Reset the default behavior of every body's orbit line (show the orbit, not the ecliptic)
-		*/
-		var hideAllOrbits = function(){
-			_.each(bodies3d, function(body3d){
-				body3d.hideOrbit();
-			});
-		};
-		var showAllOrbits = function(){
-			_.each(bodies3d, function(body3d){
-				body3d.showOrbit();
-			});
-		};
-		var hideAllEcliptics = function(){
-			_.each(bodies3d, function(body3d){
-				body3d.hideEcliptic();
-			});
-		};
-
-
 		var OLM = {
-			init : function(containerParam){
-				bodies3d.length = 0;
-				container = containerParam;
+			init : function(rootContainer){
+				this.orbits = {};
+				TracerManager.init(rootContainer);
+			},
+
+			/**
+			Reset the default behavior of every orbit's orbit line (show the orbit, not the ecliptic)
+			*/
+			hideAllOrbits : function(){
+				_.each(this.orbits, function(orbit){
+					orbit.hideOrbit();
+				});
+			},
+			
+			showAllOrbits : function(){
+				_.each(this.orbits, function(orbit){
+					orbit.showOrbit();
+				});
+			},
+			
+			hideAllEcliptics : function(){
+				_.each(this.orbits, function(orbit){
+					orbit.hideEcliptic();
+				});
 			},
 
 			addBody : function(body3d){
-				bodies3d.push(body3d);
-				
-				
+				var orbit = Object.create(BodyOrbit);
+				orbit.init(body3d);
+				this.orbits[body3d.getName()] = orbit;
+
+				TracerManager.addBody(body3d);
 			},
 			
 			onCameraChange : function(lookFromBody, lookAtBody) {
-				if(lookFromBody){
-					hideAllOrbits();
-					hideAllEcliptics();
-					lookFromBody.showEcliptic();
 
-					if(lookAtBody) {
-						lookAtBody.showOrbit();
+				var lookFromBodyOrbit = lookFromBody && this.orbits[lookFromBody.getName()];
+				var lookAtBodyOrbit = lookAtBody && this.orbits[lookAtBody.getName()];
+
+				if(lookFromBodyOrbit){
+					this.hideAllOrbits();
+					this.hideAllEcliptics();
+					
+					lookFromBodyOrbit.showEcliptic();
+
+					if(lookAtBodyOrbit) {
+						lookAtBodyOrbit.showOrbit();
 					}
 
 				} else {
-					showAllOrbits();
-					hideAllEcliptics();
+					this.showAllOrbits();
+					this.hideAllEcliptics();
 				}
 			},
 
 			resetAllOrbits : function() {
-				_.each(bodies3d, function(body3d){
-					body3d.recalculateOrbitLine(true);
+				_.each(this.orbits, function(orbit){
+					orbit.recalculateOrbitLine(true);
 				});
 			},
 
 			kill : function(){
-				_.each(bodies3d, function(body3d){
-					body3d.tracer && body3d.tracer.unlistenToVertexChange();
+				_.each(this.orbits, function(orbit){
+					orbit.kill();
 				});
+
+				TracerManager.kill();
 			}
 		};
 

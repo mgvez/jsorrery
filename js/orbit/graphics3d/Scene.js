@@ -6,14 +6,14 @@ define(
 		'orbit/graphics3d/Body3d',
 		'orbit/graphics3d/MilkyWay',
 		'orbit/graphics3d/CameraManager',
-		'orbit/graphics3d/TracerManager',
 		'orbit/graphics3d/OrbitLinesManager',
+		'orbit/graphics3d/Dimensions',
 		'orbit/gui/Gui',
 		'vendor/jquery.mousewheel',
 		'three/stats',
 		'_'
 	], 
-	function(ns, $, Body3D, MilkyWay, CameraManager, TracerManager, OrbitLinesManager, Gui){
+	function(ns, $, Body3D, MilkyWay, CameraManager, OrbitLinesManager, Dimensions, Gui){
 		'use strict';
 		var projector;
 		var stats;
@@ -51,7 +51,6 @@ define(
 
 				//this.drawAxis();
 				CameraManager.init(this, this.width/this.height, scenario.fov, this.stageSize, this.container);
-				TracerManager.init(this.root);
 				OrbitLinesManager.init(this.root);
 
 				Gui.addSlider(SCALE_CTRL_ID, function(val){
@@ -87,7 +86,8 @@ define(
 			setDimension : function(largestSMA, smallestSMA, largestRadius) {
 				this.width = $(window).width();
 				this.height = $(window).height();
-				this.stageSize = largestSMA * ns.SCALE_3D;
+				Dimensions.setLargestDimension(largestSMA);
+				this.stageSize = Dimensions.getScaled(largestSMA);
 				this.smallestSMA = smallestSMA;
 			},
 
@@ -133,7 +133,7 @@ define(
 			//when the date has changed by the user instead of by the playhead, we need to recalculate the orbits and redraw
 			onDateReset : function() {
 				this.updateCamera();
-				OrbitLineManager.resetAllOrbits();
+				OrbitLinesManager.resetAllOrbits();
 				this.draw();
 			},
 
@@ -143,8 +143,8 @@ define(
 				body3d.init(celestialBody);
 				this.bodies3d.push(body3d);
 				body3d.setParentDisplayObject(this.root);
+				
 				CameraManager.addBody(body3d);
-				TracerManager.addBody(body3d);
 				OrbitLinesManager.addBody(body3d);
 				
 				this.waitForTexture(celestialBody.map);
@@ -197,7 +197,6 @@ define(
 
 			kill : function(){
 				CameraManager.kill();
-				TracerManager.kill();
 				OrbitLinesManager.kill();
 				Gui.remove(SCALE_CTRL_ID);
 				_.each(this.bodies3d, function(body3d){

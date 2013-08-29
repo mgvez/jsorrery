@@ -3,10 +3,11 @@ define(
 	[
 		'orbit/NameSpace',
 		'jquery',
+		'orbit/graphics3d/Dimensions',
 		'orbit/Utils',
 		'three'
 	], 
-	function(ns, $, Utils) {
+	function(ns, $, Dimensions, Utils) {
 		'use strict';
 		return {
 			init : function(name, color){
@@ -19,7 +20,7 @@ define(
 				var material = new THREE.LineBasicMaterial({
 			        color: this.color
 			    });
-				_.map(orbitVertices, function(val){ return val.multiplyScalar(ns.SCALE_3D);});
+				_.map(orbitVertices, function(val){ return Dimensions.getScaled(val);});
 			    var orbitGeom = new THREE.Geometry();
 			    orbitGeom.vertices = orbitVertices;
 			    this.line = new THREE.Line(orbitGeom, material);

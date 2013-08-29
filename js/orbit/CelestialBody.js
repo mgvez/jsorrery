@@ -163,17 +163,6 @@ define(
 				return points;
 			},
 			
-			/*
-			createLogger : function() {
-				if(this.isLog) {
-					this.logger = $('<div style="border:'+this.color+' 1px solid;color:'+this.color+'" class="planetLogger">').appendTo('#logger');
-				}
-			},
-
-			log:function(tx){
-				this.logger && this.logger.html(tx);
-			},
-			/**/
 			afterTick : function() {
 				var relativeToPos = ns.U.getBody(this.relativeTo).getPosition();
 				this.relativePosition.copy(this.position).sub(relativeToPos);

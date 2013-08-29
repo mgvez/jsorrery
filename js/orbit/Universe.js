@@ -153,7 +153,6 @@ define(
 				largestSMA *= ns.KM;
 				largestRadius *= ns.KM;
 
-				ns.SCALE_3D = 10000 / largestSMA;
 				//console.log('universe size', largestSMA, ' m');
 				
 				this.size = largestSMA;

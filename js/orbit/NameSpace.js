@@ -16,8 +16,6 @@
 		ns.KM = 1000;
 		ns.DEG_TO_RAD = Math.PI/180;
 		ns.RAD_TO_DEG = 180/Math.PI;
-
-		ns.SCALE_3D = 1/1000000;//THREE.js does not render right when distances are too large, as for example if the unit in three.js corresponded to one meter in the solar system
 		
 		ns.DAY = 60 * 60 * 24;//duration in seconds
 		ns.YEAR = 365.25;//duration in days

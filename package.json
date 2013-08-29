@@ -1,0 +1,20 @@
+{
+  "name": "jsorrery",
+  "title": "jsOrrery - Solar System and orbital mechanics simulator",
+  "version": "0.0.1",
+  "homepage": "http://la-grange.ca",
+  "author": {
+    "name": "La Grange",
+    "email": "info@la-grange.ca"
+  },
+  "devDependencies": {
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-watch": "~0.4.4",
+    "grunt-contrib-less": "~0.7.0",
+    "grunt-contrib-requirejs": "~0.4.1",
+    "grunt": "~0.4.1"
+  },
+  "keywords": []
+}

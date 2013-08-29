@@ -20,6 +20,8 @@ define(
 		var ORBITAL_CAMERA_TYPE = 'orbital';
 		var POV_CAMERA_TYPE = 'pov';
 
+		var toggling_at_options = ['night', 'front', 'back'];
+
 		var bodies3d;
 		var trackOptionSelectors;
 		var viewSettings;
@@ -50,7 +52,10 @@ define(
 					currentCamera = (lookAtBody && lookAtBody.getCamera(ORBITAL_CAMERA_TYPE)) || globalCamera;
 					currentCamera.jsorrery && currentCamera.jsorrery.controls && (currentCamera.jsorrery.controls.enabled = true);
 				}
+
 			}
+
+			Gui.toggleOptions(LOOKAT_SEL_ID, toggling_at_options, !!lookFromBody);
 
 			//we show/hide orbits and ecliptics depending on what bodies are of interest
 			OrbitLinesManager.onCameraChange(lookFromBody, lookAtBody);
@@ -69,7 +74,6 @@ define(
 
 			var lookFromBody = bodies3d[viewSettings.lookFrom];
 			
-			Gui.toggleOptions(LOOKAT_SEL_ID, ['night', 'front', 'back'], !!lookFromBody);
 
 			var lookAtBody = bodies3d[viewSettings.lookAt];
 			var controls = currentCamera.jsorrery && currentCamera.jsorrery.controls;
@@ -97,7 +101,7 @@ define(
 
 		var onMouseWheel = function(event, delta, deltaX, deltaY) {
 			delta = delta / Math.abs(delta);
-			currentCamera.fov += currentCamera.fov * 0.1 * delta;
+			currentCamera.fov += currentCamera.fov * 0.1 * -delta;
 			if(currentCamera.fov > MAX_FOV) currentCamera.fov = MAX_FOV;
 			currentCamera.updateProjectionMatrix();
 			scene.draw();
@@ -105,10 +109,6 @@ define(
 
 		var onControlsUpdate = function(){
 			if(!ns.U.isPlaying()) scene.draw();
-		};
-
-		var getFOVFromDistance = function(obj, dist) {
-
 		};
 
 		var getDistanceFromFov = function(dimToSee, fov){

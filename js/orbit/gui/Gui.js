@@ -42,8 +42,13 @@ define(
 			toggleOptions : function(selectName, toToggle, isShow){
 				var options = this.selects[selectName].options;
 				var toggleFcn = isShow ? 'show' : 'hide';
+				var curVal = this.selects[selectName].select.val();
+				if(!isShow && toToggle.indexOf(curVal) !== -1) {
+					this.selects[selectName].select.val('');
+				}
 				_.each(toToggle, function(optId){
-					options[optId] && options[optId][toggleFcn]();
+					//options[optId] && options[optId][toggleFcn]();
+					options[optId] && options[optId].prop('disabled', !isShow);
 				});
 			},
 

@@ -4,15 +4,17 @@ define(
 		'orbit/NameSpace',
 		'jquery',
 		'orbit/graphics3d/Body3d',
+		'orbit/graphics3d/MilkyWay',
 		'orbit/graphics3d/CameraManager',
 		'orbit/graphics3d/TracerManager',
+		'orbit/graphics3d/OrbitLinesManager',
 		'orbit/gui/Gui',
 		'vendor/jquery.mousewheel',
 		'three/stats',
 		'_'
 	], 
-	function(ns, $, Body3D, CameraManager, TracerManager, Gui){
-
+	function(ns, $, Body3D, MilkyWay, CameraManager, TracerManager, OrbitLinesManager, Gui){
+		'use strict';
 		var projector;
 		var stats;
 		var SCALE_CTRL_ID = 'scaleCtrl';
@@ -35,23 +37,6 @@ define(
 				ambiance.position.y = 5 * this.stageSize;
 				ambiance.position.z = 5 * this.stageSize;
 
-				var sun;
-				if(this.centralBody && this.centralBody.name == 'sun') {
-					sun = new THREE.PointLight(0xFFFFFF);
-					sun.position.x = 0;
-					sun.position.y = 0;
-					sun.position.z = 0;
-				} else {
-					sun = new THREE.DirectionalLight(0xFFFFFF, 1);
-					//sun.castShadow = true;
-					sun.position.x = -1 * this.stageSize;
-					sun.position.y = 0 * this.stageSize;
-					sun.position.z = 0 * this.stageSize;
-					this.sun = sun;
-				}
-
-				this.root.add(sun);
-
 				var light = new THREE.AmbientLight( 0x202020 );
 				this.root.add( light );
 
@@ -60,11 +45,14 @@ define(
 					$('body').append( stats.domElement );
 				}
 
+				this.onTextureLoaded = this.draw.bind(this);
+
 				this.container.append(this.renderer.domElement);
 
 				//this.drawAxis();
 				CameraManager.init(this, this.width/this.height, scenario.fov, this.stageSize, this.container);
 				TracerManager.init(this.root);
+				OrbitLinesManager.init(this.root);
 
 				Gui.addSlider(SCALE_CTRL_ID, function(val){
 					val = val < 1 ? 1 : val;
@@ -76,15 +64,25 @@ define(
 					this.draw();
 				}.bind(this));
 
+				this.setMilkyway();
+
 			},
 
+			setMilkyway : function(){
+				var milkyway = this.milkyway = Object.create(MilkyWay);
+				milkyway.init(this.stageSize * 4);
+				this.waitForTexture(milkyway.mapSrc);
+				this.root.add(milkyway.getDisplayObject());
+			},
+
+			/*
 			drawAxis : function(){
 				var object = new THREE.AxisHelper(this.stageSize/10);
 	         	object.position.x = 0;//r
 	         	object.position.y = 0;//g
 	         	object.position.z = 0;//b
 		      	this.root.add( object );
-			},
+			},/**/
 
 			setDimension : function(largestSMA, smallestSMA, largestRadius) {
 				this.width = $(window).width();
@@ -101,6 +99,7 @@ define(
 			},
 
 			draw : function(){
+
 				//move sun, if its not a body shown. This assumes that the central body, if it has an orbit, revolves around the sun
 				if(this.sun && this.centralBody && this.centralBody.orbit){
 					var pos = this.centralBody.calculatePosition(ns.U.currentTime);
@@ -111,6 +110,9 @@ define(
 				_.each(this.bodies3d, function(b){
 					b.drawMove();
 				}.bind(this));
+
+				//center the milkyway to the camera position, to make it look infinite
+				this.milkyway.setPosition(CameraManager.getCamera().position);
 
 				this.renderer.render(this.root, CameraManager.getCamera());
 
@@ -123,11 +125,17 @@ define(
 				stats.update();
 			},
 
-			updateCamera : function(isPlaying){
-
-				CameraManager.updateCamera(isPlaying);
+			//camera might move and/or look at a different point depending on bodies movements
+			updateCamera : function(){
+				CameraManager.updateCamera();
 			},
 
+			//when the date has changed by the user instead of by the playhead, we need to recalculate the orbits and redraw
+			onDateReset : function() {
+				this.updateCamera();
+				OrbitLineManager.resetAllOrbits();
+				this.draw();
+			},
 
 			addBody : function(celestialBody) {
 				var body3d = Object.create(Body3D);
@@ -137,14 +145,16 @@ define(
 				body3d.setParentDisplayObject(this.root);
 				CameraManager.addBody(body3d);
 				TracerManager.addBody(body3d);
+				OrbitLinesManager.addBody(body3d);
 				
-				if(celestialBody.map){
-					var textureImg = new Image();
-			        textureImg.onload = function(){
-			            this.draw();
-			        }.bind(this);
-			        textureImg.src = celestialBody.map;
-			    }
+				this.waitForTexture(celestialBody.map);
+			},
+
+			waitForTexture : function(mapSrc){
+				if(!mapSrc) return;
+				var textureImg = new Image();
+		        textureImg.onload = this.onTextureLoaded;
+		        textureImg.src = mapSrc;
 			},
 
 			setCentralBody : function(centralBody){
@@ -161,12 +171,34 @@ define(
 					body3d.maxScale = (maxDim / (body3d.celestial.radius*ns.KM));
 					maxScaleVal = maxScaleVal > body3d.maxScale ? maxScaleVal : body3d.maxScale;
 				});
-				console.log(maxScaleVal);
+				//console.log(maxScaleVal);
+				this.initSun();
+			},
+
+			initSun : function(){
+
+				var sun;
+				if(this.centralBody && this.centralBody.name == 'sun') {
+					sun = new THREE.PointLight(0xFFFFFF);
+					sun.position.x = 0;
+					sun.position.y = 0;
+					sun.position.z = 0;
+				} else {
+					sun = new THREE.DirectionalLight(0xFFFFFF, 1);
+					//sun.castShadow = true;
+					sun.position.x = -1 * this.stageSize;
+					sun.position.y = 0 * this.stageSize;
+					sun.position.z = 0 * this.stageSize;
+					this.sun = sun;
+				}
+				this.root.add(sun);
+
 			},
 
 			kill : function(){
 				CameraManager.kill();
 				TracerManager.kill();
+				OrbitLinesManager.kill();
 				Gui.remove(SCALE_CTRL_ID);
 				_.each(this.bodies3d, function(body3d){
 					body3d.kill();

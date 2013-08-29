@@ -1,5 +1,6 @@
 
 (function(ns){
+	'use strict';
 	require.config({
 		baseUrl: './js/',
 		paths:{

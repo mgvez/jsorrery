@@ -1,4 +1,6 @@
-
+/**
+	Controls the trace of a body relative to another. Traces are not orbit lines, they are the path trace of a body relative to another
+*/
 
 define(
 	[
@@ -9,15 +11,12 @@ define(
 		'three'
 	], 
 	function(ns, $, Tracer, Gui) {
+		'use strict';
 
-		var bodies3d;
-		var container;
-		var selector;
-		
 		var toggleTraceFrom = function(){
-			var centralBody3d = bodies3d[selector.val()];
-
-			_.each(bodies3d, function(body3d){
+			var centralBody3d = this.bodies3d[this.selector.val()];
+			var container = this.container;
+			_.each(this.bodies3d, function(body3d){
 				//clear all traces first
 				var tracer = body3d.tracer;
 				if(!tracer) return;
@@ -35,20 +34,22 @@ define(
 				}
 			});
 		};
+		
 
 		var TM = {
 			init : function(containerParam){
-				bodies3d = [];
-				container = containerParam;	
-				selector = Gui.addDropdown('traceFrom', 'Trace paths relative to', toggleTraceFrom);
+				this.bodies3d = [];
+				this.container = containerParam;
+				this.toggleTraceFrom = toggleTraceFrom.bind(this);
+				this.selector = Gui.addDropdown('traceFrom', 'Trace paths relative to', this.toggleTraceFrom);
 				Gui.addOption('traceFrom', 'none', null);
-				toggleTraceFrom();
+				this.toggleTraceFrom();
 			},
 
 			addBody : function(body3d){
 
-				Gui.addOption('traceFrom', body3d.getName(), bodies3d.length);
-				bodies3d.push(body3d);
+				Gui.addOption('traceFrom', body3d.getName(), this.bodies3d.length);
+				this.bodies3d.push(body3d);
 
 				if(body3d.celestial.isCentral) return;
 
@@ -58,8 +59,9 @@ define(
 				body3d.tracer = tracer;
 				
 			},
+
 			kill : function(){
-				_.each(bodies3d, function(body3d){
+				_.each(this.bodies3d, function(body3d){
 					body3d.tracer && body3d.tracer.unlistenToVertexChange();
 				});
 			}

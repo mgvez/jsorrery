@@ -7,7 +7,7 @@ define(
 		'orbit/graphics2d/Body'
 	], 
 	function(ns, $, _, BodyGraphics){
-
+		'use strict';
 		return {
 			createStage : function() {
 				this.bodies = [];

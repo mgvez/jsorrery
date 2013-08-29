@@ -6,7 +6,7 @@ define(
 		'three'
 	],
 	function(ns, $) {
-
+		'use strict';
 		var maxIterationsForEccentricAnomaly = 10;
 		var maxDE = 1e-15;
 

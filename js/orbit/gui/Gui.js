@@ -7,6 +7,7 @@ define(
 		'_'
 	],
 	function(){
+		'use strict';
 		var elements = {};
 
 		var removeElement = function(elId){
@@ -46,8 +47,21 @@ define(
 				});
 			},
 
-			addText : function(){
-				return $('<div>').appendTo(this.root);
+			addDate : function(){
+				this.dateDisplay = $('<input>').appendTo(this.root);
+				this.dateDisplay.datepicker({
+					dateFormat : $.datepicker.ATOM
+				});
+
+				return this.dateDisplay;
+			},
+
+			setDate : function(d){
+				this.dateDisplay.val($.datepicker.formatDate( $.datepicker.ATOM, d));
+			},
+
+			getDate : function(d){
+				return this.dateDisplay.datepicker( "getDate" );
 			},
 
 			addSlider : function(id, onChange) {

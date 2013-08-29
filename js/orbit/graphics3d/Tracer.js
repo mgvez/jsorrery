@@ -7,7 +7,7 @@ define(
 		'three'
 	], 
 	function(ns, $, Utils) {
-		
+		'use strict';
 		return {
 			init : function(color, nVertices, name){
 				this.name = name;

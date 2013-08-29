@@ -15,7 +15,7 @@ define(
 		'_'
 	], 
 	function(ns, $, CelestialBody, GravityTicker, Scene, Gui, ScenarioLoader) {
-
+		'use strict';
 		var Universe = {
 			init : function(){
 
@@ -26,7 +26,16 @@ define(
 					this.playing = !this.playing;
 				}.bind(this));
 
-				this.dateDisplay = Gui.addText();
+				this.dateDisplay = Gui.addDate();
+				this.dateDisplay.on('change.orbit', function(){
+
+					this.playing = false;
+					this.epochTime = 0;
+					this.currentTime = this.startEpochTime = this.getEpochTime(Gui.getDate());
+					this.positionBodies();
+					this.scene.onDateReset();
+
+				}.bind(this));
 
 				var scenarios = ScenarioLoader.getList();
 				var scenarioChanger =  Gui.addDropdown('scenario', 'Scenario', function(){
@@ -44,14 +53,9 @@ define(
 				this.killScenario();
 				this.playing = false;
 				this.epochTime = 0;
-				this.currentTime = ns.startEpochTime;
+				this.currentTime = this.startEpochTime = this.getEpochTime();
 				this.date = new Date();
 				var scenario = ScenarioLoader.get(name);
-				//var scenario = ScenarioLoader.get('SolarSystem');
-				//var scenario = ScenarioLoader.get('SaturnMoon');
-				//var scenario = ScenarioLoader.get('InnerSolarSystem');
-				//var scenario = ScenarioLoader.get('Artificial');
-				//var scenario = ScenarioLoader.get('JupiterMoon');
 				this.createBodies(scenario);
 
 				this.scene = Object.create(Scene);
@@ -81,12 +85,12 @@ define(
 				this.bodies = {};
 				
 				$.each(scenario.bodies, function(name, config){
-					var current = Object.create(CelestialBody);
-					$.extend(current, config);
-					current.name = name;
-					this.centralBody = this.centralBody && this.centralBody.mass > current.mass ? this.centralBody : current;
-					this.bodies[current.name] = current;
-					bodies.push(current);
+					var body = Object.create(CelestialBody);
+					$.extend(body, config);
+					body.name = name;
+					this.centralBody = this.centralBody && this.centralBody.mass > body.mass ? this.centralBody : body;
+					this.bodies[body.name] = body;
+					bodies.push(body);
 				}.bind(this));
 
 				this.centralBody.isCentral = true;
@@ -95,23 +99,34 @@ define(
 
 			initBodies : function(scenario){
 
-				$.each(this.bodies, function(name, current){
-					if((typeof scenario.calculateAll === 'undefined' || !scenario.calculateAll) && !current.isCentral){
-						current.mass = 1;
+				$.each(this.bodies, function(name, body){
+					if((typeof scenario.calculateAll === 'undefined' || !scenario.calculateAll) && !body.isCentral){
+						body.mass = 1;
 					}
-					current.init();
-					current.calculateTraceParams(this.size);
+					body.init();
+					body.calculateTraceParams(this.size);
+					body.setPositionFromDate(this.currentTime);
 					
 				}.bind(this));
 
 				//after all is inialized
-				$.each(this.bodies, function(name, current){
-					this.scene.addBody(current);
-					current.afterInitialized();
-					//console.log(current.name, current.isCentral);
+				$.each(this.bodies, function(name, body){
+					this.scene.addBody(body);
+					body.afterInitialized();
+					//console.log(body.name, body.isCentral);
 				}.bind(this));
 				
 				GravityTicker.setBodies(this.bodies);
+			},
+
+			positionBodies : function(){
+				$.each(this.bodies, function(name, body){
+					body.setPositionFromDate(this.currentTime);
+				}.bind(this));
+				//adjust position depending on other bodies' position (for example a satellite is relative to its main body)
+				$.each(this.bodies, function(name, body){
+					body.afterInitialized();
+				}.bind(this));
 			},
 
 			getBody : function(name) {
@@ -148,23 +163,30 @@ define(
 
 			showDate : function(){
 				this.date.setTime(ns.J2000.getTime() + (this.currentTime * 1000));
-				this.dateDisplay.text(this.date.toISOString());
+				Gui.setDate(this.date);
 			},
 
 			tick : function() {
 				if(this.playing) {
 					var deltaT = GravityTicker.tick();
 					this.epochTime += deltaT;
-					this.currentTime = ns.startEpochTime + this.epochTime;
-					this.scene.updateCamera(true);
+					this.currentTime = this.startEpochTime + this.epochTime;
+					this.scene.updateCamera();
 					this.scene.draw();
 					this.showDate();
 
 				} else {
-					this.scene.updateCamera(false);
+					this.scene.updateCamera();
 				}
 				
 				requestAnimFrame(this.tick.bind(this));
+			},
+
+			getEpochTime : function(userDate) {
+				//userDate = userDate || new Date(2013, 2, 20, 11, 2);//new Date();
+				//userDate = userDate || new Date(2008, 6, 1, 0, 0);//new Date();
+				userDate = userDate || new Date();
+				return ((userDate - ns.J2000) / 1000) ;
 			},
 
 			isPlaying : function() {

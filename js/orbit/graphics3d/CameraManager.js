@@ -4,13 +4,21 @@ define(
 	[
 		'orbit/NameSpace',
 		'jquery',
+		'orbit/graphics3d/OrbitLinesManager',
 		'orbit/gui/Gui',
 		'three/controls/OrbitControls',
 		'three'
 	], 
-	function(ns, $, Gui) {
+	function(ns, $, OrbitLinesManager, Gui) {
+		'use strict';
 
-		var defaultCameraFov = 45;
+		var DEFAULT_FOV = 45;
+		var MAX_FOV = 90;
+		var LOOKAT_SEL_ID = 'lookAt';
+		var LOOKFROM_SEL_ID = 'lookFrom';
+		var ORBITAL_CAMERA_TYPE = 'orbital';
+		var POV_CAMERA_TYPE = 'pov';
+
 		var bodies3d;
 		var trackOptionSelectors;
 		var viewSettings;
@@ -20,51 +28,32 @@ define(
 		var domEl;
 		var lookAt = new THREE.Vector3();
 
-		var LOOKAT_SEL_ID = 'lookAt';
-		var LOOKFROM_SEL_ID = 'lookFrom';
-
-
-		var onControlsUpdate = function(){
-			scene.draw();
-		};
-		
-		/**
-		Reset the default behavior of every body's orbit line (show the orbit, not the ecliptic)
-		*/
-		var resetShownOrbit = function(){
-			_.each(bodies3d, function(body3d){
-				body3d.hideEcliptic();
-				body3d.showOrbit();
-			});
-		};
 		
 		var toggleCamera = function() {
 			viewSettings.lookFrom = trackOptionSelectors.from.val();
 			viewSettings.lookAt = trackOptionSelectors.at.val();
 			disableControls();
-			resetShownOrbit();
 
 			var lookFromBody = bodies3d[viewSettings.lookFrom];
 			var lookAtBody = bodies3d[viewSettings.lookAt];
 
 			if(lookFromBody){
-				currentCamera = lookFromBody.getCamera('pov');
-				lookFromBody.showEcliptic();
-				lookFromBody.hideOrbit();
+				currentCamera = lookFromBody.getCamera(POV_CAMERA_TYPE);
+				domEl.on('mousewheel', onMouseWheel);
 
-				if(lookAtBody) {
-					lookAtBody.hideOrbit();
-					domEl.on('mousewheel', onMouseWheel);
-				}
 			} else {
-
 				domEl.off('mousewheel');
 
-				if(viewSettings.lookFrom == 'orbital'){
-					currentCamera = (lookAtBody && lookAtBody.getCamera('orbital')) || globalCamera;
+				//if we want to look from an orbital camera, check if it is to look at a particular body or to the whole system
+				if(viewSettings.lookFrom == ORBITAL_CAMERA_TYPE){
+					currentCamera = (lookAtBody && lookAtBody.getCamera(ORBITAL_CAMERA_TYPE)) || globalCamera;
 					currentCamera.jsorrery && currentCamera.jsorrery.controls && (currentCamera.jsorrery.controls.enabled = true);
 				}
 			}
+
+			//we show/hide orbits and ecliptics depending on what bodies are of interest
+			OrbitLinesManager.onCameraChange(lookFromBody, lookAtBody);
+
 			updateCamera();
 			scene.draw();
 		};
@@ -74,7 +63,7 @@ define(
 			return out;
 		};
 
-		var updateCamera = function(isPlaying) {
+		var updateCamera = function() {
 
 			if(typeof viewSettings.lookFrom == 'undefined') toggleCamera();
 
@@ -88,32 +77,30 @@ define(
 				controls.update();
 			} else if(viewSettings.lookFrom) {
 
-				if(viewSettings.lookAt){
-					if(lookAtBody) {
-						lookAt.copy(lookAtBody.getPosition()).sub(lookFromBody.getPosition());	
-					} else if(viewSettings.lookAt == 'night') {
-						lookAt.copy(lookFromBody.getPosition());
-						lookAt.multiplyScalar(2);
-					} else if('front,back'.indexOf(viewSettings.lookAt) !== -1) {
-						var vel = lookFromBody.celestial.movement;
-						lookAt.copy(vel).normalize();
-						if(viewSettings.lookAt=='back') lookAt.negate();
-					} else {
-						lookAt.set(0, 0, 0);
-					}
+				if(lookAtBody) {
+					lookAt.copy(lookAtBody.getPosition()).sub(lookFromBody.getPosition());	
+				} else if(viewSettings.lookAt == 'night') {
+					lookAt.copy(lookFromBody.getPosition());
+					lookAt.multiplyScalar(2);
+				} else if('front,back'.indexOf(viewSettings.lookAt) !== -1) {
+					var vel = lookFromBody.celestial.movement;
+					lookAt.copy(vel).normalize();
+					if(viewSettings.lookAt=='back') lookAt.negate();
 				} else {
-					lookAt.set(0, 0, 0);
+					lookAt.set(0, 0, 0).sub(lookFromBody.getPosition());
 				}
-
+			
 				currentCamera.lookAt(lookAt);
 			}
 
-			//currentCamera.updateProjectionMatrix();
 		};
 
 		var onMouseWheel = function(event, delta, deltaX, deltaY) {
 			delta = delta / Math.abs(delta);
-			globalCamera.fov += globalCamera.fov * 0.1 * delta;
+			currentCamera.fov += currentCamera.fov * 0.1 * delta;
+			if(currentCamera.fov > MAX_FOV) currentCamera.fov = MAX_FOV;
+			currentCamera.updateProjectionMatrix();
+			scene.draw();
 		};
 
 		var onControlsUpdate = function(){
@@ -136,6 +123,7 @@ define(
 
 			if(isOrbital){
 				var controls = new THREE.OrbitControls(cam, domEl.get(0));
+				//set the controls as a property of the camera, but namespaced
 				cam.jsorrery = cam.jsorrery || {};
 				cam.jsorrery.controls = controls;
 				controls.addEventListener('change', onControlsUpdate);
@@ -158,9 +146,9 @@ define(
 				scene = sceneParam;
 				domEl = container;
 				cameraParams = {
-					fov : fov || defaultCameraFov,
+					fov : fov || DEFAULT_FOV,
 					aspect : aspect,
-					near : 1,
+					near : 0.1,
 					far : stageSize * 10
 				};
 
@@ -194,19 +182,19 @@ define(
 				Gui.addOption(LOOKAT_SEL_ID, body3d.getName(), bodies3d.length);
 
 				var pov = getNewCamera();
-				body3d.addCamera('pov', pov);
+				body3d.addCamera(POV_CAMERA_TYPE, pov);
 
 				var orbital = getNewCamera(true);
 
 				orbital.position.set(0, -1, body3d.getPlanetStageSize() * 1000);
 
-				body3d.addCamera('orbital', orbital);
+				body3d.addCamera(ORBITAL_CAMERA_TYPE, orbital);
 
 				bodies3d.push(body3d);
 			},
 
-			updateCamera : function(isPlaying){
-				updateCamera(isPlaying);
+			updateCamera : function(){
+				updateCamera();
 				return currentCamera;
 			},
 

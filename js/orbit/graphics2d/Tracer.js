@@ -6,7 +6,7 @@ define(
 		'three'
 	], 
 	function(ns, $) {
-
+		'use strict';
 		return {
 			init : function(color){
 				this.color = color;

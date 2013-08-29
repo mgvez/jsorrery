@@ -8,7 +8,7 @@ define(
 		'three'
 	], 
 	function(ns, $, Tracer) {
-
+		'use strict';
 		var Body = {
 
 			init : function(celestialBody) {

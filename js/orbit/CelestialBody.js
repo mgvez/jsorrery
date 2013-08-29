@@ -9,7 +9,7 @@ define(
 		'three'
 	], 
 	function(ns, $, Verlet, OrbitalElements) {
-
+		'use strict';
 		var CelestialBody = {
 
 			init : function(display) {
@@ -21,24 +21,25 @@ define(
 				this.orbitalElements = Object.create(OrbitalElements);
 				this.orbitalElements.setName(this.name);
 				this.orbitalElements.setDefaultOrbit(this.orbit, this.orbitCalculator);
+				//console.log(this.name, this.position, this.velocity);
 
-				var elements = this.orbitalElements.calculateElements(ns.startEpochTime);
+			},
+
+			setPositionFromDate : function(epochTime) {
+				this.angle = 0;
+				this.totalDist = 0;
+
+				this.force = new THREE.Vector3();
+				this.movement = new THREE.Vector3();
+
+				var elements = this.orbitalElements.calculateElements(epochTime);
 				this.period = this.orbitalElements.calculatePeriod(elements, this.relativeTo);
 				this.position = this.isCentral ? new THREE.Vector3() : this.orbitalElements.getPositionFromElements(elements);
 				this.relativePosition = new THREE.Vector3();
-				this.velocity = this.isCentral ? new THREE.Vector3() : this.orbitalElements.calculateVelocity(ns.startEpochTime, this.relativeTo, this.isPerturbedOrbit);
-
-
-				this.angle = 0;
-				this.totalDist = 0;
-				//this.isLog = true;
-				//this.createLogger();
-
+				this.velocity = this.isCentral ? new THREE.Vector3() : this.orbitalElements.calculateVelocity(epochTime, this.relativeTo, this.isPerturbedOrbit);
+				
 				this.verlet = Object.create(Verlet);
 				this.verlet.setBody(this);
-
-				//console.log(this.name, this.position, this.velocity);
-
 			},
 
 			afterInitialized : function(){
@@ -97,7 +98,7 @@ define(
 			getOrbitVertices : function(isElliptic){
 				if(!this.period) return;
 				
-				var startTime = ns.startEpochTime + ns.U.epochTime;
+				var startTime = ns.U.currentTime;
 
 				var incr = this.period / 360;
 				var points = [];
@@ -108,6 +109,9 @@ define(
 				var step;
 				var total = 0;
 				var defaultOrbitalElements;
+				var computed;
+				var angleToPrevious;
+
 
 				//if we want an elliptic orbit from the current planet's position (i.e. the ellipse from which the velocity was computed with vis-viva), setup fake orbital elements from the position
 				if(isElliptic) {
@@ -122,21 +126,30 @@ define(
 					defaultOrbitalElements.base.M /= ns.DEG_TO_RAD;
 					incr = ns.DAY;
 					startTime = 0;
-				}
-				var computed;
-				
+				}				
 
 				for(var i=0; total < 360; i++){
 					computed = this.orbitalElements.calculateElements(startTime+(incr*i), defaultOrbitalElements);
 					point = this.orbitalElements.getPositionFromElements(computed);
 					if(lastPoint) {
 						angle = point.angleTo(lastPoint) * ns.RAD_TO_DEG;
-						if(angle > 1.3){
-							for(j=0; j < angle; j++){
+						//make sure we do not go over 360.5 
+						if(angle > 1.3 || ((angle + total) > 360.5)){
+							for(j=0; j < angle ; j++){
 								step = (incr*(i-1)) + ((incr / angle) * j);
 								computed = this.orbitalElements.calculateElements(startTime + step, defaultOrbitalElements);
 								point = this.orbitalElements.getPositionFromElements(computed);
+								//when finishing the circle try to avoid going too far over 360 (break after first point going over 360)
+								if(total > 358) {
+									angleToPrevious = point.angleTo(points[points.length - 1]) * ns.RAD_TO_DEG;
+									if((angleToPrevious+total)>360) {
+										points.push(point);
+										break;
+									} 
+								}
+
 								points.push(point);
+								
 							}
 							total += point.angleTo(lastPoint) * ns.RAD_TO_DEG;
 							lastPoint = point;
@@ -199,7 +212,7 @@ define(
 					}
 
 					if ((ns.U.epochTime % this.displayElementsDelay) == 0) {
-						var computed = this.orbitalElements.calculateElements(ns.startEpochTime + ns.U.epochTime );
+						var computed = this.orbitalElements.calculateElements(ns.U.currentTime );
 						var pos =  this.orbitalElements.getPositionFromElements(computed);
 						this.dispatchEvent( {type:'spot', pos:pos} );
 					}

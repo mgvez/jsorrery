@@ -5,7 +5,7 @@ define(
 		'three'
 	],
 	function(ns, $) {
-	
+		'use strict';
 		var beginPos = new THREE.Vector3();
 		var Verlet = {
 			setBody : function(b){

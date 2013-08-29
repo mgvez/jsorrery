@@ -5,7 +5,7 @@
 (function(ns, undefined) {
 	define([], 
 	function() {
-
+		'use strict';
 		ns.app = null;
 		ns.name = 'orbit';
 		ns.version = '2013-05-07';
@@ -25,14 +25,6 @@
 		ns.SIDERAL_DAY = 3600 * 23.9344696;
 
 		ns.J2000 = new Date(2000, 0, 1);
-		ns.startDate = new Date();
-		ns.startDate = new Date(2003, 2, 23);
-		//ns.startDate = new Date(2003, 6, 1);
-		//startDate = new Date(1977, 3, 10);
-		//startDate = new Date(1980, 5, 27);
-		//startDate = J2000;
-		//console.log(J2000/(ns.DAY*1000));
-		ns.startEpochTime =  ((ns.startDate - ns.J2000) / 1000) ;
 
 		ns.defaultCalculationsPerTick = 200;
 

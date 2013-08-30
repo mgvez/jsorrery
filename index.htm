@@ -5,72 +5,44 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="author" content="Martin Vézina, La Grange">
 		<script data-main="./js/app.js" src="./js/require.js"></script>
-		<title>Orbit</title> 
+		<title>jsOrrery - La Grange</title>
 
-		<style>
-			body{
-				margin:0;
-				padding:0;
-				font-family:Verdana;
-				font-size:9px;
-				color:#aaa;
-			}
-			#logger{
-				position:absolute;
-				top:10px;
-				right:10px;
-				z-index:100;
-				padding:1px;
-				border:1px grey solid;
-				width: auto;
-			}
-			.planetLogger{
-				width:100%;
-				margin:1px 0;
-			}
-
-			#gui{
-				position:absolute;
-				z-index:1000;
-				top:10px;
-				left:10px;
-				width: 300px;
-				background:#333;
-				border:1px #888 solid;
-				padding:10px;
-			}
-			.planetLabel{
-				position:absolute;
-				color:#fff;
-				font-size:9px;
-				left: 24px;
-			}
-			.planetSpot {
-				width:20px;
-				height:20px;
-				position:absolute;
-				border:1px #222 solid;
-				-webkit-border-radius:10px;
-				margin-top:-10px;
-				margin-left:-10px;
-			}
-
-			label{
-				display:block;
-			}
-
-			#stats { position: absolute; bottom:0; left: 0 }
-			#stats #fps { background: transparent !important }
-			#stats #fps #fpsText { color: #aaa !important }
-			#stats #fps #fpsGraph { display: none }
-
-		</style>
+		<link href='http://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
 
 		<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.10.3.custom.min.css">
+		<link rel="stylesheet" type="text/css" href="css/master.css">
 	</head>
-	<body style="background:black;">
-		
-		<div id="logger"></div>
-		<div id="gui"></div>
+	<body>
+		<nav>
+			<div id="gui">
+				<div id="startCont" class="inputContainer"></div>
+				<label>
+					<span>Date</span>
+					<div id="dateCont" class="inputContainer"></div>
+				</label>
+				<label>
+					<span>Scenario</span>
+					<div id="scenarioCont" class="inputContainer"></div>
+				</label>
+				<label>
+					<span>Point of view </span>
+					<div id="lookFromCont" class="inputContainer"></div>
+				</label>
+				<label>
+					<span>Look at</span>
+					<div id="lookAtCont" class="inputContainer"></div>
+				</label>
+				<label>
+					<span>Trace paths relative to</span>
+					<div id="traceFromCont" class="inputContainer"></div>
+				</label>
+				<label>
+					<span>Planet Scale</span>
+					<div id="scaleCtrlCont" class="inputContainer"></div>
+				</label>
+			</div>
+		</nav>
+
+			
 	</body>
 </html>

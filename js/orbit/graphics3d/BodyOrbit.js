@@ -50,12 +50,10 @@ define(
 					}
 					this.ellipticOrbitLine.setLine(orbitVertices);
 
-
-					this.recalculateListener = function(){
-						this.recalculateOrbitLine(false);
-					}.bind(this);
-
 					if(this.celestial.isPerturbedOrbit) {
+						this.recalculateListener = function(){
+							this.recalculateOrbitLine(false);
+						}.bind(this);
 						this.celestial.addEventListener('revolution', this.recalculateListener);
 					}
 

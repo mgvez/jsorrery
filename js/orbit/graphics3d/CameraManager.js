@@ -161,19 +161,19 @@ define(
 				viewSettings = {};
 
 				trackOptionSelectors = {
-					from: Gui.addDropdown(LOOKFROM_SEL_ID, 'Look from', toggleCamera),
-					at : Gui.addDropdown(LOOKAT_SEL_ID, 'Look at', toggleCamera)
+					from: Gui.addDropdown(LOOKFROM_SEL_ID, toggleCamera),
+					at : Gui.addDropdown(LOOKAT_SEL_ID, toggleCamera)
 				};
 				
-				Gui.addOption(LOOKFROM_SEL_ID, 'orbital camera', 'orbital');
-				Gui.addOption(LOOKAT_SEL_ID, 'whole system', 'universe');
+				Gui.addOption(LOOKFROM_SEL_ID, 'Free camera', 'orbital');
+				Gui.addOption(LOOKAT_SEL_ID, 'System', 'universe');
 
 				if(ns.U.getBody().name == 'sun') {
-					Gui.addOption(LOOKAT_SEL_ID, 'night (away from the sun)', 'night');
+					Gui.addOption(LOOKAT_SEL_ID, 'Night (away from the sun)', 'night');
 				}
 				
-				Gui.addOption(LOOKAT_SEL_ID, 'direction of velocity', 'front');
-				Gui.addOption(LOOKAT_SEL_ID, 'inverse direction of velocity', 'back');
+				Gui.addOption(LOOKAT_SEL_ID, 'Direction of velocity', 'front');
+				Gui.addOption(LOOKAT_SEL_ID, 'Inverse direction of velocity', 'back');
 
 			},
 

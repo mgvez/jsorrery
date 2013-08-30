@@ -41,7 +41,7 @@ define(
 				this.bodies3d = [];
 				this.container = containerParam;
 				this.toggleTraceFrom = toggleTraceFrom.bind(this);
-				this.selector = Gui.addDropdown('traceFrom', 'Trace paths relative to', this.toggleTraceFrom);
+				this.selector = Gui.addDropdown('traceFrom', this.toggleTraceFrom);
 				Gui.addOption('traceFrom', 'none', null);
 				this.toggleTraceFrom();
 			},

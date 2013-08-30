@@ -53,7 +53,7 @@ define(
 				CameraManager.init(this, this.width/this.height, scenario.fov, this.stageSize, this.container);
 				OrbitLinesManager.init(this.root);
 
-				Gui.addSlider(SCALE_CTRL_ID, function(val){
+				Gui.addSlider(SCALE_CTRL_ID, 'Planet Scale', function(val){
 					val = val < 1 ? 1 : val;
 					//console.log(val);
 					//val = Math.pow(val, 1.5);

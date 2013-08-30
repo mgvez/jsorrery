@@ -1,0 +1,157 @@
+
+	
+
+@roboto : 'Roboto', sans-serif;
+
+
+@borderCol : #333;
+@inputBg : rgba(255, 255, 255, 0.1);
+@selectActiveBg : rgba(25, 25, 25, 0.9);
+@txCol : #aaa;
+
+body{
+	margin:0;
+	padding:0;
+	font-family:@roboto;
+	font-size:11px;
+	color: @txCol;
+	background: black;
+	overflow:hidden;
+}
+
+
+
+
+#universe{
+
+}
+
+nav{
+	position:absolute;
+	z-index:1000;
+	top:0;
+	left:0;
+	height: 100%;
+	width: 300px;
+	background: rgba(0, 0, 0, 0.3);
+	border-bottom:1px #888 solid;
+	#gui{
+		padding: 12px;
+		
+		.inputContainer{
+			position:relative;
+			min-height: 30px;
+		}
+
+		ul{
+			list-style-type:none;
+			margin:0;
+			padding:0;
+			font-weight:normal;
+			position:absolute;
+
+			li{
+				margin:0;
+				padding: 2px 8px;
+				border-bottom: 1px black solid;
+				&.selected{
+					.inputBox();
+				}
+				&:hover, &.selected{
+					font-weight:bold;
+					color:#fff;
+				}
+
+				&.disabled{
+					font-weight:normal;
+					color:@txCol;
+					opacity:0.4;
+				}
+			}
+
+			&.open{
+				.inputBox(@selectActiveBg);
+				z-index:1000;
+			}
+		}
+
+		label{
+			display:block;
+			margin: 6px 0;
+			& > span{
+				display:block;
+				font-weight:bold;
+			}
+		}
+
+		input, button{
+			font-family:@roboto;
+		}
+
+		input{
+			.inputBox();
+			padding:2px 8px;
+		}
+
+		button{
+
+			text-transform: uppercase;
+		}
+	}
+
+}
+
+.inputBox(@bg : @inputBg){
+	background: @bg;
+	border: 1px @borderCol solid;
+	color:white;
+	
+}
+
+.planetLabel{
+	position:absolute;
+	color:#fff;
+	font-size:9px;
+	left: 24px;
+}
+
+.planetSpot {
+	@sz : 20px;
+	width:@sz;
+	height:@sz;
+	position:absolute;
+	border:1px #222 solid;
+	.border-radius(50%);
+	margin-top:-@sz / 2;
+	margin-left:-@sz / 2;
+}
+
+
+
+#stats { 
+	position: absolute;
+	bottom:0;
+	left: 0;
+	#fps {
+		background: transparent !important;
+		#fpsText { color: #aaa !important; }
+		#fpsGraph { display: none; }
+	}
+}
+
+
+
+
+// Drop shadows
+.box-shadow(@shadow) {
+  -webkit-box-shadow: @shadow;
+     -moz-box-shadow: @shadow;
+          box-shadow: @shadow;
+}
+
+// Border Radius
+.border-radius(@radius) {
+  -webkit-border-radius: @radius;
+     -moz-border-radius: @radius;
+          border-radius: @radius;
+}

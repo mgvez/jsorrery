@@ -38,7 +38,7 @@ define(
 				}.bind(this));
 
 				var scenarios = ScenarioLoader.getList();
-				var scenarioChanger =  Gui.addDropdown('scenario', 'Scenario', function(){
+				var scenarioChanger =  Gui.addDropdown('scenario', function(){
 					this.loadScenario(scenarioChanger.val());
 				}.bind(this));
 				_.each(scenarios, function(scenario){

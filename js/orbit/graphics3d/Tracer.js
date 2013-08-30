@@ -62,6 +62,7 @@ define(
 			
 			unlistenToVertexChange : function() {
 				if(!this.listeners) return;
+				var listener;
 				while(listener = this.listeners.pop()){
 					listener.dispatcher.removeEventListener(listener.event, listener.handler);
 				}

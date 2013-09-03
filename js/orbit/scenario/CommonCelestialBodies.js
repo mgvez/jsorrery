@@ -127,7 +127,7 @@ define(
 				mass : 7.3477e22,
 				radius : 1738.1,
 				color : "#ffffff",
-				map : 'img/moonmap1k.jpg',
+				map : 'img/moonmap4k_levels.jpg',
 				//map : 'img/moonmap1k_stripe.jpg',
 				sideralDay : (27.321582 * ns.DAY) + 11000,
 				tilt : 1.5424,
@@ -160,7 +160,7 @@ define(
 						var angleX = eclPos.angleTo(new THREE.Vector3(1, 0, 0));
 						var angleY = eclPos.angleTo(new THREE.Vector3(0, 1, 0));
 						//console.log(angleX, angleY);
-						var angle = angleX;
+						var angle = angleX + 0.1;
 						var q = Math.PI / 2;
 						if(angleY > q) angle = -angleX; 
 						this.originalMapRotation = angle + Math.PI;

@@ -103,10 +103,12 @@ define(
 			},
 
 			addDate : function(){
-				this.dateDisplay = $('<input>').appendTo(getContainer('date'));
-				this.dateDisplay.datepicker({
-					dateFormat : $.datepicker.ATOM
-				});
+				if(!this.dateDisplay) {
+					this.dateDisplay = $('<input>').appendTo(getContainer('date'));
+					this.dateDisplay.datepicker({
+						dateFormat : $.datepicker.ATOM
+					});
+				}
 				return this.dateDisplay;
 			},
 

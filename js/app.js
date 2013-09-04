@@ -42,7 +42,10 @@
 		}
 	});
 		
-	require(['jquery', 'orbit/Main'], function($, Orbit){
+	require([
+		'jquery',
+		'orbit/Main'
+	], function($, Orbit){
 		$(function(){
 			ns.app = Orbit.init();
 		});

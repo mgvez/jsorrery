@@ -11,17 +11,15 @@ define(
 		'orbit/algorithm/GravityTicker',
 		'orbit/graphics3d/Scene',
 		'orbit/gui/Gui',
-		'orbit/scenario/ScenarioLoader',
 		'_'
 	], 
-	function(ns, $, CelestialBody, GravityTicker, Scene, Gui, ScenarioLoader) {
+	function(ns, $, CelestialBody, GravityTicker, Scene, Gui) {
 		'use strict';
 		var Universe = {
-			init : function(){
+			init : function(scenario){
 
 				ns.U = this;
 				
-				Gui.init();
 				Gui.addBtn('start/stop', 'start', function(){
 					this.playing = !this.playing;
 				}.bind(this));
@@ -37,25 +35,12 @@ define(
 
 				}.bind(this));
 
-				var scenarios = ScenarioLoader.getList();
-				var scenarioChanger =  Gui.addDropdown('scenario', function(){
-					this.loadScenario(scenarioChanger.val());
-				}.bind(this));
-				_.each(scenarios, function(scenario){
-					Gui.addOption('scenario', scenario.title, scenario.name);
-				});
+				this.ticker = this.tick.bind(this);
 				
-				this.loadScenario(scenarios[0].name);
-				this.tick();
-			},
-
-			loadScenario : function(name){
-				this.killScenario();
 				this.playing = false;
 				this.epochTime = 0;
 				this.currentTime = this.startEpochTime = this.getEpochTime();
 				this.date = new Date();
-				var scenario = ScenarioLoader.get(name);
 				this.createBodies(scenario);
 
 				this.scene = Object.create(Scene);
@@ -69,10 +54,15 @@ define(
 				GravityTicker.setCalculationsPerTick(scenario.calculationsPerTick || ns.defaultCalculationsPerTick);
 				
 				this.showDate();
+				this.tick();
 
 			},
 
-			killScenario : function(){
+			kill : function(){
+				//kills the animation callback
+				this.killed = true;
+				this.dateDisplay.off('.orbit');
+
 				if(!this.scene) return;
 				this.scene.kill();
 				this.centralBody = null;
@@ -166,6 +156,7 @@ define(
 			},
 
 			tick : function() {
+				if(this.killed) return;
 				if(this.playing) {
 					var deltaT = GravityTicker.tick();
 					this.epochTime += deltaT;
@@ -178,7 +169,7 @@ define(
 					this.scene.updateCamera();
 				}
 				
-				requestAnimFrame(this.tick.bind(this));
+				requestAnimFrame(this.ticker);
 			},
 
 			getEpochTime : function(userDate) {

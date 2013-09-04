@@ -27,6 +27,8 @@ define(
 		var viewSettings;
 		var globalCamera;
 		var currentCamera;
+		var allCameras;
+		var cameraParams;
 		var scene;
 		var domEl;
 		var lookAt = new THREE.Vector3();
@@ -115,8 +117,6 @@ define(
 			return dimToSee * Math.atan(fov * 2 * ns.DEG_TO_RAD);
 		};
 
-		var allCameras = [];
-		var cameraParams;
 		var getNewCamera = function(isOrbital){
 			var cam = new THREE.PerspectiveCamera(cameraParams.fov, cameraParams.aspect, cameraParams.near, cameraParams.far);
 			cam.up = new THREE.Vector3(0,0,1);
@@ -145,6 +145,9 @@ define(
 			init : function(sceneParam, aspect, fov, stageSize, container){
 				scene = sceneParam;
 				domEl = container;
+				allCameras = [];
+				bodies3d = [];
+				viewSettings = {};
 				cameraParams = {
 					fov : fov || DEFAULT_FOV,
 					aspect : aspect,
@@ -156,9 +159,6 @@ define(
 				globalCamera.position.set(0, -1, getDistanceFromFov(stageSize, globalCamera.fov));
 
 				scene.root.add(globalCamera);
-
-				bodies3d = [];
-				viewSettings = {};
 
 				trackOptionSelectors = {
 					from: Gui.addDropdown(LOOKFROM_SEL_ID, toggleCamera),
@@ -186,7 +186,7 @@ define(
 
 				var orbital = getNewCamera(true);
 
-				orbital.position.set(0, -1, body3d.getPlanetStageSize() * 1000);
+				orbital.position.set(0, -1, body3d.getPlanetStageSize() * 200);
 
 				body3d.addCamera(ORBITAL_CAMERA_TYPE, orbital);
 

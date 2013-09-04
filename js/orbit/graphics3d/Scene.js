@@ -50,7 +50,8 @@ define(
 				this.container.append(this.renderer.domElement);
 
 				//this.drawAxis();
-				CameraManager.init(this, this.width/this.height, scenario.fov, this.stageSize, this.container);
+				this.cameraManager = Object.create(CameraManager);
+				this.cameraManager.init(this, this.width/this.height, scenario.fov, this.stageSize, this.container);
 				OrbitLinesManager.init(this.root);
 
 				Gui.addSlider(SCALE_CTRL_ID, 'Planet Scale', function(val){
@@ -92,7 +93,7 @@ define(
 			},
 
 			toXYCoords:function (pos) {
-		        var vector = projector.projectVector(pos, CameraManager.getCamera());
+		        var vector = projector.projectVector(pos, this.cameraManager.getCamera());
 		        vector.x = (vector.x + 1)/2 * this.width;
 		        vector.y = -(vector.y - 1)/2 * this.height;/**/
 		        return vector;
@@ -112,12 +113,12 @@ define(
 				}.bind(this));
 
 				//center the milkyway to the camera position, to make it look infinite
-				this.milkyway.setPosition(CameraManager.getCamera().position);
+				this.milkyway.setPosition(this.cameraManager.getCamera().position);
 
-				this.renderer.render(this.root, CameraManager.getCamera());
+				this.renderer.render(this.root, this.cameraManager.getCamera());
 
 				//after all bodies have been positionned, update camera matrix (as camera might be attached to a body)
-				CameraManager.updateCameraMatrix();
+				this.cameraManager.updateCameraMatrix();
 				_.each(this.bodies3d, function(b){
 					b.placeLabel(this.toXYCoords(b.getPosition()), this.width, this.height);
 				}.bind(this));
@@ -127,7 +128,7 @@ define(
 
 			//camera might move and/or look at a different point depending on bodies movements
 			updateCamera : function(){
-				CameraManager.updateCamera();
+				this.cameraManager.updateCamera();
 			},
 
 			//when the date has changed by the user instead of by the playhead, we need to recalculate the orbits and redraw
@@ -144,7 +145,7 @@ define(
 				this.bodies3d.push(body3d);
 				body3d.setParentDisplayObject(this.root);
 				
-				CameraManager.addBody(body3d);
+				this.cameraManager.addBody(body3d);
 				OrbitLinesManager.addBody(body3d);
 				
 				this.waitForTexture(celestialBody.map);
@@ -196,7 +197,7 @@ define(
 			},
 
 			kill : function(){
-				CameraManager.kill();
+				this.cameraManager.kill();
 				OrbitLinesManager.kill();
 				Gui.remove(SCALE_CTRL_ID);
 				_.each(this.bodies3d, function(body3d){

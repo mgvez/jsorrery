@@ -7,7 +7,7 @@ define(
 		'use strict';
 
 		var MilkyWay = {
-			mapSrc : 'img/bg/milkyway.jpg',
+			mapSrc : 'img/milkyway.jpg',
 			init : function(size){
 				var matOptions = {
 					map : THREE.ImageUtils.loadTexture(this.mapSrc),

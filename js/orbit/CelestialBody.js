@@ -43,6 +43,9 @@ define(
 			},
 
 			afterInitialized : function(){
+
+				this.previousRelativePosition = this.position.clone();
+
 				if(this.relativeTo) {
 					var central = ns.U.getBody(this.relativeTo);
 					if(central && central!==ns.U.getBody()) {
@@ -50,8 +53,6 @@ define(
 						this.velocity.add(central.velocity);
 					}
 				}
-				this.previousPosition = this.position.clone();
-				this.originalPosition = this.position.clone();
 				this.afterMove(0);
 
 				if(this.customInitialize) this.customInitialize();
@@ -166,22 +167,24 @@ define(
 			afterTick : function() {
 				var relativeToPos = ns.U.getBody(this.relativeTo).getPosition();
 				this.relativePosition.copy(this.position).sub(relativeToPos);
-				this.movement.copy(this.relativePosition).sub(this.previousPosition);
+				this.movement.copy(this.relativePosition).sub(this.previousRelativePosition);
 
 				//distance 
 				this.totalDist += this.movement.length();
-				this.angle += this.relativePosition.angleTo(this.previousPosition);
-				this.previousPosition.copy(this.relativePosition);
+				this.angle += this.relativePosition.angleTo(this.previousRelativePosition);
+				this.previousRelativePosition.copy(this.relativePosition);
 
 				if(this.totalDist > this.vertexDist) {
 					this.dispatchEvent( {type:'vertex'} );
 					this.totalDist = this.totalDist % this.vertexDist;
 				}
-
+				
 				if(this.angle > ns.CIRCLE){
 					this.angle = this.angle % ns.CIRCLE;
 					this.dispatchEvent( {type:'revolution'} );
 				}
+
+				this.afterMove(ns.U.epochTime);
 
 			},
 

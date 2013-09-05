@@ -29,17 +29,34 @@ define(
 			if(!isOpen) {
 				options.show();
 				list.addClass('open');
+
+				list.on('mouseleave.orbit', function(e){
+					closeList(list, options, options.filter('.selected'));
+				});
+
+				list.data('open', true);
+
 			} else {
 				if(clickedOption.hasClass('disabled')) return;
-				list.removeClass('open');
-				options.hide();
-				options.removeClass('selected');
-				clickedOption.show();
-				clickedOption.addClass('selected');
+				closeList(list, options, clickedOption);
+
 				input.val(clickedOption.data('value')).trigger('change');
 			}
 
-			list.data('open', !isOpen);
+		};
+
+
+		var closeList = function(list, options, clickedOption) {
+			
+			list.removeClass('open');
+			options.hide();
+			options.removeClass('selected');
+			clickedOption.show();
+			clickedOption.addClass('selected');
+			list.off('.orbit');
+
+			list.data('open', false);
+
 		};
 
 		return {

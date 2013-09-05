@@ -23,7 +23,6 @@ define(
 				activeScenario.kill();
 			}
 
-
 			activeScenario = Object.create(Universe);
 			activeScenario.init(scenarioConfig);
 
@@ -33,8 +32,7 @@ define(
 			init : function(){
 
 				Gui.init();
-
-
+				
 				var scenarios = ScenarioLoader.getList();
 				var scenarioChanger =  Gui.addDropdown('scenario', function(){
 					loadScenario(scenarioChanger.val());
@@ -44,8 +42,7 @@ define(
 					Gui.addOption('scenario', scenario.title, scenario.name);
 				});
 
-
-				loadScenario(scenarios[0].name);
+				loadScenario(scenarios[2].name);
 
 			}
 		};

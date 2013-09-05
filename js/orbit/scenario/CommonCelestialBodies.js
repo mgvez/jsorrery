@@ -3,10 +3,11 @@ define(
 	[
 		'jquery',
 		'orbit/NameSpace',
-		'orbit/scenario/MoonRealOrbit'
+		'orbit/scenario/MoonRealOrbit',
+		'vendor/greensock/TweenMax',
+		'vendor/greensock/easing/EasePack',
 	],
-	function($, ns, MoonRealOrbit){
-
+	function($, ns, MoonRealOrbit, tmax){
 		var common = {
 			sun : {
 				mass : 1.9891e30,
@@ -128,8 +129,7 @@ define(
 				radius : 1738.1,
 				color : "#ffffff",
 				map : 'img/moonmap4k_levels.jpg',
-				//map : 'img/moonmap1k_stripe.jpg',
-				sideralDay : (27.321582 * ns.DAY) + 11000,
+				sideralDay : (27.3215782 * ns.DAY) ,
 				tilt : 1.5424,
 				fov : 1,
 				relativeTo : 'earth',
@@ -152,23 +152,34 @@ define(
 						o : (360 / 18.600) / 365.25
 					}	
 				},
-				customInitialize : function() {
+				getAngleToEarth : function(){
 					var earth = ns.U.getBody('earth');
 					if(earth) {
-						var eclPos = this.position.clone().normalize();
+						
+						var eclPos = this.position.clone().sub(earth.getPosition()).normalize();
 						eclPos.z = 0;
 						var angleX = eclPos.angleTo(new THREE.Vector3(1, 0, 0));
 						var angleY = eclPos.angleTo(new THREE.Vector3(0, 1, 0));
 						//console.log(angleX, angleY);
-						var angle = angleX + 0.1;
+						var angle = angleX;// + 0.1;//ajustement
 						var q = Math.PI / 2;
-						if(angleY > q) angle = -angleX; 
-						this.originalMapRotation = angle + Math.PI;
+						if(angleY > q) angle = -angleX;
+						return angle;
+					}
+				},
+				customInitialize : function() {
+					this.baseMapRotation = this.getAngleToEarth() + Math.PI;
+					this.nextCheck = this.sideralDay;
+				},
+				afterMove : function(time){
+					//when a sideral day has passed, make sure that the near side is still facing the earth. Since the moon's orbit is heavily disturbed, some imprecision occurs in its orbit, and its duration is not always the same, especially in an incomplete scenario (where there are no sun/planets). Therefore, a correction is brought to the base map rotation, tweened so that is is not jerky.
+					if(time >= this.nextCheck){
+						this.nextCheck += this.sideralDay;
+						TweenMax.to(this, 2, {baseMapRotation : this.getAngleToEarth() + Math.PI, ease:Sine.easeInOut});
 					}
 				}
 			}
 		};
-
 		return common;
 
 	}

@@ -127,7 +127,7 @@ define(
 
 				if(this.celestial.sideralDay){
 					var curRotation = (ns.U.epochTime / this.celestial.sideralDay) * ns.CIRCLE;
-					this.planet.rotation.y = (this.celestial.originalMapRotation || 0) + curRotation;
+					this.planet.rotation.y = (this.celestial.baseMapRotation || 0) + curRotation;
 				}
 				this.tracer && this.tracer.doTrace(pos);
 				return pos;

@@ -17,7 +17,7 @@ define(
 		'use strict';
 		var Universe = {
 			init : function(scenario){
-
+				//Universe is, well, global
 				ns.U = this;
 				
 				Gui.addBtn('start/stop', 'start', function(){

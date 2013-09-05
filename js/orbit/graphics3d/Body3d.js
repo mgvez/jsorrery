@@ -23,7 +23,7 @@ define(
 					return this;
 				}.bind(this);
 
-				this.label = $('<div class="planetSpot"><div class="planetLabel">'+this.celestial.name+'</div></div>').appendTo('body');
+				this.label = $('<div class="planetSpot"><div class="planetLabel">'+(this.celestial.title || this.celestial.name)+'</div></div>').appendTo('body');
 			},
 
 			placeLabel : function(pos, w, h){

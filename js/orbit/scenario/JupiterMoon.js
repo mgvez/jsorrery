@@ -15,6 +15,7 @@ define(
 			commonBodies : ['jupiter'],
 			bodies : {
 				io : {
+					title : 'Io',
 					mass : 893.2e20,
 					radius:1821.6,
 					color : '#999999',
@@ -38,6 +39,7 @@ define(
 					}
 				},
 				europa : {
+					title : 'Europa',
 					mass : 480.0e20,
 					radius:1560.8,
 					color : '#999999',
@@ -61,6 +63,7 @@ define(
 					}
 				},
 				ganymede : {
+					title : 'Ganymede',
 					mass : 1481.9e20,
 					radius:2631.2,
 					color : '#999999',
@@ -84,6 +87,7 @@ define(
 					}
 				},
 				callisto : {
+					title : 'Callisto',
 					mass : 1075.9e20,
 					radius:2410.3,
 					color : '#999999',

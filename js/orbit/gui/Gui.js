@@ -123,7 +123,8 @@ define(
 				if(!this.dateDisplay) {
 					this.dateDisplay = $('<input>').appendTo(getContainer('date'));
 					this.dateDisplay.datepicker({
-						dateFormat : $.datepicker.ATOM
+						dateFormat : $.datepicker.ATOM,
+						changeYear : true
 					});
 				}
 				return this.dateDisplay;

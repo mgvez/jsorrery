@@ -1,4 +1,6 @@
 body{margin:0;padding:0;font-family:'Roboto',sans-serif;font-size:11px;color:#aaa;background:black;overflow:hidden}
+.ui-datepicker{background:rgba(25,25,25,0.95);border:1px #333 solid;padding:20px;display:none}.ui-datepicker td{width:18px;height:18px;text-align:center;background:rgba(255,255,255,0.1)}
+.ui-datepicker a{color:white;text-decoration:none}
 nav{position:absolute;z-index:1000;top:0;left:0;height:100%;width:300px;background:rgba(0,0,0,0.3);border-bottom:1px #888 solid}nav #gui{padding:12px}nav #gui .inputContainer{position:relative;min-height:20px}
 nav #gui ul{list-style-type:none;margin:0;padding:0;font-weight:normal;position:absolute}nav #gui ul li{margin:0;padding:2px 8px;border-bottom:1px black solid}nav #gui ul li.selected{background:rgba(255,255,255,0.1);border:1px #333 solid;color:white}
 nav #gui ul li:hover,nav #gui ul li.selected{font-weight:bold;color:#fff}
@@ -8,7 +10,7 @@ nav #gui label{display:block;margin:6px 0}nav #gui label>span{display:block;font
 nav #gui input,nav #gui button{font-family:'Roboto',sans-serif}
 nav #gui input{background:rgba(255,255,255,0.1);border:1px #333 solid;color:white;padding:2px 8px}
 nav #gui button{text-transform:uppercase}
-.planetLabel{position:absolute;color:#fff;font-size:9px;left:24px}
+.planetLabel{position:absolute;color:#fff;background:rgba(25,25,25,0.7);padding:3px;font-size:9px;left:24px;white-space:nowrap}
 .planetSpot{width:20px;height:20px;position:absolute;border:1px #222 solid;-webkit-border-radius:50%;-moz-border-radius:50%;border-radius:50%;margin-top:-10px;margin-left:-10px}
 #stats{position:absolute;bottom:0;left:0}#stats #fps{background:transparent !important}#stats #fps #fpsText{color:#aaa !important}
 #stats #fps #fpsGraph{display:none}

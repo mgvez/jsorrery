@@ -7,6 +7,8 @@
 @borderCol : #333;
 @inputBg : rgba(255, 255, 255, 0.1);
 @selectActiveBg : rgba(25, 25, 25, 0.9);
+@calendarBg : rgba(25, 25, 25, 0.95);
+@planetLabelBg : rgba(25, 25, 25, 0.7);
 @txCol : #aaa;
 
 body{
@@ -19,6 +21,25 @@ body{
 	overflow:hidden;
 }
 
+
+.ui-datepicker{
+	background:@calendarBg;
+	border: 1px @borderCol solid;
+	padding:20px;
+	display:none;
+
+	td{
+		width:18px;
+		height:18px;
+		text-align:center;
+		background: @inputBg;
+	}
+
+	a{
+		color:white;
+		text-decoration:none;
+	}
+}
 
 
 
@@ -105,14 +126,16 @@ nav{
 	background: @bg;
 	border: 1px @borderCol solid;
 	color:white;
-	
 }
 
 .planetLabel{
 	position:absolute;
 	color:#fff;
+	background:@planetLabelBg;
+	padding:3px;
 	font-size:9px;
 	left: 24px;
+	white-space: nowrap;
 }
 
 .planetSpot {

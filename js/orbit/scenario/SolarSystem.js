@@ -31,12 +31,6 @@ define(
 				'pluto',
 				'halley'
 			],
-			/*bodies : {
-				moon : {
-					isPerturbedOrbit : true,
-					isRecalculateOrbitLine : true
-				}
-			},/**/
 			secondsPerTick : 3600 * 5,
 			calculateAll : false
 		};

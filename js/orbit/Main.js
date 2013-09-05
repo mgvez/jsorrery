@@ -42,7 +42,7 @@ define(
 					Gui.addOption('scenario', scenario.title, scenario.name);
 				});
 
-				loadScenario(scenarios[2].name);
+				loadScenario(scenarios[0].name);
 
 			}
 		};

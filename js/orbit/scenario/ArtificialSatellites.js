@@ -19,6 +19,7 @@ define(
 			commonBodies : ['earth'],
 			bodies : {
 				mercury6 : {
+					title : 'Mercury 6',
 					mass : 1224.7,
 					radius : 2,
 					color : "#ffffff",
@@ -42,6 +43,7 @@ define(
 					}
 				},
 				hubble : {
+					title : 'Hubble ST',
 					mass : 11110,
 					radius : 2,
 					color : "#ffaa00",
@@ -66,6 +68,7 @@ define(
 
 				},
 				gemini6 : {
+					title : 'Gemini 6A',
 					mass : 1,
 					radius : 2,
 					color : '#00aaff',
@@ -89,6 +92,7 @@ define(
 					}
 				},
 				gps : {
+					title : 'Typical GPS Satellite',
 					mass : 1,
 					radius : 2,
 					color : '#00aaff',

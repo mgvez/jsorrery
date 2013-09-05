@@ -7,9 +7,10 @@ define(
 		'vendor/greensock/TweenMax',
 		'vendor/greensock/easing/EasePack',
 	],
-	function($, ns, MoonRealOrbit, tmax){
+	function($, ns, MoonRealOrbit){
 		var common = {
 			sun : {
+				title : 'The Sun',
 				mass : 1.9891e30,
 				radius : 6.96342e5,
 				color : '#ffff00',
@@ -17,6 +18,7 @@ define(
 				k : 0.01720209895 //gravitational constant (μ)
 			},
 			mercury : {
+				title : 'Mercury',
 				mass : 3.3022e23,
 				radius:2439,
 				color : '#588a7b',
@@ -27,6 +29,7 @@ define(
 				}
 			},
 			venus : {
+				title : 'Venus',
 				mass : 4.868e24,
 				radius : 6051,
 				color : '#fda700',
@@ -37,6 +40,7 @@ define(
 				}
 			},
 			earth : {
+				title : 'The Earth',
 				mass : 5.9736e24,
 				radius : 6378.1,
 				color : '#1F7CDA',
@@ -49,6 +53,7 @@ define(
 				}
 			},
 			mars : {
+				title : 'Mars',
 				mass : 6.4185e23,
 				radius : 3376,
 				color : '#ff3300',
@@ -61,6 +66,7 @@ define(
 			}
 			,
 			jupiter : {
+				title : 'Jupiter',
 				mass : 1.8986e27,
 				radius : 71492,
 				color : '#ff9932',
@@ -71,6 +77,7 @@ define(
 				}
 			},
 			saturn : {
+				title : 'Saturn',
 				mass : 5.6846e26,
 				radius : 58232,
 				color : '#ffcc99',
@@ -86,6 +93,7 @@ define(
 				}
 			},
 			uranus : {
+				title : 'Uranus',
 				mass : 8.6810e25,
 				radius : 25559,
 				color : '#99ccff',
@@ -96,6 +104,7 @@ define(
 				}
 			},
 			neptune : {
+				title : 'Neptune',
 				mass : 1.0243e26,
 				radius : 24764,
 				color : '#3299ff',
@@ -106,6 +115,7 @@ define(
 				}
 			},
 			pluto : {
+				title : 'Pluto',
 				mass : 1.305e22+1.52e21,
 				radius : 1153,
 				color : '#aaaaaa',
@@ -116,6 +126,7 @@ define(
 				}
 			},
 			halley : {
+				title : 'Halley Comet',
 				mass : 2.2e14,
 				radius : 50,
 				color : '#ffffff',
@@ -125,6 +136,7 @@ define(
 				}
 			},
 			moon : {
+				title : 'The Moon',
 				mass : 7.3477e22,
 				radius : 1738.1,
 				color : "#ffffff",
@@ -166,6 +178,7 @@ define(
 						if(angleY > q) angle = -angleX;
 						return angle;
 					}
+					return 0;
 				},
 				customInitialize : function() {
 					this.baseMapRotation = this.getAngleToEarth() + Math.PI;

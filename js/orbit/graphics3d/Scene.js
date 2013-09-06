@@ -4,7 +4,8 @@ define(
 		'orbit/NameSpace',
 		'jquery',
 		'orbit/graphics3d/Body3d',
-		'orbit/graphics3d/MilkyWay',
+		'orbit/graphics3d/MilkyWayParticles',
+		'orbit/graphics3d/Sun',
 		'orbit/graphics3d/CameraManager',
 		'orbit/graphics3d/OrbitLinesManager',
 		'orbit/graphics3d/Dimensions',
@@ -13,7 +14,7 @@ define(
 		'three/stats',
 		'_'
 	], 
-	function(ns, $, Body3D, MilkyWay, CameraManager, OrbitLinesManager, Dimensions, Gui){
+	function(ns, $, Body3D, MilkyWay, Sun, CameraManager, OrbitLinesManager, Dimensions, Gui){
 		'use strict';
 		var projector;
 		var stats;
@@ -70,9 +71,22 @@ define(
 
 			setMilkyway : function(){
 				var milkyway = this.milkyway = Object.create(MilkyWay);
-				milkyway.init(this.stageSize * 4);
-				this.waitForTexture(milkyway.mapSrc);
+				var onReady = milkyway.init(this.stageSize * 4);
+				
 				this.root.add(milkyway.getDisplayObject());
+
+			},
+
+
+			setSun : function(){
+
+				var sun = this.sun = Object.create(Sun);
+				sun.init();
+				var hasCelestial = this.centralBody && this.centralBody.name == 'sun';
+				sun.setLight(hasCelestial);
+				 
+				this.root.add(sun.getDisplayObject());
+
 			},
 
 			/*
@@ -105,7 +119,7 @@ define(
 				if(this.sun && this.centralBody && this.centralBody.orbit){
 					var pos = this.centralBody.calculatePosition(ns.U.currentTime);
 					pos.setLength(this.stageSize * 5).negate();
-					this.sun.position.copy(pos);
+					this.sun.setPosition(pos);
 				}
 
 				_.each(this.bodies3d, function(b){
@@ -113,7 +127,7 @@ define(
 				}.bind(this));
 
 				//center the milkyway to the camera position, to make it look infinite
-				this.milkyway.setPosition(this.cameraManager.getCamera().position);
+				this.milkyway && this.milkyway.setPosition(this.cameraManager.getCamera().position);
 
 				this.renderer.render(this.root, this.cameraManager.getCamera());
 
@@ -173,28 +187,9 @@ define(
 					maxScaleVal = maxScaleVal > body3d.maxScale ? maxScaleVal : body3d.maxScale;
 				});
 				//console.log(maxScaleVal);
-				this.initSun();
+				this.setSun();
 			},
 
-			initSun : function(){
-
-				var sun;
-				if(this.centralBody && this.centralBody.name == 'sun') {
-					sun = new THREE.PointLight(0xFFFFFF);
-					sun.position.x = 0;
-					sun.position.y = 0;
-					sun.position.z = 0;
-				} else {
-					sun = new THREE.DirectionalLight(0xFFFFFF, 1);
-					//sun.castShadow = true;
-					sun.position.x = -1 * this.stageSize;
-					sun.position.y = 0 * this.stageSize;
-					sun.position.z = 0 * this.stageSize;
-					this.sun = sun;
-				}
-				this.root.add(sun);
-
-			},
 
 			kill : function(){
 				this.cameraManager.kill();

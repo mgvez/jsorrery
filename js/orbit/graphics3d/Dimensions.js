@@ -16,7 +16,7 @@ define(
 			scale : 1,
 
 			setLargestDimension : function(dim) {
-				this.scale =  10000 / dim;
+				this.scale =  1000 / dim;
 			},
 
 			getScaled : function(obj) {

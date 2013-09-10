@@ -45,16 +45,16 @@ define(
 
 				this.scene = Object.create(Scene);
 				this.calculateDimensions();
-				this.scene.createStage(scenario);
-				this.initBodies(scenario);
-				
-				this.scene.setCentralBody(this.centralBody);
-				
-				GravityTicker.setSecondsPerTick(scenario.secondsPerTick);
-				GravityTicker.setCalculationsPerTick(scenario.calculationsPerTick || ns.defaultCalculationsPerTick);
-				
-				this.showDate();
-				this.tick();
+				var onSceneReady = this.scene.createStage(scenario);
+
+				onSceneReady.then(function(){
+					this.initBodies(scenario);
+					this.scene.setCentralBody(this.centralBody);
+					GravityTicker.setSecondsPerTick(scenario.secondsPerTick);
+					GravityTicker.setCalculationsPerTick(scenario.calculationsPerTick || ns.defaultCalculationsPerTick);
+					this.showDate();
+					this.tick();
+				}.bind(this));
 
 			},
 

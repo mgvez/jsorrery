@@ -151,7 +151,7 @@ define(
 				cameraParams = {
 					fov : fov || DEFAULT_FOV,
 					aspect : aspect,
-					near : 0.1,
+					near : 0.01,
 					far : stageSize * 10
 				};
 

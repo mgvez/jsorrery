@@ -29,6 +29,8 @@ define(
 				this.container = $('<div id="universe" width="'+this.width+'" height="'+this.height+'">').appendTo('body');
 				this.root = new THREE.Scene();
 
+				
+
 				this.renderer = new THREE.WebGLRenderer({antialias: true});
 				//this.renderer.shadowMapEnabled = true;
 				this.renderer.setSize(this.width, this.height);
@@ -65,16 +67,16 @@ define(
 					this.draw();
 				}.bind(this));
 
-				this.setMilkyway();
-
+				var onInitialized = this.setMilkyway();
+				return onInitialized;
 			},
 
 			setMilkyway : function(){
 				var milkyway = this.milkyway = Object.create(MilkyWay);
 				var onReady = milkyway.init(this.stageSize * 4);
-				
 				this.root.add(milkyway.getDisplayObject());
 
+				return onReady;
 			},
 
 

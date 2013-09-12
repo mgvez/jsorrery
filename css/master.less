@@ -129,6 +129,7 @@ nav{
 }
 
 .planetLabel{
+	.unselectable();
 	position:absolute;
 	color:#fff;
 	background:@planetLabelBg;
@@ -139,6 +140,7 @@ nav{
 }
 
 .planetSpot {
+	.unselectable();
 	@sz : 20px;
 	width:@sz;
 	height:@sz;
@@ -163,7 +165,14 @@ nav{
 }
 
 
-
+.unselectable(){
+	cursor: default !important;
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
 
 // Drop shadows
 .box-shadow(@shadow) {

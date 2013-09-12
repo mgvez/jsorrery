@@ -22,18 +22,19 @@ define(
 		var SPECT = 5;
 		var MIN_MAG = -1.44;
 
-		var spectralColors = {
-			O : 0x9db4ff,
-			B : 0xaabfff,
-			A : 0xcad8ff,
-			F : 0xfbf8ff,
-			G : 0xfff4e8,
-			K : 0xffddb4,
-			M : 0xffbd6f,
-			L : 0xf84235,
-			T : 0xba3059,
-			Y : 0x605170
-		};
+		var spectralColors = [
+			0xfbf8ff,
+			0xc8d5ff,
+			0xd8e2ff,
+			0xe6ecfc,
+			0xfbf8ff,
+			0xfff4e8,
+			0xffeeda,
+			0xfeead3,
+			0xfccecb,
+			0xebd3da,
+			0xe7dbf3
+		];
 
 		var namedStars = {};
 
@@ -70,25 +71,16 @@ define(
 
 		var getShaderAttr = function(){
 			var starTexture = THREE.ImageUtils.loadTexture( "img/star.png" );
-			var starColorGraph = THREE.ImageUtils.loadTexture( 'img/star_color_modified.png' );
 
 			return {
 				uniforms : {
 					color:     { type: "c", value: new THREE.Color( 0xffffff ) },
 					starTexture:   { type: "t", value: starTexture },
-					spectralMap: {type: "t", value: starColorGraph },
-					idealDepth: { type: "f", value: 1.0 },
-					blurPower: { type: "f", value: 1.0 },
-					blurDivisor: { type: "f", value: 2.0 },
-					sceneSize: { type: "f", value: 120.0 },
-					scale: { type: "f", value: 1.0 },
-					brightnessScale: { type: "f", value: 1.0 },
 				},
 
 				attributes : {
 					size: 			{ type: 'f', value: [] },
 					customColor: 	{ type: 'c', value: [] },
-					colorIndex: 	{ type: 'f', value: [] },
 				}
 			};
 		};
@@ -110,6 +102,7 @@ define(
 
 			for( var i=0; i<count; i++ ){
 				star = stars[i];
+
 				starVect = new THREE.Vector3(star[X], star[Y], star[Z]);
 				if(starVect.x === 0) continue;//dont add the sun
 				starVect.normalize().multiplyScalar(size);
@@ -119,26 +112,18 @@ define(
 				spectralType = String(star[SPECT]).toUpperCase();
 				starColor  = spectralColors[spectralType] || spectralColors.F;
 
-				
-				if(starVect.mag < 7) {
-					//starVect.size = 2 + Math.pow((2 / starVect.mag), 1.2);
-					starColor = lightenDarkenColor(starColor, Math.pow(1/starVect.mag, (pxRatio*0.5)));
-				} else {
-					//starVect.size = 2;
-					starColor = lightenDarkenColor(starColor, Math.pow(1/starVect.mag, (1.1/pxRatio)));
-				}			
-				/**/
-				//starColor=0xffffff;
-				starVect.size = 2 * pxRatio;//Math.floor(10 * (2 + (1 / mag))) / 10;
-				//starColor = lightenDarkenColor(starColor, Math.pow(1.5/mag, 1.1));
-				
-
-				starVect.spectralIndex = 0.5;//star[SPECT];
-
 				if(name) namedStars[name] = starVect;
 
-				//a voir comment ajuster dans le color ramp
-				starVect.spectralLookup = Math.random();//0.5;
+				if(starVect.mag < 7) {
+					//starVect.size = 2 + Math.pow((2 / starVect.mag), 1.2);
+					starColor = lightenDarkenColor(starColor, Math.pow(1/starVect.mag, 0.5));
+				} else {
+					//starVect.size = 2;
+					starColor = lightenDarkenColor(starColor, Math.pow(1/starVect.mag, 1.1));
+				}			
+				/**/
+				starVect.size = 2 * pxRatio;//Math.floor(10 * (2 + (1 / mag))) / 10;
+				//starColor = lightenDarkenColor(starColor, Math.pow(1.5/mag, 1.1));
 
 				pGeo.vertices.push( starVect );
 				pGeo.colors.push( new THREE.Color(starColor) );
@@ -165,12 +150,10 @@ define(
 			//	set the values to the shader
 			var values_size = shaderAttr.attributes.size.value;
 			var values_color = shaderAttr.attributes.customColor.value;
-			var values_spectral = shaderAttr.attributes.colorIndex.value;
 
 			for( var v = 0; v < pGeo.vertices.length; v++ ) {
 				values_size[ v ] = pGeo.vertices[v].size;
 				values_color[ v ] = pGeo.colors[v];
-				values_spectral[ v ] = pGeo.vertices[v].spectralLookup;
 			}
 
 
@@ -180,8 +163,8 @@ define(
 		};
 
 		var MilkyWay = {
-			dataSrc : 'js/orbit/data/milkyway.json',
-			//dataSrc : 'js/orbit/data/milkyway_heasarc_468k.json',
+			//dataSrc : 'js/orbit/data/milkyway.json',
+			dataSrc : 'js/orbit/data/milkyway_heasarc_468k.json',
 			init : function(size){
 
 

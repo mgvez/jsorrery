@@ -129,24 +129,17 @@ define(
 				pGeo.colors.push( new THREE.Color(starColor) );
 			}
 
-
-
 			var shaderMaterial = new THREE.ShaderMaterial( {
 				uniforms: 		shaderAttr.uniforms,
 				attributes:     shaderAttr.attributes,
 				vertexShader:   shaders.vertex,
 				fragmentShader: shaders.fragment,
 				blending: 		THREE.AdditiveBlending,
-				depthTest: 		false,
-				depthWrite: 	false,
 				transparent:	true,
 			});
-			//container.shaderMaterial = shaderMaterial;
 
 			var particleSystem = new THREE.ParticleSystem( pGeo, shaderMaterial );
-			particleSystem.dynamic = false;
-			particleSystem.renderDepth = 1e20;
-
+			
 			//	set the values to the shader
 			var values_size = shaderAttr.attributes.size.value;
 			var values_color = shaderAttr.attributes.customColor.value;
@@ -163,8 +156,8 @@ define(
 		};
 
 		var MilkyWay = {
-			//dataSrc : 'js/orbit/data/milkyway.json',
-			dataSrc : 'js/orbit/data/milkyway_heasarc_468k.json',
+			dataSrc : 'js/orbit/data/milkyway.json',
+			//dataSrc : 'js/orbit/data/milkyway_heasarc_468k.json',
 			init : function(size){
 
 

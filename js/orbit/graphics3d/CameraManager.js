@@ -151,8 +151,8 @@ define(
 				cameraParams = {
 					fov : fov || DEFAULT_FOV,
 					aspect : aspect,
-					near : 0.01,
-					far : stageSize * 10
+					near : 0.001,
+					far : stageSize * 5
 				};
 
 				globalCamera = getNewCamera(true);

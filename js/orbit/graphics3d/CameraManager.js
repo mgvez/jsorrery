@@ -5,12 +5,13 @@ define(
 		'orbit/NameSpace',
 		'jquery',
 		'orbit/graphics3d/OrbitLinesManager',
+		'orbit/graphics3d/TracerManager',
 		'orbit/graphics3d/Dimensions',
 		'orbit/gui/Gui',
 		'three/controls/OrbitControls',
 		'three'
 	], 
-	function(ns, $, OrbitLinesManager, Dimensions, Gui) {
+	function(ns, $, OrbitLinesManager, TracerManager, Dimensions, Gui) {
 		'use strict';
 
 		var DEFAULT_FOV = 45;
@@ -42,9 +43,16 @@ define(
 			var lookFromBody = bodies3d[viewSettings.lookFrom];
 			var lookAtBody = bodies3d[viewSettings.lookAt];
 
+			TracerManager.setTraceFrom();
+
 			if(lookFromBody){
 				currentCamera = lookFromBody.getCamera(POV_CAMERA_TYPE);
 				domEl.on('mousewheel', onMouseWheel);
+
+				//if we look from a body to another, trace the lookat body's path relative to the pov 
+				if(lookAtBody) {
+					TracerManager.setTraceFrom(lookFromBody, lookAtBody);
+				}
 
 			} else {
 				domEl.off('mousewheel');
@@ -178,8 +186,8 @@ define(
 			},
 
 			addBody : function(body3d){				
-				Gui.addOption(LOOKFROM_SEL_ID, body3d.getName(), bodies3d.length);
-				Gui.addOption(LOOKAT_SEL_ID, body3d.getName(), bodies3d.length);
+				Gui.addOption(LOOKFROM_SEL_ID, body3d.celestial.title, bodies3d.length);
+				Gui.addOption(LOOKAT_SEL_ID, body3d.celestial.title, bodies3d.length);
 
 				var pov = getNewCamera();
 				body3d.addCamera(POV_CAMERA_TYPE, pov);

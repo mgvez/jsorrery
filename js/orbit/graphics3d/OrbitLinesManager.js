@@ -59,9 +59,9 @@ define(
 					
 					lookFromBodyOrbit.showEcliptic();
 
-					if(lookAtBodyOrbit) {
+					/*if(lookAtBodyOrbit) {
 						lookAtBodyOrbit.showOrbit();
-					}
+					}/**/
 
 				} else {
 					this.showAllOrbits();

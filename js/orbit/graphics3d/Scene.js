@@ -8,13 +8,14 @@ define(
 		'orbit/graphics3d/Sun',
 		'orbit/graphics3d/CameraManager',
 		'orbit/graphics3d/OrbitLinesManager',
+		'orbit/graphics3d/TracerManager',
 		'orbit/graphics3d/Dimensions',
 		'orbit/gui/Gui',
 		'vendor/jquery.mousewheel',
 		'three/stats',
 		'_'
 	], 
-	function(ns, $, Body3D, MilkyWay, Sun, CameraManager, OrbitLinesManager, Dimensions, Gui){
+	function(ns, $, Body3D, MilkyWay, Sun, CameraManager, OrbitLinesManager, TracerManager, Dimensions, Gui){
 		'use strict';
 		var projector;
 		var stats;
@@ -151,6 +152,7 @@ define(
 			onDateReset : function() {
 				this.updateCamera();
 				OrbitLinesManager.resetAllOrbits();
+				TracerManager.resetTrace();
 				this.draw();
 			},
 

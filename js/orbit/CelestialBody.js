@@ -66,7 +66,7 @@ define(
 			calculateTraceParams : function(universeSize) {
 
 				var defaultVertexDist = this.vertexDist = universeSize * ns.vertexDist;
-				this.nVertices = ns.minVertexPerOrbit;
+				this.nVertices = ns.minVerticesChangesPerOrbit;
 
 				if(this.orbit){
 
@@ -80,14 +80,13 @@ define(
 							)/2
 						) * ns.KM;
 					
-					var thisMinVertexDist = this.circ / ns.minVertexPerOrbit;
+					var thisMinVertexDist = this.circ / ns.minVerticesChangesPerOrbit;
 					if(defaultVertexDist > thisMinVertexDist){
 						this.vertexDist = thisMinVertexDist;
 					}
 
 					this.nVertices = Math.round((this.circ / this.vertexDist));
 					this.vertexDist = this.circ / this.nVertices;
-					this.nVertices++;
 				}
 				//console.log(this.name, this.nVertices, this.vertexDist);
 				

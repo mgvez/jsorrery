@@ -15,7 +15,7 @@ body{
 	margin:0;
 	padding:0;
 	font-family:@roboto;
-	font-size:11px;
+	font-size:10px;
 	color: @txCol;
 	background: black;
 	overflow:hidden;
@@ -52,70 +52,99 @@ nav{
 	z-index:1000;
 	top:0;
 	left:0;
-	height: 100%;
-	width: 300px;
+	height: 45px;
+	width: 100%;
 	background: rgba(0, 0, 0, 0.3);
 	border-bottom:1px #888 solid;
+
 	#gui{
-		padding: 12px;
+		padding: 5px;
 		
 		.inputContainer{
 			position:relative;
 			min-height: 20px;
 		}
 
-		ul{
-			list-style-type:none;
-			margin:0;
-			padding:0;
-			font-weight:normal;
-			position:absolute;
 
-			li{
-				margin:0;
-				padding: 2px 8px;
-				border-bottom: 1px black solid;
-				&.selected{
-					.inputBox();
-				}
-				&:hover, &.selected{
-					font-weight:bold;
-					color:#fff;
-				}
 
-				&.disabled{
-					font-weight:normal;
-					color:@txCol;
-					opacity:0.4;
-				}
+		.dropdown{
+
+			.display, li{
+				cursor:pointer;
+				overflow:hidden;
 			}
+			
 
-			&.open{
+			ul{
+				list-style-type:none;
+				margin:0;
+				padding:0;
+				font-weight:normal;
+				position:absolute;
+				display:none;
 				.inputBox(@selectActiveBg);
 				z-index:1000;
+
+				li{
+					margin:0;
+					padding: 2px 8px;
+					border-bottom: 1px black solid;
+					white-space: nowrap;
+
+					&.selected{
+						.inputBox();
+					}
+
+					&:hover, &.selected{
+						font-weight:bold;
+						color:#fff;
+					}
+
+					&.disabled{
+						font-weight:normal;
+						color:@txCol;
+						opacity:0.4;
+					}
+				}
+			}
+
+			&:hover{
+				ul{
+					display:block;
+				}
 			}
 		}
-
 		label{
 			display:block;
-			margin: 6px 0;
+			float:left;
+			width:140px;
+			margin: 0px 8px;
 			& > span{
 				display:block;
 				font-weight:bold;
 			}
+
+			&#scenarioLabel{
+				width: 180px;
+			}
 		}
+
+		
 
 		input, button{
 			font-family:@roboto;
 		}
 
-		input{
+		input, .display{
 			.inputBox();
-			padding:2px 8px;
+			padding:1px 3px;
+			margin: 2px 0 0 0;
 		}
 
 		button{
 
+			.inputBox();
+			cursor:pointer;
 			text-transform: uppercase;
 		}
 	}
@@ -186,4 +215,16 @@ nav{
   -webkit-border-radius: @radius;
      -moz-border-radius: @radius;
           border-radius: @radius;
+}
+
+.clearfix {
+  *zoom: 1;
+  &:before,
+  &:after {
+    display: table;
+    content: "";
+  }
+  &:after {
+    clear: both;
+  }
 }

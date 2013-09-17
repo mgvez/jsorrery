@@ -18,46 +18,13 @@ define(
 			return $('#'+id+'Cont');
 		};
 
-		var listClicked = function(list, clickedOption, input){
-			var isOpen = list.data('open');
-			var options = list.data('options');
-			if(!options){
-				options = list.find('li');
-				list.data('options', options);
-			}
-
-			if(!isOpen) {
-				options.show();
-				list.addClass('open');
-
-				list.on('mouseleave.orbit', function(e){
-					closeList(list, options, options.filter('.selected'));
-				});
-
-				list.data('open', true);
-
-			} else {
-				if(clickedOption.hasClass('disabled')) return;
-				closeList(list, options, clickedOption);
-
-				input.val(clickedOption.data('value')).trigger('change');
-			}
-
-		};
-
-
-		var closeList = function(list, options, clickedOption) {
+		var listClicked = function(selector, clickedOption, input){
 			
-			list.removeClass('open');
-			options.hide();
-			options.removeClass('selected');
-			clickedOption.show();
-			clickedOption.addClass('selected');
-			list.off('.orbit');
-
-			list.data('open', false);
+			selector.display.html(clickedOption.html());
+			input.val(clickedOption.data('value')).trigger('change');
 
 		};
+
 
 		return {
 			init : function(universe){
@@ -72,16 +39,20 @@ define(
 
 			addDropdown : function(id, callback){
 				removeElement(id);
-				this.selects[id] = {
+				var dropdownContainer = getContainer(id).empty().addClass('dropdown');
+				var dropdownDisplay = $('<div class="display">').appendTo(dropdownContainer);
+				var selector = this.selects[id] = {
 					input : $('<input id="'+id+'_inp">').on('change.orrery', callback),
-					list : $('<ul id="'+id+'" data-open="false">').appendTo(getContainer(id)),
+					display: dropdownDisplay,
+					list : $('<ul id="'+id+'">').appendTo(dropdownContainer),
 					options : {}
 				};
-				var list = elements[id] = this.selects[id].list;
-				var input = this.selects[id].input;
+
+				var list = elements[id] = selector.list;
+				var input = selector.input;
 
 				this.selects[id].clickHandler = function(e){
-					listClicked(list, $(this), input);
+					listClicked(selector, $(this), input);
 				};
 
 
@@ -97,9 +68,7 @@ define(
 
 				if(sel.list.children().length === 0) {
 					sel.input.val(val);
-					option.addClass('selected');
-				} else {
-					option.hide();
+					sel.display.html(label);
 				}
 
 				option.appendTo(sel.list);

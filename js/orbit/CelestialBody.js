@@ -217,6 +217,10 @@ define(
 
 			getPosition : function(){
 				return this.position.clone();
+			},
+			//return true/false if this body is orbiting the requested body
+			isOrbitAround : function(celestial){
+				return celestial.name === this.relativeTo;
 			}
 		};
 

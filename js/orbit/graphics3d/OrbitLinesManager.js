@@ -59,7 +59,7 @@ define(
 					
 					lookFromBodyOrbit.showEcliptic();
 
-					/*if(lookAtBodyOrbit) {
+					if(lookAtBodyOrbit && lookAtBody.celestial.isOrbitAround(lookFromBody.celestial)) {
 						lookAtBodyOrbit.showOrbit();
 					}/**/
 

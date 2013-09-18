@@ -1,6 +1,7 @@
 body{margin:0;padding:0;font-family:'Roboto',sans-serif;font-size:10px;color:#aaa;background:black;overflow:hidden}
 .ui-datepicker{background:rgba(25,25,25,0.95);border:1px #333 solid;padding:20px;display:none}.ui-datepicker td{width:18px;height:18px;text-align:center;background:rgba(255,255,255,0.1)}
 .ui-datepicker a{color:white;text-decoration:none}
+.ui-slider{border-bottom:1px #333 solid;height:10px;position:relative;width:200px}.ui-slider .ui-slider-handle{background:#333;width:10px;height:10px;-webkit-border-radius:50%;-moz-border-radius:50%;border-radius:50%;position:absolute;top:6px}
 nav{position:absolute;z-index:1000;top:0;left:0;height:45px;width:100%;background:rgba(0,0,0,0.3);border-bottom:1px #888 solid}nav #gui{padding:5px}nav #gui .inputContainer{position:relative;min-height:20px}
 nav #gui .dropdown .display,nav #gui .dropdown li{cursor:pointer;overflow:hidden}
 nav #gui .dropdown ul{list-style-type:none;margin:0;padding:0;font-weight:normal;position:absolute;display:none;background:rgba(25,25,25,0.9);border:1px #333 solid;color:white;z-index:1000}nav #gui .dropdown ul li{margin:0;padding:2px 8px;border-bottom:1px black solid;white-space:nowrap}nav #gui .dropdown ul li.selected{background:rgba(255,255,255,0.1);border:1px #333 solid;color:white}

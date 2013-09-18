@@ -57,7 +57,7 @@ define(
 				OrbitLinesManager.init(this.root);
 
 				Gui.addSlider(SCALE_CTRL_ID, 'Planet Scale', function(val){
-					val = val < 1 ? 1 : val;
+					
 					//console.log(val);
 					//val = Math.pow(val, 1.5);
 					_.each(this.bodies3d, function(body3d){

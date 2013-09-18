@@ -17,6 +17,9 @@ define(
 		var getContainer = function(id){
 			return $('#'+id+'Cont');
 		};
+		var getLabel = function(id){
+			return $('#'+id+'Label');
+		};
 
 		var listClicked = function(selector, clickedOption, input){
 			
@@ -109,9 +112,14 @@ define(
 
 			addSlider : function(id, label, onChange) {
 				removeElement(id);
-				var slider = $('<div>').appendTo(getContainer(id)).slider({
+				var container = getContainer(id);
+				var valDisplay = getLabel(id).find('.valDisplay').text('1x');
+				var slider = $('<div>').appendTo(container).slider({
 					slide : function(evt, ui){
-						onChange(ui.value);
+						var val = ui.value;
+						val = val < 1 ? 1 : val;
+						valDisplay.text(val+'x');
+						onChange(val);
 					}
 				});
 				elements[id] = slider;

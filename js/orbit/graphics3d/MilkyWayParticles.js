@@ -159,8 +159,7 @@ define(
 			dataSrc : 'js/orbit/data/milkyway.json',
 			//dataSrc : 'js/orbit/data/milkyway_heasarc_468k.json',
 			init : function(size){
-
-
+				
 				// create the particle system
 				rendered = this.displayObj = new THREE.Object3D();
 				//var particleSystem = new THREE.ParticleSystem(particles, pMaterial);

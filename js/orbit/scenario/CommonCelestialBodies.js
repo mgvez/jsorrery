@@ -126,7 +126,7 @@ define(
 				}
 			},
 			halley : {
-				title : 'Halley Comet',
+				title : 'Halley\'s Comet',
 				mass : 2.2e14,
 				radius : 50,
 				color : '#ffffff',

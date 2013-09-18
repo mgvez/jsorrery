@@ -15,6 +15,8 @@ define(
 			init : function(celestialBody) {
 				this.root = new THREE.Object3D();
 				this.celestial = celestialBody;
+				//max delta T to show rotation. If deltaT is larger than that, planet would spin too fast, so don't show sideral day
+				this.maxDeltaForSideralDay = this.celestial.sideralDay && this.celestial.sideralDay / 20;
 
 				this.setPlanet();
 
@@ -125,7 +127,7 @@ define(
 				var pos = this.getPosition();
 				this.root.position.copy(pos);
 
-				if(this.celestial.sideralDay){
+				if(this.celestial.sideralDay && ns.U.deltaT <= this.maxDeltaForSideralDay){
 					var curRotation = (ns.U.epochTime / this.celestial.sideralDay) * ns.CIRCLE;
 					this.planet.rotation.y = (this.celestial.baseMapRotation || 0) + curRotation;
 				}

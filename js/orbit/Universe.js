@@ -80,6 +80,7 @@ define(
 					body.name = name;
 					this.centralBody = this.centralBody && this.centralBody.mass > body.mass ? this.centralBody : body;
 					this.bodies[body.name] = body;
+
 					bodies.push(body);
 				}.bind(this));
 
@@ -158,8 +159,8 @@ define(
 			tick : function() {
 				if(this.killed) return;
 				if(this.playing) {
-					var deltaT = GravityTicker.tick();
-					this.epochTime += deltaT;
+					this.deltaT = GravityTicker.tick();
+					this.epochTime += this.deltaT;
 					this.currentTime = this.startEpochTime + this.epochTime;
 					this.scene.updateCamera();
 					this.scene.draw();

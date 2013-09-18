@@ -28,9 +28,7 @@ define(
 				this.bodies3d = [];
 
 				this.container = $('<div id="universe" width="'+this.width+'" height="'+this.height+'">').appendTo('body');
-				this.root = new THREE.Scene();
-
-				
+				this.root = new THREE.Scene();				
 
 				this.renderer = new THREE.WebGLRenderer({antialias: true});
 				//this.renderer.shadowMapEnabled = true;

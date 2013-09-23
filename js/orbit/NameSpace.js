@@ -27,7 +27,7 @@
 		ns.CENTURY = 100 * ns.YEAR;
 		ns.SIDERAL_DAY = 3600 * 23.9344696;
 
-		ns.J2000 = new Date(2000, 0, 1);
+		ns.J2000 = new Date('2000-01-01T12:00:00-00:00');
 
 		ns.defaultCalculationsPerTick = 200;
 

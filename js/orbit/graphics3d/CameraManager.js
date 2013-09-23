@@ -16,8 +16,6 @@ define(
 
 		var DEFAULT_FOV = 45;
 		var MAX_FOV = 90;
-		var LOOKAT_SEL_ID = 'lookAt';
-		var LOOKFROM_SEL_ID = 'lookFrom';
 		var ORBITAL_CAMERA_TYPE = 'orbital';
 		var POV_CAMERA_TYPE = 'pov';
 
@@ -65,7 +63,7 @@ define(
 
 			}
 
-			Gui.toggleOptions(LOOKAT_SEL_ID, toggling_at_options, !!lookFromBody);
+			Gui.toggleOptions(Gui.LOOKAT_ID, toggling_at_options, !!lookFromBody);
 
 			//we show/hide orbits and ecliptics depending on what bodies are of interest
 			OrbitLinesManager.onCameraChange(lookFromBody, lookAtBody);
@@ -169,25 +167,25 @@ define(
 				scene.root.add(globalCamera);
 
 				trackOptionSelectors = {
-					from: Gui.addDropdown(LOOKFROM_SEL_ID, toggleCamera),
-					at : Gui.addDropdown(LOOKAT_SEL_ID, toggleCamera)
+					from: Gui.addDropdown(Gui.LOOKFROM_ID, toggleCamera),
+					at : Gui.addDropdown(Gui.LOOKAT_ID, toggleCamera)
 				};
 				
-				Gui.addOption(LOOKFROM_SEL_ID, 'Free camera', 'orbital');
-				Gui.addOption(LOOKAT_SEL_ID, 'System', 'universe');
+				Gui.addOption(Gui.LOOKFROM_ID, 'Free camera', 'orbital');
+				Gui.addOption(Gui.LOOKAT_ID, 'System', 'universe');
 
 				if(ns.U.getBody().name == 'sun') {
-					Gui.addOption(LOOKAT_SEL_ID, 'Night (away from the sun)', 'night');
+					Gui.addOption(Gui.LOOKAT_ID, 'Night (away from the sun)', 'night');
 				}
 				
-				Gui.addOption(LOOKAT_SEL_ID, 'Direction of velocity', 'front');
-				Gui.addOption(LOOKAT_SEL_ID, 'Inverse direction of velocity', 'back');
+				Gui.addOption(Gui.LOOKAT_ID, 'Direction of velocity', 'front');
+				Gui.addOption(Gui.LOOKAT_ID, 'Inverse direction of velocity', 'back');
 
 			},
 
 			addBody : function(body3d){				
-				Gui.addOption(LOOKFROM_SEL_ID, body3d.celestial.title, bodies3d.length);
-				Gui.addOption(LOOKAT_SEL_ID, body3d.celestial.title, bodies3d.length);
+				Gui.addOption(Gui.LOOKFROM_ID, body3d.celestial.title, bodies3d.length);
+				Gui.addOption(Gui.LOOKAT_ID, body3d.celestial.title, bodies3d.length);
 
 				var pov = getNewCamera();
 				body3d.addCamera(POV_CAMERA_TYPE, pov);
@@ -207,6 +205,7 @@ define(
 			},
 
 			getCamera : function(){
+				if(typeof viewSettings.lookFrom == 'undefined') toggleCamera();
 				return currentCamera;
 			},
 
@@ -215,8 +214,8 @@ define(
 			},
 
 			kill : function(){
-				Gui.remove(LOOKAT_SEL_ID);
-				Gui.remove(LOOKFROM_SEL_ID);
+				Gui.remove(Gui.LOOKAT_ID);
+				Gui.remove(Gui.LOOKFROM_ID);
 				domEl && domEl.off('mousewheel');
 
 				_.each(allCameras, function(cam){

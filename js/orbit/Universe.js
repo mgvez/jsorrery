@@ -16,31 +16,37 @@ define(
 	function(ns, $, CelestialBody, GravityTicker, Scene, Gui) {
 		'use strict';
 		var Universe = {
-			init : function(scenario){
+			init : function(scenario, qstrSettings){
+
+				this.name = scenario.name;
+
+				var initialSettings = _.extend({}, qstrSettings, scenario.defaultsGuiSettings);
+				Gui.setDefaults(initialSettings);
+
 				//Universe is, well, global
 				ns.U = this;
 				
-				Gui.addBtn('start/stop', 'start', function(){
+				Gui.addBtn('start/stop', Gui.START_ID, function(){
 					this.playing = !this.playing;
 				}.bind(this));
 
-				this.dateDisplay = Gui.addDate();
-				this.dateDisplay.on('change.orbit', function(){
-
+				this.dateDisplay = Gui.addDate(function(){
 					this.playing = false;
 					this.epochTime = 0;
 					this.currentTime = this.startEpochTime = this.getEpochTime(Gui.getDate());
-					this.positionBodies();
+					this.repositionBodies();
 					this.scene.onDateReset();
-
 				}.bind(this));
 
 				this.ticker = this.tick.bind(this);
 				
+				this.deltaT = 0;
 				this.playing = false;
 				this.epochTime = 0;
-				this.currentTime = this.startEpochTime = this.getEpochTime();
-				this.date = new Date();
+
+				this.date = Gui.getDate() || new Date();
+				this.currentTime = this.startEpochTime = this.getEpochTime(this.date);
+				
 				this.createBodies(scenario);
 
 				this.scene = Object.create(Scene);
@@ -53,6 +59,7 @@ define(
 					GravityTicker.setSecondsPerTick(scenario.secondsPerTick);
 					GravityTicker.setCalculationsPerTick(scenario.calculationsPerTick || ns.defaultCalculationsPerTick);
 					this.showDate();
+					Gui.putDefaults();
 					this.tick();
 				}.bind(this));
 
@@ -110,7 +117,7 @@ define(
 				GravityTicker.setBodies(this.bodies);
 			},
 
-			positionBodies : function(){
+			repositionBodies : function(){
 				$.each(this.bodies, function(name, body){
 					body.setPositionFromDate(this.currentTime);
 				}.bind(this));

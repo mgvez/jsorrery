@@ -21,15 +21,30 @@ define(
 			return $('#'+id+'Label');
 		};
 
-		var listClicked = function(selector, clickedOption, input){
-			
+		var listClicked = function(id, selector, clickedOption, input){
+			var val = clickedOption.data('value');
 			selector.display.html(clickedOption.html());
-			input.val(clickedOption.data('value')).trigger('change');
+			input.val(val).trigger('change');
+			exportingValues[id] = val;
 
 		};
 
+		var dateDisplay;
+		var date;
+
+		var exportingValues = {};
+		
 
 		return {
+
+			PLANET_SCALE_ID : 'planetScale',
+			SCENARIO_ID : 'scenario',
+			START_ID : 'start',
+			LINK_ID : 'link',
+			DATE_ID : 'date',
+			LOOKAT_ID : 'lookAt',
+			LOOKFROM_ID : 'lookFrom',
+
 			init : function(universe){
 				this.root = $('#gui');
 				this.selects = {};
@@ -39,7 +54,12 @@ define(
 				removeElement(id);
 				elements[id] = $('<button id="'+id+'">'+label+'</button>').appendTo(getContainer(id)).on('click.orrery', callback);
 			},
-
+			
+			exportValues : function(){
+				var exportStr = JSON.stringify(exportingValues);
+				return window.btoa(exportStr);
+			},
+			
 			addDropdown : function(id, callback){
 				removeElement(id);
 				var dropdownContainer = getContainer(id).empty().addClass('dropdown');
@@ -55,9 +75,8 @@ define(
 				var input = selector.input;
 
 				this.selects[id].clickHandler = function(e){
-					listClicked(selector, $(this), input);
+					listClicked(id, selector, $(this), input);
 				};
-
 
 				return this.selects[id].input;
 			},
@@ -76,6 +95,13 @@ define(
 
 				option.appendTo(sel.list);
 
+				var defaultVal = this.defaultSettings && this.defaultSettings[selectName];
+				if(defaultVal == val) {
+					this.pushDefaultsCallbacks(function(){
+						listClicked(selectName, sel, option, sel.input)
+					});
+				}
+
 			},
 
 			toggleOptions : function(selectName, toToggle, isShow){
@@ -91,43 +117,93 @@ define(
 				});
 			},
 
-			addDate : function(){
-				if(!this.dateDisplay) {
-					this.dateDisplay = $('<input>').appendTo(getContainer('date'));
-					this.dateDisplay.datepicker({
+			addDate : function(onChange){
+				if(!dateDisplay) {
+					dateDisplay = $('<input>').appendTo(getContainer(this.DATE_ID));
+					dateDisplay.datepicker({
 						dateFormat : $.datepicker.ATOM,
 						changeYear : true
 					});
 				}
-				return this.dateDisplay;
+
+				dateDisplay.off('change').on('change.orbit', function(){
+					date = null;
+					onChange();
+				}.bind(this));
+
+				var defaultDate = this.defaultSettings[this.DATE_ID];
+				if(defaultDate){
+					defaultDate = new Date(defaultDate);
+					this.setDate(defaultDate);
+				}
+
+				return dateDisplay;
 			},
 
 			setDate : function(d){
-				this.dateDisplay.val($.datepicker.formatDate( $.datepicker.ATOM, d));
+				date = d;
+				exportingValues[this.DATE_ID] = d;
+				dateDisplay.val($.datepicker.formatDate( $.datepicker.ATOM, d));
 			},
 
-			getDate : function(d){
-				return this.dateDisplay.datepicker( "getDate" );
+			getDate : function(){
+				return date || dateDisplay.datepicker( "getDate" );
 			},
 
-			addSlider : function(id, label, onChange) {
+			addSlider : function(id, onChange) {
 				removeElement(id);
 				var container = getContainer(id);
 				var valDisplay = getLabel(id).find('.valDisplay').text('1x');
+
+				var defaultVal = Number(this.defaultSettings[id]);
+
 				var slider = $('<div>').appendTo(container).slider({
 					slide : function(evt, ui){
 						var val = ui.value;
 						val = val < 1 ? 1 : val;
-						valDisplay.text(val+'x');
-						onChange(val);
-					}
+						exportingValues[id] = val;
+						setSlideValue(val);
+					},
+					value : defaultVal || 1
 				});
+
 				elements[id] = slider;
+
+				var setSlideValue = function(val){
+					valDisplay.text(val+'x');
+					onChange(val);
+				};
+
+				if(defaultVal) {
+					this.pushDefaultsCallbacks(function(){
+						setSlideValue(defaultVal)
+					});
+				}
+
+				exportingValues[id] = defaultVal || 1;
+
 				return slider;
 			},
 
 			remove : function(id){
 				removeElement(id);
+			},
+
+			pushDefaultsCallbacks : function(callback){
+				this.defaultCallbacks = this.defaultCallbacks || [];
+				this.defaultCallbacks.push(callback);
+			},
+
+			putDefaults : function(){
+				if(!this.defaultCallbacks) return;
+				_.each(this.defaultCallbacks, function(callback){
+					callback();
+				});
+				this.defaultCallbacks.length = 0;
+			},
+
+			setDefaults : function(defaultSettings) {
+				this.defaultSettings = defaultSettings;
 			}
 		};
 	}

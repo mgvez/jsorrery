@@ -5,7 +5,9 @@ define(
 		'orbit/NameSpace',
 		'jquery',
 		'orbit/graphics3d/Dimensions',
-		'three'
+		'three',
+		'vendor/greensock/TweenMax',
+		'vendor/greensock/easing/EasePack'
 	], 
 	function(ns, $, Dimensions) {
 		'use strict';
@@ -25,12 +27,27 @@ define(
 					return this;
 				}.bind(this);
 
-				this.label = $('<div class="planetSpot"><div class="planetLabel">'+(this.celestial.title || this.celestial.name)+'</div></div>').appendTo('body');
+				this.label = $('<div class="planetSpot" data-shown="true"><div class="planetLabel">'+(this.celestial.title || this.celestial.name)+'</div></div>').appendTo('body');
 			},
 
-			placeLabel : function(pos, w, h){
+			placeLabel : function(pos, w, h, camPos, fov){
 				if(pos.z<1 && pos.z>0 && pos.x>0 && pos.x<w && pos.y>0 && pos.y<h){
 					this.label.css({left : pos.x+'px', top : pos.y+'px'}).show();
+
+					var dist = this.root.position.distanceTo(camPos);
+					var visibleHeight = 2 * Math.tan( fov / 2 ) * dist;
+
+					var isVisible = (this.getPlanetStageSize() / visibleHeight) < 0.1;
+					if(
+						(!isVisible && this.label.data('shown')===true)
+						||
+						(isVisible && this.label.data('shown')===false)
+					) {
+						this.label.data('shown', !this.label.data('shown'));
+						TweenMax.killTweensOf(this.label);
+						TweenMax.to(this.label, 1, {css:{opacity: isVisible ? 1 : 0}});
+					}
+
 				} else {
 					this.label.hide();
 				}
@@ -126,7 +143,6 @@ define(
 			drawMove : function(){
 				var pos = this.getPosition();
 				this.root.position.copy(pos);
-
 				if(this.celestial.sideralDay && ns.U.deltaT <= this.maxDeltaForSideralDay){
 					var curRotation = (ns.U.epochTime / this.celestial.sideralDay) * ns.CIRCLE;
 					this.planet.rotation.y = (this.celestial.baseMapRotation || 0) + curRotation;

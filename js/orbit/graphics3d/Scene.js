@@ -19,11 +19,10 @@ define(
 		'use strict';
 		var projector;
 		var stats;
-		var SCALE_CTRL_ID = 'scaleCtrl';
 
 		return {
 			createStage : function(scenario) {
-
+			
 				projector = projector || new THREE.Projector();
 				this.bodies3d = [];
 
@@ -50,21 +49,18 @@ define(
 				this.onTextureLoaded = this.draw.bind(this);
 
 				this.container.append(this.renderer.domElement);
-
-				//this.drawAxis();
-				this.cameraManager = Object.create(CameraManager);
-				this.cameraManager.init(this, this.width/this.height, scenario.fov, this.stageSize, this.container);
-				OrbitLinesManager.init(this.root);
-
-				Gui.addSlider(SCALE_CTRL_ID, 'Planet Scale', function(val){
-					
-					//console.log(val);
-					//val = Math.pow(val, 1.5);
+				
+				Gui.addSlider(Gui.PLANET_SCALE_ID, function(val){
 					_.each(this.bodies3d, function(body3d){
 						body3d.setScale(val);
 					});
 					this.draw();
 				}.bind(this));
+
+				//this.drawAxis();
+				this.cameraManager = Object.create(CameraManager);
+				this.cameraManager.init(this, this.width/this.height, scenario.fov, this.stageSize, this.container);
+				OrbitLinesManager.init(this.root);
 
 				var onInitialized = this.setMilkyway();
 				return onInitialized;
@@ -115,7 +111,7 @@ define(
 			},
 
 			draw : function(){
-
+				
 				//move sun, if its not a body shown. This assumes that the central body, if it has an orbit, revolves around the sun
 				if(this.sun && this.centralBody && this.centralBody.orbit){
 					var pos = this.centralBody.calculatePosition(ns.U.currentTime);
@@ -134,8 +130,12 @@ define(
 
 				//after all bodies have been positionned, update camera matrix (as camera might be attached to a body)
 				this.cameraManager.updateCameraMatrix();
+				//place planets labels. We need the camera position relative to the world in order to compute planets screen sizes, and hide/show labels depending on it
+				var radFov = this.cameraManager.getCamera().fov * ns.DEG_TO_RAD;
+				var camPos = this.cameraManager.getCamera().position.clone();
+				camPos.applyMatrix4(this.cameraManager.getCamera().matrixWorld);
 				_.each(this.bodies3d, function(b){
-					b.placeLabel(this.toXYCoords(b.getPosition()), this.width, this.height);
+					b.placeLabel(this.toXYCoords(b.getPosition()), this.width, this.height, camPos, radFov);
 				}.bind(this));
 
 				stats.update();
@@ -196,7 +196,7 @@ define(
 			kill : function(){
 				this.cameraManager.kill();
 				OrbitLinesManager.kill();
-				Gui.remove(SCALE_CTRL_ID);
+				Gui.remove(Gui.PLANET_SCALE_ID);
 				_.each(this.bodies3d, function(body3d){
 					body3d.kill();
 				});

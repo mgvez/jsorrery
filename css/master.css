@@ -15,6 +15,7 @@ nav #gui input,nav #gui .display{background:rgba(255,255,255,0.1);border:1px #33
 nav #gui button{background:rgba(255,255,255,0.1);border:1px #333 solid;color:white;cursor:pointer;text-transform:uppercase}
 .planetLabel{cursor:default !important;-moz-user-select:-moz-none;-khtml-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none;position:absolute;color:#fff;background:rgba(25,25,25,0.7);padding:3px;font-size:9px;left:24px;white-space:nowrap}
 .planetSpot{cursor:default !important;-moz-user-select:-moz-none;-khtml-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none;width:20px;height:20px;position:absolute;border:1px #222 solid;-webkit-border-radius:50%;-moz-border-radius:50%;border-radius:50%;margin-top:-10px;margin-left:-10px}
+#debug{position:absolute;bottom:10px;right:10px;color:#fff;font-size:10px}
 #stats{position:absolute;bottom:0;left:0}#stats #fps{background:transparent !important}#stats #fps #fpsText{color:#aaa !important}
 #stats #fps #fpsGraph{display:none}
 .clearfix{*zoom:1}.clearfix:before,.clearfix:after{display:table;content:""}

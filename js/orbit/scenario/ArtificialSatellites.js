@@ -18,18 +18,22 @@ define(
 			title : 'Artificial satellites around the Earth',
 			commonBodies : ['earth'],
 			bodies : {
+				earth: {
+					map : 'img/earthmap1k_KSC.jpg'
+				},
 				mercury6 : {
 					title : 'Mercury 6',
 					mass : 1224.7,
 					radius : 2,
 					color : "#ffffff",
 					orbit : {
+						relativeTo : 'earth',
 						base : {
 							a : (earthRadius + 40 + 159) ,
 							e : 0.00804,
 							w : 0,
 							M : 0,
-							i : 32.5 - earthTilt,
+							i : 32.5,
 							o : 0
 						},
 						day : {
@@ -48,12 +52,13 @@ define(
 					radius : 2,
 					color : "#ffaa00",
 					orbit: {
+						relativeTo : 'earth',
 						base : {
 							a : (earthRadius + 11 + 586.47) ,
 							e : 0.00172,
 							w : 0,
 							M : 0,
-							i : 28.48 - earthTilt,
+							i : 28.48,
 							o : 0
 						},
 						day : {
@@ -73,12 +78,13 @@ define(
 					radius : 2,
 					color : '#00aaff',
 					orbit: {
+						relativeTo : 'earth',
 						base : {
 							a : (earthRadius + 2 + 300) ,
 							e : 0.0003,
 							w : 0,
 							M : 0,
-							i : 28.89 - earthTilt,
+							i : 28.89,
 							o : 0
 						},
 						day : {
@@ -97,12 +103,13 @@ define(
 					radius : 2,
 					color : '#00aaff',
 					orbit: {
+						relativeTo : 'earth',
 						base : {
 							a : 26600,
 							e : 0,
 							w : 0,
 							M : 0,
-							i : 55 - earthTilt,
+							i : 55,
 							o : 0
 						},
 						day : {

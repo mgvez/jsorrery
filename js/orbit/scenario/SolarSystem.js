@@ -32,7 +32,10 @@ define(
 				'halley'
 			],
 			secondsPerTick : 3600 * 5,
-			calculateAll : false
+			calculateAll : false,
+			defaultsGuiSettings : { 
+				planetScale : 10
+			}
 		};
 
 		return cnf;

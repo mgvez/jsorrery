@@ -31,7 +31,10 @@ define(
 				}
 			},
 			secondsPerTick : 3600,//3600 * 24 * 2,
-			calculateAll : true
+			calculateAll : true,
+			defaultsGuiSettings : { 
+				planetScale : 10
+			}
 		};
 
 		return cnf;

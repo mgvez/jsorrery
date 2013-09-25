@@ -6,6 +6,7 @@ define(
 		'orbit/scenario/CommonCelestialBodies',
 		'orbit/scenario/SolarSystem',
 		'orbit/scenario/InnerSolarSystem',
+		'orbit/scenario/Apollo8',
 		'orbit/scenario/EarthMoon',
 		'orbit/scenario/ArtificialSatellites',
 		'orbit/scenario/JupiterMoon',

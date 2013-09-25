@@ -25,12 +25,22 @@ define(
 
 			},
 
+			//if epoch start is not j2000, get epoch time from j2000 epoch time
+			getEpochTime : function(epochTime) {
+				if(this.epoch) {
+					epochTime = epochTime - ((this.epoch.getTime() -  ns.J2000) / 1000);
+				}
+				return epochTime;
+			},
+
 			setPositionFromDate : function(epochTime) {
 				this.angle = 0;
 				this.totalDist = 0;
 
 				this.force = new THREE.Vector3();
 				this.movement = new THREE.Vector3();
+
+				epochTime = this.getEpochTime(epochTime);
 
 				var elements = this.orbitalElements.calculateElements(epochTime);
 				this.period = this.orbitalElements.calculatePeriod(elements, this.relativeTo);
@@ -40,6 +50,23 @@ define(
 				
 				this.verlet = Object.create(Verlet);
 				this.verlet.setBody(this);
+			},
+			
+			getAngleTo : function(bodyName){
+				var ref = ns.U.getBody(bodyName);
+				if(ref) {
+					
+					var eclPos = this.position.clone().sub(ref.getPosition()).normalize();
+					eclPos.z = 0;
+					var angleX = eclPos.angleTo(new THREE.Vector3(1, 0, 0));
+					var angleY = eclPos.angleTo(new THREE.Vector3(0, 1, 0));
+					//console.log(angleX, angleY);
+					var angle = angleX;
+					var q = Math.PI / 2;
+					if(angleY > q) angle = -angleX;
+					return angle;
+				}
+				return 0;
 			},
 
 			afterInitialized : function(){
@@ -53,18 +80,21 @@ define(
 						this.velocity.add(central.velocity);
 					}
 				}
-				this.afterMove(0);
 
 				if(this.customInitialize) this.customInitialize();
+				
+				if(this.afterCompleteMove) this.afterCompleteMove(ns.U.epochTime, ns.U.date);
 			},
 
 			moveBody : function(deltaTIncrement, i){
+				if(this.beforeMove) this.beforeMove(deltaTIncrement);
 				this.verlet.moveBody(deltaTIncrement, i);
+				if(this.afterMove) this.afterMove(deltaTIncrement);
 			},
 
 			//calculate the number of vertices it takes to have a trace that makes one orbit, with the configured distance between each vertex
 			calculateTraceParams : function(universeSize) {
-
+				if(this.nVertices && this.vertexDist) return;
 				var defaultVertexDist = this.vertexDist = universeSize * ns.vertexDist;
 				this.nVertices = ns.minVerticesChangesPerOrbit;
 
@@ -98,7 +128,7 @@ define(
 			getOrbitVertices : function(isElliptic){
 				if(!this.period) return;
 				
-				var startTime = ns.U.currentTime;
+				var startTime = this.getEpochTime(ns.U.currentTime);
 
 				var incr = this.period / 360;
 				var points = [];
@@ -181,13 +211,11 @@ define(
 				if(this.angle > ns.CIRCLE){
 					this.angle = this.angle % ns.CIRCLE;
 					this.dispatchEvent( {type:'revolution'} );
+					if(this.onOrbitCompleted) this.onOrbitCompleted();
 				}
 
-				this.afterMove(ns.U.epochTime);
+				if(this.afterCompleteMove) this.afterCompleteMove(ns.U.epochTime, ns.U.date);
 
-			},
-
-			afterMove : function(time){
 			},
 
 			displayFromElements : function(){

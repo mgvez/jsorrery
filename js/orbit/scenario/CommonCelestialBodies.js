@@ -164,31 +164,21 @@ define(
 						o : (360 / 18.600) / 365.25
 					}	
 				},
-				getAngleToEarth : function(){
-					var earth = ns.U.getBody('earth');
-					if(earth) {
-						
-						var eclPos = this.position.clone().sub(earth.getPosition()).normalize();
-						eclPos.z = 0;
-						var angleX = eclPos.angleTo(new THREE.Vector3(1, 0, 0));
-						var angleY = eclPos.angleTo(new THREE.Vector3(0, 1, 0));
-						//console.log(angleX, angleY);
-						var angle = angleX;// + 0.1;//ajustement
-						var q = Math.PI / 2;
-						if(angleY > q) angle = -angleX;
-						return angle;
+				getMapRotation : function(angle){
+					if(angle > 0) {
+						return angle - Math.PI;
 					}
-					return 0;
+					return angle + Math.PI;
 				},
 				customInitialize : function() {
-					this.baseMapRotation = this.getAngleToEarth() + Math.PI;
+					this.baseMapRotation = this.getMapRotation(this.getAngleTo('earth'));
 					this.nextCheck = this.sideralDay;
 				},
-				afterMove : function(time){
+				afterCompleteMove : function(time){
 					//when a sideral day has passed, make sure that the near side is still facing the earth. Since the moon's orbit is heavily disturbed, some imprecision occurs in its orbit, and its duration is not always the same, especially in an incomplete scenario (where there are no sun/planets). Therefore, a correction is brought to the base map rotation, tweened so that is is not jerky.
 					if(time >= this.nextCheck){
 						this.nextCheck += this.sideralDay;
-						TweenMax.to(this, 2, {baseMapRotation : this.getAngleToEarth() + Math.PI, ease:Sine.easeInOut});
+						TweenMax.to(this, 2, {baseMapRotation : this.getMapRotation(this.getAngleTo('earth')), ease:Sine.easeInOut});
 					}
 				}
 			}

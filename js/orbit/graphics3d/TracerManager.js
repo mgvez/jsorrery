@@ -44,6 +44,7 @@ define(
 				var container = this.container;
 				
 				_.each(this.bodies3d, function(body3d){
+					if(body3d.celestial.forceTrace) return;
 					var tracer = body3d.tracer;
 					//clear all traces first
 					if(!tracer) return;
@@ -63,6 +64,15 @@ define(
 				tracer.init(body3d.celestial.color, N_VERTICES, body3d.celestial.name);
 				
 				body3d.tracer = tracer;
+
+				if(body3d.celestial.forceTrace) {
+					var tracer = body3d.tracer;
+					if(!tracer) return;
+					tracer.setTraceFrom(ns.U.getBody(body3d.celestial.relativeTo).getBody3D());
+					tracer.getNew();
+					tracer.listenToVertexChange(body3d.celestial);
+					this.container.add(tracer.getDisplayObject());
+				}
 				
 			},
 

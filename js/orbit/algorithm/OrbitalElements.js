@@ -10,7 +10,7 @@ define(
 		var maxIterationsForEccentricAnomaly = 10;
 		var maxDE = 1e-15;
 
-		var Deg ={
+		var Deg = {
 			sin : function(v) {
 				return Math.sin(v * ns.DEG_TO_RAD);
 			},
@@ -163,7 +163,12 @@ define(
 
 				computed.r = computed.pos.length();
     			computed.v = Math.atan2(computed.pos.y, computed.pos.x);
-
+    			if(orbitalElements.relativeTo) {
+    				var relativeTo = ns.U.getBody(orbitalElements.relativeTo);
+    				if(relativeTo.tilt) {
+    					computed.tilt = -relativeTo.tilt * ns.DEG_TO_RAD;
+    				}
+    			};
 				return computed;
 			},
 
@@ -180,6 +185,10 @@ define(
 			    var z = computed.r * Math.sin(computed.v+computed.w) * Math.sin(computed.i);/**/
 
 				var pos = new THREE.Vector3(x, y, z);
+
+				if(computed.tilt){
+					pos.applyMatrix4( new THREE.Matrix4().makeRotationX( computed.tilt ) );
+				}
 				return pos;
 			},
 

@@ -7,8 +7,8 @@ define(
 		'orbit/scenario/ApolloNumbers'
 	], 
 	function(ns, common, apolloNumbers) {
-		
-		var apolloNumber = '8';
+		//apollo 10, 13 & 17 don't work
+		var apolloNumber = '13';
 		var earthRadius = common.earth.radius;
 		var earthTilt = common.earth.tilt;
 		var apolloOrbit = apolloNumbers.get('TLI', 'Apollo'+apolloNumber);
@@ -39,6 +39,7 @@ define(
 					((25926+1626) * ns.LB_TO_KG) + (160333 * ns.LB_TO_KG),
 					radius : 2,
 					color : "#ff0000",
+					traceColor : '#ffffff',
 					nVertices : 2000,
 					vertexDist : 100000,
 					forceTrace : true,

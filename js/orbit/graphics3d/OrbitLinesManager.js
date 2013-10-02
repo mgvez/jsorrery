@@ -7,16 +7,14 @@ define(
 		'orbit/NameSpace',
 		'jquery',
 		'orbit/graphics3d/BodyOrbit',
-		'orbit/graphics3d/TracerManager',
 		'_'
 	], 
-	function(ns, $, BodyOrbit, TracerManager){
+	function(ns, $, BodyOrbit){
 		'use strict';
 
 		var OLM = {
 			init : function(rootContainer){
 				this.orbits = {};
-				TracerManager.init(rootContainer);
 			},
 
 			/**
@@ -44,8 +42,6 @@ define(
 				var orbit = Object.create(BodyOrbit);
 				orbit.init(body3d);
 				this.orbits[body3d.getName()] = orbit;
-
-				TracerManager.addBody(body3d);
 			},
 			
 			onCameraChange : function(lookFromBody, lookAtBody) {
@@ -79,8 +75,6 @@ define(
 				_.each(this.orbits, function(orbit){
 					orbit.kill();
 				});
-
-				TracerManager.kill();
 			}
 		};
 

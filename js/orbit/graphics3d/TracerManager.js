@@ -31,13 +31,13 @@ define(
 			resetTrace : function(){
 				this.removeTracers();
 				if(!this.traceFromBody || !this.tracingBody) return;
-				var tracer = this.tracingBody.tracer;
-				if(!tracer) return;
-				tracer.setTraceFrom(this.traceFromBody);
-				tracer.getNew();
-				tracer.listenToVertexChange(this.tracingBody.celestial);
-				tracer.listenToVertexChange(this.traceFromBody.celestial);
-				this.container.add(tracer.getDisplayObject());
+				this.tracer = this.tracingBody.tracer;
+				if(!this.tracer) return;
+				this.tracer.setTraceFrom(this.traceFromBody);
+				this.tracer.getNew();
+				//tracer.listenToVertexChange(this.tracingBody.celestial);
+				//tracer.listenToVertexChange(this.traceFromBody.celestial);
+				this.container.add(this.tracer.getDisplayObject());
 			},
 
 			removeTracers : function(){
@@ -54,6 +54,13 @@ define(
 				});
 			},
 
+			draw : function() {
+				if(this.deferredForceTraceBody) {
+					this.setTraceFrom(ns.U.getBody(this.deferredForceTraceBody.celestial.relativeTo).getBody3D(), this.deferredForceTraceBody);
+					this.deferredForceTraceBody = null;
+				}
+			},
+
 			addBody : function(body3d){
 
 				this.bodies3d.push(body3d);
@@ -61,17 +68,11 @@ define(
 				if(body3d.celestial.isCentral) return;
 
 				var tracer = Object.create(Tracer);
-				tracer.init(body3d.celestial.color, N_VERTICES, body3d.celestial.name);
-				
+				tracer.init(body3d.celestial.traceColor || body3d.celestial.color, N_VERTICES, body3d.celestial.name);
 				body3d.tracer = tracer;
 
 				if(body3d.celestial.forceTrace) {
-					var tracer = body3d.tracer;
-					if(!tracer) return;
-					tracer.setTraceFrom(ns.U.getBody(body3d.celestial.relativeTo).getBody3D());
-					tracer.getNew();
-					tracer.listenToVertexChange(body3d.celestial);
-					this.container.add(tracer.getDisplayObject());
+					this.deferredForceTraceBody = body3d;
 				}
 				
 			},

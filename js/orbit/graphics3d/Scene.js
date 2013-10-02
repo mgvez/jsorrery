@@ -61,6 +61,7 @@ define(
 				this.cameraManager = Object.create(CameraManager);
 				this.cameraManager.init(this, this.width/this.height, scenario.fov, this.stageSize, this.container);
 				OrbitLinesManager.init(this.root);
+				TracerManager.init(this.root);
 
 				var onInitialized = this.setMilkyway();
 				return onInitialized;
@@ -123,6 +124,8 @@ define(
 					b.drawMove();
 				}.bind(this));
 
+				TracerManager.draw();
+
 				//center the milkyway to the camera position, to make it look infinite
 				this.milkyway && this.milkyway.setPosition(this.cameraManager.getCamera().position);
 
@@ -163,6 +166,7 @@ define(
 				
 				this.cameraManager.addBody(body3d);
 				OrbitLinesManager.addBody(body3d);
+				TracerManager.addBody(body3d);
 				
 				this.waitForTexture(celestialBody.map);
 			},
@@ -196,6 +200,7 @@ define(
 			kill : function(){
 				this.cameraManager.kill();
 				OrbitLinesManager.kill();
+				TracerManager.kill();
 				Gui.remove(Gui.PLANET_SCALE_ID);
 				_.each(this.bodies3d, function(body3d){
 					body3d.kill();

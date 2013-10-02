@@ -79,7 +79,7 @@ define(
 				Epoch : J2000
 
 				a 	Semi-major axis
-			    e 	Eccentricity (rad)
+			    e 	Eccentricity
 			    i 	Inclination
 			    o 	Longitude of Ascending Node (Ω)
 			    w 	Argument of periapsis (ω)

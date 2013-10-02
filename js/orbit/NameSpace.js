@@ -18,6 +18,11 @@
 		ns.KM = 1000;
 		ns.DEG_TO_RAD = Math.PI/180;
 		ns.RAD_TO_DEG = 180/Math.PI;
+
+		ns.NM_TO_KM = 1.852;
+		ns.LB_TO_KG = 0.453592;
+		ns.LBF_TO_NEWTON = 4.44822162;
+		ns.FT_TO_M = 0.3048;
 		
 		//duration in seconds
 		ns.DAY = 60 * 60 * 24;

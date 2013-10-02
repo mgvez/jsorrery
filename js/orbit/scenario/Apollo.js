@@ -3,58 +3,49 @@
 define(
 	[
 		'orbit/NameSpace',
-		'orbit/scenario/CommonCelestialBodies'
+		'orbit/scenario/CommonCelestialBodies',
+		'orbit/scenario/ApolloNumbers'
 	], 
-	function(ns, common) {
-		//launch : 1968-12-21T12:51:00.000Z
-		//EOI = launch + 695 secs = 1968-12-21T13:02:35.000Z 
-		//TLI : 1968-12-21T15:47:05.000Z
-		//http://projets.git/lab/jsorrery/index.htm?date=1968-12-21T15:47:05.000Z&scenario=EarthMoon&lookAt=0&planetScale=1
-		//http://projets.git/lab/jsorrery/index.htm?scenario=Apollo8&lookAt=2&planetScale=1
-		var NM_TO_KM = 1.852;
-		var LB_TO_KG = 0.453592;
-		var LBF_TO_NEWTON = 4.44822162;
-		var FT_TO_M = 0.3048;
+	function(ns, common, apolloNumbers) {
+		
+		var apolloNumber = '8';
 		var earthRadius = common.earth.radius;
 		var earthTilt = common.earth.tilt;
-		var epoch = new Date('1968-12-21T13:02:35.000Z');
-		
-		var system =  {
-			name : 'Apollo8',
-			title : 'Apollo 8 free return',
+		var apolloOrbit = apolloNumbers.get('TLI', 'Apollo'+apolloNumber);
+		var epoch = apolloOrbit.epoch;
+
+		var system = {
+			name : 'Apollo',
+			title : 'Apollo '+apolloNumber+' free return trajectory',
 			commonBodies : ['earth', 'moon', 'sun', 'mercury', 'venus', 'mars'/**/],
-			secondsPerTick : 50,
-			calculationsPerTick : 10,
+			secondsPerTick : 100,
+			calculationsPerTick : 50,
 			calculateAll : true,
 			defaultsGuiSettings : {
-				date: new Date('1968-12-21T15:46:05.000Z')//epoch
+				date: epoch//epoch
 			},
 			bodies : {
-				earth: {
-					map : 'img/earthmap1k.jpg'
-				},
 				moon : {
 					isPerturbedOrbit : true
 				},
-				apollo8 : {
-					title : 'Apollo 8',
+				apollo8TLI : _.extend({
+					title : 'Apollo '+apolloNumber,
 					relativeTo : 'earth',
-					epoch : epoch,
 					mass : 
 					//CSM
-					((62845 + 19900 + 3951) * LB_TO_KG) + 
+					((62845 + 19900 + 3951) * ns.LB_TO_KG) + 
 					//S-IVB
 					//dry                       propellant at start of 2nd burn
-					((25926+1626) * LB_TO_KG) + (160333 * LB_TO_KG),
+					((25926+1626) * ns.LB_TO_KG) + (160333 * ns.LB_TO_KG),
 					radius : 2,
-					color : "#ffffff",
+					color : "#ff0000",
 					nVertices : 2000,
 					vertexDist : 100000,
 					forceTrace : true,
-					orbit : {
+					/*orbit : {
 						relativeTo : 'earth',
 						base : {
-							a : (earthRadius + (99.99 * NM_TO_KM)) ,
+							a : (earthRadius + (99.99 * ns.NM_TO_KM)) ,
 							e : 0.00006,
 							w : 125,
 							M : 0,
@@ -69,13 +60,13 @@ define(
 							w : 0,
 							o : 0
 						}	
-					},
+					},/**/
 					events : {
 						TLI : {
 							when : new Date('1968-12-21T15:47:05.000Z').getTime(),
 							burnTime : 317.72 * 1000,
-							thrust : 201777 * LBF_TO_NEWTON,
-							burnMassDelta : 149510 * LB_TO_KG
+							thrust : 201777 * ns.LBF_TO_NEWTON,
+							burnMassDelta : 149510 * ns.LB_TO_KG
 						}
 					},
 
@@ -84,21 +75,20 @@ define(
 						console.log(ns.U.epochTime / 60);
 					},
 					/**/
+					/*
 					afterCompleteMove : function(elapsedTime, absoluteDate){
 						this.dbg = this.dbg || $('<div style="position:absolute;bottom:0;right:0;color:#fff">').appendTo('body');
 						if(!absoluteDate) return;
 						if(typeof this.TliStatus == 'undefined' && absoluteDate.getTime() >= this.events.TLI.when) {
 							this.TliStatus = 1;
 							this.events.TLI.endTime = this.events.TLI.when + this.events.TLI.burnTime;
-							/*console.log(absoluteDate);
-							console.log(this.events.TLI.when);/**/
-
+							
 							var moon = ns.U.getBody('moon');
 							var a = moon.getAngleTo('earth');
 							console.log('angle to moon', a * ns.RAD_TO_DEG);
 
 
-							var dataSpeed = 25567 * FT_TO_M;
+							var dataSpeed = 25567 * ns.FT_TO_M;
 
 							console.log('velocity', this.events.TLI.speed);
 							console.log('max velocity', this.events.TLI.maxSpeed);
@@ -110,7 +100,7 @@ define(
 							console.log('****************');
 							console.log(elapsedTime, this.events.TLI.endTime);
 							console.log('velocity',this.events.TLI.speed);
-							var dataSpeed = 35505.41 * FT_TO_M;
+							var dataSpeed = 35505.41 * ns.FT_TO_M;
 							console.log('velocity (data)',dataSpeed);
 							console.log('mass',this.mass);
 							this.TliStatus = 0; 
@@ -142,8 +132,10 @@ define(
 							}
 							//if(this.dbg) this.dbg.text(this.events.TLI.speed);
 						}
-					}
-				}
+					}/**/
+				}, 
+				apolloOrbit
+				)
 			}
 		};
 

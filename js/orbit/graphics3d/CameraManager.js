@@ -48,7 +48,7 @@ define(
 				domEl.on('mousewheel', onMouseWheel);
 
 				//if we look from a body to another, trace the lookat body's path relative to the pov UNLESS the look target is orbiting to the pov
-				if(lookAtBody && lookAtBody.celestial.isOrbitAround(lookFromBody.celestial)) {
+				if(lookAtBody && !lookAtBody.celestial.isOrbitAround(lookFromBody.celestial)) {
 					TracerManager.setTraceFrom(lookFromBody, lookAtBody);
 				}
 

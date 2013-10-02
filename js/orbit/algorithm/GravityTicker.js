@@ -18,20 +18,10 @@ define(
 		/**
 		Calculates the forces that are created by each body toward one another
 		*/
-		var dbg = 0;
-		var isDebug = false;
-		var cnt = $('#debug');
-		if(cnt.length==0) cnt=$('<div id="debug">').appendTo('body');
-		var dspDbg = $('<div>').appendTo(cnt);
-		var watch;
-		var watchName = 'earth';
 		var calculateGForces = (function(){
 			var workVect, i, j;
 			return function(){
-				isDebug = dbg%500==0;
-				if(isDebug) cnt.empty();
 				for(i=0; i<bodies.length; i++){
-					if(!watch && bodies[i].name==watchName) watch = bodies[i];
 					//loop in following bodies and calculate forces between them and this one. No need to do previous ones, as they were done in previous iterations
 					for(j=i+1; j<bodies.length; j++){
 						if(bodies[i].mass === 1 && bodies[j].mass === 1) continue; 
@@ -39,15 +29,8 @@ define(
 						//add forces (for the first body, it is the reciprocal of the calculated force)
 						bodies[i].force.sub(workVect);
 						bodies[j].force.add(workVect);
-						if(isDebug && (bodies[i].name==watchName || bodies[j].name==watchName)){
-							var str = bodies[i].name + ':' + bodies[j].name+' = ' + workVect.length() + '<br>';
-							cnt.append(str);
-							//console.log(workVect.length(), bodies[j].position.clone().sub(bodies[i].position).length());
-						}
 					}
 				}
-				if(isDebug) cnt.append(ns.U.currentTime+' total :'+watch.force.length());
-				dbg++;
 			};
 		})();
 

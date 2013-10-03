@@ -102,7 +102,6 @@ define(
 						body.mass = 1;
 					}
 					body.init();
-					body.calculateTraceParams(this.size);
 					body.setPositionFromDate(this.currentTime);
 					
 				}.bind(this));

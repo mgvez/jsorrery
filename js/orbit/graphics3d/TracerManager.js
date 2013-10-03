@@ -35,8 +35,6 @@ define(
 				if(!this.tracer) return;
 				this.tracer.setTraceFrom(this.traceFromBody);
 				this.tracer.getNew();
-				//tracer.listenToVertexChange(this.tracingBody.celestial);
-				//tracer.listenToVertexChange(this.traceFromBody.celestial);
 				this.container.add(this.tracer.getDisplayObject());
 			},
 
@@ -48,7 +46,6 @@ define(
 					var tracer = body3d.tracer;
 					//clear all traces first
 					if(!tracer) return;
-					tracer.unlistenToVertexChange();
 					container.remove(tracer.getDisplayObject());
 					
 				});
@@ -78,9 +75,6 @@ define(
 			},
 
 			kill : function(){
-				_.each(this.bodies3d, function(body3d){
-					body3d.tracer && body3d.tracer.unlistenToVertexChange();
-				});
 			}
 		};
 

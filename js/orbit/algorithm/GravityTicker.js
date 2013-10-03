@@ -71,7 +71,7 @@ define(
 						t++;
 					}
 					for(i=0; i<bodies.length; i++){
-						bodies[i].afterTick();
+						bodies[i].afterTick(secondsPerTick);
 					}
 					
 					return secondsPerTick;

@@ -40,7 +40,6 @@ define(
 					radius : 2,
 					color : "#ff0000",
 					traceColor : '#ffffff',
-					nVertices : 2000,
 					vertexDist : 100000,
 					forceTrace : true,
 					/*orbit : {

@@ -8,12 +8,17 @@ define(
 	], 
 	function(ns, $, Utils) {
 		'use strict';
+		//a change of direction of x radians triggers a vertex switch in the path (equivalent to adding a vertex);
+		var SWITCH_TRESHOLD = 0.005;
+		var vNorm = new THREE.Vector3(1, 0, 0);
+
 		return {
 			init : function(color, nVertices, name){
 				this.name = name;
 				this.color = Utils.rgbToHex(Utils.darken(Utils.hexToRgb(color), 0.7));
 				this.points = [];
 				this.nVertices = nVertices;
+				this.lastVertexIdx = this.nVertices - 1;
 				this.lastMod = 0;
 				this.root = new THREE.Object3D();
 				this.tracePosition = new THREE.Vector3();
@@ -37,7 +42,6 @@ define(
 				}
 				this.line = new THREE.Line(this.geom, material);
 				this.currentVertex = 0;
-				this.previous = 0;
 				this.initCallback = this.changeVertex.bind(this);
 				this.attachTrace();
 			},
@@ -50,26 +54,6 @@ define(
 				this.line && this.root.add(this.line);
 			},
 
-			listenToVertexChange : function(celestialBody) {
-				if(!celestialBody) return;
-				this.listeners = this.listeners || [];
-				var listener = {
-					dispatcher : celestialBody,
-					event : 'vertex',
-					handler : this.changeVertex.bind(this)
-				};
-				listener.dispatcher.addEventListener(listener.event, listener.handler);
-				this.listeners.push(listener);
-			},
-			
-			unlistenToVertexChange : function() {
-				if(!this.listeners) return;
-				var listener;
-				while(listener = this.listeners.pop()){
-					listener.dispatcher.removeEventListener(listener.event, listener.handler);
-				}
-			},
-
 			setTraceFrom : function(traceFromBody) {
 				if(this.traceFrom !== traceFromBody) this.getNew();
 				this.traceFrom = traceFromBody;
@@ -79,52 +63,45 @@ define(
 			},
 
 			changeVertex : function(){
-				this.currentVertex < this.nVertices && this.currentVertex++;
-				this.switchVertex = true;
+				this.lastPathDirection = null;
+				this.switchVertex = this.currentVertex === this.lastVertexIdx;
+				this.currentVertex < this.lastVertexIdx && this.currentVertex++;
 			},
 
 			doTrace : function(pos){
 				if(!this.geom) return;
 				var i;
 				pos = this.setTracePos(pos);
-				/*console.clear();
-				console.log(pos);
-				console.log(this.geom.vertices[this.currentVertex]);/**/
-				if(this.geom.vertices[this.currentVertex].distanceTo(pos) ==0) return;
+				if(this.geom.vertices[this.currentVertex] && this.geom.vertices[this.currentVertex].distanceTo(pos) ==0 ) return;
 				this.geom.verticesNeedUpdate = true;
 				
-					
-				
-				if(this.currentVertex < this.nVertices) {
+				if(this.currentVertex < this.lastVertexIdx) {
 					for(i = this.currentVertex; i < this.nVertices; i++) {
 						this.geom.vertices[i].copy(pos);
 					}
 				} else {
-					var lastVertexIdx = this.nVertices - 1;
 					if(this.switchVertex){
-						for(i = 0; i < lastVertexIdx; i++) {
+						for(i = 0; i < this.lastVertexIdx; i++) {
 							this.geom.vertices[i].copy(this.geom.vertices[i+1]);
 						}
 						this.switchVertex = false;
 					}
-					this.geom.vertices[this.geom.vertices.length-1].copy(pos);
+					this.geom.vertices[this.lastVertexIdx].copy(pos);
 				}
 
 				var v2 = this.geom.vertices[this.currentVertex-2]; 
-				v2 = v2 && v2.clone();
 				var v1 = this.geom.vertices[this.currentVertex-1]; 
-				v1 = v1 && v1.clone();
-				var v0 = this.geom.vertices[this.currentVertex].clone();
-				var vNorm = new THREE.Vector3(1, 0, 0);
+				var v0 = this.geom.vertices[this.currentVertex];
 				
-				//console.log(this.diff);
-				//console.log(diff);
 				if(v1 && v2) {
 
-					var a = v1.sub(v2);
-					var b = v0.sub(this.previous);
-					var diff = Math.abs(Math.abs(a.angleTo(vNorm)) - Math.abs(b.angleTo(vNorm)));
-					if(diff > 0.005){
+					if(!this.lastPathDirection) {
+						var a = v1.clone().sub(v2);
+						this.lastPathDirection = Math.abs(a.angleTo(vNorm));
+					}
+					var curPath = v0.clone().sub(this.previousPos);
+					var diff = Math.abs(this.lastPathDirection - Math.abs(curPath.angleTo(vNorm)));
+					if(diff > SWITCH_TRESHOLD){
 						this.changeVertex();
 					}
 
@@ -133,7 +110,7 @@ define(
 				if(!v1 || !v2){
 					this.changeVertex();
 				}
-				this.previous = pos;
+				this.previousPos = pos;
 							
 			},
 

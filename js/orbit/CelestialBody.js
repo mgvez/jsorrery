@@ -35,7 +35,6 @@ define(
 
 			setPositionFromDate : function(epochTime) {
 				this.angle = 0;
-				this.totalDist = 0;
 
 				this.force = new THREE.Vector3();
 				this.movement = new THREE.Vector3();
@@ -90,36 +89,6 @@ define(
 				if(this.beforeMove) this.beforeMove(deltaTIncrement);
 				this.verlet.moveBody(deltaTIncrement, i);
 				if(this.afterMove) this.afterMove(deltaTIncrement);
-			},
-
-			//calculate the number of vertices it takes to have a trace that makes one orbit, with the configured distance between each vertex
-			calculateTraceParams : function(universeSize) {
-				if(this.nVertices && this.vertexDist) return;
-				var defaultVertexDist = this.vertexDist = universeSize * ns.vertexDist;
-				this.nVertices = ns.minVerticesChangesPerOrbit;
-
-				if(this.orbit){
-
-					//cirumference of orbit
-					var a = this.orbit.base.a;
-					var e = this.orbit.base.e;
-					var b = a * Math.sqrt(1-Math.pow(e, 2));
-					this.circ = (2 * Math.PI) * Math.sqrt(
-							(
-							Math.pow(a, 2)+Math.pow(b, 2)
-							)/2
-						) * ns.KM;
-					
-					var thisMinVertexDist = this.circ / ns.minVerticesChangesPerOrbit;
-					if(defaultVertexDist > thisMinVertexDist){
-						this.vertexDist = thisMinVertexDist;
-					}
-
-					this.nVertices = Math.round((this.circ / this.vertexDist));
-					this.vertexDist = this.circ / this.nVertices;
-				}
-				//console.log(this.name, this.nVertices, this.vertexDist);
-				
 			},
 
 			/**
@@ -193,20 +162,13 @@ define(
 				return points;
 			},
 			
-			afterTick : function() {
+			afterTick : function(deltaT) {
 				var relativeToPos = ns.U.getBody(this.relativeTo).getPosition();
 				this.relativePosition.copy(this.position).sub(relativeToPos);
 				this.movement.copy(this.relativePosition).sub(this.previousRelativePosition);
-
-				//distance 
-				this.totalDist += this.movement.length();
+				this.velocity = this.movement.length() / deltaT;
 				this.angle += this.relativePosition.angleTo(this.previousRelativePosition);
 				this.previousRelativePosition.copy(this.relativePosition);
-
-				if(this.totalDist > this.vertexDist) {
-					this.dispatchEvent( {type:'vertex'} );
-					this.totalDist = this.totalDist % this.vertexDist;
-				}
 				
 				if(this.angle > ns.CIRCLE){
 					this.angle = this.angle % ns.CIRCLE;

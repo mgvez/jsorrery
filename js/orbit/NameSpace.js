@@ -36,8 +36,6 @@
 
 		ns.defaultCalculationsPerTick = 200;
 
-		//minimal number of points traced per orbit 
-		ns.minVerticesChangesPerOrbit = 200;
 		//in universe size (so depends on max orbit among all bodies)
 		ns.vertexDist = 1/50;
 

@@ -8,6 +8,21 @@ define([
 	'_'
 ], function(ns, common){
 	'use strict';
+
+	var launchTimes = [
+		'1968-10-11:15:02:45.000Z',
+		'1968-12-21T12:51:00.000Z',
+		'1969-03-03:16:00:00.000Z',
+		'1969-05-18T16:49:00.000Z',
+		'1969-07-16T13:32:00.000Z',
+		'1969-11-14T16:22:00.000Z',
+		'1970-04-11T19:13:00.000Z',
+		'1971-01-31T21:03:02.000Z',
+		'1971-07-26T13:34:00.000Z',
+		'1972-04-16T17:54:00.000Z',
+		'1972-12-07T05:33:00.000Z'
+	];
+
 	var ApolloNumbers = {
 		earth : {
 			name : [
@@ -480,7 +495,18 @@ define([
 			var argumentPerigee = ln - trueAnomaly;
 
 			var geoLongAscNode = ((ns.DEG_TO_RAD * numbers.long[idx]) - as) + ns.CIRCLE;
-			var epoch = new Date(numbers.gmt[idx]);
+
+
+			var epoch;
+			if(numbers.gmt){
+				epoch = new Date(numbers.gmt[idx]);
+			} else {
+				epoch = new Date(launchTimes[idx]);
+				console.log(epoch.toGMTString())
+				console.log(epoch.getTime()/(1000*3600*24));
+				epoch = new Date(epoch.getTime() + numbers.time[idx]*1000);
+				console.log(epoch.toGMTString())
+			}
 			var celestLongAscNode = getLongAtLocalSideralTime(epoch, geoLongAscNode * ns.RAD_TO_DEG);
 
 			var E = Math.acos( ( e + Math.cos(trueAnomaly) ) / (1 + e * Math.cos(trueAnomaly)));
@@ -489,6 +515,7 @@ define([
 			var T = M / N;
 			
 			/*
+			console.log('**************************************** '+orbitType);
 			console.log('r',r);
 			console.log('v',v);
 			console.log('C',C);
@@ -508,7 +535,10 @@ define([
 			console.log('T', T);
 			/**/
 
-
+			/*if(orbitType=='earth'){
+				celestLongAscNode += 145;
+				celestLongAscNode = celestLongAscNode%360;
+			}/**/
 
 			return {
 				epoch : epoch,
@@ -517,8 +547,8 @@ define([
 					base : {
 						a : a / ns.KM,
 						e : e,
-						w : (argumentPerigee * ns.RAD_TO_DEG) , 
-						M : M * ns.RAD_TO_DEG,
+						w : (argumentPerigee * ns.RAD_TO_DEG), 
+						M : M * ns.RAD_TO_DEG ,
 						i : numbers.incl[idx],
 						o : celestLongAscNode
 					},

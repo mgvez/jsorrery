@@ -7,6 +7,9 @@ define(
 	function(ns, $) {
 		'use strict';
 		var beginPos = new THREE.Vector3();
+
+		//xi+1 = xi + (xi - xi-1) + a * dt * dt
+
 		var Verlet = {
 			setBody : function(b){
 				this.b = b;

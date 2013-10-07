@@ -166,7 +166,7 @@ define(
 				var relativeToPos = ns.U.getBody(this.relativeTo).getPosition();
 				this.relativePosition.copy(this.position).sub(relativeToPos);
 				this.movement.copy(this.relativePosition).sub(this.previousRelativePosition);
-				this.velocity = this.movement.length() / deltaT;
+				this.speed = this.movement.length() / deltaT;
 				this.angle += this.relativePosition.angleTo(this.previousRelativePosition);
 				this.previousRelativePosition.copy(this.relativePosition);
 				

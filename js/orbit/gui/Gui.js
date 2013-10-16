@@ -3,12 +3,20 @@ define(
 	[
 		'orbit/NameSpace',
 		'jquery',
+		'orbit/gui/ExportValues',
 		'ui',
-		'_'
+		'_',
+		'vendor/greensock/TweenMax',
+		'vendor/greensock/easing/EasePack'
 	],
-	function(){
+	function(ns, $, ExportValues){
 		'use strict';
 		var elements = {};
+
+		var BTNS_LABELS = {
+			share : '&#59196;',
+			start : ['&#9654;', '&#8214;']
+ 		};
 
 		var removeElement = function(elId){
 			elements[elId] && elements[elId].remove();
@@ -25,22 +33,64 @@ define(
 			var val = clickedOption.data('value');
 			selector.display.html(clickedOption.html());
 			input.val(val).trigger('change');
-			exportingValues[id] = val;
+			ExportValues.setVal(id, val);
 
+		};
+
+		var setupHelp = function(){
+			var allHelpContents = $('.helpContent');
+
+			var hideContent = function(content){
+				var shown = content.filter('.shown');
+				var onDone = $.Deferred();
+				if(shown.length>0){
+					TweenMax.killTweensOf(shown);
+					TweenMax.to(shown, 0.5, {css:{height:1, opacity:0}, onComplete:function(){
+							shown.hide();
+							shown.removeClass('shown');
+							onDone.resolve();
+						}
+					});
+				} else {
+					onDone.resolve();
+				}
+				return onDone.promise();
+			};
+			var showContent = function(content){
+				TweenMax.killTweensOf(content);
+				TweenMax.from(content.show().css({height:'auto', opacity:1}), 0.5, {css:{height:1, opacity:0}});
+				content.addClass('shown');
+			};
+
+			$('.help').on('click.orbit', function(e){
+				e.preventDefault();
+				var _self = $(this);
+				var content = _self.data('content');
+				if(!content){
+					content = allHelpContents.filter('#'+_self.data('for'));
+					_self.data('content', content);
+					content.find('.close').on('click.orbit', function(){
+						hideContent(content);
+					});
+				}
+
+				var onHidden = hideContent(allHelpContents);
+				onHidden.then(function(){
+					showContent(content)
+				});
+				return false;
+			});
 		};
 
 		var dateDisplay;
 		var date;
-
-		var exportingValues = {};
-		
 
 		return {
 
 			PLANET_SCALE_ID : 'planetScale',
 			SCENARIO_ID : 'scenario',
 			START_ID : 'start',
-			LINK_ID : 'link',
+			SHARE_ID : 'share',
 			DATE_ID : 'date',
 			LOOKAT_ID : 'lookAt',
 			LOOKFROM_ID : 'lookFrom',
@@ -48,16 +98,33 @@ define(
 			init : function(universe){
 				this.root = $('#gui');
 				this.selects = {};
+
+				setupHelp();
 			},
 
 			addBtn : function(label, id, callback) {
 				removeElement(id);
-				elements[id] = $('<button id="'+id+'">'+label+'</button>').appendTo(getContainer(id)).on('click.orrery', callback);
-			},
-			
-			exportValues : function(){
-				var exportStr = JSON.stringify(exportingValues);
-				return window.btoa(exportStr);
+				label = BTNS_LABELS[id] || label;
+				var labelOff;
+				var labelOn;
+				if(label instanceof Array) {
+					labelOff = label[0];
+					labelOn = label[1];
+				} else {
+					labelOff = label;
+				}
+				var status = false;
+				var btn = elements[id] = $('<button id="'+id+'">'+labelOff+'</button>').appendTo(getContainer(id));
+				btn.on('click.orrery', function(e){
+					e.stopPropagation();
+					callback();
+					status = !status;
+					if(status && labelOn){
+						btn.html(labelOn);
+					} else {
+						btn.html(labelOff);
+					} 
+				});
 			},
 			
 			addDropdown : function(id, callback){
@@ -120,10 +187,10 @@ define(
 			addDate : function(onChange){
 				if(!dateDisplay) {
 					dateDisplay = $('<input>').appendTo(getContainer(this.DATE_ID));
-					dateDisplay.datepicker({
+					/*dateDisplay.datepicker({
 						dateFormat : $.datepicker.ATOM,
 						changeYear : true
-					});
+					});/**/
 				}
 
 				dateDisplay.off('change').on('change.orbit', function(){
@@ -142,8 +209,10 @@ define(
 
 			setDate : function(d){
 				date = d;
-				exportingValues[this.DATE_ID] = d;
-				dateDisplay.val($.datepicker.formatDate( $.datepicker.ATOM, d));
+				var dStr = d.toISOString();
+				ExportValues.setVal(this.DATE_ID, dStr);
+				dateDisplay.val(dStr);
+				//dateDisplay.val($.datepicker.formatDate( $.datepicker.ATOM, d));
 			},
 
 			getDate : function(){
@@ -161,7 +230,7 @@ define(
 					slide : function(evt, ui){
 						var val = ui.value;
 						val = val < 1 ? 1 : val;
-						exportingValues[id] = val;
+						ExportValues.setVal(id, val);
 						setSlideValue(val);
 					},
 					value : defaultVal || 1
@@ -180,7 +249,7 @@ define(
 					});
 				}
 
-				exportingValues[id] = defaultVal || 1;
+				ExportValues.setVal(id, defaultVal || 1);
 
 				return slider;
 			},
@@ -200,6 +269,10 @@ define(
 					callback();
 				});
 				this.defaultCallbacks.length = 0;
+			},
+
+			getDefaultCameraPos : function() {
+				
 			},
 
 			setDefaults : function(defaultSettings) {

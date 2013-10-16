@@ -8,10 +8,11 @@ define(
 		'orbit/graphics3d/TracerManager',
 		'orbit/graphics3d/Dimensions',
 		'orbit/gui/Gui',
+		'orbit/gui/ExportValues',
 		'three/controls/OrbitControls',
 		'three'
 	], 
-	function(ns, $, OrbitLinesManager, TracerManager, Dimensions, Gui) {
+	function(ns, $, OrbitLinesManager, TracerManager, Dimensions, Gui, ExportValues) {
 		'use strict';
 
 		var DEFAULT_FOV = 45;
@@ -38,6 +39,7 @@ define(
 			viewSettings.lookAt = trackOptionSelectors.at.val();
 			disableControls();
 
+
 			var lookFromBody = bodies3d[viewSettings.lookFrom];
 			var lookAtBody = bodies3d[viewSettings.lookAt];
 
@@ -60,10 +62,11 @@ define(
 					currentCamera = (lookAtBody && lookAtBody.getCamera(ORBITAL_CAMERA_TYPE)) || globalCamera;
 					currentCamera.jsorrery && currentCamera.jsorrery.controls && (currentCamera.jsorrery.controls.enabled = true);
 				}
-
 			}
 
 			Gui.toggleOptions(Gui.LOOKAT_ID, toggling_at_options, !!lookFromBody);
+
+			ExportValues.setCamera(currentCamera);
 
 			//we show/hide orbits and ecliptics depending on what bodies are of interest
 			OrbitLinesManager.onCameraChange(lookFromBody, lookAtBody);
@@ -181,6 +184,15 @@ define(
 				Gui.addOption(Gui.LOOKAT_ID, 'Direction of velocity', 'front');
 				Gui.addOption(Gui.LOOKAT_ID, 'Inverse direction of velocity', 'back');
 
+			},
+
+			putDefaults : function(settings) {
+				if(settings) {
+					currentCamera.position.x = settings.x || 0;
+					currentCamera.position.y = settings.y || 0;
+					currentCamera.position.z = settings.z || 0;
+					currentCamera.fov = settings.fov || DEFAULT_FOV;
+				}
 			},
 
 			addBody : function(body3d){				

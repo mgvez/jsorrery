@@ -9,11 +9,14 @@ define(
 		'jquery',
 		'orbit/Universe',
 		'orbit/gui/Gui',
+		'orbit/gui/Sharer',
 		'orbit/scenario/ScenarioLoader',
 		'_'
 	], 
-	function(ns, $, Universe, Gui, ScenarioLoader) {
+	function(ns, $, Universe, Gui, Sharer, ScenarioLoader) {
 		'use strict';
+
+		var preloader;
 
 		var activeScenario;
 		var loadScenario = function(name, defaultParams) {
@@ -26,8 +29,8 @@ define(
 			}
 
 			activeScenario = Object.create(Universe);
-			activeScenario.init(scenarioConfig, defaultParams);
-
+			var onSceneReady = activeScenario.init(scenarioConfig, defaultParams);
+			onSceneReady.then(removePreloader);
 		};
 
 		var getQueryString = function() {
@@ -38,12 +41,32 @@ define(
 				temp = parts[i].split("=");
 				qstr[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1]);
 			}
+
+			if(typeof qstr.cx != 'undefined'){
+				qstr.cameraSettings = {
+					x : qstr.cx,
+					y : qstr.cy,
+					z : qstr.cz,
+					fov : qstr.fov
+				};
+				delete(qstr.cx);
+				delete(qstr.cy);
+				delete(qstr.cz);
+				delete(qstr.fov);
+			} 
+
 			return qstr;
+		};
+
+		var removePreloader = function(){
+			preloader.fadeOut(500);
+			//console.log(console.memory);
 		};
 
 		var Orbit = {
 			init : function(){
 
+				preloader = $('#preload');
 				Gui.init();
 
 
@@ -56,11 +79,8 @@ define(
 				}.bind(this));
 
 				
-				Gui.addBtn('link', Gui.LINK_ID, function(){
-					var exports = Gui.exportValues();
-					console.log(exports);
-					var obj = JSON.parse(window.atob(exports));
-					console.log(obj);
+				Gui.addBtn('share', Gui.SHARE_ID, function(){
+					Sharer.show();
 				}.bind(this));
 				
 

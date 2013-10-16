@@ -5,11 +5,12 @@ define(
 		'orbit/NameSpace',
 		'jquery',
 		'orbit/graphics3d/Dimensions',
+		'orbit/graphics3d/loaders/ResourceLoader',
 		'three',
 		'vendor/greensock/TweenMax',
 		'vendor/greensock/easing/EasePack'
 	], 
-	function(ns, $, Dimensions) {
+	function(ns, $, Dimensions, ResourceLoader) {
 		'use strict';
 
 		var Body3d = {
@@ -66,7 +67,7 @@ define(
 				var map = this.celestial.map;
 				var matOptions = {};
 				if(map){
-					matOptions.map = THREE.ImageUtils.loadTexture(map);
+					matOptions.map = ResourceLoader.loadTexture(map);
 				} else {
 					matOptions.color = this.celestial.color
 				}
@@ -96,7 +97,7 @@ define(
 						Dimensions.getScaled(this.celestial.ring.outerRadius * ns.KM)
 					];
 					
-					var ringMap = THREE.ImageUtils.loadTexture( this.celestial.ring.map );
+					var ringMap = ResourceLoader.loadTexture( this.celestial.ring.map );
 		
 					var ringMaterial = new THREE.MeshLambertMaterial({
 	                   map: ringMap

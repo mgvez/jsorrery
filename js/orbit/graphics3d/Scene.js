@@ -46,8 +46,6 @@ define(
 					$('body').append( stats.domElement );
 				}
 
-				this.onTextureLoaded = this.draw.bind(this);
-
 				this.container.append(this.renderer.domElement);
 				
 				Gui.addSlider(Gui.PLANET_SCALE_ID, function(val){
@@ -58,21 +56,22 @@ define(
 				}.bind(this));
 
 				//this.drawAxis();
-				this.cameraManager = Object.create(CameraManager);
-				this.cameraManager.init(this, this.width/this.height, scenario.fov, this.stageSize, this.container);
+				CameraManager.init(this, this.width/this.height, scenario.fov, this.stageSize, this.container);
 				OrbitLinesManager.init(this.root);
 				TracerManager.init(this.root);
 
-				var onInitialized = this.setMilkyway();
-				return onInitialized;
+				this.setMilkyway();
+
+			},
+
+			setCameraDefaults : function(settings) {
+				CameraManager.putDefaults(settings);
 			},
 
 			setMilkyway : function(){
 				var milkyway = this.milkyway = Object.create(MilkyWay);
 				var onReady = milkyway.init(this.stageSize * 4);
 				this.root.add(milkyway.getDisplayObject());
-
-				return onReady;
 			},
 
 
@@ -90,10 +89,10 @@ define(
 			/*
 			drawAxis : function(){
 				var object = new THREE.AxisHelper(this.stageSize/10);
-	         	object.position.x = 0;//r
-	         	object.position.y = 0;//g
-	         	object.position.z = 0;//b
-		      	this.root.add( object );
+			 	object.position.x = 0;//r
+			 	object.position.y = 0;//g
+			 	object.position.z = 0;//b
+			  	this.root.add( object );
 			},/**/
 
 			setDimension : function(largestSMA, smallestSMA, largestRadius) {
@@ -105,10 +104,10 @@ define(
 			},
 
 			toXYCoords:function (pos) {
-		        var vector = projector.projectVector(pos, this.cameraManager.getCamera());
-		        vector.x = (vector.x + 1)/2 * this.width;
-		        vector.y = -(vector.y - 1)/2 * this.height;/**/
-		        return vector;
+				var vector = projector.projectVector(pos, CameraManager.getCamera());
+				vector.x = (vector.x + 1)/2 * this.width;
+				vector.y = -(vector.y - 1)/2 * this.height;/**/
+				return vector;
 			},
 
 			draw : function(){
@@ -127,16 +126,16 @@ define(
 				TracerManager.draw();
 
 				//center the milkyway to the camera position, to make it look infinite
-				this.milkyway && this.milkyway.setPosition(this.cameraManager.getCamera().position);
+				this.milkyway && this.milkyway.setPosition(CameraManager.getCamera().position);
 
-				this.renderer.render(this.root, this.cameraManager.getCamera());
+				this.renderer.render(this.root, CameraManager.getCamera());
 
 				//after all bodies have been positionned, update camera matrix (as camera might be attached to a body)
-				this.cameraManager.updateCameraMatrix();
+				CameraManager.updateCameraMatrix();
 				//place planets labels. We need the camera position relative to the world in order to compute planets screen sizes, and hide/show labels depending on it
-				var radFov = this.cameraManager.getCamera().fov * ns.DEG_TO_RAD;
-				var camPos = this.cameraManager.getCamera().position.clone();
-				camPos.applyMatrix4(this.cameraManager.getCamera().matrixWorld);
+				var radFov = CameraManager.getCamera().fov * ns.DEG_TO_RAD;
+				var camPos = CameraManager.getCamera().position.clone();
+				camPos.applyMatrix4(CameraManager.getCamera().matrixWorld);
 				_.each(this.bodies3d, function(b){
 					b.placeLabel(this.toXYCoords(b.getPosition()), this.width, this.height, camPos, radFov);
 				}.bind(this));
@@ -146,7 +145,7 @@ define(
 
 			//camera might move and/or look at a different point depending on bodies movements
 			updateCamera : function(){
-				this.cameraManager.updateCamera();
+				CameraManager.updateCamera();
 			},
 
 			//when the date has changed by the user instead of by the playhead, we need to recalculate the orbits and redraw
@@ -164,18 +163,9 @@ define(
 				this.bodies3d.push(body3d);
 				body3d.setParentDisplayObject(this.root);
 				
-				this.cameraManager.addBody(body3d);
+				CameraManager.addBody(body3d);
 				OrbitLinesManager.addBody(body3d);
 				TracerManager.addBody(body3d);
-				
-				this.waitForTexture(celestialBody.map);
-			},
-
-			waitForTexture : function(mapSrc){
-				if(!mapSrc) return;
-				var textureImg = new Image();
-		        textureImg.onload = this.onTextureLoaded;
-		        textureImg.src = mapSrc;
 			},
 
 			setCentralBody : function(centralBody){
@@ -198,7 +188,7 @@ define(
 
 
 			kill : function(){
-				this.cameraManager.kill();
+				CameraManager.kill();
 				OrbitLinesManager.kill();
 				TracerManager.kill();
 				Gui.remove(Gui.PLANET_SCALE_ID);

@@ -4,9 +4,10 @@ Source : http://threejs.org/examples/webgl_lensflares.html
 
 define(
 	[
-		'orbit/NameSpace'
+		'orbit/NameSpace',
+		'orbit/graphics3d/loaders/ResourceLoader'
 	], 
-	function(ns){
+	function(ns, ResourceLoader){
 		'use strict';
 
 var printed;
@@ -32,7 +33,7 @@ var printed;
 			mapSrc : 'img/lensflare0.png',
 			init : function(size){
 				this.root = new THREE.Object3D();
-				var flareTx = THREE.ImageUtils.loadTexture(this.mapSrc);
+				var flareTx = ResourceLoader.loadTexture(this.mapSrc);
 				var flareColor = new THREE.Color( 0xffffff );
 				flareColor.setHSL( 0.57, 0.80, 0.97 );
 

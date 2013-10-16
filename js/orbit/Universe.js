@@ -11,13 +11,14 @@ define(
 		'orbit/algorithm/GravityTicker',
 		'orbit/graphics3d/Scene',
 		'orbit/gui/Gui',
+		'orbit/graphics3d/loaders/ResourceLoader',
 		'_'
 	], 
-	function(ns, $, CelestialBody, GravityTicker, Scene, Gui) {
+	function(ns, $, CelestialBody, GravityTicker, Scene, Gui, ResourceLoader) {
 		'use strict';
 		var Universe = {
 			init : function(scenario, qstrSettings){
-
+				ResourceLoader.reset();
 				this.name = scenario.name;
 
 				var initialSettings = _.extend({}, qstrSettings, scenario.defaultsGuiSettings);
@@ -26,7 +27,8 @@ define(
 				//Universe is, well, global
 				ns.U = this;
 				
-				Gui.addBtn('start/stop', Gui.START_ID, function(){
+				//start/stop
+				Gui.addBtn('play', Gui.START_ID, function(){
 					this.playing = !this.playing;
 				}.bind(this));
 
@@ -51,17 +53,23 @@ define(
 
 				this.scene = Object.create(Scene);
 				this.calculateDimensions();
-				var onSceneReady = this.scene.createStage(scenario);
+				this.scene.createStage(scenario);
 
-				onSceneReady.then(function(){
-					this.initBodies(scenario);
-					this.scene.setCentralBody(this.centralBody);
-					GravityTicker.setSecondsPerTick(scenario.secondsPerTick);
-					GravityTicker.setCalculationsPerTick(scenario.calculationsPerTick || ns.defaultCalculationsPerTick);
+				this.initBodies(scenario);
+				this.scene.setCentralBody(this.centralBody);
+				GravityTicker.setSecondsPerTick(scenario.secondsPerTick);
+				GravityTicker.setCalculationsPerTick(scenario.calculationsPerTick || ns.defaultCalculationsPerTick);
+				var onSceneReady = ResourceLoader.getOnReady();
+
+				onSceneReady.done(function(){
 					this.showDate();
 					Gui.putDefaults();
+					this.scene.setCameraDefaults(initialSettings.cameraSettings);
+					this.scene.draw();
 					this.tick();
 				}.bind(this));
+
+				return onSceneReady;
 
 			},
 

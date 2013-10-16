@@ -3,10 +3,10 @@ define(
 		'orbit/NameSpace',
 		'jquery',
 		'orbit/data/Constellations',
-		'orbit/graphics3d/shaders/ShaderLoader',
+		'orbit/graphics3d/loaders/ResourceLoader',
 		'_'
 	], 
-	function(ns, $, Constellations, ShaderLoader){
+	function(ns, $, Constellations, ResourceLoader){
 		'use strict';
 
 		var rendered;
@@ -20,6 +20,7 @@ define(
 		var Z = 3;
 		var MAG = 4;
 		var SPECT = 5;
+		
 		var MIN_MAG = -1.44;
 
 		var spectralColors = [
@@ -37,6 +38,8 @@ define(
 		];
 
 		var namedStars = {};
+
+		var starTexture;
 
 		var lightenDarkenColor = function (hex, amount) {
 			var col = [hex >> 16, (hex >> 8) & 0x00FF,  hex & 0x0000FF];
@@ -70,7 +73,6 @@ define(
 		};
 
 		var getShaderAttr = function(){
-			var starTexture = THREE.ImageUtils.loadTexture( "img/star.png" );
 
 			return {
 				uniforms : {
@@ -165,12 +167,10 @@ define(
 				//var particleSystem = new THREE.ParticleSystem(particles, pMaterial);
 				rendered.rotation.x = -((23+(26/60)+(21/3600)) * ns.DEG_TO_RAD);
 
-				var onDataLoaded = $.ajax({
-					url : this.dataSrc,
-					dataType : 'json'
-				});
+				var onDataLoaded = ResourceLoader.loadJSON(this.dataSrc);
+				var onShaderLoaded = ResourceLoader.loadShaders('stars');
 
-				var onShaderLoaded = ShaderLoader('stars');
+				starTexture = ResourceLoader.loadTexture( "img/star.png" );
 				
 				var onReady = $.Deferred();
 				$.when(onShaderLoaded, onDataLoaded).then(function(shaderResponse, dataResponse){

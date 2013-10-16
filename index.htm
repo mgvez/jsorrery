@@ -5,45 +5,128 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="author" content="Martin Vézina, La Grange">
 		<script data-main="./js/app.js" src="./js/require.js"></script>
-		<title>jsOrrery - La Grange</title>
+		<title>jsOrrery - Javascript Solar System Simulator</title>
 
-		<link href='http://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
+		<meta property="og:title" content="jsOrrery - Solar System Simulator" /> 
+		<meta property="og:image" content="/img/jsorrery_likefb.jpg" /> 
+		<meta property="og:description" content="See the Solar System in your browser with jsOrrery, a Javascript / WebGL orbital mechanics simulator." />
+		<meta property="og:url" content=" " />
+
+		<link href='http://fonts.googleapis.com/css?family=Quattrocento' rel='stylesheet' type='text/css'>
 
 		<link rel="stylesheet" type="text/css" href="css/master.css">
 	</head>
 	<body>
 		<nav>
 			<div id="gui">
-				<label>
+				<label id="startLabel">
 					<div id="startCont" class="inputContainer"></div>
 				</label>
-				<label id="dateLabel">
-					<span>Date</span>
-					<div id="dateCont" class="inputContainer"></div>
-				</label>
 				<label id="scenarioLabel">
-					<span>Scenario</span>
+					<div>Scenario <span class="help" data-for="helpScenario">&#59140;</span></div>
 					<div id="scenarioCont" class="inputContainer"></div>
 				</label>
+				<label id="dateLabel">
+					<div>Date <span class="help" data-for="helpDate">&#59140;</span></div>
+					<div id="dateCont" class="inputContainer"></div>
+				</label>
 				<label id="povLabel">
-					<span>Point of view </span>
+					<div>Point of view <span class="help" data-for="helpLookFrom">&#59140;</span></div>
 					<div id="lookFromCont" class="inputContainer"></div>
 				</label>
 				<label id="lookatLabel">
-					<span>Look at</span>
+					<div>Look at <span class="help" data-for="helpLookAt">&#59140;</span></div>
 					<div id="lookAtCont" class="inputContainer"></div>
 				</label>
 				<label id="planetScaleLabel">
-					<span>Planet Scale <span class="valDisplay"></span></span>
+					<div>Planet Scale <span class="valDisplay"></span> <span class="help" data-for="helpScale">&#59140;</span></div>
 					<div id="planetScaleCont" class="inputContainer"></div>
 				</label>
 
-				<label>
-					<div id="linkCont" class="inputContainer"></div>
+				<label id="shareLabel">
+					<div id="shareCont" class="inputContainer"></div>
 				</label>
+				<div id="shareWidget">
+					<a class="close">&#10062;</a>
+					Direct link url
+					<input type="text" id="shareUrl">
+					<div id="social">
+						<div id="twitterShare" data-via="lagrange_mtl"></div>
+					</div>
+				</div>
 			</div>
 		</nav>
 
+
+		<div class="helpContent" id="helpScenario">
+			<a class="close">&#10062;</a>
+			<h2>Scenario</h2>
+		</div>
+		<div class="helpContent" id="helpDate">
+			<a class="close">&#10062;</a>
+			<h2>Date</h2>
+			<p>The <a href="http://en.wikipedia.org/wiki/Orbital_elements" target="_blank">orbital elements</a> of the planets are used to calculate their original position when picking a date. These calculations produce a very good approximation of the positions : you can compare the stars and constellations that you see in the background from other sources, provided that you place the point of view on The Earth.</p>
+			<p>The velocity of each planet is also derived from these calculations, so that when the animation is playing, the positions are no longer calculated from the elements, but from the gravity that is acting between the different bodies. The calculation of these forces is also an approximation using a simple Verlet algorithm, and its precision decays over time. This decay is more pronounced in some scenarios.</p>
+			<p>You can find on the internet the dates of celestial events, for example eclipses or lunar phases, and check if you can observe them in this simulation.</p>
+		</div>
+		<div class="helpContent" id="helpLookFrom">
+			<a class="close">&#10062;</a>
+			<h2>Point of view</h2>
+			<p>This option makes it possible to place the camera at the position of a planet of your choice, so you'd see the other planets from the point of view of the chosen one. From there you can zoom by scrolling.</p>
+			<p>The Free Camera is a camera that floats into space, and that you can move by scrolling and dragging. This camera always revolve around a point specified in the "look at" option field.</p>
+		</div>
+		<div class="helpContent" id="helpLookAt">
+			<a class="close">&#10062;</a>
+			<h2>Look at</h2>
+			<p>You can make your selected camera look at a planet of your choice, so that it always will be centered in your viewport.</p>
+			<p>If you place the camera from the viewpoint of a planet and look at another one, the latter's path will be traced relative to the former's position. This feature is useful to observe the <a href="http://en.wikipedia.org/wiki/Apparent_retrograde_motion" target="_blank">apparent retrograde motion</a> of the planets relative to the Earth.</p>
+		</div>
+		<div class="helpContent" id="helpScale">
+			<a class="close">&#10062;</a>
+			<h2>Planet scale</h2>
+			<p>When the scale is at 1x, the planets sizes are in 1:1 scale to the size of the orbits, and of the universe. Since the distances in the Solar System are so huge, we can't even see the planets at this scale, so I made it possible to make the planets larger to see them more easily. I left the possibility to view them at their real size, because I feel it gives a better hint about the vastness of our Solar System.</p>
+		</div>
 			
+		<div id="preload">
+			<div class="orbit"><div class="planet"></div></div>
+			<div class="title">
+				<h1>jsorrery</h1>
+				<h2>solar system</h2>
+			</div>
+		</div>
+
+
+	<div id="fb-root"></div>
+	<script type="text/javascript">
+		/** ANALYTICS */
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		  ga('create', 'UA-32778044-3');
+		  ga('send', 'pageview');
+		
+		/** FACEBOOK */
+		window.fbAsyncInit = function() {
+			FB.init({
+				appId : '{var:facebook_appid}'
+			});
+
+		};
+
+		(function(d){
+			var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+			if (d.getElementById(id)) {return;}
+			js = d.createElement('script'); js.id = id; js.async = true;
+			js.src = "//connect.facebook.net/en_US/all.js";
+			ref.parentNode.insertBefore(js, ref);
+		}(document));
+		
+		
+		/** TWITTER */
+		!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+		
+	</script>
 	</body>
 </html>

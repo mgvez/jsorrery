@@ -133,7 +133,7 @@ define(
 		var system = {
 			name : 'Apollo',
 			title : 'Apollo '+apolloNumber+' free return trajectory',
-			commonBodies : ['earth', 'moon', 'sun', 'mercury', 'venus', 'mars'/**/],
+			commonBodies : ['earth', 'moon'/*, 'sun', 'mercury', 'venus', 'mars'/**/],
 			secondsPerTick : 100,
 			calculationsPerTick : 100,
 			calculateAll : true,

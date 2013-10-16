@@ -5,7 +5,7 @@ define(
 		'orbit/NameSpace',
 		'orbit/scenario/MoonRealOrbit',
 		'vendor/greensock/TweenMax',
-		'vendor/greensock/easing/EasePack',
+		'vendor/greensock/easing/EasePack'
 	],
 	function($, ns, MoonRealOrbit){
 		var common = {
@@ -129,7 +129,7 @@ define(
 				title : 'Halley\'s Comet',
 				mass : 2.2e14,
 				radius : 50,
-				color : '#ffffff',
+				color : '#999999',
 				orbit : {
 					base : {a : 17.83414429 * ns.AU ,  e : 0.967142908, i: 162.262691, M : 360 * (438393600 / (75.1 * ns.YEAR * ns.DAY)), w : 111.332485, o : 58.420081},
 					day : {a : 0 ,  e : 0, i: 0, M : (360 / (75.1 * 365.25) ), w : 0, o : 0}

@@ -42,4 +42,4 @@
 		return ns;
 	});
 
-})(window.orbit = window.orbit || {});
+})(window.jsorrery = window.jsorrery || {});

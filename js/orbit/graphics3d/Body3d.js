@@ -72,7 +72,16 @@ define(
 					matOptions.color = this.celestial.color
 				}
 
-				var mat = new THREE.MeshLambertMaterial(matOptions);
+				if(this.celestial.bumpmap){
+					var bumpMap = ResourceLoader.loadTexture(this.celestial.bumpmap);
+					bumpMap.wrapS = bumpMap.wrapT = THREE.RepeatWrapping;
+					bumpMap.format = THREE.RGBFormat;
+
+					matOptions.bumpMap = bumpMap;
+					matOptions.bumpScale = 0.01;/**/
+				}
+
+				var mat = new THREE.MeshPhongMaterial(matOptions);
 
 				if(this.celestial.name==='sun'){
 					mat.emissive = new THREE.Color( 0xdddd33 );

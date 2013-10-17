@@ -141,6 +141,7 @@ define(
 				radius : 1738.1,
 				color : "#ffffff",
 				map : 'img/moonmap4k_levels.jpg',
+				bumpmap : 'img/moonbump1k.jpg',
 				sideralDay : (27.3215782 * ns.DAY) ,
 				tilt : 1.5424,
 				fov : 1,

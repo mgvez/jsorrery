@@ -7,10 +7,10 @@ define(
 	],
 	function(ns, $, ExportValues){
 		'use strict';
-
 		var widget;
 		var twitterContainer;
 		var urlInput;
+		var baseLink = window.location.protocol + '//' + window.location.host + window.location.pathname;
 
 		var twitterParseAttempt = function() {
 			var twttr = window.twttr || null;
@@ -42,22 +42,42 @@ define(
 					return memo;
 				}, []).join('&');
 
-				var link = window.location.protocol + '//' + window.location.host + window.location.pathname+'?'+qstr;
-				urlInput.val(link);
+				var completeLink = baseLink +'?'+qstr;
 
-				var lnk = '<a href="https://twitter.com/share" class="twitter-share-button" data-url="' + link +'" data-via="'+twitterContainer.data('via')+'">Tweet</a>';
-				twitterContainer.html(lnk);
-				twitterParseAttempt();
+				var onShortened = $.Deferred();
+				if(ns.gapi && ns.gapi.client.urlshortener) {
+					var request = ns.gapi.client.urlshortener.url.insert({
+						resource: {
+							longUrl: completeLink
+						}
+					});
+					request.execute(function(response) {
+						onShortened.resolve(response.id || completeLink);
+					});
 
-				widget.fadeIn(200, function(){
-					urlInput.get(0).select();
+				} else {
+					onShortened.resolve(completeLink);
+				}
+
+				onShortened.then(function(link){
+
+					urlInput.val(link);
+					var twLink = '<a href="https://twitter.com/share" class="twitter-share-button" data-counturl="'+baseLink+'" data-url="' + link +'" data-via="'+twitterContainer.data('via')+'">Tweet</a>';
+					twitterContainer.html(twLink);
+					twitterParseAttempt();
+
+					widget.fadeIn(200, function(){
+						urlInput.get(0).select();
+					});
+
+					var b = $('html');
+					b.on('click.sharer', function(){
+						b.off('.sharer');
+						widget.fadeOut(200);
+					});
+
 				});
-
-				var b = $('html');
-				b.on('click.sharer', function(){
-					b.off('.sharer');
-					widget.fadeOut(200);
-				});
+				
 			}
 
 		};

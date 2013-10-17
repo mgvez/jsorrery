@@ -501,11 +501,7 @@ define([
 			if(numbers.gmt){
 				epoch = new Date(numbers.gmt[idx]);
 			} else {
-				epoch = new Date(launchTimes[idx]);
-				console.log(epoch.toGMTString())
-				console.log(epoch.getTime()/(1000*3600*24));
-				epoch = new Date(epoch.getTime() + numbers.time[idx]*1000);
-				console.log(epoch.toGMTString())
+				epoch = new Date(new Date(launchTimes[idx]).getTime() + numbers.time[idx]*1000);
 			}
 			var celestLongAscNode = getLongAtLocalSideralTime(epoch, geoLongAscNode * ns.RAD_TO_DEG);
 

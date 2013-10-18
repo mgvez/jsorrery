@@ -163,19 +163,20 @@ define(
 			},
 			
 			afterTick : function(deltaT) {
-				var relativeToPos = ns.U.getBody(this.relativeTo).getPosition();
-				this.relativePosition.copy(this.position).sub(relativeToPos);
-				this.movement.copy(this.relativePosition).sub(this.previousRelativePosition);
-				this.speed = this.movement.length() / deltaT;
-				this.angle += this.relativePosition.angleTo(this.previousRelativePosition);
-				this.previousRelativePosition.copy(this.relativePosition);
-				
-				if(this.angle > ns.CIRCLE){
-					this.angle = this.angle % ns.CIRCLE;
-					this.dispatchEvent( {type:'revolution'} );
-					if(this.onOrbitCompleted) this.onOrbitCompleted();
+				if(!this.isCentral){
+					var relativeToPos = ns.U.getBody(this.relativeTo).getPosition();
+					this.relativePosition.copy(this.position).sub(relativeToPos);
+					this.movement.copy(this.relativePosition).sub(this.previousRelativePosition);
+					this.speed = this.movement.length() / deltaT;
+					this.angle += this.relativePosition.angleTo(this.previousRelativePosition);
+					this.previousRelativePosition.copy(this.relativePosition);
+					
+					if(this.angle > ns.CIRCLE){
+						this.angle = this.angle % ns.CIRCLE;
+						this.dispatchEvent( {type:'revolution'} );
+						if(this.onOrbitCompleted) this.onOrbitCompleted();
+					}
 				}
-
 				if(this.afterCompleteMove) this.afterCompleteMove(ns.U.epochTime, ns.U.date);
 
 			},

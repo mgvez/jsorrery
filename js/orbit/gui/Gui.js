@@ -194,7 +194,10 @@ define(
 				}
 
 				dateDisplay.off('change').on('change.orbit', function(){
-					date = null;
+					date = new Date(dateDisplay.val());
+					if(isNaN(date.getTime())){
+						date = new Date();
+					}
 					onChange();
 				}.bind(this));
 
@@ -216,7 +219,7 @@ define(
 			},
 
 			getDate : function(){
-				return date || dateDisplay.datepicker( "getDate" );
+				return date;
 			},
 
 			addSlider : function(id, onChange) {

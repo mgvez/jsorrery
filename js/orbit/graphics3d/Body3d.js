@@ -31,6 +31,10 @@ define(
 				this.label = $('<div class="planetSpot" data-shown="true"><div class="planetLabel">'+(this.celestial.title || this.celestial.name)+'</div></div>').appendTo('body');
 			},
 
+			addEventLabel : function(label){
+				
+			},
+
 			placeLabel : function(pos, w, h, camPos, fov){
 				if(pos.z<1 && pos.z>0 && pos.x>0 && pos.x<w && pos.y>0 && pos.y<h){
 					this.label.css({left : pos.x+'px', top : pos.y+'px'}).show();
@@ -70,15 +74,6 @@ define(
 					matOptions.map = ResourceLoader.loadTexture(map);
 				} else {
 					matOptions.color = this.celestial.color
-				}
-
-				if(this.celestial.bumpmap){
-					var bumpMap = ResourceLoader.loadTexture(this.celestial.bumpmap);
-					bumpMap.wrapS = bumpMap.wrapT = THREE.RepeatWrapping;
-					bumpMap.format = THREE.RGBFormat;
-
-					matOptions.bumpMap = bumpMap;
-					matOptions.bumpScale = 0.01;/**/
 				}
 
 				var mat = new THREE.MeshPhongMaterial(matOptions);

@@ -2,10 +2,10 @@
 
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
-		'orbit/graphics3d/Dimensions',
-		'orbit/graphics3d/loaders/ResourceLoader',
+		'jsorrery/graphics3d/Dimensions',
+		'jsorrery/graphics3d/loaders/ResourceLoader',
 		'three',
 		'vendor/greensock/TweenMax',
 		'vendor/greensock/easing/EasePack'

@@ -1,10 +1,10 @@
 
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
-		'orbit/graphics3d/Dimensions',
-		'orbit/Utils',
+		'jsorrery/graphics3d/Dimensions',
+		'jsorrery/Utils',
 		'three'
 	], 
 	function(ns, $, Dimensions, Utils) {

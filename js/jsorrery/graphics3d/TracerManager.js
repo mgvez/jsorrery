@@ -4,9 +4,9 @@
 
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
-		'orbit/graphics3d/Tracer',
+		'jsorrery/graphics3d/Tracer',
 		'three'
 	], 
 	function(ns, $, Tracer) {

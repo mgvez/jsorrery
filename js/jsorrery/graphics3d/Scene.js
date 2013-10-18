@@ -1,16 +1,16 @@
 
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
-		'orbit/graphics3d/Body3d',
-		'orbit/graphics3d/MilkyWayParticles',
-		'orbit/graphics3d/Sun',
-		'orbit/graphics3d/CameraManager',
-		'orbit/graphics3d/OrbitLinesManager',
-		'orbit/graphics3d/TracerManager',
-		'orbit/graphics3d/Dimensions',
-		'orbit/gui/Gui',
+		'jsorrery/graphics3d/Body3d',
+		'jsorrery/graphics3d/MilkyWayParticles',
+		'jsorrery/graphics3d/Sun',
+		'jsorrery/graphics3d/CameraManager',
+		'jsorrery/graphics3d/OrbitLinesManager',
+		'jsorrery/graphics3d/TracerManager',
+		'jsorrery/graphics3d/Dimensions',
+		'jsorrery/gui/Gui',
 		'vendor/jquery.mousewheel',
 		'three/stats',
 		'_'

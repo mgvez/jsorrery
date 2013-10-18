@@ -1,9 +1,9 @@
 
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
-		'orbit/gui/ExportValues'
+		'jsorrery/gui/ExportValues'
 	],
 	function(ns, $, ExportValues){
 		'use strict';

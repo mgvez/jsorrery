@@ -5,13 +5,13 @@
 
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
-		'orbit/CelestialBody',
-		'orbit/algorithm/GravityTicker',
-		'orbit/graphics3d/Scene',
-		'orbit/gui/Gui',
-		'orbit/graphics3d/loaders/ResourceLoader',
+		'jsorrery/CelestialBody',
+		'jsorrery/algorithm/GravityTicker',
+		'jsorrery/graphics3d/Scene',
+		'jsorrery/gui/Gui',
+		'jsorrery/graphics3d/loaders/ResourceLoader',
 		'_'
 	], 
 	function(ns, $, CelestialBody, GravityTicker, Scene, Gui, ResourceLoader) {
@@ -76,7 +76,7 @@ define(
 			kill : function(){
 				//kills the animation callback
 				this.killed = true;
-				this.dateDisplay.off('.orbit');
+				this.dateDisplay.off('.jsorrery');
 
 				if(!this.scene) return;
 				this.scene.kill();

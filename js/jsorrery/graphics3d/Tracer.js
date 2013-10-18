@@ -1,9 +1,9 @@
 
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
-		'orbit/Utils',
+		'jsorrery/Utils',
 		'three'
 	], 
 	function(ns, $, Utils) {

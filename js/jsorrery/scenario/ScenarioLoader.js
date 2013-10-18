@@ -2,14 +2,14 @@
 define(
 	[
 		'jquery',
-		'orbit/NameSpace',
-		'orbit/scenario/CommonCelestialBodies',
-		'orbit/scenario/SolarSystem',
-		'orbit/scenario/InnerSolarSystem',
-		'orbit/scenario/Apollo',
-		'orbit/scenario/EarthMoon',
-		'orbit/scenario/ArtificialSatellites',
-		'orbit/scenario/JupiterMoon',
+		'jsorrery/NameSpace',
+		'jsorrery/scenario/CommonCelestialBodies',
+		'jsorrery/scenario/SolarSystem',
+		'jsorrery/scenario/InnerSolarSystem',
+		'jsorrery/scenario/Apollo',
+		'jsorrery/scenario/EarthMoon',
+		'jsorrery/scenario/ArtificialSatellites',
+		'jsorrery/scenario/JupiterMoon',
 	],
 	function($, ns, common){
 

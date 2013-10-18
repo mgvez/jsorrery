@@ -2,9 +2,9 @@
 
 define(
 	[
-		'orbit/NameSpace',
-		'orbit/scenario/CommonCelestialBodies',
-		'orbit/scenario/ApolloNumbers'
+		'jsorrery/NameSpace',
+		'jsorrery/scenario/CommonCelestialBodies',
+		'jsorrery/scenario/ApolloNumbers'
 	], 
 	function(ns, common, apolloNumbers) {
 		//apollo 10, 11, 13 & 17 don't work. 13 and 17 in particular seem to have errors in the numbers, as the orbits are very far from the moon. 10 & 11 need a correction of about 1° to seem more accurate

@@ -2,8 +2,8 @@
 define(
 	[
 		'jquery',
-		'orbit/NameSpace',
-		'orbit/scenario/MoonRealOrbit',
+		'jsorrery/NameSpace',
+		'jsorrery/scenario/MoonRealOrbit',
 		'vendor/greensock/TweenMax',
 		'vendor/greensock/easing/EasePack'
 	],

@@ -40,10 +40,10 @@
 		
 	require([
 		'jquery',
-		'orbit/Main'
-	], function($, Orbit){
+		'jsorrery/Main'
+	], function($, JSOrrery){
 		$(function(){
-			ns.app = Orbit.init();
+			ns.app = JSOrrery.init();
 		});
 	});
 	

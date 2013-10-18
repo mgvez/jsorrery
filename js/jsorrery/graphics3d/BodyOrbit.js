@@ -1,9 +1,9 @@
 
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
-		'orbit/graphics3d/OrbitLine',
+		'jsorrery/graphics3d/OrbitLine',
 		'three'
 	], 
 	function(ns, $, OrbitLine) {

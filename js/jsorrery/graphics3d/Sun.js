@@ -4,8 +4,8 @@ Source : http://threejs.org/examples/webgl_lensflares.html
 
 define(
 	[
-		'orbit/NameSpace',
-		'orbit/graphics3d/loaders/ResourceLoader'
+		'jsorrery/NameSpace',
+		'jsorrery/graphics3d/loaders/ResourceLoader'
 	], 
 	function(ns, ResourceLoader){
 		'use strict';

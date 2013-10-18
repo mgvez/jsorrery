@@ -1,6 +1,6 @@
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
 		'three'
 	],

@@ -2,7 +2,7 @@
 
 define(
 	[
-		'orbit/NameSpace'
+		'jsorrery/NameSpace'
 	],
 	function(ns){
 

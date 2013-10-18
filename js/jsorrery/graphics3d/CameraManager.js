@@ -2,13 +2,13 @@
 
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
-		'orbit/graphics3d/OrbitLinesManager',
-		'orbit/graphics3d/TracerManager',
-		'orbit/graphics3d/Dimensions',
-		'orbit/gui/Gui',
-		'orbit/gui/ExportValues',
+		'jsorrery/graphics3d/OrbitLinesManager',
+		'jsorrery/graphics3d/TracerManager',
+		'jsorrery/graphics3d/Dimensions',
+		'jsorrery/gui/Gui',
+		'jsorrery/gui/ExportValues',
 		'three/controls/OrbitControls',
 		'three'
 	], 

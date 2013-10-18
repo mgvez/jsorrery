@@ -2,10 +2,10 @@
 
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
-		'orbit/algorithm/Verlet',
-		'orbit/algorithm/OrbitalElements',
+		'jsorrery/algorithm/Verlet',
+		'jsorrery/algorithm/OrbitalElements',
 		'three'
 	], 
 	function(ns, $, Verlet, OrbitalElements) {

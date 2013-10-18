@@ -5,12 +5,12 @@
 
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
-		'orbit/Universe',
-		'orbit/gui/Gui',
-		'orbit/gui/Sharer',
-		'orbit/scenario/ScenarioLoader',
+		'jsorrery/Universe',
+		'jsorrery/gui/Gui',
+		'jsorrery/gui/Sharer',
+		'jsorrery/scenario/ScenarioLoader',
 		'_'
 	], 
 	function(ns, $, Universe, Gui, Sharer, ScenarioLoader) {

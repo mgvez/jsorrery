@@ -4,9 +4,9 @@
 
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
-		'orbit/graphics3d/BodyOrbit',
+		'jsorrery/graphics3d/BodyOrbit',
 		'_'
 	], 
 	function(ns, $, BodyOrbit){

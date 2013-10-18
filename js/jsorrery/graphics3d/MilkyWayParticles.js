@@ -1,9 +1,9 @@
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
-		'orbit/data/Constellations',
-		'orbit/graphics3d/loaders/ResourceLoader',
+		'jsorrery/data/Constellations',
+		'jsorrery/graphics3d/loaders/ResourceLoader',
 		'_'
 	], 
 	function(ns, $, Constellations, ResourceLoader){

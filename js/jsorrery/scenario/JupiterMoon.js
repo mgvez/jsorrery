@@ -3,8 +3,8 @@
 
 define(
 	[
-		'orbit/NameSpace',
-		'orbit/scenario/CommonCelestialBodies'
+		'jsorrery/NameSpace',
+		'jsorrery/scenario/CommonCelestialBodies'
 	], 
 	function(ns, common) {
 

@@ -1,7 +1,7 @@
 
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery'
 	], 
 	function(ns, $) {

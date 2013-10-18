@@ -1,9 +1,9 @@
 
 define(
 	[
-		'orbit/NameSpace',
+		'jsorrery/NameSpace',
 		'jquery',
-		'orbit/gui/ExportValues',
+		'jsorrery/gui/ExportValues',
 		'ui',
 		'_',
 		'vendor/greensock/TweenMax',
@@ -62,14 +62,14 @@ define(
 				content.addClass('shown');
 			};
 
-			$('.help').on('click.orbit', function(e){
+			$('.help').on('click.jsorrery', function(e){
 				e.preventDefault();
 				var _self = $(this);
 				var content = _self.data('content');
 				if(!content){
 					content = allHelpContents.filter('#'+_self.data('for'));
 					_self.data('content', content);
-					content.find('.close').on('click.orbit', function(){
+					content.find('.close').on('click.jsorrery', function(){
 						hideContent(content);
 					});
 				}
@@ -153,7 +153,7 @@ define(
 				if(!sel) return;
 
 				var option = sel.options[val] = $('<li data-value="'+val+'">'+label+'</li>');
-				option.on('click.orbit', sel.clickHandler);
+				option.on('click.jsorrery', sel.clickHandler);
 
 				if(sel.list.children().length === 0) {
 					sel.input.val(val);
@@ -193,7 +193,7 @@ define(
 					});/**/
 				}
 
-				dateDisplay.off('change').on('change.orbit', function(){
+				dateDisplay.off('change').on('change.jsorrery', function(){
 					date = new Date(dateDisplay.val());
 					if(isNaN(date.getTime())){
 						date = new Date();

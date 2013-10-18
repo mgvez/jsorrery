@@ -39,7 +39,7 @@ nav #gui #shareWidget #twitterShare{float:left}
 #stats #fps #fpsGraph{display:none}
 .button{font-family:"EntypoRegular";font-size:32px;line-height:22px;width:32px}
 .help{top:-2px;display:inline-block;font-family:"EntypoRegular";font-size:18px;line-height:inherit;height:18px;width:18px;margin-left:3px;font-weight:normal;cursor:pointer;opacity:0.7}.help:hover{opacity:1}
-.helpContent{display:none;position:absolute;top:45px;left:0;z-index:150;background:rgba(0,0,0,0.6);width:40%;min-width:400px;max-height:80%;padding:30px 30%;border-bottom:1px #222 solid;font-family:'Quattrocento',serif;font-size:16px;letter-spacing:0.5px;line-height:1.8em;color:#aaa;text-align:justify;overflow-y:scroll}.helpContent h2{color:#fff;text-shadow:0 0 2px #555}
+.helpContent{display:none;position:absolute;top:45px;left:0;z-index:150;background:rgba(0,0,0,0.6);width:60%;min-width:400px;max-height:80%;padding:30px 20%;border-bottom:1px #222 solid;font-family:'Quattrocento',serif;font-size:16px;letter-spacing:0.5px;line-height:1.8em;color:#aaa;text-align:justify;overflow-y:scroll}.helpContent h2{color:#fff;text-shadow:0 0 2px #555}
 .close{cursor:pointer;position:absolute;top:10px;right:10px;font-size:25px;font-family:"EntypoRegular";-webkit-transition-duration:.5s;-moz-transition-duration:.5s;-o-transition-duration:.5s;transition-duration:.5s}.close:hover{color:#fff}
 .clearfix{*zoom:1}.clearfix:before,.clearfix:after{display:table;content:""}
 .clearfix:after{clear:both}

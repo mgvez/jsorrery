@@ -29,7 +29,8 @@ define(
 			scenarios[scenario.name] = scenario;
 			list.push({
 				name : scenario.name,
-				title : scenario.title || scenario.name
+				title : scenario.title || scenario.name,
+				help : scenario.help || ''
 			});
 		}
 

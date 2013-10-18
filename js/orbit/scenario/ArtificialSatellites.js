@@ -128,7 +128,8 @@ define(
 			},
 			
 			secondsPerTick : 5,
-			calculationsPerTick : 20
+			calculationsPerTick : 20,
+			help : "A selection of artificial satellites orbiting the Earth. They were not launched in the same years, so the epoch is irrelevent in this simulation. I included this scenario to show the differences between these satellite's orbits shapes."
 
 		};
 

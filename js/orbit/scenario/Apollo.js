@@ -8,7 +8,7 @@ define(
 	], 
 	function(ns, common, apolloNumbers) {
 		//apollo 10, 11, 13 & 17 don't work. 13 and 17 in particular seem to have errors in the numbers, as the orbits are very far from the moon. 10 & 11 need a correction of about 1° to seem more accurate
-		var apolloNumber = '12';
+		var apolloNumber = '8';
 		var earthRadius = common.earth.radius;
 		var earthTilt = common.earth.tilt;
 		var apolloEarthOrbit = apolloNumbers.get('earth', 'Apollo'+apolloNumber);
@@ -109,8 +109,7 @@ define(
 				},
 				getPosToEarth : function(){
 					return this.position.clone().sub(ns.U.getBody('earth').position);
-				},
-				help : "Paths of Apollo <a href=\"http://en.wikipedia.org/wiki/Free_return_trajectory\" target=\"_blank\">free return trajectories</a> are calculated from data available on Nasa's website. Data for every Moon mission is available, but all don't work perfectly in the simulation. I chose to display Apollo 8, because it was the first mission to get to the moon. The return path doesn't get exactly to Earth's atmosphere, but the simulation is precise enough to get an idea of the shape of the trajectory and the genius behind it."
+				}
 			}
 		);
 
@@ -122,11 +121,16 @@ define(
 
 					this.dbg = this.dbg || $('<div style="position:absolute;bottom:0;right:0;color:#fff;width:300px;padding:4px;">').appendTo('body');
 					var dist = Math.abs(this.position.clone().sub(ns.U.getBody('moon').position).length()) / 1000;
-					
+
 					if(!this.minMoonDist || dist < this.minMoonDist){
 						this.minMoonDist = dist;
 						this.dbg.html('min moon dist '+dist+'km');
+					} else if(this.lastMoonDist == this.minMoonDist){
+						console.log('min dist '+this.minMoonDist);
+						ns.U.getBody(this.relativeTo).getBody3D().addEventLabel('Closest approach to the moon');
 					}
+
+					this.lastMoonDist = dist;
 				}
 			}
 		);
@@ -135,8 +139,8 @@ define(
 			name : 'Apollo',
 			title : 'Apollo '+apolloNumber+' free return trajectory',
 			commonBodies : ['earth', 'moon'/*, 'sun', 'mercury', 'venus', 'mars'/**/],
-			secondsPerTick : 100,
-			calculationsPerTick : 100,
+			secondsPerTick : 500,
+			calculationsPerTick : 500,
 			calculateAll : true,
 			defaultsGuiSettings : {
 				date: epoch//epoch
@@ -162,7 +166,8 @@ define(
 						title : 'Apollo '+apolloNumber+' EO',
 					}
 				)/**/
-			}
+			},
+			help : "Paths of Apollo <a href=\"http://en.wikipedia.org/wiki/Free_return_trajectory\" target=\"_blank\">free return trajectories</a> are calculated from data available on Nasa's website. Data for every Moon mission is available, but all don't work perfectly in the simulation. I chose to display Apollo 8, because it was the first mission to get to the moon. The return path doesn't get exactly to Earth's atmosphere, but keep in mind that the simulated trajectory that you see here does not depend solely on Apollo's numbers, but also on the Moon's and the Earth's calculated positions, velocities and masses. Furthermore, I can't pretend that the algorithm I programmed to calculate the forces resulting from gravity is on par with what Nasa scientists can do. Still, the simulation is precise enough to get a very good idea of the shape of the free return trajectory and the genius behind it."
 		};
 
 

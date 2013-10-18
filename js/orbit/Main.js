@@ -69,7 +69,6 @@ define(
 				preloader = $('#preload');
 				Gui.init();
 
-
 				var defaultParams = _.extend({}, getQueryString());
 				Gui.setDefaults(defaultParams);
 
@@ -84,6 +83,7 @@ define(
 				}.bind(this));
 				
 
+				var help = '';
 				var defaultScenario = 0;		
 
 				_.each(scenarios, function(scenario, idx){
@@ -92,8 +92,15 @@ define(
 					if(defaultParams.scenario && scenario.name === defaultParams.scenario) {
 						defaultScenario = idx;
 					}
+					
+					//dump scenarios specific descriptions in the scenario help panel
+					help += '<h3>'+scenario.title+'</h3><p>'+scenario.help+'</p>';
 
 				});
+
+
+				var scenarioHelpContainer = $('#helpScenario');
+				scenarioHelpContainer.append(help);
 
 				loadScenario(scenarios[defaultScenario].name, defaultParams);
 

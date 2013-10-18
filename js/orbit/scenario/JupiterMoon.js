@@ -12,6 +12,7 @@ define(
 		var system =  {
 			name : 'JupiterMoon',
 			title : 'Jupiter and Gallilean satellites',
+			help : 'This scenario was included to see if it was possible to simulate <a href="http://en.wikipedia.org/wiki/Orbital_resonance" target="_blank">Laplace resonance</a>.',
 			commonBodies : ['jupiter'],
 			bodies : {
 				io : {

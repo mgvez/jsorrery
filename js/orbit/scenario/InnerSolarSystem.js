@@ -34,7 +34,8 @@ define(
 			calculateAll : true,
 			defaultsGuiSettings : { 
 				planetScale : 10
-			}
+			},
+			help:"Includes all the planets from Mercury to Mars, plus the Earth's moon."
 		};
 
 		return cnf;

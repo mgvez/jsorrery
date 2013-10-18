@@ -139,8 +139,8 @@ define(
 			name : 'Apollo',
 			title : 'Apollo '+apolloNumber+' free return trajectory',
 			commonBodies : ['earth', 'moon'/*, 'sun', 'mercury', 'venus', 'mars'/**/],
-			secondsPerTick : 500,
-			calculationsPerTick : 500,
+			secondsPerTick : 100,
+			calculationsPerTick : 100,
 			calculateAll : true,
 			defaultsGuiSettings : {
 				date: epoch//epoch

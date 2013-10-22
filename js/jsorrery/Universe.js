@@ -11,10 +11,11 @@ define(
 		'jsorrery/algorithm/GravityTicker',
 		'jsorrery/graphics3d/Scene',
 		'jsorrery/gui/Gui',
+		'jsorrery/graphics2d/Labels',
 		'jsorrery/graphics3d/loaders/ResourceLoader',
 		'_'
 	], 
-	function(ns, $, CelestialBody, GravityTicker, Scene, Gui, ResourceLoader) {
+	function(ns, $, CelestialBody, GravityTicker, Scene, Gui, Labels, ResourceLoader) {
 		'use strict';
 		var Universe = {
 			init : function(scenario, qstrSettings){
@@ -27,6 +28,8 @@ define(
 				//Universe is, well, global
 				ns.U = this;
 				
+				Labels.init(); 
+
 				//start/stop
 				Gui.addBtn('play', Gui.START_ID, function(){
 					this.playing = !this.playing;
@@ -83,6 +86,8 @@ define(
 				this.centralBody = null;
 				this.scene = null;
 				this.bodies = {};
+
+				Labels.kill();
 			},
 
 			createBodies : function(scenario) {
@@ -196,6 +201,10 @@ define(
 
 			isPlaying : function() {
 				return this.playing;
+			},
+
+			stop : function(){
+				this.playing = false;
 			}
 		};
 		

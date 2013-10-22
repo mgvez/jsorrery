@@ -5,12 +5,13 @@ define(
 		'jsorrery/NameSpace',
 		'jquery',
 		'jsorrery/graphics3d/Dimensions',
+		'jsorrery/graphics2d/Labels',
 		'jsorrery/graphics3d/loaders/ResourceLoader',
 		'three',
 		'vendor/greensock/TweenMax',
 		'vendor/greensock/easing/EasePack'
 	], 
-	function(ns, $, Dimensions, ResourceLoader) {
+	function(ns, $, Dimensions, Labels, ResourceLoader) {
 		'use strict';
 
 		var Body3d = {
@@ -28,35 +29,11 @@ define(
 					return this;
 				}.bind(this);
 
-				this.label = $('<div class="planetSpot" data-shown="true"><div class="planetLabel">'+(this.celestial.title || this.celestial.name)+'</div></div>').appendTo('body');
+				Labels.addPlanetLabel(this.celestial.title || this.celestial.name, this);
+
 			},
 
-			addEventLabel : function(label){
-				
-			},
-
-			placeLabel : function(pos, w, h, camPos, fov){
-				if(pos.z<1 && pos.z>0 && pos.x>0 && pos.x<w && pos.y>0 && pos.y<h){
-					this.label.css({left : pos.x+'px', top : pos.y+'px'}).show();
-
-					var dist = this.root.position.distanceTo(camPos);
-					var visibleHeight = 2 * Math.tan( fov / 2 ) * dist;
-
-					var isVisible = (this.getPlanetStageSize() / visibleHeight) < 0.1;
-					if(
-						(!isVisible && this.label.data('shown')===true)
-						||
-						(isVisible && this.label.data('shown')===false)
-					) {
-						this.label.data('shown', !this.label.data('shown'));
-						TweenMax.killTweensOf(this.label);
-						TweenMax.to(this.label, 1, {css:{opacity: isVisible ? 1 : 0}});
-					}
-
-				} else {
-					this.label.hide();
-				}
-			},
+			addEventLabel:function(){},
 
 			getDisplayObject : function() {
 				return this.root;
@@ -163,10 +140,6 @@ define(
 
 			getName : function(){
 				return this.celestial.name;
-			},
-
-			kill : function(){
-				this.label.remove();
 			}
 		};
 

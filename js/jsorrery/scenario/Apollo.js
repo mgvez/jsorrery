@@ -4,9 +4,10 @@ define(
 	[
 		'jsorrery/NameSpace',
 		'jsorrery/scenario/CommonCelestialBodies',
-		'jsorrery/scenario/ApolloNumbers'
+		'jsorrery/scenario/ApolloNumbers',
+		'jsorrery/graphics2d/Labels'
 	], 
-	function(ns, common, apolloNumbers) {
+	function(ns, common, apolloNumbers, Labels) {
 		//apollo 10, 11, 13 & 17 don't work. 13 and 17 in particular seem to have errors in the numbers, as the orbits are very far from the moon. 10 & 11 need a correction of about 1° to seem more accurate
 		var apolloNumber = '8';
 		var earthRadius = common.earth.radius;
@@ -28,7 +29,10 @@ define(
 			color : "#00ffff",
 			traceColor : '#ffffff',
 			vertexDist : 100000,
-			forceTrace : true
+			forceTrace : true,
+			data : {
+
+			}
 		};
 
 		var apollo8TLIBurnTime = 317.72 * 1000;
@@ -119,15 +123,22 @@ define(
 			{
 				afterCompleteMove : function(elapsedTime, absoluteDate){
 
-					this.dbg = this.dbg || $('<div style="position:absolute;bottom:0;right:0;color:#fff;width:300px;padding:4px;">').appendTo('body');
+					if(!this.data.hasTLILabel && this.relativePosition.x != 0){
+
+						Labels.addEventLabel('Trans Lunar Injection', this.relativePosition.clone(), ns.U.getBody(this.relativeTo));
+						this.data.hasTLILabel = true;
+					}
+
+					//this.dbg = this.dbg || $('<div style="position:absolute;bottom:0;right:0;color:#fff;width:300px;padding:4px;">').appendTo('body');
 					var dist = Math.abs(this.position.clone().sub(ns.U.getBody('moon').position).length()) / 1000;
 
 					if(!this.minMoonDist || dist < this.minMoonDist){
 						this.minMoonDist = dist;
-						this.dbg.html('min moon dist '+dist+'km');
+						//this.dbg.html('min moon dist '+dist+'km');
 					} else if(this.lastMoonDist == this.minMoonDist){
 						console.log('min dist '+this.minMoonDist);
-						ns.U.getBody(this.relativeTo).getBody3D().addEventLabel('Closest approach to the moon');
+						Labels.addEventLabel('Closest distance to<br>the Moon: '+Math.round(this.minMoonDist)+' km', this.previousRelativePosition.clone(), ns.U.getBody(this.relativeTo));
+						//ns.U.stop();
 					}
 
 					this.lastMoonDist = dist;
@@ -138,16 +149,16 @@ define(
 		var system = {
 			name : 'Apollo',
 			title : 'Apollo '+apolloNumber+' free return trajectory',
-			commonBodies : ['earth', 'moon'/*, 'sun', 'mercury', 'venus', 'mars'/**/],
-			secondsPerTick : 500,
-			calculationsPerTick : 500,
+			commonBodies : ['earth', 'moon', 'sun', 'mercury', 'venus', 'mars'/**/],
+			secondsPerTick : 100,
+			calculationsPerTick : 100,
 			calculateAll : true,
 			defaultsGuiSettings : {
 				date: epoch//epoch
 			},
 			bodies : {
 				earth:{
-					map:'img/earthmap1k_KSC.jpg'
+					map:'img/earthmap1k.jpg'
 				},
 				moon : {
 					isPerturbedOrbit : true
@@ -156,7 +167,7 @@ define(
 					apolloTLI,
 					apolloTLIOrbit,
 					{
-						title : 'Apollo '+apolloNumber+' TLI',
+						title : 'Apollo '+apolloNumber,
 					}
 				)/*,
 				apolloEO : _.extend({},

@@ -31,6 +31,8 @@ nbproject
 
 #grunt
 node_modules
+Gruntfile.js
+package.json
 
 _unused
 _reference

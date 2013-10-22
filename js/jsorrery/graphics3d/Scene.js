@@ -9,21 +9,21 @@ define(
 		'jsorrery/graphics3d/CameraManager',
 		'jsorrery/graphics3d/OrbitLinesManager',
 		'jsorrery/graphics3d/TracerManager',
+		'jsorrery/graphics2d/Labels',
 		'jsorrery/graphics3d/Dimensions',
 		'jsorrery/gui/Gui',
 		'vendor/jquery.mousewheel',
 		'three/stats',
 		'_'
 	], 
-	function(ns, $, Body3D, MilkyWay, Sun, CameraManager, OrbitLinesManager, TracerManager, Dimensions, Gui){
+	function(ns, $, Body3D, MilkyWay, Sun, CameraManager, OrbitLinesManager, TracerManager, Labels, Dimensions, Gui){
 		'use strict';
-		var projector;
+
 		var stats;
 
 		return {
 			createStage : function(scenario) {
-			
-				projector = projector || new THREE.Projector();
+
 				this.bodies3d = [];
 
 				this.container = $('<div id="universe" width="'+this.width+'" height="'+this.height+'">').appendTo('body');
@@ -103,13 +103,6 @@ define(
 				this.smallestSMA = smallestSMA;
 			},
 
-			toXYCoords:function (pos) {
-				var vector = projector.projectVector(pos, CameraManager.getCamera());
-				vector.x = (vector.x + 1)/2 * this.width;
-				vector.y = -(vector.y - 1)/2 * this.height;/**/
-				return vector;
-			},
-
 			draw : function(){
 				
 				//move sun, if its not a body shown. This assumes that the central body, if it has an orbit, revolves around the sun
@@ -132,14 +125,12 @@ define(
 
 				//after all bodies have been positionned, update camera matrix (as camera might be attached to a body)
 				CameraManager.updateCameraMatrix();
+
 				//place planets labels. We need the camera position relative to the world in order to compute planets screen sizes, and hide/show labels depending on it
 				var radFov = CameraManager.getCamera().fov * ns.DEG_TO_RAD;
 				var camPos = CameraManager.getCamera().position.clone();
 				camPos.applyMatrix4(CameraManager.getCamera().matrixWorld);
-				_.each(this.bodies3d, function(b){
-					b.placeLabel(this.toXYCoords(b.getPosition()), this.width, this.height, camPos, radFov);
-				}.bind(this));
-
+				Labels.draw(camPos, radFov);
 				stats.update();
 			},
 
@@ -192,9 +183,6 @@ define(
 				OrbitLinesManager.kill();
 				TracerManager.kill();
 				Gui.remove(Gui.PLANET_SCALE_ID);
-				_.each(this.bodies3d, function(body3d){
-					body3d.kill();
-				});
 				this.container.remove();
 
 			}

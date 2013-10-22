@@ -25,9 +25,10 @@
 @inputBg : rgba(255, 255, 255, 0.1);
 @selectActiveBg : rgba(25, 25, 25, 0.9);
 @calendarBg : rgba(25, 25, 25, 0.95);
-@planetLabelBg : rgba(25, 25, 25, 0.7);
+@labelBg : rgba(25, 25, 25, 0.7);
 @txCol : #aaa;
 @prelaodCol : #444;
+@labelLineCol : #333;
 
 @menuH : 45px;
 
@@ -345,12 +346,43 @@ nav{
 	.unselectable();
 	position:absolute;
 	color:#fff;
-	background:@planetLabelBg;
+	background:@labelBg;
 	padding:3px;
 	font-size:9px;
 	left: 24px;
 	white-space: nowrap;
 	z-index:50;
+}
+
+.eventLabel{
+	.unselectable();
+	position:absolute;
+	color:#fff;
+	width:2px;
+	height:2px;
+	.border-radius(1px);
+	margin-left:-1px;
+	margin-top:-1px;
+	background:#fff;
+
+	.line{
+		.transform-origin(0 0);
+		width:1px;
+		height:100px;
+		border-left:1px @labelLineCol solid;
+		position:absolute;
+		left:1px;
+	}
+
+	.tx{
+		position:absolute;
+		background:@labelBg;
+		font-size: 9px;
+		padding:3px;
+		white-space: nowrap;
+		border-bottom:1px @labelLineCol solid;
+		text-align:center;
+	}
 }
 
 .planetSpot {
@@ -359,7 +391,7 @@ nav{
 	width:@sz;
 	height:@sz;
 	position:absolute;
-	border:1px #222 solid;
+	border:1px @labelLineCol solid;
 	.border-radius(50%);
 	margin-top:-@sz / 2;
 	margin-left:-@sz / 2;
@@ -496,6 +528,52 @@ nav{
           transition-duration: @transition-duration;
 }
 
+// Transformations
+.rotate(@degrees) {
+  -webkit-transform: rotate(@degrees);
+      -ms-transform: rotate(@degrees); // IE9+
+          transform: rotate(@degrees);
+}
+.scale(@ratio) {
+  -webkit-transform: scale(@ratio);
+      -ms-transform: scale(@ratio); // IE9+
+          transform: scale(@ratio);
+}
+.translate(@x; @y) {
+  -webkit-transform: translate(@x, @y);
+      -ms-transform: translate(@x, @y); // IE9+
+          transform: translate(@x, @y);
+}
+.translate3d(@x; @y; @z) {
+  -webkit-transform: translate3d(@x, @y, @z);
+          transform: translate3d(@x, @y, @z);
+}
+
+.rotateX(@degrees) {
+  -webkit-transform: rotateX(@degrees);
+      -ms-transform: rotateX(@degrees); // IE9+
+          transform: rotateX(@degrees);
+}
+.rotateY(@degrees) {
+  -webkit-transform: rotateY(@degrees);
+      -ms-transform: rotateY(@degrees); // IE9+
+          transform: rotateY(@degrees);
+}
+.perspective(@perspective) {
+  -webkit-perspective: @perspective;
+     -moz-perspective: @perspective;
+          perspective: @perspective;
+}
+.perspective-origin(@perspective) {
+  -webkit-perspective-origin: @perspective;
+     -moz-perspective-origin: @perspective;
+          perspective-origin: @perspective;
+}
+.transform-origin(@origin){
+  -webkit-transform-origin: @origin;
+     -moz-transform-origin: @origin;
+          transform-origin: @origin;
+}
 
 .clearfix {
   *zoom: 1;

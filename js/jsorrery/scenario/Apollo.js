@@ -137,7 +137,7 @@ define(
 						//this.dbg.html('min moon dist '+dist+'km');
 					} else if(this.lastMoonDist == this.minMoonDist){
 						console.log('min dist '+this.minMoonDist);
-						Labels.addEventLabel('Closest approach<br>to the Moon: '+Math.round(this.minMoonDist)+' km', this.previousRelativePosition.clone(), ns.U.getBody(this.relativeTo));
+						Labels.addEventLabel('Closest distance to<br>the Moon: '+Math.round(this.minMoonDist)+' km', this.previousRelativePosition.clone(), ns.U.getBody(this.relativeTo));
 						//ns.U.stop();
 					}
 

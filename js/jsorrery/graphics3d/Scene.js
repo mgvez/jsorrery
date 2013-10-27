@@ -21,6 +21,10 @@ define(
 
 		var stats;
 
+		var drawBody = function(b){
+			b.drawMove();
+		};
+
 		return {
 			createStage : function(scenario) {
 
@@ -110,11 +114,9 @@ define(
 					var pos = this.centralBody.calculatePosition(ns.U.currentTime);
 					pos.setLength(this.stageSize * 5).negate();
 					this.sun.setPosition(pos);
-				}
+				}/**/
 
-				_.each(this.bodies3d, function(b){
-					b.drawMove();
-				}.bind(this));
+				_.each(this.bodies3d, drawBody);
 
 				TracerManager.draw();
 
@@ -131,6 +133,7 @@ define(
 				var camPos = CameraManager.getCamera().position.clone();
 				camPos.applyMatrix4(CameraManager.getCamera().matrixWorld);
 				Labels.draw(camPos, radFov);
+				/**/
 				stats.update();
 			},
 

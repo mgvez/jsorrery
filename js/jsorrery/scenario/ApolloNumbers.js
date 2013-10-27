@@ -23,7 +23,7 @@ define([
 		'1972-12-07T05:33:00.000Z'
 	];
 
-	var ApolloNumbers = {
+	var OrbitData = {
 		earth : {
 			name : [
 				'Apollo7',
@@ -456,14 +456,15 @@ define([
 		return ((TSH / 24) + (TSM/(24*60)) + (TSS/(24*60*60))) * 360;
 	};
 
+
 	var GM = 3.986005e14;
 	return {
-		get : function(orbitType, name){
+		get : function(orbitType, missionName){
 			
 			//see http://www.braeunig.us/apollo/apollo11-TLI.htm
 
-			var numbers = ApolloNumbers[orbitType];
-			var idx = numbers.name.indexOf(name);
+			var numbers = OrbitData[orbitType];
+			var idx = numbers.name.indexOf(missionName);
 			if(idx === -1) return;
 
 			var v = numbers.spaceVel[idx] * ns.FT_TO_M;

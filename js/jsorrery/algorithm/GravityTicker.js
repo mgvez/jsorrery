@@ -13,70 +13,64 @@ define(
 		var calculationsPerTick = 1;
 		var secondsPerTick = 1;
 		var deltaTIncrement = 1;
+		var deltaTIncrementSquared = 1;
 		var bodies = [];
 
 		/**
 		Calculates the forces that are created by each body toward one another
 		*/
-		var calculateGForces = (function(){
-			var workVect, i, j;
-			return function(){
-				for(i=0; i<bodies.length; i++){
-					//loop in following bodies and calculate forces between them and this one. No need to do previous ones, as they were done in previous iterations
-					for(j=i+1; j<bodies.length; j++){
-						if(bodies[i].mass === 1 && bodies[j].mass === 1) continue; 
-						workVect = getGForceBetween(bodies[i], bodies[j]);
-						//add forces (for the first body, it is the reciprocal of the calculated force)
-						bodies[i].force.sub(workVect);
-						bodies[j].force.add(workVect);
-					}
+		var calculateGForces = function(){
+			var workVect=new THREE.Vector3(), i, j;
+			for(i=0; i<bodies.length; i++){
+				//loop in following bodies and calculate forces between them and this one. No need to do previous ones, as they were done in previous iterations
+				for(j=i+1; j<bodies.length; j++){
+					if(bodies[i].mass === 1 && bodies[j].mass === 1) continue; 
+					workVect = getGForceBetween(bodies[i], bodies[j]);
+					//add forces (for the first body, it is the reciprocal of the calculated force)
+					bodies[i].force.sub(workVect);
+					bodies[j].force.add(workVect);/**/
 				}
-			};
-		})();
+			}
+		};
 
 		/**
 		Get the gravitational force in Newtons between two bodies (their distance in m, mass in kg)
 		*/
-		var getGForceBetween = (function(){
-			var workVect, dstSquared, massPrd, Fg;
-			return function(a, b){
-				workVect = a.position.clone().sub(b.position);//vector is between positions of body A and body B
-				dstSquared = workVect.lengthSq();
-				massPrd = a.mass * b.mass;
-				Fg = ns.G * (massPrd / dstSquared);//in newtons (1 N = 1 kg*m / s^2)
-				workVect.normalize();
-				workVect.multiplyScalar(Fg);//vector is now force of attraction in newtons
-				return workVect;
-			};
-		})();
+		var getGForceBetween = function(a, b){
+			var workVect=new THREE.Vector3(), dstSquared, massPrd, Fg;
+			workVect.copy(a.position).sub(b.position);//vector is between positions of body A and body B
+			dstSquared = workVect.lengthSq();
+			massPrd = a.mass * b.mass;
+			Fg = ns.G * (massPrd / dstSquared);//in newtons (1 N = 1 kg*m / s^2)
+			workVect.normalize();
+			workVect.multiplyScalar(Fg);//vector is now force of attraction in newtons/**/
+			return workVect;
+		};
 			
 		
 		var setDT = function (){
 			if(!calculationsPerTick || !secondsPerTick) return;
 			deltaTIncrement = secondsPerTick / calculationsPerTick;
+			deltaTIncrementSquared = Math.pow(deltaTIncrement, 2);
 		};
 
 		var Algorithm = {
 			
-			tick : (function(){
+			tick : function(){
 				var t, i;
-				return function(){
-					//We calculate the positions of all bodies, and thus the gravity, more than once per tick. Not efficient but more precise than approximating the whole forces to their value at the beginning of the cycle.
-					t = 0;
-					while(t < calculationsPerTick){
-						calculateGForces();
-						for(i=0; i<bodies.length; i++){
-							bodies[i].moveBody(deltaTIncrement, i);
-						}
-						t++;
-					}
+				//We calculate the positions of all bodies, and thus the gravity, more than once per tick. Not efficient but more precise than approximating the whole forces to their value at the beginning of the cycle.
+				for(t=0; t < calculationsPerTick; t++){
+					calculateGForces();
 					for(i=0; i<bodies.length; i++){
-						bodies[i].afterTick(secondsPerTick);
+						bodies[i].moveBody(deltaTIncrement, deltaTIncrementSquared, i);
 					}
-					
-					return secondsPerTick;
-				};
-			})(),
+				}
+				for(i=0; i<bodies.length; i++){
+					bodies[i].afterTick(secondsPerTick);
+				}/**/
+				
+				return secondsPerTick;
+			},
 			
 			setBodies : function(b){
 				bodies.length = 0;

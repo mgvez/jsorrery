@@ -80,7 +80,7 @@ define(
 				//kills the animation callback
 				this.killed = true;
 				this.dateDisplay.off('.jsorrery');
-
+				Gui.setDate(null);
 				if(!this.scene) return;
 				this.scene.kill();
 				this.centralBody = null;
@@ -179,10 +179,15 @@ define(
 				if(this.killed) return;
 				if(this.playing) {
 					this.deltaT = GravityTicker.tick();
+					console.timeStamp('gravity computed');
 					this.epochTime += this.deltaT;
 					this.currentTime = this.startEpochTime + this.epochTime;
 					this.scene.updateCamera();
+
+					console.timeStamp('camera updated');
 					this.scene.draw();
+
+					console.timeStamp('scene drawn');
 					this.showDate();
 				} else {
 					this.scene.updateCamera();

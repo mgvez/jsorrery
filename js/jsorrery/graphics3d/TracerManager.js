@@ -19,11 +19,22 @@ define(
 			init : function(containerParam){
 				this.bodies3d = [];
 				this.container = containerParam;
+				this.activeTracers = [];
 			},
 
 			setTraceFrom : function(lookFromBody, lookAtBody){				
 				this.removeTracers();
+				this.activeTracers.length = 0;
 				this.addTracer(lookAtBody, lookFromBody);
+			},
+
+			//when date changes by user action, reset active tracers
+			resetTrace : function(){
+				this.removeTracers();
+				_.each(this.activeTracers, function(tracer, i){
+					tracer.getNew();
+					this.container.add(tracer.getDisplayObject());
+				}.bind(this));
 			},
 
 			addTracer : function(tracingBody, traceFromBody) {
@@ -33,6 +44,7 @@ define(
 				tracer.setTraceFrom(traceFromBody);
 				tracer.getNew();
 				this.container.add(tracer.getDisplayObject());
+				this.activeTracers.push(tracer);
 			},
 
 			removeTracers : function(){
@@ -44,7 +56,6 @@ define(
 					//clear all traces first
 					if(!tracer) return;
 					container.remove(tracer.getDisplayObject());
-					
 				});
 			},
 

@@ -152,6 +152,12 @@ a{
 ::-webkit-resizer                { /* 7 */ }
 
 
+#credits{
+	position:absolute;
+	bottom: 10px;
+	right: 10px;
+	cursor:pointer;
+}
 
 .ui-datepicker{
 	background:@calendarBg;
@@ -202,6 +208,24 @@ nav{
 	width: 100%;
 	background: rgba(0, 0, 0, 0.3);
 	border-bottom:1px @widgetBorderCol solid;
+
+	.help{
+		//position:absolute;
+		top:-2px;
+		display:inline-block;
+		font-family:@entypo;
+		font-size:18px;
+		line-height:inherit;
+		height:18px;
+		width:18px;
+		margin-left:3px;
+		font-weight:normal;
+		cursor:pointer;
+		opacity:0.7;
+		&:hover{
+			opacity:1;
+		}
+	}
 
 	#gui{
 		padding: 3px;
@@ -424,23 +448,7 @@ nav{
 	width:32px;
 }
 
-.help{
-	//position:absolute;
-	top:-2px;
-	display:inline-block;
-	font-family:@entypo;
-	font-size:18px;
-	line-height:inherit;
-	height:18px;
-	width:18px;
-	margin-left:3px;
-	font-weight:normal;
-	cursor:pointer;
-	opacity:0.7;
-	&:hover{
-		opacity:1;
-	}
-}
+
 
 .helpContent{
 	display:none;
@@ -475,7 +483,7 @@ nav{
 	position:absolute;
 	top: 10px;
 	right:10px;
-	font-size:25px;
+	font-size:45px;
 	font-family:@entypo;
 	.transition-duration(0.5s);
 	&:hover{

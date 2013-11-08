@@ -46,6 +46,7 @@ define(
 				this.position = this.isCentral ? new THREE.Vector3() : this.orbitalElements.getPositionFromElements(elements);
 				this.relativePosition = new THREE.Vector3();
 				this.velocity = this.isCentral ? new THREE.Vector3() : this.orbitalElements.calculateVelocity(epochTime, this.relativeTo, this.isPerturbedOrbit);
+				this.previousPosition = null;
 				
 				//this.verlet = Object.create(Verlet);
 			},

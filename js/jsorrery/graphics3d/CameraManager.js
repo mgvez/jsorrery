@@ -188,10 +188,10 @@ define(
 
 			putDefaults : function(settings) {
 				if(settings) {
-					currentCamera.position.x = settings.x || 0;
-					currentCamera.position.y = settings.y || 0;
-					currentCamera.position.z = settings.z || 0;
-					currentCamera.fov = settings.fov || DEFAULT_FOV;
+					currentCamera.position.x = Number(settings.x) || 0;
+					currentCamera.position.y = Number(settings.y) || 0;
+					currentCamera.position.z = Number(settings.z) || 0;
+					currentCamera.fov = Number(settings.fov) || DEFAULT_FOV;
 				}
 			},
 
@@ -199,11 +199,16 @@ define(
 				Gui.addOption(Gui.LOOKFROM_ID, body3d.celestial.title, bodies3d.length);
 				Gui.addOption(Gui.LOOKAT_ID, body3d.celestial.title, bodies3d.length);
 
+				var getCamPos = function(){
+					return body3d.root.localToWorld(this.position.clone());
+				};
+
 				var pov = getNewCamera();
+				pov.getAbsoluetPos = getCamPos;
 				body3d.addCamera(POV_CAMERA_TYPE, pov);
 
 				var orbital = getNewCamera(true);
-
+				orbital.getAbsoluetPos = getCamPos;
 				orbital.position.set(0, -1, body3d.getPlanetStageSize() * 200);
 
 				body3d.addCamera(ORBITAL_CAMERA_TYPE, orbital);

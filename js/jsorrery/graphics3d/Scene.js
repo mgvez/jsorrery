@@ -74,7 +74,7 @@ define(
 
 			setMilkyway : function(){
 				var milkyway = this.milkyway = Object.create(MilkyWay);
-				var onReady = milkyway.init(this.stageSize * 4);
+				var onReady = milkyway.init(this.stageSize * 6);
 				this.root.add(milkyway.getDisplayObject());
 			},
 
@@ -108,20 +108,27 @@ define(
 			},
 
 			draw : function(){
+
+				var camPos = (CameraManager.getCamera().getAbsoluetPos && CameraManager.getCamera().getAbsoluetPos() ) || CameraManager.getCamera().position;
 				
 				//move sun, if its not a body shown. This assumes that the central body, if it has an orbit, revolves around the sun
 				if(this.sun && this.centralBody && this.centralBody.orbit){
 					var pos = this.centralBody.calculatePosition(ns.U.currentTime);
-					pos.setLength(this.stageSize * 5).negate();
+					pos.setLength(this.stageSize * 4).negate();
 					this.sun.setPosition(pos);
-				}/**/
+				} else if(this.sun){
+					var sunPos = this.centralBody.getBody3D().getPosition();
+					this.sun.setPosition(sunPos);/**/
+					this.sun.setFlarePosition(camPos.clone().multiplyScalar(0.2));/**/
+					this.sun.setFlareSize(this.centralBody.getBody3D().getScreenSizeRatio(camPos, CameraManager.getCamera().fov), this.height);/**/
+				}
 
 				_.each(this.bodies3d, drawBody);
 
 				TracerManager.draw();
 
 				//center the milkyway to the camera position, to make it look infinite
-				this.milkyway && this.milkyway.setPosition(CameraManager.getCamera().position);
+				this.milkyway && this.milkyway.setPosition(camPos);
 
 				this.renderer.render(this.root, CameraManager.getCamera());
 

@@ -11,10 +11,12 @@ a{color:#fff}
 ::-webkit-scrollbar-thumb{background:#333}
 ::-webkit-scrollbar-corner{}
 ::-webkit-resizer{}
+#credits{position:absolute;bottom:10px;right:10px;cursor:pointer}
 .ui-datepicker{background:rgba(25,25,25,0.95);border:1px #333 solid;padding:20px;display:none}.ui-datepicker td{width:18px;height:18px;text-align:center;background:rgba(255,255,255,0.1)}
 .ui-datepicker a{color:white;text-decoration:none}
 .ui-slider{border-bottom:1px #333 solid;height:10px;position:relative;width:200px}.ui-slider .ui-slider-handle{background:#333;width:10px;height:10px;-webkit-border-radius:50%;-moz-border-radius:50%;border-radius:50%;position:absolute;top:6px}
-nav{position:absolute;z-index:500;top:0;left:0;height:45px;width:100%;background:rgba(0,0,0,0.3);border-bottom:1px #555 solid}nav #gui{padding:3px}nav #gui .inputContainer{position:relative;min-height:20px}
+nav{position:absolute;z-index:500;top:0;left:0;height:45px;width:100%;background:rgba(0,0,0,0.3);border-bottom:1px #555 solid}nav .help{top:-2px;display:inline-block;font-family:"EntypoRegular";font-size:18px;line-height:inherit;height:18px;width:18px;margin-left:3px;font-weight:normal;cursor:pointer;opacity:0.7}nav .help:hover{opacity:1}
+nav #gui{padding:3px}nav #gui .inputContainer{position:relative;min-height:20px}
 nav #gui .dropdown .display,nav #gui .dropdown li{cursor:pointer;overflow:hidden}
 nav #gui .dropdown ul{list-style-type:none;margin:0;padding:0;font-weight:normal;position:absolute;display:none;background:rgba(25,25,25,0.9);border:1px #333 solid;color:white;z-index:1000}nav #gui .dropdown ul li{margin:0;padding:2px 8px;border-bottom:1px black solid;white-space:nowrap}nav #gui .dropdown ul li.selected{background:rgba(255,255,255,0.1);border:1px #333 solid;color:white}
 nav #gui .dropdown ul li:hover,nav #gui .dropdown ul li.selected{font-weight:bold;color:#fff}
@@ -40,8 +42,7 @@ nav #gui #shareWidget #twitterShare{float:left}
 #stats{position:absolute;bottom:0;left:0}#stats #fps{background:transparent !important}#stats #fps #fpsText{color:#aaa !important}
 #stats #fps #fpsGraph{display:none}
 .button{font-family:"EntypoRegular";font-size:32px;line-height:22px;width:32px}
-.help{top:-2px;display:inline-block;font-family:"EntypoRegular";font-size:18px;line-height:inherit;height:18px;width:18px;margin-left:3px;font-weight:normal;cursor:pointer;opacity:0.7}.help:hover{opacity:1}
 .helpContent{display:none;position:absolute;top:45px;left:0;z-index:150;background:rgba(0,0,0,0.6);width:60%;min-width:400px;max-height:80%;padding:30px 20%;border-bottom:1px #222 solid;font-family:'Quattrocento',serif;font-size:16px;letter-spacing:0.5px;line-height:1.8em;color:#aaa;text-align:justify;overflow-y:scroll}.helpContent h2{color:#fff;text-shadow:0 0 2px #555}
-.close{cursor:pointer;position:absolute;top:10px;right:10px;font-size:25px;font-family:"EntypoRegular";-webkit-transition-duration:.5s;-moz-transition-duration:.5s;-o-transition-duration:.5s;transition-duration:.5s}.close:hover{color:#fff}
+.close{cursor:pointer;position:absolute;top:10px;right:10px;font-size:45px;font-family:"EntypoRegular";-webkit-transition-duration:.5s;-moz-transition-duration:.5s;-o-transition-duration:.5s;transition-duration:.5s}.close:hover{color:#fff}
 .clearfix{*zoom:1}.clearfix:before,.clearfix:after{display:table;content:""}
 .clearfix:after{clear:both}

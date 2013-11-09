@@ -13,16 +13,16 @@ define(
 		var CelestialBody = {
 
 			init : function(display) {
-
+				this.forces = {};
 				this.display = display;
 				this.force = new THREE.Vector3();
 				this.movement = new THREE.Vector3();
+				this.invMass = 1 / this.mass;
 
 				this.orbitalElements = Object.create(OrbitalElements);
 				this.orbitalElements.setName(this.name);
 				this.orbitalElements.setDefaultOrbit(this.orbit, this.orbitCalculator);
 				//console.log(this.name, this.position, this.velocity);
-
 			},
 
 			//if epoch start is not j2000, get epoch time from j2000 epoch time
@@ -46,9 +46,9 @@ define(
 				this.position = this.isCentral ? new THREE.Vector3() : this.orbitalElements.getPositionFromElements(elements);
 				this.relativePosition = new THREE.Vector3();
 				this.velocity = this.isCentral ? new THREE.Vector3() : this.orbitalElements.calculateVelocity(epochTime, this.relativeTo, this.isPerturbedOrbit);
+				this.previousPosition = null;
 				
-				this.verlet = Object.create(Verlet);
-				this.verlet.setBody(this);
+				//this.verlet = Object.create(Verlet);
 			},
 			
 			getAngleTo : function(bodyName){
@@ -85,9 +85,9 @@ define(
 				if(this.afterCompleteMove) this.afterCompleteMove(ns.U.epochTime, ns.U.date);
 			},
 
-			moveBody : function(deltaTIncrement, i){
+			moveBody : function(deltaTIncrement, deltaTIncrementSquared, i){
 				if(this.beforeMove) this.beforeMove(deltaTIncrement);
-				this.verlet.moveBody(deltaTIncrement, i);
+				Verlet.moveBody(this, deltaTIncrement, deltaTIncrementSquared, i);
 				if(this.afterMove) this.afterMove(deltaTIncrement);
 			},
 
@@ -177,7 +177,7 @@ define(
 						if(this.onOrbitCompleted) this.onOrbitCompleted();
 					}
 				}
-				if(this.afterCompleteMove) this.afterCompleteMove(ns.U.epochTime, ns.U.date);
+				if(this.afterCompleteMove) this.afterCompleteMove(ns.U.epochTime, ns.U.date, deltaT);
 
 			},
 

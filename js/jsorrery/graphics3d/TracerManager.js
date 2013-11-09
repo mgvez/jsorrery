@@ -19,23 +19,32 @@ define(
 			init : function(containerParam){
 				this.bodies3d = [];
 				this.container = containerParam;
+				this.activeTracers = [];
 			},
 
-			setTraceFrom : function(lookFromBody, lookAtBody){
-				
-				this.traceFromBody = lookFromBody;
-				this.tracingBody = lookAtBody;
-				this.resetTrace();
+			setTraceFrom : function(lookFromBody, lookAtBody){				
+				this.removeTracers();
+				this.activeTracers.length = 0;
+				this.addTracer(lookAtBody, lookFromBody);
 			},
 
+			//when date changes by user action, reset active tracers
 			resetTrace : function(){
 				this.removeTracers();
-				if(!this.traceFromBody || !this.tracingBody) return;
-				this.tracer = this.tracingBody.tracer;
-				if(!this.tracer) return;
-				this.tracer.setTraceFrom(this.traceFromBody);
-				this.tracer.getNew();
-				this.container.add(this.tracer.getDisplayObject());
+				_.each(this.activeTracers, function(tracer, i){
+					tracer.getNew();
+					this.container.add(tracer.getDisplayObject());
+				}.bind(this));
+			},
+
+			addTracer : function(tracingBody, traceFromBody) {
+				if(!traceFromBody || !tracingBody) return;
+				var tracer = tracingBody.tracer;
+				if(!tracer) return;
+				tracer.setTraceFrom(traceFromBody);
+				tracer.getNew();
+				this.container.add(tracer.getDisplayObject());
+				this.activeTracers.push(tracer);
 			},
 
 			removeTracers : function(){
@@ -47,13 +56,15 @@ define(
 					//clear all traces first
 					if(!tracer) return;
 					container.remove(tracer.getDisplayObject());
-					
 				});
 			},
 
 			draw : function() {
 				if(this.deferredForceTraceBody) {
-					this.setTraceFrom(ns.U.getBody(this.deferredForceTraceBody.celestial.relativeTo).getBody3D(), this.deferredForceTraceBody);
+					this.deferredForceTraceBody.map(function(tracingBody){
+						var traceFromBody = ns.U.getBody(tracingBody.celestial.traceRelativeTo || tracingBody.celestial.relativeTo).getBody3D();
+						this.addTracer(tracingBody, traceFromBody);
+					}.bind(this));
 					this.deferredForceTraceBody = null;
 				}
 			},
@@ -69,7 +80,8 @@ define(
 				body3d.tracer = tracer;
 
 				if(body3d.celestial.forceTrace) {
-					this.deferredForceTraceBody = body3d;
+					this.deferredForceTraceBody = this.deferredForceTraceBody || [];
+					this.deferredForceTraceBody.push(body3d);
 				}
 				
 			},

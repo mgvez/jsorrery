@@ -22,8 +22,8 @@ define(
 		//project scene position to 2d screen coordinates. Returns null if position is out of screen.
 		var toScreenCoords = function (pos) {
 			var vector = projector.projectVector(pos, CameraManager.getCamera());
-			vector.x = (vector.x + 1)/2 * sceneW;
-			vector.y = -(vector.y - 1)/2 * sceneH;/**/
+			vector.x = Math.round((vector.x + 1)/2 * sceneW);
+			vector.y = Math.round(-(vector.y - 1)/2 * sceneH);/**/
 
 			if(vector.z<1 && vector.z>0 && vector.x>0 && vector.x<sceneW && vector.y>0 && vector.y<sceneH){
 				return vector;

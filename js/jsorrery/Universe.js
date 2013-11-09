@@ -80,7 +80,7 @@ define(
 				//kills the animation callback
 				this.killed = true;
 				this.dateDisplay.off('.jsorrery');
-
+				Gui.setDate(null);
 				if(!this.scene) return;
 				this.scene.kill();
 				this.centralBody = null;
@@ -140,7 +140,7 @@ define(
 			},
 
 			getBody : function(name) {
-				if(name === 'central' || typeof name === 'undefined') {
+				if(name === 'central' || !name) {
 					return this.centralBody;
 				}
 				return this.bodies[name];
@@ -179,12 +179,16 @@ define(
 				if(this.killed) return;
 				if(this.playing) {
 					this.deltaT = GravityTicker.tick();
+					console.timeStamp('gravity computed');
 					this.epochTime += this.deltaT;
 					this.currentTime = this.startEpochTime + this.epochTime;
 					this.scene.updateCamera();
-					this.scene.draw();
-					this.showDate();
 
+					console.timeStamp('camera updated');
+					this.scene.draw();
+
+					console.timeStamp('scene drawn');
+					this.showDate();
 				} else {
 					this.scene.updateCamera();
 				}
@@ -193,8 +197,6 @@ define(
 			},
 
 			getEpochTime : function(userDate) {
-				//userDate = userDate || new Date(2013, 2, 20, 11, 2);//new Date();
-				//userDate = userDate || new Date(2008, 6, 1, 0, 0);//new Date();
 				userDate = userDate || new Date();
 				return ((userDate - ns.J2000) / 1000) ;
 			},
@@ -205,9 +207,10 @@ define(
 
 			stop : function(){
 				this.playing = false;
+				this.scene.updateCamera();
+				this.scene.draw();
 			}
 		};
-		
 		return Universe;
 		
 	}

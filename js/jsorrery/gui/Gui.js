@@ -212,10 +212,12 @@ define(
 
 			setDate : function(d){
 				date = d;
-				var dStr = d.toISOString();
-				ExportValues.setVal(this.DATE_ID, dStr);
-				dateDisplay.val(dStr);
-				//dateDisplay.val($.datepicker.formatDate( $.datepicker.ATOM, d));
+				if(d){
+					var dStr = d.toISOString();
+					ExportValues.setVal(this.DATE_ID, dStr);
+					dateDisplay.val(dStr);
+					//dateDisplay.val($.datepicker.formatDate( $.datepicker.ATOM, d));
+				}
 			},
 
 			getDate : function(){

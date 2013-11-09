@@ -133,6 +133,14 @@ define(
 				return pos;
 			},
 
+			getScreenSizeRatio : function(camPos, fov){
+				var sz = this.getPlanetSize();
+				var dist = this.getPosition().sub(camPos).length();
+
+				var height = 2 * Math.tan( (fov * ns.DEG_TO_RAD) / 2 ) * dist; // visible height, see http://stackoverflow.com/questions/13350875/three-js-width-of-view/13351534#13351534
+				return sz/height;
+			},
+
 			getPosition : function(pos) {
 				var curPosition = (pos && pos.clone()) || this.celestial.getPosition();
 				return Dimensions.getScaled(curPosition);

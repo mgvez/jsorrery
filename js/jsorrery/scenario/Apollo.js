@@ -9,7 +9,8 @@ define(
 	], 
 	function(ns, common, apolloNumbers, Labels) {
 		//apollo 10, 11, 13 & 17 don't work. 13 and 17 in particular seem to have errors in the numbers, as the orbits are very far from the moon. 10 & 11 need a correction of about 1° to seem more accurate
-		var apolloNumber = '12';
+		var g = window.location.search.match(/apollo=([0-9]+)/);
+		var apolloNumber = (g && g[1]) || '8';
 		var earthRadius = common.earth.radius;
 		var earthTilt = common.earth.tilt;
 		var apolloEarthOrbit = apolloNumbers.get('earth', 'Apollo'+apolloNumber);
@@ -44,7 +45,7 @@ define(
 						}
 
 
-						dist = Math.abs(this.position.clone().sub(ns.U.getBody('moon').position).length()) / 1000;
+						dist = (Math.abs(this.position.clone().sub(ns.U.getBody('moon').position).length()) / 1000) - ns.U.getBody('moon').radius;
 						var moonSpeed = 0;
 						if(this.data.lastMoonDist){
 							moonSpeed = ((this.data.lastMoonDist-dist) / deltaT) * 1000;
@@ -63,7 +64,7 @@ define(
 						this.data.minSpeed = !this.data.minSpeed || (this.data.minSpeed > this.speed) ? this.speed : this.data.minSpeed;
 
 					} else {
-						dist = Math.abs(this.position.clone().sub(ns.U.getBody('earth').position).length()) / 1000;
+						dist = (Math.abs(this.position.clone().sub(ns.U.getBody('earth').position).length()) / 1000 ) - ns.U.getBody('earth').radius;
 						if(!this.data.minEarthDist || dist < this.data.minEarthDist){
 							this.data.minEarthDist = dist;
 						} else if(this.data.lastEarthDist == this.data.minEarthDist && dist < (Math.abs(this.position.clone().sub(ns.U.getBody('moon').position).length()) / 1000)){
@@ -83,8 +84,8 @@ define(
 			name : 'Apollo',
 			title : 'Apollo '+apolloNumber+' free return trajectory',
 			commonBodies : ['earth', 'moon'/*, 'sun', 'mercury', 'venus', 'mars'/**/],
-			secondsPerTick : 500,
-			calculationsPerTick : 500,
+			secondsPerTick : 200,
+			calculationsPerTick : 400,
 			calculateAll : true,
 			defaultsGuiSettings : {
 				date: epoch//epoch

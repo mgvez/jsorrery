@@ -57,6 +57,8 @@ define(
 
 				if(this.celestial.name==='sun'){
 					mat.emissive = new THREE.Color( 0xdddd33 );
+				} else {
+					mat.specular = new THREE.Color('grey');
 				}
 
 				var radius = this.getPlanetSize();
@@ -81,12 +83,16 @@ define(
 					var ringMap = ResourceLoader.loadTexture( this.celestial.ring.map );
 		
 					var ringMaterial = new THREE.MeshLambertMaterial({
-	                   map: ringMap
-	                });
+						map: ringMap/*,
+						transparent: true,
+						side: THREE.DoubleSide,/**/
+					});
 					var ringGeometry = new THREE.TorusGeometry(ringSize[1], ringSize[1] - ringSize[0], 2, 40);
+					//var ringGeometry = new THREE.RingGeometry2(ringSize[1], ringSize[1] - ringSize[0], 180, 1, 0, Math.PI * 2);
+					ringGeometry.computeFaceNormals();
 
-	                var ring = new THREE.Mesh(ringGeometry, ringMaterial);
-	                ring.rotation.x = - Math.PI / 2;
+					var ring = new THREE.Mesh(ringGeometry, ringMaterial);
+					ring.rotation.x = - Math.PI / 2;
 					this.planet.add(ring);
 					
 				}

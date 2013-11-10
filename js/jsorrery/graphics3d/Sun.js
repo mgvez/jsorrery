@@ -24,7 +24,6 @@ define(
 				var flareParams = this.flareParams = {size : 400};
 				this.sunFlare = new THREE.LensFlare( flareTx, this.flareParams.size, 0.0, THREE.AdditiveBlending, flareColor );
 
-				var inc=0;
 				var lensFlareUpdateCallback = function( object ) {
 					var f, fl = object.lensFlares.length;
 					var flare;
@@ -37,10 +36,9 @@ define(
 						flare.y = this.positionScreen.y + vecY * flare.distance;
 						flare.size = flareParams.size;
 						//console.log(flare.size);
-						flare.wantedRotation = flare.x * Math.PI * 0.25 + (inc*-0.001);
-						flare.rotation += ( flare.wantedRotation - flare.rotation ) * 0.25;
+						flare.wantedRotation = flare.x * Math.PI * 0.5 ;
+						flare.rotation += ( flare.wantedRotation - flare.rotation ) * 0.5;
 					}
-					inc++;
 				};
 
 				this.sunFlare.customUpdateCallback = lensFlareUpdateCallback;

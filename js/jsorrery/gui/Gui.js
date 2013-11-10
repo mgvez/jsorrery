@@ -283,6 +283,7 @@ define(
 			},
 
 			setDefaults : function(defaultSettings) {
+				console.log(defaultSettings);
 				this.defaultSettings = defaultSettings;
 			}
 		};

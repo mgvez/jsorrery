@@ -70,7 +70,7 @@ define(
 				Gui.init();
 
 				var defaultParams = _.extend({}, getQueryString());
-				Gui.setDefaults(defaultParams);
+				//Gui.setDefaults(defaultParams);
 
 				var scenarios = ScenarioLoader.getList();
 				var scenarioChanger =  Gui.addDropdown(Gui.SCENARIO_ID, function(){

@@ -155,7 +155,7 @@ define(
 				scene = sceneParam;
 				domEl = container;
 				allCameras = [];
-				bodies3d = [];
+				bodies3d = {};
 				viewSettings = {};
 				cameraParams = {
 					fov : fov || DEFAULT_FOV,
@@ -196,8 +196,8 @@ define(
 			},
 
 			addBody : function(body3d){				
-				Gui.addOption(Gui.LOOKFROM_ID, body3d.celestial.title, bodies3d.length);
-				Gui.addOption(Gui.LOOKAT_ID, body3d.celestial.title, bodies3d.length);
+				Gui.addOption(Gui.LOOKFROM_ID, body3d.celestial.title, body3d.celestial.name);
+				Gui.addOption(Gui.LOOKAT_ID, body3d.celestial.title, body3d.celestial.name);
 
 				var getCamPos = function(){
 					return body3d.root.localToWorld(this.position.clone());
@@ -213,7 +213,7 @@ define(
 
 				body3d.addCamera(ORBITAL_CAMERA_TYPE, orbital);
 
-				bodies3d.push(body3d);
+				bodies3d[body3d.celestial.name] = body3d;
 			},
 
 			updateCamera : function(){

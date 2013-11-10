@@ -158,6 +158,8 @@ define(
 				if(sel.list.children().length === 0) {
 					sel.input.val(val);
 					sel.display.html(label);
+
+					ExportValues.setVal(selectName, val);
 				}
 
 				option.appendTo(sel.list);

@@ -13,7 +13,7 @@ define(
 			init : function(name, color){
 				this.name = name;
 				this.added = false;
-				this.color = Utils.rgbToHex(Utils.darken(Utils.hexToRgb(color), 0.4));
+				this.color = Utils.rgbToHex(Utils.darken(Utils.hexToRgb(color), 0.75));
 			},
 
 			setLine : function(orbitVertices){

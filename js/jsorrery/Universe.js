@@ -21,10 +21,8 @@ define(
 			init : function(scenario, qstrSettings){
 				ResourceLoader.reset();
 				this.name = scenario.name;
-
-				var initialSettings = _.extend({}, qstrSettings, scenario.defaultsGuiSettings);
+				var initialSettings = _.extend({}, scenario.defaultGuiSettings, qstrSettings, scenario.forcedGuiSettings);
 				Gui.setDefaults(initialSettings);
-
 				//Universe is, well, global
 				ns.U = this;
 				

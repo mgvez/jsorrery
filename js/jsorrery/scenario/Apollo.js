@@ -87,7 +87,7 @@ define(
 			secondsPerTick : 200,
 			calculationsPerTick : 400,
 			calculateAll : true,
-			defaultsGuiSettings : {
+			forcedGuiSettings : {
 				date: epoch//epoch
 			},
 			bodies : {

@@ -57,6 +57,8 @@ define(
 
 				if(this.celestial.name==='sun'){
 					mat.emissive = new THREE.Color( 0xdddd33 );
+				} else {
+					mat.specular = new THREE.Color('grey');
 				}
 
 				var radius = this.getPlanetSize();

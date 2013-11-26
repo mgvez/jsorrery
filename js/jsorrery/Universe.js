@@ -71,7 +71,7 @@ define(
 					this.tick();
 				}.bind(this));
 
-				return onSceneReady;
+				return onSceneReady.promise();
 
 			},
 

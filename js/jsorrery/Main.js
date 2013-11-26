@@ -59,8 +59,11 @@ define(
 		};
 
 		var removePreloader = function(){
-			preloader.fadeOut(500);
-			//console.log(console.memory);
+			preloader.stop().fadeOut(500);
+		};
+
+		var addPreloader = function(){
+			preloader.stop().fadeIn(500);
 		};
 
 		var Orbit = {
@@ -74,6 +77,7 @@ define(
 
 				var scenarios = ScenarioLoader.getList();
 				var scenarioChanger =  Gui.addDropdown(Gui.SCENARIO_ID, function(){
+					addPreloader();
 					loadScenario(scenarioChanger.val());
 				}.bind(this));
 

@@ -55,12 +55,7 @@ define(
 				}
 
 				var mat = new THREE.MeshPhongMaterial(matOptions);
-
-				if(this.celestial.name==='sun'){
-					mat.emissive = new THREE.Color( 0xdddd33 );
-				} else {
-					mat.specular = new THREE.Color('grey');
-				}
+				_.extend(mat, this.celestial.material || {});
 
 				var radius = this.getPlanetSize();
 				var segments = 50;

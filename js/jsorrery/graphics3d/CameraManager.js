@@ -187,11 +187,13 @@ define(
 			},
 
 			putDefaults : function(settings) {
+				//console.log(settings);
 				if(settings) {
 					currentCamera.position.x = Number(settings.x) || 0;
 					currentCamera.position.y = Number(settings.y) || 0;
 					currentCamera.position.z = Number(settings.z) || 0;
 					currentCamera.fov = Number(settings.fov) || DEFAULT_FOV;
+					currentCamera.updateProjectionMatrix();
 				}
 			},
 

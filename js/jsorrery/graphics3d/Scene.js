@@ -108,7 +108,6 @@ define(
 			},
 
 			draw : function(){
-
 				var camPos = (CameraManager.getCamera().getAbsoluetPos && CameraManager.getCamera().getAbsoluetPos() ) || CameraManager.getCamera().position;
 				
 				//move sun, if its not a body shown. This assumes that the central body, if it has an orbit, revolves around the sun

@@ -10,9 +10,6 @@ define(
 	function(ns, ResourceLoader){
 		'use strict';
 
-
-		
-
 		var Sun = {
 			flareMapSrc : 'img/sunflare.png',
 			init : function(size){
@@ -74,7 +71,8 @@ define(
 			},
 
 			setFlareSize : function(sunSizeRatio, screenH){
-				this.flareParams.size = sunSizeRatio * screenH * 300;
+				//console.log(sunSizeRatio);
+				this.flareParams.size = sunSizeRatio * screenH * 20;
 			}
 		};
 

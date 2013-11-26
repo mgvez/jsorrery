@@ -22,6 +22,7 @@ define(
 				ResourceLoader.reset();
 				this.name = scenario.name;
 				var initialSettings = _.extend({}, scenario.defaultGuiSettings, qstrSettings, scenario.forcedGuiSettings);
+				//console.log(initialSettings);
 				Gui.setDefaults(initialSettings);
 				//Universe is, well, global
 				ns.U = this;
@@ -177,15 +178,10 @@ define(
 				if(this.killed) return;
 				if(this.playing) {
 					this.deltaT = GravityTicker.tick();
-					console.timeStamp('gravity computed');
 					this.epochTime += this.deltaT;
 					this.currentTime = this.startEpochTime + this.epochTime;
 					this.scene.updateCamera();
-
-					console.timeStamp('camera updated');
 					this.scene.draw();
-
-					console.timeStamp('scene drawn');
 					this.showDate();
 				} else {
 					this.scene.updateCamera();

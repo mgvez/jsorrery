@@ -59,11 +59,13 @@ define(
 		};
 
 		var removePreloader = function(){
-			preloader.stop().fadeOut(500);
+			preloader.stop().fadeOut(500, function(){
+				preloader.hide();
+			});
 		};
 
 		var addPreloader = function(){
-			preloader.stop().fadeIn(500);
+			preloader.stop().css({opacity:1}).show();
 		};
 
 		var Orbit = {

@@ -93,11 +93,13 @@ define(
 				var defaultScenario = 0;		
 
 				_.each(scenarios, function(scenario, idx){
-					Gui.addOption(Gui.SCENARIO_ID, scenario.title, scenario.name);
+					var isSelected = false;
 					//find ID of loaded scenario
 					if(defaultParams.scenario && scenario.name === defaultParams.scenario) {
 						defaultScenario = idx;
+						isSelected = true;
 					}
+					Gui.addOption(Gui.SCENARIO_ID, scenario.title, scenario.name, isSelected);
 					
 					//dump scenarios specific descriptions in the scenario help panel
 					help += '<h3>'+scenario.title+'</h3><p>'+scenario.help+'</p>';

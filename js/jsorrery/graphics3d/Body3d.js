@@ -8,6 +8,7 @@ define(
 		'jsorrery/graphics2d/Labels',
 		'jsorrery/graphics3d/loaders/ResourceLoader',
 		'three',
+		'three/RingGeometry2',
 		'vendor/greensock/TweenMax',
 		'vendor/greensock/easing/EasePack'
 	], 
@@ -81,14 +82,15 @@ define(
 					];
 					
 					var ringMap = ResourceLoader.loadTexture( this.celestial.ring.map );
-		
+
 					var ringMaterial = new THREE.MeshLambertMaterial({
-						map: ringMap/*,
+						map: ringMap,
 						transparent: true,
-						side: THREE.DoubleSide,/**/
+						side: THREE.DoubleSide
 					});
-					var ringGeometry = new THREE.TorusGeometry(ringSize[1], ringSize[1] - ringSize[0], 2, 40);
-					//var ringGeometry = new THREE.RingGeometry2(ringSize[1], ringSize[1] - ringSize[0], 180, 1, 0, Math.PI * 2);
+
+					//var ringGeometry = new THREE.TorusGeometry(ringSize[1], ringSize[1] - ringSize[0], 2, 40);
+					var ringGeometry = new THREE.RingGeometry2(ringSize[1], ringSize[0], 180, 1, 0, Math.PI * 2);
 					ringGeometry.computeFaceNormals();
 
 					var ring = new THREE.Mesh(ringGeometry, ringMaterial);

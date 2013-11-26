@@ -11,7 +11,8 @@
 			'ui' : 'vendor/jquery-ui-1.10.3.custom.min',
 			'three/controls/OrbitControls' : 'vendor/three/controls/OrbitControls',
 			'three/controls/TrackballControls' : 'vendor/three/controls/TrackballControls',
-			'three/stats' : 'vendor/three/stats.min'
+			'three/stats' : 'vendor/three/stats.min',
+			'three/RingGeometry2' : 'vendor/three/RingGeometry2'
 		},
 		shim: {
 			'three': {
@@ -33,6 +34,9 @@
 				deps: ['three']
 			},
 			'three/controls/TrackballControls' : {
+				deps: ['three']
+			},
+			'three/RingGeometry2' : {
 				deps: ['three']
 			}
 		}

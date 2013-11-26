@@ -148,7 +148,7 @@ define(
 				return this.selects[id].input;
 			},
 
-			addOption : function(selectName, label, val) {
+			addOption : function(selectName, label, val, isSelected) {
 				var sel = this.selects[selectName];
 				if(!sel) return;
 
@@ -165,7 +165,7 @@ define(
 				option.appendTo(sel.list);
 
 				var defaultVal = this.defaultSettings && this.defaultSettings[selectName];
-				if(defaultVal == val) {
+				if(isSelected || defaultVal == val) {
 					this.pushDefaultsCallbacks(function(){
 						listClicked(selectName, sel, option, sel.input)
 					});

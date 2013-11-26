@@ -82,10 +82,11 @@ define(
 				radius : 58232,
 				color : '#ffcc99',
 				map : 'img/saturnmap.jpg',
+				tilt : 26.7,
 				ring : {
 					innerRadius : 74500,
 					outerRadius : 117580,
-					map : 'img/saturnrings.jpg'
+					map : 'img/saturnrings.png'
 				},
 				orbit : {
 					base : {a : 9.53667594 * ns.AU ,  e : 0.05386179, i: 2.48599187, l : 49.95424423, lp : 92.59887831, o : 113.66242448},

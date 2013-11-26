@@ -140,7 +140,8 @@ define(
 			},
 
 			getScreenSizeRatio : function(camPos, fov){
-				var sz = this.getPlanetSize();
+				var sz = this.getPlanetStageSize();
+				//console.log(this.planet.scale.x);
 				var dist = this.getPosition().sub(camPos).length();
 
 				var height = 2 * Math.tan( (fov * ns.DEG_TO_RAD) / 2 ) * dist; // visible height, see http://stackoverflow.com/questions/13350875/three-js-width-of-view/13351534#13351534

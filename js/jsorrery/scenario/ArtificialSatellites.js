@@ -18,9 +18,9 @@ define(
 			title : 'Artificial satellites around the Earth',
 			commonBodies : ['earth'],
 			bodies : {
-				/*earth: {
+				earth: {
 					map : 'img/earthmap1k_KSC.jpg'
-				},/**/
+				},
 				mercury6 : {
 					title : 'Mercury 6',
 					mass : 1224.7,

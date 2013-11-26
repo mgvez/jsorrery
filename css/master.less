@@ -105,7 +105,7 @@ a{
 		width:@orbitSz;
 		height:@orbitSz;
 		.border-radius(@orbitSz/2);
-		border:1px #111 solid;
+		border:1px #333 solid;
 		position:absolute;
 		top:50%;
 		margin-top:-@orbitSz/2;
@@ -117,7 +117,7 @@ a{
 			width:@planetSz;
 			height:@planetSz;
 			.border-radius(@planetSz/2);
-			background:#111;
+			background:#333;
 			position:absolute;
 			top:(@orbitSz / 2)-(@planetSz/2) ;
 			left:-@planetSz/2;
@@ -500,6 +500,7 @@ nav{
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	pointer-events:none;
 }
 
 // Drop shadows

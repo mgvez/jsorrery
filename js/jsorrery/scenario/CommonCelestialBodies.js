@@ -4,6 +4,7 @@ define(
 		'jquery',
 		'jsorrery/NameSpace',
 		'jsorrery/scenario/MoonRealOrbit',
+		'three',
 		'vendor/greensock/TweenMax',
 		'vendor/greensock/easing/EasePack'
 	],
@@ -15,7 +16,10 @@ define(
 				radius : 6.96342e5,
 				color : '#ffff00',
 				map : 'img/sunmap.jpg',
-				k : 0.01720209895 //gravitational constant (μ)
+				k : 0.01720209895, //gravitational constant (μ)
+				material : {
+					emissive : new THREE.Color( 0xdddd33 )
+				}
 			},
 			mercury : {
 				title : 'Mercury',
@@ -45,6 +49,9 @@ define(
 				radius : 3443.9307 * ns.NM_TO_KM,
 				color : '#1F7CDA',
 				map : 'img/earthmap1k_clouds.jpg',
+				material : {
+					specular : new THREE.Color('grey')
+				},
 				sideralDay : ns.SIDERAL_DAY,
 				tilt : 23+(26/60)+(21/3600) ,
 				orbit : {

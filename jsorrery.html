@@ -1,0 +1,151 @@
+<!doctype html>
+<html xmlns:fb="http://ogp.me/ns/fb#">
+	<head>	
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="author" content="Martin Vézina, La Grange">
+		<script data-main="./js/app.js" src="./js/require.js"></script>
+		<title>jsOrrery - Javascript Solar System Simulator</title>
+
+		<meta property="og:title" content="jsOrrery - Solar System Simulator" /> 
+		<meta property="og:image" content="http://mgvez.github.io/jsorrery/img/jsorrery-share-fb.jpg" /> 
+		<meta property="og:description" content="See the Solar System in your browser with jsOrrery, a Javascript / WebGL orbital mechanics simulator." />
+		<meta property="og:url" content="http://mgvez.github.io/jsorrery/jsorrery.html" />
+
+		<link href='http://fonts.googleapis.com/css?family=Quattrocento' rel='stylesheet' type='text/css'>
+
+		<link rel="stylesheet" type="text/css" href="css/master.css">
+	</head>
+	<body>
+		<nav>
+			<div id="gui">
+				<label id="startLabel">
+					<div id="startCont" class="inputContainer"></div>
+				</label>
+				<label id="scenarioLabel">
+					<div>Scenario <span class="help" data-for="helpScenario">&#59140;</span></div>
+					<div id="scenarioCont" class="inputContainer"></div>
+				</label>
+				<label id="dateLabel">
+					<div>Date <span class="help" data-for="helpDate">&#59140;</span></div>
+					<div id="dateCont" class="inputContainer"></div>
+				</label>
+				<label id="povLabel">
+					<div>Point of view <span class="help" data-for="helpLookFrom">&#59140;</span></div>
+					<div id="lookFromCont" class="inputContainer"></div>
+				</label>
+				<label id="lookatLabel">
+					<div>Look at <span class="help" data-for="helpLookAt">&#59140;</span></div>
+					<div id="lookAtCont" class="inputContainer"></div>
+				</label>
+				<label id="planetScaleLabel">
+					<div>Planet Scale <span class="valDisplay"></span> <span class="help" data-for="helpScale">&#59140;</span></div>
+					<div id="planetScaleCont" class="inputContainer"></div>
+				</label>
+
+				<label id="shareLabel">
+					<div id="shareCont" class="inputContainer"></div>
+				</label>
+				<div id="shareWidget">
+					Direct link url
+					<input type="text" id="shareUrl">
+					<div id="social">
+						<div id="twitterShare" data-via="lagrange_mtl"></div>
+					</div>
+				</div>
+			</div>
+		</nav>
+
+
+		<div class="helpContent" id="helpScenario">
+			<a class="close">&#10062;</a>
+			<h2>Scenario</h2>
+			<p>The available scenarios are in fact collections of numbers that describe celestial bodies and their position. These numbers are coming, for the most part, from Nasa's websites. Their accuracy is quite impressive, more than enough for the context of this simulation. The picture that you see on any given date represents what the real Solar System looked like on that date.</p>
+		</div>
+		<div class="helpContent" id="helpDate">
+			<a class="close">&#10062;</a>
+			<h2>Date</h2>
+			<p>The <a href="http://en.wikipedia.org/wiki/Orbital_elements" target="_blank">orbital elements</a> of the planets are used to calculate their original position when picking a date. These calculations produce a very good approximation of the positions : you can compare the stars and constellations that you see in the background from other sources, provided that you place the point of view on The Earth.</p>
+			<p>The velocity of each planet is also derived from these calculations, so that when the animation is playing, the positions are no longer calculated from the elements, but from the gravity that is acting between the different bodies. The calculation of these forces is also an approximation using a simple Verlet algorithm, and its precision decays over time. This decay is more pronounced in some scenarios.</p>
+			<p>You can find on the internet the dates of celestial events, for example eclipses or lunar phases, and check if you can observe them in this simulation.</p>
+		</div>
+		<div class="helpContent" id="helpLookFrom">
+			<a class="close">&#10062;</a>
+			<h2>Point of view</h2>
+			<p>This option makes it possible to place the camera at the position of a planet of your choice, so you'd see the other planets from the point of view of the chosen one. From there you can zoom by scrolling.</p>
+			<p>The Free Camera is a camera that floats into space, and that you can move by scrolling and dragging. This camera always revolve around a point specified in the "look at" option field.</p>
+		</div>
+		<div class="helpContent" id="helpLookAt">
+			<a class="close">&#10062;</a>
+			<h2>Look at</h2>
+			<p>You can make your selected camera look at a planet of your choice, so that it always will be centered in your viewport.</p>
+			<p>If you place the camera from the viewpoint of a planet and look at another one, the latter's path will be traced relative to the former's position. This feature is useful to observe the <a href="http://en.wikipedia.org/wiki/Apparent_retrograde_motion" target="_blank">apparent retrograde motion</a> of the planets relative to the Earth.</p>
+		</div>
+		<div class="helpContent" id="helpScale">
+			<a class="close">&#10062;</a>
+			<h2>Planet scale</h2>
+			<p>When the scale is at 1x, the planets sizes are in 1:1 scale to the size of the orbits, and of the universe. Since the distances in the Solar System are so huge, we can't even see the planets at this scale, so I made it possible to make the planets larger to see them more easily. I left the possibility to view them at their real size, because I feel it gives a better hint about the vastness of our Solar System.</p>
+		</div>
+		
+		<div class="helpContent" id="helpCredits">
+			<a class="close">&#10062;</a>
+			<h2>Credits</h2>
+			<p>
+				<a href="http://la-grange.ca"><img src="img/logo-la-grange.png"></a>
+			</p>
+			<p>Programming by <a href="http://lab.la-grange.ca/en/martin-vezina">Martin Vézina</a>, <a href="http://la-grange.ca">La Grange</a>, 2013.</p>
+			<p>See project on Github at <a href="https://github.com/mgvez/jsorrery">https://github.com/mgvez/jsorrery</a></p>
+
+			<h3>Special thanks</h3>
+			<ul>
+
+				<li>Planets orbital elements were taken from Nasa's <a href="http://ssd.jpl.nasa.gov/?planet_pos">Jet Propulsion Laboratory</a>.</li>
+				<li>I learned about calculating positions from orbital elements by reading these documents by <a href="http://www.stargazing.net/kepler/ellipse.html">Keith Burnett</a>, <a href="http://www.stjarnhimlen.se/comp/tutorial.html">Paul Schlyter</a> and <a href="http://ssd.jpl.nasa.gov/txt/aprx_pos_planets.pdf">E M Standish (JPL)</a>.</li>
+				<li>Planet texture maps are a courtesy of <a href="http://planetpixelemporium.com/planets.html">James Hastings-Trew</a>.</li>
+				<li>Stars coordinates from <a href="http://astronexus.com/">AstroNexus</a> and <a href="http://heasarc.gsfc.nasa.gov/docs/archive.html">Nasa</a>.</li>
+				<li>David Eagle for orbital calculations of the moon, based on "Lunar Tables and Programs From 4000 B.C. TO A.D. 8000" by Michelle Chapront-Touze and Jean Chapront. See <a href="http://www.mathworks.com/matlabcentral/fileexchange/39130-orbital-elements-of-the-moon">mathworks.com</a>.</li>
+				<li><a href="http://www.braeunig.us/apollo/">Bob Braeunig</a> for calculations of Apollo missions trans lunar injection trajectories.</li>
+				<li><a href="http://clowder.net/hop/index.html">Hop David</a> for vis viva calculation of velocity.</li>
+				<li>I have found answers to many questions on random places across the internetz, places like <a href="http://stackoverflow.com">StackOverflow</a> or <a href="http://www.orbiter-forum.com/">Orbiter Forum</a>. There are a lot of helpful people out there.</li>
+				<li>Some techniques are inspired by Michael Chang's <a href="http://www.html5rocks.com/en/tutorials/casestudies/100000stars/">tutorial</a> of <a href="http://workshop.chromeexperiments.com/stars/">100,000 stars</a></li>
+				<li>And of course, many thanks to <a href="http://www.mrdoob.com/">Mr Doob</a> for the excellent <a href="http://threejs.org/">three.js</a></li>
+			</ul>
+		</div>
+
+		<div id="preload">
+			<div class="orbit"><div class="planet"></div></div>
+			<div class="title">
+				<h1>jsorrery</h1>
+				<h2>solar system</h2>
+			</div>
+		</div>
+
+		<div id="credits" class="help" data-for="helpCredits">CREDITS</div>
+
+	<script type="text/javascript">
+		/** ANALYTICS */
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		  ga('create', 'UA-32778044-3');
+		  ga('send', 'pageview');
+		/** TWITTER */
+		!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+		
+	</script>
+
+	<script>
+		window.gapiLoaded = (function(ns){
+			ns.gapi = null;
+			return function(){
+				ns.gapi = window.gapi;
+				window.gapi.client.setApiKey('AIzaSyAFDXxg1NPaJdajDzmG29Lj648Ss9S1ORE');
+				window.gapi.client.load('urlshortener', 'v1', function(){});
+			}
+		})(window.jsorrery = window.jsorrery || {});
+	</script>
+	<script src="https://apis.google.com/js/client.js?onload=gapiLoaded"></script>
+	</body>
+</html>

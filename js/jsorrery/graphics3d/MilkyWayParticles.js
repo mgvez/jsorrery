@@ -124,7 +124,7 @@ define(
 					starColor = lightenDarkenColor(starColor, Math.pow(1/starVect.mag, 1.1));
 				}			
 				/**/
-				starVect.size = 2 * pxRatio;//Math.floor(10 * (2 + (1 / mag))) / 10;
+				starVect.size = pxRatio * Math.floor(10 * (2 + (1 / mag))) / 10;
 				//starColor = lightenDarkenColor(starColor, Math.pow(1.5/mag, 1.1));
 
 				pGeo.vertices.push( starVect );

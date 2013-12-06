@@ -10,15 +10,6 @@ define(
 		var maxIterationsForEccentricAnomaly = 10;
 		var maxDE = 1e-15;
 
-		var Deg = {
-			sin : function(v) {
-				return Math.sin(v * ns.DEG_TO_RAD);
-			},
-			cos : function(v) {
-				return Math.cos(v * ns.DEG_TO_RAD);
-			}
-		};
-
 		return {
 			setDefaultOrbit : function(orbitalElements, calculator) {
 				this.orbitalElements = orbitalElements;
@@ -133,8 +124,13 @@ define(
 					computed.a = computed.a * ns.KM;//was in km, set it in m
 				}
 
-				var ePrime = ns.RAD_TO_DEG * computed.e;
-				computed.E = computed.M + ePrime * Deg.sin(computed.M) * (1 + computed.e * Deg.cos(computed.M));
+
+				computed.i = ns.DEG_TO_RAD * computed.i;
+				computed.o = ns.DEG_TO_RAD * computed.o;
+				computed.w = ns.DEG_TO_RAD * computed.w;
+				computed.M = ns.DEG_TO_RAD * computed.M;
+
+				computed.E = computed.M + computed.e * Math.sin(computed.M) * (1 + computed.e * Math.cos(computed.M));
 
 				var En = computed.E;
 				var dE = 0;
@@ -142,21 +138,16 @@ define(
 				var i = 0;
 				do{
 					En = En + dE;
-					dM = computed.M - (En - ePrime * Deg.sin(En));
-					dE = dM / (1 - (computed.e * Deg.cos(En)));
+					dM = computed.M - (En - computed.e * Math.sin(En));
+					dE = dM / (1 - (computed.e * Math.cos(En)));
 					i++;
 				} while(Math.abs(dE) > maxDE && i <= maxIterationsForEccentricAnomaly);
 
-				computed.E = En % 360;
-				computed.i = computed.i % 360;
-				computed.o = computed.o % 360;
-				computed.w = computed.w % 360;
-				computed.M = computed.M % 360;
-				computed.i = ns.DEG_TO_RAD * computed.i;
-				computed.o = ns.DEG_TO_RAD * computed.o;
-				computed.w = ns.DEG_TO_RAD * computed.w;
-				computed.M = ns.DEG_TO_RAD * computed.M;
-				computed.E = ns.DEG_TO_RAD * computed.E;
+				computed.E = En % ns.CIRCLE;
+				computed.i = computed.i % ns.CIRCLE;
+				computed.o = computed.o % ns.CIRCLE;
+				computed.w = computed.w % ns.CIRCLE;
+				computed.M = computed.M % ns.CIRCLE;
 
 				//in the plane of the orbit
 				computed.pos = new THREE.Vector3(computed.a * (Math.cos(computed.E) - computed.e), computed.a * (Math.sqrt(1 - (computed.e*computed.e))) * Math.sin(computed.E));
@@ -175,21 +166,21 @@ define(
 			getPositionFromElements : function(computed) {
 
 				if(!computed) return new THREE.Vector3(0,0,0);
-				computed.r = computed.r !== null ? computed.r : computed.pos.length();
-    			computed.v = computed.v !== null ? computed.v : Math.atan2(computed.pos.y, computed.pos.x);
 
-    			var x = computed.r * ( Math.cos(computed.o) * Math.cos(computed.v+computed.w) -
-    			Math.sin(computed.o) * Math.sin(computed.v+computed.w) * Math.cos(computed.i) )
-			    var y = computed.r * ( Math.sin(computed.o) * Math.cos(computed.v+computed.w) +
-			     Math.cos(computed.o) * Math.sin(computed.v+computed.w) * Math.cos(computed.i) )
-			    var z = computed.r * Math.sin(computed.v+computed.w) * Math.sin(computed.i);/**/
+				var oQuat =  new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), computed.o);
+				var iQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), computed.i);
+				var wQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), computed.w);
+				var planeQuat = new THREE.Quaternion(0, 0, 0, 1);
+				
+				planeQuat.multiplyQuaternions(oQuat, iQuat);
+				planeQuat.multiply(wQuat);
 
-				var pos = new THREE.Vector3(x, y, z);
+				computed.pos.applyQuaternion(planeQuat);
 
 				if(computed.tilt){
-					pos.applyMatrix4( new THREE.Matrix4().makeRotationX( computed.tilt ) );
+					computed.pos.applyQuaternion( new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), computed.tilt) );
 				}
-				return pos;
+				return computed.pos;
 			},
 
 			calculatePeriod : function(elements, relativeTo) {

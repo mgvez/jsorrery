@@ -167,19 +167,26 @@ define(
 
 				if(!computed) return new THREE.Vector3(0,0,0);
 
-				var oQuat =  new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), computed.o);
-				var iQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), computed.i);
-				var wQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), computed.w);
-				var planeQuat = new THREE.Quaternion(0, 0, 0, 1);
-				
-				planeQuat.multiplyQuaternions(oQuat, iQuat);
-				planeQuat.multiply(wQuat);
+				var quats = [];
+				//if object is orbiting a tilted body, we need to rotate to that value first
+				if(computed.tilt){
+					quats.push(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), computed.tilt));
+				}
 
+				//add, in order, the rotations for longitude of ascending node, inclination and arg of periapsis
+				quats.push(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), computed.o));
+				quats.push(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), computed.i));
+				quats.push(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), computed.w));
+				var planeQuat = new THREE.Quaternion();
+
+				planeQuat.multiplyQuaternions(quats.shift(), quats.shift());
+				var q;
+				while(q = quats.shift()){
+					planeQuat.multiply(q);
+				}
+							
 				computed.pos.applyQuaternion(planeQuat);
 
-				if(computed.tilt){
-					computed.pos.applyQuaternion( new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), computed.tilt) );
-				}
 				return computed.pos;
 			},
 

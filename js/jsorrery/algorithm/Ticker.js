@@ -2,9 +2,10 @@ define(
 	[
 		'jsorrery/NameSpace',
 		'jquery',
+		'jsorrery/algorithm/Verlet',
 		'three'
 	],
-	function(ns, $) {
+	function(ns, $, MoveByVerlet) {
 		'use strict';
 		/**
 		number of calculations of gravity per tick. Adding more calculation has the effect of checking the position of bodies more often at each tick, so that the forces are not a multiplication of their values of the beginning of the tick. Since each body moves at each second, their relative position is not the same at the beginning of tick as at the end. The force they produce is'nt either. If we want to be more precise we have to "move" each body a given number of time at each tick so the forces are calculated from their new position.
@@ -54,19 +55,41 @@ define(
 			deltaTIncrementSquared = Math.pow(deltaTIncrement, 2);
 		};
 
+		var moveByGravity = function(epochTime){
+			var t, i;
+			//We calculate the positions of all bodies, and thus the gravity, more than once per tick. Not efficient but more precise than approximating the whole forces to their value at the beginning of the cycle.
+			for(t=0; t < calculationsPerTick; t++){
+				calculateGForces();
+				for(i=0; i<bodies.length; i++){
+					bodies[i].beforeMove(deltaTIncrement);
+					if(bodies[i].isPerturbedOrbit){
+						bodies[i].setPositionFromDate(epochTime + (deltaTIncrement*(t+1)), false);
+						if(t==calculationsPerTick-1){console.clear();console.log(epochTime + (deltaTIncrement*(t+1)));}
+					} else if(!bodies[i].isStill){
+						MoveByVerlet.moveBody(bodies[i], deltaTIncrement, deltaTIncrementSquared, i);
+					}
+					bodies[i].afterMove(deltaTIncrement);
+				}
+			}
+		};
+
+		var moveByElements = function(epochTime){
+			for(var i=0; i<bodies.length; i++){
+				bodies[i].setPositionFromDate(epochTime, false);
+			}
+		}
+
 		var Algorithm = {
 			
-			tick : function(){
-				var t, i;
-				//We calculate the positions of all bodies, and thus the gravity, more than once per tick. Not efficient but more precise than approximating the whole forces to their value at the beginning of the cycle.
-				for(t=0; t < calculationsPerTick; t++){
-					calculateGForces();
-					for(i=0; i<bodies.length; i++){
-						bodies[i].moveBody(deltaTIncrement, deltaTIncrementSquared, i);
-					}
+			tick : function(computePhysics, epochTime){
+				if(computePhysics){
+					moveByGravity(epochTime - secondsPerTick);
+				} else {
+					moveByElements(epochTime);
 				}
-				for(i=0; i<bodies.length; i++){
-					bodies[i].afterTick(secondsPerTick);
+
+				for(var i=0; i<bodies.length; i++){
+					bodies[i].afterTick(secondsPerTick, !computePhysics);
 				}/**/
 				
 				return secondsPerTick;

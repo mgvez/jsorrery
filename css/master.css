@@ -23,11 +23,11 @@ nav #gui .dropdown ul li:hover,nav #gui .dropdown ul li.selected{font-weight:bol
 nav #gui .dropdown ul li.disabled{font-weight:normal;color:#aaa;opacity:0.4}
 nav #gui .dropdown:hover ul{display:block}
 nav #gui label{position:relative;display:block;float:left;width:140px;margin:0px 8px}nav #gui label>div{display:block;font-weight:bold}
-nav #gui label#scenarioLabel{width:180px}
+nav #gui label#scenarioLabel{width:210px}
 nav #gui label#planetScaleLabel{width:200px}
 nav #gui label#startLabel{width:auto}
 nav #gui label#shareLabel{float:right;width:auto}
-nav #gui input,nav #gui button{font-family:helvetica,arial,sans-serif}
+nav #gui input,nav #gui button{font-family:helvetica,arial,sans-serif;font-size:11px}
 nav #gui input,nav #gui .display{background:rgba(255,255,255,0.1);border:1px #333 solid;color:white;padding:1px 3px;margin:2px 0 0 0}
 nav #gui button{background:rgba(255,255,255,0.1);border:1px #333 solid;color:white;font-family:"EntypoRegular";font-size:32px;line-height:22px;width:32px;margin-top:6px;cursor:pointer;text-transform:uppercase;-webkit-transition-duration:.5s;-moz-transition-duration:.5s;-o-transition-duration:.5s;transition-duration:.5s}nav #gui button:hover{opacity:0.7}
 nav #gui #shareWidget{position:absolute;top:50px;right:5px;padding:12px;background:#000;border:1px #555 solid;display:none}nav #gui #shareWidget input#shareUrl{width:250px;margin:6px 0}

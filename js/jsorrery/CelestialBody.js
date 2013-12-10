@@ -4,18 +4,15 @@ define(
 	[
 		'jsorrery/NameSpace',
 		'jquery',
-		'jsorrery/algorithm/Verlet',
 		'jsorrery/algorithm/OrbitalElements',
 		'three'
 	], 
-	function(ns, $, Verlet, OrbitalElements) {
+	function(ns, $, OrbitalElements) {
 		'use strict';
 		var CelestialBody = {
 
-			init : function(display) {
-				this.forces = {};
-				this.display = display;
-				this.force = new THREE.Vector3();
+			init : function() {
+				this.reset();
 				this.movement = new THREE.Vector3();
 				this.invMass = 1 / this.mass;
 
@@ -23,32 +20,32 @@ define(
 				this.orbitalElements.setName(this.name);
 				this.orbitalElements.setDefaultOrbit(this.orbit, this.orbitCalculator);
 				//console.log(this.name, this.position, this.velocity);
+
+			},
+
+			reset : function(){
+				this.angle = 0;
+				this.force = new THREE.Vector3();
+				this.movement = new THREE.Vector3();
+				this.previousPosition = null;
 			},
 
 			//if epoch start is not j2000, get epoch time from j2000 epoch time
 			getEpochTime : function(epochTime) {
 				if(this.epoch) {
-					epochTime = epochTime - ((this.epoch.getTime() -  ns.J2000) / 1000);
+					epochTime = epochTime - ((this.epoch.getTime() - ns.J2000) / 1000);
 				}
 				return epochTime;
 			},
 
-			setPositionFromDate : function(epochTime) {
-				this.angle = 0;
-
-				this.force = new THREE.Vector3();
-				this.movement = new THREE.Vector3();
+			setPositionFromDate : function(epochTime, calculateVelocity) {
 
 				epochTime = this.getEpochTime(epochTime);
-
-				var elements = this.orbitalElements.calculateElements(epochTime);
-				this.period = this.orbitalElements.calculatePeriod(elements, this.relativeTo);
-				this.position = this.isCentral ? new THREE.Vector3() : this.orbitalElements.getPositionFromElements(elements);
+				this.position = this.isCentral ? new THREE.Vector3() : this.orbitalElements.getPositionFromElements(this.orbitalElements.calculateElements(epochTime));
 				this.relativePosition = new THREE.Vector3();
-				this.velocity = this.isCentral ? new THREE.Vector3() : this.orbitalElements.calculateVelocity(epochTime, this.relativeTo, this.isPerturbedOrbit);
-				this.previousPosition = null;
-				
-				//this.verlet = Object.create(Verlet);
+				if(calculateVelocity) {
+					this.velocity = this.isCentral ? new THREE.Vector3() : this.orbitalElements.calculateVelocity(epochTime, this.relativeTo, this.isPerturbedOrbit);
+				}				
 			},
 			
 			getAngleTo : function(bodyName){
@@ -72,34 +69,37 @@ define(
 
 				this.previousRelativePosition = this.position.clone();
 
-				if(this.relativeTo) {
-					var central = ns.U.getBody(this.relativeTo);
-					if(central && central!==ns.U.getBody()) {
-						this.position.add(central.position);
-						this.velocity.add(central.velocity);
-					}
-				}
+				this.positionRelativeTo();
 
 				if(this.customInitialize) this.customInitialize();
 				
 				if(this.afterCompleteMove) this.afterCompleteMove(ns.U.epochTime, ns.U.date);
 			},
 
-			moveBody : function(deltaTIncrement, deltaTIncrementSquared, i){
-				if(this.beforeMove) this.beforeMove(deltaTIncrement);
-				Verlet.moveBody(this, deltaTIncrement, deltaTIncrementSquared, i);
-				if(this.afterMove) this.afterMove(deltaTIncrement);
+			positionRelativeTo : function(){
+				if(this.relativeTo) {
+					var central = ns.U.getBody(this.relativeTo);
+					if(central && central!==ns.U.getBody()) {
+						this.position.add(central.position);
+						this.velocity && central.velocity && this.velocity.add(central.velocity);
+					}
+				}
 			},
+
+			beforeMove : function(deltaTIncrement){},
+			afterMove : function(deltaTIncrement){},
 
 			/**
 			Calculates orbit line from orbital elements. By default, the orbital elements might not be osculating, i.e. they might account for perturbations. But the given orbit would thus be different slightly from the planet's path, as the velocity is calculated by considering that the orbit is elliptic.
 			*/
 			getOrbitVertices : function(isElliptic){
-				if(!this.period) return;
-				
-				var startTime = this.getEpochTime(ns.U.currentTime);
 
-				var incr = this.period / 360;
+				var startTime = this.getEpochTime(ns.U.currentTime);
+				var elements = this.orbitalElements.calculateElements(startTime);
+				var period = this.orbitalElements.calculatePeriod(elements, this.relativeTo);
+				if(!period) return;
+								
+				var incr = period / 360;
 				var points = [];
 				var lastPoint;
 				var point;
@@ -129,6 +129,7 @@ define(
 
 				for(var i=0; total < 360; i++){
 					computed = this.orbitalElements.calculateElements(startTime+(incr*i), defaultOrbitalElements);
+					//if(this.name=='moon')console.log(startTime+(incr*i));
 					point = this.orbitalElements.getPositionFromElements(computed);
 					if(lastPoint) {
 						angle = point.angleTo(lastPoint) * ns.RAD_TO_DEG;
@@ -162,15 +163,20 @@ define(
 				return points;
 			},
 			
-			afterTick : function(deltaT) {
+			afterTick : function(deltaT, isPositionRelativeTo) {
 				if(!this.isCentral){
+
+					if(isPositionRelativeTo){
+						this.positionRelativeTo();
+					}
+
 					var relativeToPos = ns.U.getBody(this.relativeTo).getPosition();
 					this.relativePosition.copy(this.position).sub(relativeToPos);
 					this.movement.copy(this.relativePosition).sub(this.previousRelativePosition);
 					this.speed = this.movement.length() / deltaT;
 					this.angle += this.relativePosition.angleTo(this.previousRelativePosition);
 					this.previousRelativePosition.copy(this.relativePosition);
-					
+
 					if(this.angle > ns.CIRCLE){
 						this.angle = this.angle % ns.CIRCLE;
 						this.dispatchEvent( {type:'revolution'} );
@@ -179,27 +185,6 @@ define(
 				}
 				if(this.afterCompleteMove) this.afterCompleteMove(ns.U.epochTime, ns.U.date, deltaT);
 
-			},
-
-			displayFromElements : function(){
-				if(this.year == 0 && ns.U.epochTime && this.orbit) {
-
-					if (this.displayElementsDelay === undefined) {
-						var periodTracing = this.period - (this.period % ns.U.epochTime);
-						var nTicksPerRev = Math.abs((periodTracing / ns.U.epochTime));
-						var nDisplayPerRev = (this.orbit.base.a / ns.AU) *  10;
-						nDisplayPerRev = nDisplayPerRev < 10 ? 10 : nDisplayPerRev;
-						var nTicksPerDisplay = Math.ceil(nTicksPerRev / nDisplayPerRev);
-						this.displayElementsDelay = nTicksPerDisplay * ns.U.epochTime;
-					}
-
-					if ((ns.U.epochTime % this.displayElementsDelay) == 0) {
-						var computed = this.orbitalElements.calculateElements(ns.U.currentTime );
-						var pos =  this.orbitalElements.getPositionFromElements(computed);
-						this.dispatchEvent( {type:'spot', pos:pos} );
-					}
-
-				} 
 			},
 
 			calculatePosition : function(t) {

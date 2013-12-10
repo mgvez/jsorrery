@@ -8,14 +8,14 @@ define(
 		'jsorrery/NameSpace',
 		'jquery',
 		'jsorrery/CelestialBody',
-		'jsorrery/algorithm/GravityTicker',
+		'jsorrery/algorithm/Ticker',
 		'jsorrery/graphics3d/Scene',
 		'jsorrery/gui/Gui',
 		'jsorrery/graphics2d/Labels',
 		'jsorrery/graphics3d/loaders/ResourceLoader',
 		'_'
 	], 
-	function(ns, $, CelestialBody, GravityTicker, Scene, Gui, Labels, ResourceLoader) {
+	function(ns, $, CelestialBody, Ticker, Scene, Gui, Labels, ResourceLoader) {
 		'use strict';
 		var Universe = {
 			init : function(scenario, qstrSettings){
@@ -26,6 +26,8 @@ define(
 				Gui.setDefaults(initialSettings);
 				//Universe is, well, global
 				ns.U = this;
+
+				this.usePhysics = scenario.usePhysics || ns.USE_PHYSICS_BY_DEFAULT;
 				
 				Labels.init(); 
 
@@ -44,7 +46,7 @@ define(
 
 				this.ticker = this.tick.bind(this);
 				
-				this.deltaT = 0;
+				this.deltaT = scenario.secondsPerTick;
 				this.playing = false;
 				this.epochTime = 0;
 
@@ -59,8 +61,8 @@ define(
 
 				this.initBodies(scenario);
 				this.scene.setCentralBody(this.centralBody);
-				GravityTicker.setSecondsPerTick(scenario.secondsPerTick);
-				GravityTicker.setCalculationsPerTick(scenario.calculationsPerTick || ns.defaultCalculationsPerTick);
+				Ticker.setSecondsPerTick(scenario.secondsPerTick);
+				Ticker.setCalculationsPerTick(scenario.calculationsPerTick || ns.defaultCalculationsPerTick);
 				var onSceneReady = ResourceLoader.getOnReady();
 
 				onSceneReady.done(function(){
@@ -114,7 +116,7 @@ define(
 						body.mass = 1;
 					}
 					body.init();
-					body.setPositionFromDate(this.currentTime);
+					body.setPositionFromDate(this.currentTime, true);
 					
 				}.bind(this));
 
@@ -125,12 +127,13 @@ define(
 					//console.log(body.name, body.isCentral);
 				}.bind(this));
 				
-				GravityTicker.setBodies(this.bodies);
+				Ticker.setBodies(this.bodies);
 			},
 
 			repositionBodies : function(){
 				$.each(this.bodies, function(name, body){
-					body.setPositionFromDate(this.currentTime);
+					body.reset();
+					body.setPositionFromDate(this.currentTime, true);
 				}.bind(this));
 				//adjust position depending on other bodies' position (for example a satellite is relative to its main body)
 				$.each(this.bodies, function(name, body){
@@ -177,9 +180,11 @@ define(
 			tick : function() {
 				if(this.killed) return;
 				if(this.playing) {
-					this.deltaT = GravityTicker.tick();
+					
 					this.epochTime += this.deltaT;
 					this.currentTime = this.startEpochTime + this.epochTime;
+					Ticker.tick(this.usePhysics, this.currentTime);
+					
 					this.scene.updateCamera();
 					this.scene.draw();
 					this.showDate();

@@ -19,7 +19,6 @@ define(
 			},
 
 			setOrbitLines : function(){
-
 				var orbitVertices = this.celestial.getOrbitVertices(false);
 				
 				if(orbitVertices){
@@ -56,7 +55,6 @@ define(
 						}.bind(this);
 						this.celestial.addEventListener('revolution', this.recalculateListener);
 					}
-
 					this.orbitLine = this.celestial.isPerturbedOrbit ? this.perturbedOrbitLine : this.ellipticOrbitLine;
 
 				}

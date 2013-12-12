@@ -108,8 +108,12 @@ define(
 			},
 
 			draw : function(){
-				var camPos = (CameraManager.getCamera().getAbsoluetPos && CameraManager.getCamera().getAbsoluetPos() ) || CameraManager.getCamera().position;
 				
+				_.each(this.bodies3d, drawBody);
+				//after all bodies have been positionned, update camera matrix (as camera might be attached to a body)
+				CameraManager.updateCameraMatrix();
+				var camPos = (CameraManager.getCamera().getAbsolutePos && CameraManager.getCamera().getAbsolutePos() ) || CameraManager.getCamera().position;
+
 				//move sun, if its not a body shown. This assumes that the central body, if it has an orbit, revolves around the sun
 				if(this.sun && this.centralBody && this.centralBody.orbit){
 					var pos = this.centralBody.calculatePosition(ns.U.currentTime);
@@ -122,17 +126,12 @@ define(
 					this.sun.setFlareSize(this.centralBody.getBody3D().getScreenSizeRatio(camPos, CameraManager.getCamera().fov), this.height);/**/
 				}
 
-				_.each(this.bodies3d, drawBody);
-
 				TracerManager.draw();
 
 				//center the milkyway to the camera position, to make it look infinite
 				this.milkyway && this.milkyway.setPosition(camPos);
 
 				this.renderer.render(this.root, CameraManager.getCamera());
-
-				//after all bodies have been positionned, update camera matrix (as camera might be attached to a body)
-				CameraManager.updateCameraMatrix();
 
 				//place planets labels. We need the camera position relative to the world in order to compute planets screen sizes, and hide/show labels depending on it
 				var radFov = CameraManager.getCamera().fov * ns.DEG_TO_RAD;

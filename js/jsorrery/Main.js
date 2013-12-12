@@ -20,7 +20,10 @@ define(
 
 		var activeScenario;
 		var loadScenario = function(name, defaultParams) {
-			if(activeScenario && name === activeScenario.name) return;
+			if(activeScenario && name === activeScenario.name) {
+				removePreloader();
+				return;
+			}
 
 			var scenarioConfig = ScenarioLoader.get(name);
 

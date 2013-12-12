@@ -64,7 +64,6 @@ define(
 					bodies[i].beforeMove(deltaTIncrement);
 					if(bodies[i].isPerturbedOrbit){
 						bodies[i].setPositionFromDate(epochTime + (deltaTIncrement*(t+1)), false);
-						if(t==calculationsPerTick-1){console.clear();console.log(epochTime + (deltaTIncrement*(t+1)));}
 					} else if(!bodies[i].isStill){
 						MoveByVerlet.moveBody(bodies[i], deltaTIncrement, deltaTIncrementSquared, i);
 					}

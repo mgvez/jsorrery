@@ -35,6 +35,9 @@ define(
 			{},
 			apolloBase,
 			{
+				customInitialize : function(){
+					this.data = {};
+				},
 				afterCompleteMove : function(elapsedTime, absoluteDate, deltaT){
 					var dist;
 					

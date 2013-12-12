@@ -35,6 +35,9 @@ define(
 			{},
 			apolloBase,
 			{
+				customInitialize : function(){
+					this.data = {};
+				},
 				afterCompleteMove : function(elapsedTime, absoluteDate, deltaT){
 					var dist;
 					
@@ -81,6 +84,7 @@ define(
 		);
 
 		var system = {
+			usePhysics : true,
 			name : 'Apollo',
 			title : 'Apollo '+apolloNumber+' free return trajectory',
 			commonBodies : ['earth', 'moon'/*, 'sun', 'mercury', 'venus', 'mars'/**/],
@@ -91,12 +95,9 @@ define(
 				date: epoch//epoch
 			},
 			bodies : {
-				/*earth:{
-					map:'img/earthmap1k.jpg'
-				},/**/
-				moon : {
-					isPerturbedOrbit : true
-				},				
+				earth:{
+					isStill : true
+				},/**/		
 				apolloTLI : _.extend({},
 					apolloTLI,
 					apolloTLIOrbit,

@@ -206,11 +206,11 @@ define(
 				};
 
 				var pov = getNewCamera();
-				pov.getAbsoluetPos = getCamPos;
+				pov.getAbsolutePos = getCamPos;
 				body3d.addCamera(POV_CAMERA_TYPE, pov);
 
 				var orbital = getNewCamera(true);
-				orbital.getAbsoluetPos = getCamPos;
+				orbital.getAbsolutePos = getCamPos;
 				orbital.position.set(0, -1, body3d.getPlanetStageSize() * 200);
 
 				body3d.addCamera(ORBITAL_CAMERA_TYPE, orbital);
@@ -229,7 +229,7 @@ define(
 			},
 
 			updateCameraMatrix : function(){
-				currentCamera.updateMatrixWorld();
+				currentCamera && currentCamera.parent && currentCamera.parent.updateMatrixWorld();
 			},
 
 			kill : function(){

@@ -23,6 +23,9 @@
 		ns.LB_TO_KG = 0.453592;
 		ns.LBF_TO_NEWTON = 4.44822162;
 		ns.FT_TO_M = 0.3048;
+
+		//use physics or orbital elements to animate
+		ns.USE_PHYSICS_BY_DEFAULT = false;
 		
 		//duration in seconds
 		ns.DAY = 60 * 60 * 24;

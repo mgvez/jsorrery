@@ -194,13 +194,17 @@ define(
 						changeYear : true
 					});/**/
 				}
-
+				var curDate;
 				dateDisplay.off('change').on('change.jsorrery', function(){
-					date = new Date(dateDisplay.val());
-					if(isNaN(date.getTime())){
-						date = new Date();
+					var newDate = new Date(dateDisplay.val());
+					if(isNaN(newDate.getTime())){
+						newDate = new Date();
 					}
-					onChange();
+					if(curDate != newDate){
+						this.setDate(newDate);
+						onChange();
+					}
+					curDate = newDate;
 				}.bind(this));
 
 				var defaultDate = this.defaultSettings[this.DATE_ID];

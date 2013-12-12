@@ -12,6 +12,7 @@ define(
 		//xi+1 = xi + (xi - xi-1) + a * dt * dt
 
 		var Verlet = {
+			name : 'Verlet',
 			moveBody : function(body, deltaTIncrement, deltaTIncrementSquared, i){
 				
 				if(body.previousPosition){

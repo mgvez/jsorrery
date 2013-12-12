@@ -8,6 +8,7 @@ define(
 	function(ns, common) {
 		
 		var system =  {
+			usePhysics : true,
 			name : 'MoonSoi',
 			title : 'SOI of the Moon',
 			commonBodies : [ 'moon', 'earth'],

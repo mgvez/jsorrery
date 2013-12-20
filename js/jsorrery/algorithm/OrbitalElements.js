@@ -3,16 +3,65 @@ define(
 	[
 		'jsorrery/NameSpace',
 		'jquery',
+		'jsorrery/helpers/Math',
 		'three'
 	],
-	function(ns, $) {
+	function(ns, $, CMath) {
 		'use strict';
 		var maxIterationsForEccentricAnomaly = 10;
 		var maxDE = 1e-15;
 
+		var solveEccentricAnomaly = function(f, x0, maxIter) {
+				
+			var x = 0;
+			var x2 = x0;
+			
+			for (var i = 0; i < maxIter; i++) {
+				x = x2;
+				x2 = f(x);
+			}
+			
+			return x2;
+		}
+
+		var solveKepler = function(e, M) {
+			return function(x) {
+				return x + (M + e * Math.sin(x) - x) / (1 - e * Math.cos(x));
+			};
+		};
+
+		var solveKeplerLaguerreConway = function(e, M) {
+			return function(x) {
+				var s = e * Math.sin(x);
+				var c = e * Math.cos(x);
+				var f = x - s - M;
+				var f1 = 1 - c;
+				var f2 = s;
+
+				x += -5 * f / (f1 + CMath.sign(f1) * Math.sqrt(Math.abs(16 * f1 * f1 - 20 * f * f2)));
+				return x;
+			};
+		};
+
+		var solveKeplerLaguerreConwayHyp = function(e, M) {
+			return function(x) {
+				var s = e * CMath.sinh(x);
+				var c = e * CMath.cosh(x);
+				var f = x - s - M;
+				var f1 = c - 1;
+				var f2 = s;
+
+				x += -5 * f / (f1 + CMath.sign(f1) * Math.sqrt(Math.abs(16 * f1 * f1 - 20 * f * f2)));
+				return x;
+			};
+		};
+
 		return {
 			setDefaultOrbit : function(orbitalElements, calculator) {
 				this.orbitalElements = orbitalElements;
+				if(orbitalElements && orbitalElements.epoch) {
+					this.epochCorrection = ns.U.getEpochTime(orbitalElements.epoch);
+				}
 				this.calculator = calculator;
 			},
 
@@ -60,6 +109,25 @@ define(
 				return pos;
 			},
 
+			solveEccentricAnomaly : function(e, M){
+				if (e == 0.0) {
+					return M;
+				}  else if (e < 0.9) {
+					var sol = solveEccentricAnomaly(solveKepler(e, M), M, 6);
+					return sol;
+				} else if (e < 1.0) {
+					var E = M + 0.85 * e * ((Math.sin(M) >= 0.0) ? 1 : -1);
+					var sol = solveEccentricAnomaly(solveKeplerLaguerreConway(e, M), E, 8);
+					return sol;
+				} else if (e == 1.0) {
+					return M;
+				} else {
+					var E = Math.log(2 * M / e + 1.85);
+					var sol = solveEccentricAnomaly(solveKeplerLaguerreConwayHyp(e, M), E, 30);
+					return sol;
+				}
+			},
+
 			calculateElements : function(timeEpoch, forcedOrbitalElements) {
 				if(!forcedOrbitalElements && !this.orbitalElements) return null;
 
@@ -87,7 +155,9 @@ define(
 				Pn	Longitude of the ascending node precession period (mean value)
 
 			    */
-
+			    if (this.epochCorrection) {
+			    	timeEpoch -= this.epochCorrection;
+			    }
 				var tDays = timeEpoch / ns.DAY;
 				var T = tDays / ns.CENTURY ;
 				//console.log(T);
@@ -130,6 +200,7 @@ define(
 				computed.w = ns.DEG_TO_RAD * computed.w;
 				computed.M = ns.DEG_TO_RAD * computed.M;
 
+				/*
 				computed.E = computed.M + computed.e * Math.sin(computed.M) * (1 + computed.e * Math.cos(computed.M));
 
 				var En = computed.E;
@@ -141,9 +212,11 @@ define(
 					dM = computed.M - (En - computed.e * Math.sin(En));
 					dE = dM / (1 - (computed.e * Math.cos(En)));
 					i++;
-				} while(Math.abs(dE) > maxDE && i <= maxIterationsForEccentricAnomaly);
+				} while(Math.abs(dE) > maxDE && i <= maxIterationsForEccentricAnomaly);/**/
 
-				computed.E = En % ns.CIRCLE;
+				computed.E = this.solveEccentricAnomaly(computed.e, computed.M);
+
+				computed.E = computed.E % ns.CIRCLE;
 				computed.i = computed.i % ns.CIRCLE;
 				computed.o = computed.o % ns.CIRCLE;
 				computed.w = computed.w % ns.CIRCLE;

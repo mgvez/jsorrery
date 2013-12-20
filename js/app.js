@@ -47,6 +47,13 @@
 		'jsorrery/Main'
 	], function($, JSOrrery){
 		$(function(){
+
+			if(!window.WebGLRenderingContext){
+				var msgCont = $('#preload').find('.title');
+				msgCont.append('<h3>Your browser does not support WebGL. Please visit <a href="http://get.webgl.org/">webgl.org</a></h3>');
+				return;
+			}
+
 			ns.app = JSOrrery.init();
 		});
 	});

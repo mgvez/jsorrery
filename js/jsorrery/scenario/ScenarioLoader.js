@@ -10,6 +10,7 @@ define(
 		,'jsorrery/scenario/EarthMoon'
 		,'jsorrery/scenario/ArtificialSatellites'
 		,'jsorrery/scenario/JupiterMoon'
+		,'jsorrery/scenario/NearEarthObject'
 		//,'jsorrery/scenario/MoonSOI'
 	],
 	function($, ns, common){

@@ -1,7 +1,8 @@
 @font-face{font-family:'EntypoRegular';src:url('./assets/entypo.eot');src:url('./assets/entypo.eot?#iefix') format('embedded-opentype'),url('./assets/entypo.woff') format('woff'),url('./assets/entypo.ttf') format('truetype'),url('./assets/entypo.svg#EntypoRegular') format('svg');font-weight:normal;font-style:normal}body{margin:0;padding:0;font-family:helvetica,arial,sans-serif;font-size:10px;color:#aaa;background:black;overflow:hidden;-webkit-font-smoothing:antialiased}
 h1,h2{font-family:'Quattrocento',serif;font-weight:normal}
 a{color:#fff}
-#preload{width:100%;height:100%;background:#000;position:absolute;top:0;left:0;z-index:1000}#preload .title{color:#444;position:relative;top:50%;height:90px;width:150px;margin:0 auto;margin-top:-45px}#preload .title h1,#preload .title h2{text-align:center;cursor:default}
+#preload{width:100%;height:100%;background:#000;position:absolute;top:0;left:0;z-index:1000}#preload .title{color:#444;position:relative;top:50%;height:90px;width:150px;margin:0 auto;margin-top:-45px;text-align:center}#preload .title h1,#preload .title h2{cursor:default}
+#preload .title h3{color:orange}
 #preload .title h1{font-size:20px;letter-spacing:6px;text-transform:uppercase;margin:16px 0;-webkit-transition-duration:1s;-moz-transition-duration:1s;-o-transition-duration:1s;transition-duration:1s;color:#aaa;text-shadow:0 0 2px #555}
 #preload .title h2{font-size:12px;margin:12px 0;letter-spacing:6px}
 #preload .orbit{width:200px;height:200px;-webkit-border-radius:100px;-moz-border-radius:100px;border-radius:100px;border:1px #333 solid;position:absolute;top:50%;margin-top:-100px;left:50%;margin-left:-100px;-webkit-animation:orbit 2s infinite linear}#preload .orbit .planet{width:6px;height:6px;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;background:#333;position:absolute;top:97px;left:-3px}

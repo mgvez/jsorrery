@@ -7,9 +7,10 @@ Corrections have been added to element's altitude to compensate for imprecisions
 define(
 	[
 		'jsorrery/NameSpace',
-		'jsorrery/scenario/CommonCelestialBodies'
+		'jsorrery/scenario/CommonCelestialBodies',
+		'jsorrery/scenario/NasaNumbers'
 	], 
-	function(ns, common) {
+	function(ns, common, nasaNumbers) {
 
 		var earthRadius = common.earth.radius;
 		var earthTilt = common.earth.tilt;
@@ -29,7 +30,7 @@ define(
 					orbit : {
 						relativeTo : 'earth',
 						base : {
-							a : (earthRadius + 40 + 159) ,
+							a : ((earthRadius * 2) + 159 + 265) / 2 ,
 							e : 0.00804,
 							w : 0,
 							M : 0,
@@ -46,6 +47,16 @@ define(
 						}	
 					}
 				},
+				mercury7 : 
+					_.extend({
+							title : 'Mercury 7',
+							mass : 1,
+							radius : 2,
+							color : "#ffffff"
+						},
+						nasaNumbers.get('earth', 'Mercury7')
+					)
+				,
 				hubble : {
 					title : 'Hubble ST',
 					mass : 11110,
@@ -80,7 +91,7 @@ define(
 					orbit: {
 						relativeTo : 'earth',
 						base : {
-							a : (earthRadius + 2 + 300) ,
+							a : ((earthRadius * 2) + 161 + 259.4) / 2 ,
 							e : 0.0003,
 							w : 0,
 							M : 0,

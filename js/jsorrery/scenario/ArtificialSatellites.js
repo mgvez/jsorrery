@@ -57,6 +57,16 @@ define(
 						nasaNumbers.get('earth', 'Mercury7')
 					)
 				,
+				Mercury8 : 
+					_.extend({
+							title : 'Mercury 8',
+							mass : 1,
+							radius : 2,
+							color : "#ffffff"
+						},
+						nasaNumbers.get('earth', 'Mercury8')
+					)
+				,
 				hubble : {
 					title : 'Hubble ST',
 					mass : 11110,

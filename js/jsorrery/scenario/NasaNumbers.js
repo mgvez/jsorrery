@@ -13,22 +13,22 @@ define([
 		Apollo7: {
 			launchTime: '1968-10-11:15:02:45.000Z',
 			earth: {
-				time: 626.76,
-				altitude: 748439,
-				surfRange: 1121.743,
-				earthVel: 24208.5,
-				spaceVel: 25553.2,
-				geoLat: 31.4091,
-				geodLat: 31.58,
-				long: -61.2293,
-				pathAngle: 0.005,
-				headingAngle: 86.32,
-				apo: 152.34,
-				peri: 123.03,
-				period: 89.55,
-				incl: 31.608,
-				descNode: 42.415,
-				ecc: 0.0045
+				time: 626.76,//Insertion - GET (sec)
+				altitude: 748439,//Altitude (ft)
+				surfRange: 1121.743,//Surface Range (n mi)
+				earthVel: 24208.5,//Earth Fixed Velocity (ft/sec)
+				spaceVel: 25553.2,//Space-Fixed Velocity (ft/sec)
+				geoLat: 31.4091,//Geocentric Latitude (deg N)
+				geodLat: 31.58,//Geodetic Latitude (deg N)
+				long: -61.2293,//Longitude (deg E)
+				pathAngle: 0.005,//Space-Fixed Flight Path Angle (deg)
+				headingAngle: 86.32,//Space-Fixed Heading Angle (deg E of N)
+				apo: 152.34,//Apogee (n mi)
+				peri: 123.03,//Perigee (n mi)
+				period: 89.55,//Period (mins)
+				incl: 31.608,//Inclination (deg)
+				descNode: 42.415,//Descending Node (deg) 
+				ecc: 0.0045//Eccentricity
 			}
 		},
 		Apollo8: {
@@ -384,6 +384,23 @@ define([
 				c3: -18152226
 			}
 		},
+		Mercury6: {
+			launchTime: '',
+			earth: {
+				time: 0,
+				altitude: 528381,
+				spaceVel: 25730,
+				geoLat: 0,
+				geodLat: 0,
+				long: 0,
+				pathAngle: -0.0468,
+				headingAngle: 0,
+				apo: 140.92,
+				peri: 86.92,
+				period: 88.48,
+				incl: 32.54
+			}
+		},
 		Mercury7: {
 			launchTime: '1962-05-25T12:45:00.000Z',
 			earth: {
@@ -398,6 +415,23 @@ define([
 				apo: 144.96,
 				peri: 86.87,
 				period: 88.53,
+				incl: 32.55
+			}
+		},
+		Mercury8: {
+			launchTime: '1962-10-03T12:15:11.000Z',
+			earth: {
+				time: 319,
+				altitude: 528510,
+				spaceVel: 25751,
+				geoLat: 30.42,//approx
+				geodLat: 30.5885,
+				long: -71.9946,
+				pathAngle: -0.0085,
+				headingAngle: 77.8228,
+				apo: 152.8,
+				peri: 86.94,
+				period: 88.91,
 				incl: 32.55
 			}
 		}

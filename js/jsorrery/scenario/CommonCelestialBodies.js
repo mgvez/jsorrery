@@ -154,7 +154,7 @@ define(
 				fov : 1,
 				relativeTo : 'earth',
 				orbitCalculator : MoonRealOrbit,
-				isPerturbedOrbit : true,
+				calculateFromElements : true,
 				orbit: {
 					base : {
 						a : 384400,

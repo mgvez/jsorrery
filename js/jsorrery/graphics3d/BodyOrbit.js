@@ -49,21 +49,21 @@ define(
 					}
 					this.ellipticOrbitLine.setLine(orbitVertices);
 
-					if(this.celestial.isPerturbedOrbit) {
+					if(this.celestial.calculateFromElements) {
 						this.recalculateListener = function(){
 							this.recalculateOrbitLine(false);
 						}.bind(this);
 						this.celestial.addEventListener('revolution', this.recalculateListener);
 					}
-					this.orbitLine = this.celestial.isPerturbedOrbit ? this.perturbedOrbitLine : this.ellipticOrbitLine;
+					this.orbitLine = this.celestial.calculateFromElements ? this.perturbedOrbitLine : this.ellipticOrbitLine;
 
 				}
 			},
 
 			recalculateOrbitLine : function(isForced){
-				if(!isForced && (!this.perturbedOrbitLine || !this.celestial.isPerturbedOrbit)) return;
-				//console.log('recalculate '+this.celestial.name+' perturbed:'+this.celestial.isPerturbedOrbit);
-				var orbitVertices = this.celestial.getOrbitVertices(!this.celestial.isPerturbedOrbit);
+				if(!isForced && (!this.perturbedOrbitLine || !this.celestial.calculateFromElements)) return;
+				//console.log('recalculate '+this.celestial.name+' perturbed:'+this.celestial.calculateFromElements);
+				var orbitVertices = this.celestial.getOrbitVertices(!this.celestial.calculateFromElements);
 				if(orbitVertices){
 					var wasAdded = this.orbitLine.added;
 					this.hideOrbit();

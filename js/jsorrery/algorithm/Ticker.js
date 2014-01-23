@@ -62,7 +62,7 @@ define(
 				calculateGForces();
 				for(i=0; i<bodies.length; i++){
 					bodies[i].beforeMove(deltaTIncrement);
-					if(bodies[i].isPerturbedOrbit){
+					if(bodies[i].calculateFromElements){
 						bodies[i].setPositionFromDate(epochTime + (deltaTIncrement*(t+1)), false);
 					} else if(!bodies[i].isStill){
 						MoveByVerlet.moveBody(bodies[i], deltaTIncrement, deltaTIncrementSquared, i);

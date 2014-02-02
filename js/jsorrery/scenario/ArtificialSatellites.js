@@ -18,6 +18,8 @@ define(
 			name : 'Artificial',
 			title : 'Artificial satellites around the Earth',
 			commonBodies : ['earth'],
+			usePhysics: true,
+			calculateAll : true,
 			bodies : {
 				/*earth: {
 					map : 'img/earthmap1k_KSC.jpg'

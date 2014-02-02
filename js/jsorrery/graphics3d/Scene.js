@@ -12,11 +12,12 @@ define(
 		'jsorrery/graphics2d/Labels',
 		'jsorrery/graphics3d/Dimensions',
 		'jsorrery/gui/Gui',
+		'jsorrery/graphics3d/Screenshot',
 		'vendor/jquery.mousewheel',
 		'three/stats',
 		'_'
 	], 
-	function(ns, $, Body3D, MilkyWay, Sun, CameraManager, OrbitLinesManager, TracerManager, Labels, Dimensions, Gui){
+	function(ns, $, Body3D, MilkyWay, Sun, CameraManager, OrbitLinesManager, TracerManager, Labels, Dimensions, Gui, Screenshot){
 		'use strict';
 
 		var stats;
@@ -33,7 +34,10 @@ define(
 				this.container = $('<div id="universe" width="'+this.width+'" height="'+this.height+'">').appendTo('body');
 				this.root = new THREE.Scene();				
 
-				this.renderer = new THREE.WebGLRenderer({antialias: true});
+				this.renderer = new THREE.WebGLRenderer({antialias: true, preserveDrawingBuffer: true});
+
+				if(ns.capture) this.screenshot = Object.create(Screenshot).init(this.renderer);
+
 				//this.renderer.shadowMapEnabled = true;
 				this.renderer.setSize(this.width, this.height);
 
@@ -132,6 +136,7 @@ define(
 				this.milkyway && this.milkyway.setPosition(camPos);
 
 				this.renderer.render(this.root, CameraManager.getCamera());
+				this.screenshot && this.screenshot.capture();
 
 				//place planets labels. We need the camera position relative to the world in order to compute planets screen sizes, and hide/show labels depending on it
 				var radFov = CameraManager.getCamera().fov * ns.DEG_TO_RAD;

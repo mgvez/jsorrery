@@ -10,11 +10,14 @@ define(
 		var workVect = new THREE.Vector3();
 
 		//xi+1 = xi + (xi - xi-1) + a * dt * dt
-
+		var printed = false;
 		var Verlet = {
 			name : 'Verlet',
 			moveBody : function(body, deltaTIncrement, deltaTIncrementSquared, i){
-				
+				if(!printed) {
+					console.log('Verlet');
+					printed = true;
+				}
 				if(body.previousPosition){
 					beginPos.copy(body.position);
 					body.force.multiplyScalar(body.invMass);//force is in newtons, need to divide it by the mass to get number of m/s*s of accel

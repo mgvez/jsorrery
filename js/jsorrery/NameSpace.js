@@ -11,7 +11,7 @@
 		ns.version = '2013-09-16';
 
 		//gravitational constant to measure the force with masses in kg and radii in meters N(m/kg)^2
-		ns.G = 6.673e-11;
+		ns.G = 6.6742e-11;
 		//astronomical unit in km
 		ns.AU = 149597870;
 		ns.CIRCLE = 2 * Math.PI;

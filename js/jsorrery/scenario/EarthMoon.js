@@ -12,8 +12,9 @@ define(
 			title : 'The Moon and the Earth',
 			commonBodies : ['earth', 'moon'],
 			secondsPerTick : 3600,
-			calculationsPerTick : 2000,
-			calculateAll : false,
+			calculationsPerTick : 5,
+			calculateAll : true,
+			usePhysics : true,
 			help : "Only the Earth and its moon. The Moon's orbit is not accurate as it is heavily perturbed by the Sun which is not included in the simulation."
 		};
 

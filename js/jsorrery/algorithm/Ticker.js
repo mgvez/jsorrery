@@ -1,11 +1,13 @@
 define(
 	[
 		'jsorrery/NameSpace',
-		'jquery',
+		'jsorrery/algorithm/Gravity',
 		'jsorrery/algorithm/Verlet',
-		'three'
+		'jsorrery/algorithm/Quadratic',
+		'three',
+		'_'
 	],
-	function(ns, $, MoveByVerlet) {
+	function(ns, Gravity, MoveByVerlet, Quadratic) {
 		'use strict';
 		/**
 		number of calculations of gravity per tick. Adding more calculation has the effect of checking the position of bodies more often at each tick, so that the forces are not a multiplication of their values of the beginning of the tick. Since each body moves at each second, their relative position is not the same at the beginning of tick as at the end. The force they produce is'nt either. If we want to be more precise we have to "move" each body a given number of time at each tick so the forces are calculated from their new position.
@@ -16,53 +18,26 @@ define(
 		var deltaTIncrement = 1;
 		var deltaTIncrementSquared = 1;
 		var bodies = [];
-
-		/**
-		Calculates the forces that are created by each body toward one another
-		*/
-		var calculateGForces = function(){
-			var workVect=new THREE.Vector3(), i, j;
-			for(i=0; i<bodies.length; i++){
-				//loop in following bodies and calculate forces between them and this one. No need to do previous ones, as they were done in previous iterations
-				for(j=i+1; j<bodies.length; j++){
-					if(bodies[i].mass === 1 && bodies[j].mass === 1) continue; 
-					workVect = getGForceBetween(bodies[i], bodies[j]);
-					//add forces (for the first body, it is the reciprocal of the calculated force)
-					bodies[i].force.sub(workVect);
-					bodies[j].force.add(workVect);/**/
-				}
-			}
-		};
-
-		/**
-		Get the gravitational force in Newtons between two bodies (their distance in m, mass in kg)
-		*/
-		var getGForceBetween = function(a, b){
-			var workVect=new THREE.Vector3(), dstSquared, massPrd, Fg;
-			workVect.copy(a.position).sub(b.position);//vector is between positions of body A and body B
-			dstSquared = workVect.lengthSq();
-			massPrd = a.mass * b.mass;
-			Fg = ns.G * (massPrd / dstSquared);//in newtons (1 N = 1 kg*m / s^2)
-			workVect.normalize();
-			workVect.multiplyScalar(Fg);//vector is now force of attraction in newtons/**/
-			return workVect;
-		};
-			
 		
 		var setDT = function (){
 			if(!calculationsPerTick || !secondsPerTick) return;
 			deltaTIncrement = secondsPerTick / calculationsPerTick;
 			deltaTIncrementSquared = Math.pow(deltaTIncrement, 2);
 		};
-
+		
 		var moveByGravity = function(epochTime){
 			var t, i;
 			//We calculate the positions of all bodies, and thus the gravity, more than once per tick. Not efficient but more precise than approximating the whole forces to their value at the beginning of the cycle.
+			/*for(t=0; t < calculationsPerTick; t++){
+				Quadratic.moveBodies(epochTime, deltaTIncrement);
+			}
+
+			return;/**/
 			for(t=0; t < calculationsPerTick; t++){
-				calculateGForces();
+				Gravity.calculateGForces(bodies);
 				for(i=0; i<bodies.length; i++){
 					bodies[i].beforeMove(deltaTIncrement);
-					if(bodies[i].calculateFromElements){
+					if(bodies[i].calculateFromElements && false){
 						bodies[i].setPositionFromDate(epochTime + (deltaTIncrement*(t+1)), false);
 					} else if(!bodies[i].isStill){
 						MoveByVerlet.moveBody(bodies[i], deltaTIncrement, deltaTIncrementSquared, i);
@@ -71,8 +46,12 @@ define(
 				}
 			}
 		};
-
+		var printed = false;
 		var moveByElements = function(epochTime){
+			if(!printed) {
+					console.log('Elements');
+					printed = true;
+				}
 			for(var i=0; i<bodies.length; i++){
 				bodies[i].setPositionFromDate(epochTime, false);
 			}
@@ -96,9 +75,10 @@ define(
 			
 			setBodies : function(b){
 				bodies.length = 0;
-				$.each(b, function(name, body){
+				_.each(b, function(body, name){
 					bodies.push(body);
 				});
+				Quadratic.setBodies(bodies);
 			},
 			
 			setCalculationsPerTick : function(n){

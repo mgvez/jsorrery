@@ -40,7 +40,6 @@ define(
 		Verlet.name = 'Verlet';	
 		
 		Verlet.moveBodies = function(epochTime, deltaT) {
-
 			this.computeDeltaT(deltaT);
 
 			Gravity.calculateGForces(this.bodies);

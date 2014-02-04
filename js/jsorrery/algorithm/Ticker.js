@@ -10,14 +10,14 @@ define(
 	function(ns, Gravity, Verlet, Quadratic) {
 		'use strict';
 		/**
-		number of calculations of gravity per tick. Adding more calculation has the effect of checking the position of bodies more often at each tick, so that the forces are not a multiplication of their values of the beginning of the tick. Since each body moves at each second, their relative position is not the same at the beginning of tick as at the end. The force they produce is'nt either. If we want to be more precise we have to "move" each body a given number of time at each tick so the forces are calculated from their new position.
+		number of calculations of gravity per tick. Adding more calculation has the effect of checking the position of bodies more often at each tick, so that the forces are not a multiplication of their values of the beginning of the tick. Since each body moves at each second, their relative position is not the same at the beginning of tick as at the end. The force they produce is'nt either. If we want to be more precise we have to "move" each body a given number of time at each tick so the forces are calculated from their new position, depending on the precision of the integration.
 		*/
 
 		var calculationsPerTick = 1;
 		var secondsPerTick = 1;
 		var deltaTIncrement = 1;
 		var bodies = [];
-		var moveAlgo;
+		var integration;
 		
 		var setDT = function (){
 			if(!calculationsPerTick || !secondsPerTick) return;
@@ -26,7 +26,7 @@ define(
 		
 		var moveByGravity = function(epochTime){
 			for(var t=0; t < calculationsPerTick; t++){
-				moveAlgo.moveBodies(epochTime + (t * deltaTIncrement), deltaTIncrement);
+				integration.moveBodies(epochTime + (t * deltaTIncrement), deltaTIncrement);
 			}
 		};
 
@@ -36,7 +36,7 @@ define(
 			}
 		};
 
-		var Algorithm = {
+		var Ticker = {
 			
 			tick : function(computePhysics, epochTime){
 				if(computePhysics){
@@ -57,7 +57,7 @@ define(
 				_.each(b, function(body, name){
 					bodies.push(body);
 				});
-				moveAlgo = Verlet.init(bodies);
+				integration = Quadratic.init(bodies);
 			},
 			
 			setCalculationsPerTick : function(n){
@@ -69,9 +69,9 @@ define(
 				secondsPerTick = s;
 				setDT();
 			}
-		}
+		};
 
-		return Algorithm;
+		return Ticker;
 	
 	}
 );

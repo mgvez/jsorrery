@@ -22,15 +22,15 @@ define(
 
 		return {
 
-			getNew : function(pos){
+			getNew : function(pos, color){
 
 				var displayObj = new THREE.Object3D();
 
 				var mat = new THREE.MeshLambertMaterial({
-					color : 0xffffff
+					color : color || 0xffffff
 				});
 
-				var radius = 0.1;
+				var radius = 0.01;
 				var segments = 12;
 				var rings = 12;
 				var dot = new THREE.Mesh(

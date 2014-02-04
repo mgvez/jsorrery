@@ -14,8 +14,9 @@ define(
 			calculateGForces : function(bodies){
 				var workVect=new THREE.Vector3(), i, j;
 				for(i=0; i<bodies.length; i++){
-					//loop in following bodies and calculate forces between them and this one. No need to do previous ones, as they were done in previous iterations
+					if(!i) bodies[i].force.x = bodies[i].force.y = bodies[i].force.z = 0;
 					for(j=i+1; j<bodies.length; j++){
+						if(!i) bodies[j].force.x = bodies[j].force.y = bodies[j].force.z = 0;
 						if(
 							(bodies[i].mass === 1 && bodies[j].mass === 1)
 							||

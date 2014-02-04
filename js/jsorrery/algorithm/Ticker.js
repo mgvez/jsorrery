@@ -28,8 +28,8 @@ define(
 		var moveByGravity = function(epochTime){
 			var t, i;
 			//We calculate the positions of all bodies, and thus the gravity, more than once per tick. Not efficient but more precise than approximating the whole forces to their value at the beginning of the cycle.
-			/*for(t=0; t < calculationsPerTick; t++){
-				Quadratic.moveBodies(epochTime, deltaTIncrement);
+			for(t=0; t < calculationsPerTick; t++){
+				Quadratic.moveBodies(epochTime + (t * deltaTIncrement), deltaTIncrement);
 			}
 
 			return;/**/

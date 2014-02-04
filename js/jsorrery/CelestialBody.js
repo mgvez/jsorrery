@@ -73,7 +73,7 @@ define(
 
 				if(this.customInitialize) this.customInitialize();
 				
-				if(this.afterCompleteMove) this.afterCompleteMove(ns.U.epochTime, ns.U.date);
+				if(this.customAfterTick) this.customAfterTick(ns.U.epochTime, ns.U.date);
 			},
 
 			positionRelativeTo : function(){
@@ -183,7 +183,7 @@ define(
 						if(this.onOrbitCompleted) this.onOrbitCompleted();
 					}
 				}
-				if(this.afterCompleteMove) this.afterCompleteMove(ns.U.epochTime, ns.U.date, deltaT);
+				if(this.customAfterTick) this.customAfterTick(ns.U.epochTime, ns.U.date, deltaT);
 
 			},
 

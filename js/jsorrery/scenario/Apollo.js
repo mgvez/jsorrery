@@ -38,7 +38,7 @@ define(
 				customInitialize : function(){
 					this.data = {};
 				},
-				afterCompleteMove : function(elapsedTime, absoluteDate, deltaT){
+				customAfterTick : function(elapsedTime, absoluteDate, deltaT){
 					var dist;
 
 					

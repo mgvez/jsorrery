@@ -18,7 +18,7 @@ define(
 			name : 'Artificial',
 			title : 'Artificial satellites around the Earth',
 			commonBodies : ['earth'],
-			usePhysics: true,
+			usePhysics: false,
 			calculateAll : true,
 			bodies : {
 				/*earth: {

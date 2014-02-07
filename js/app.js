@@ -30,6 +30,9 @@
 			'vendor/jquery.scrollto': {
 				deps: ['jquery']
 			},
+			'vendor/jquery.xdomainajax': {
+				deps: ['jquery']
+			},
 			'three/controls/OrbitControls' : {
 				deps: ['three']
 			},

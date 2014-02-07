@@ -10,9 +10,133 @@ radius: km
 define(
 	[
 		'jsorrery/NameSpace',
-		'jsorrery/scenario/CommonCelestialBodies'
+		'jsorrery/scenario/CommonCelestialBodies',
+		'vendor/jquery.xdomainajax'
 	], 
 	function(ns, common) {
+
+
+		var bodies = {};
+
+		var neoPath = 'http://neo.jpl.nasa.gov/cgi-bin/neo_ca?type=NEO&hmax=all&sort=date&sdir=ASC&tlim=far_future&dmax=0.05AU&max_rows=0&action=Display+Table&show=1';
+
+		var onLoadError = function(jqXHR, textStatus, errorThrown){
+			alert('Error loading NEO definitions. See console.');
+			console.log(textStatus, errorThrown);
+		};
+
+
+		var onListLoaded = function(res) {
+			var html = res.results && res.results[0];
+			if(!html) return onLoadError(res, null, 'No result');
+
+			var reg = /http\:\/\/ssd\.jpl\.nasa\.gov\/sbdb\.cgi\?sstr\=([^";]+)/g;
+			var matches = html.match(reg);
+			if(!matches) return onLoadError(res, null, 'No links found');
+
+			var allRequests = [];
+			for(var i = 0; i<10 && i<matches.length; i++) {
+				(function(i){
+					var url = matches[i];
+					var name = decodeURI(url.substring(url.indexOf('sstr=')+5));
+
+					var loadDef = $.ajax({
+						url: url,
+						type: 'get',
+						dataType: 'html',
+						context: {
+							name: name,
+							url: url
+						},
+					});
+
+					loadDef.fail(onLoadError);
+					loadDef.then(onObjectLoaded);
+					allRequests.push(loadDef);
+					
+				})(i);
+			}
+
+			var allReady = $.when.apply($, allRequests);
+
+			return allReady;
+
+		};
+
+
+		var onObjectLoaded = function(res) {
+			//console.log(res);
+
+			var html = res.results && res.results[0];
+			if(!html) return onLoadError(res, null, 'No result');
+
+			var startStr = 'Orbital Elements at Epoch';
+			var from = html.indexOf(startStr);
+			var to = html.indexOf('show covariance matrix');
+
+			html = html.substring(from, to);
+
+			//find epoch
+			var epoch = Number(html.substring(startStr.length, html.indexOf('(')).replace(/\s/g, ''));
+			var tsSinceJ2000 = (epoch-2451545) * (60*60*24*1000);
+			epoch = ns.J2000.getTime() + tsSinceJ2000;
+			var epochDate = new Date(epoch);
+
+			//parse table containing elements. Its the second one in the substring.
+			from = html.indexOf('<table', html.indexOf('<table')+1);
+			to = html.indexOf('</table>');
+			
+			html = html.substring(from, to+9);
+			var table = $(html);
+			//console.log(table);
+
+			var orbitalElements = {};
+			var rows = table.find('tr');
+			rows.each(function(i, row){
+				var cells = $(row).find('td');
+				var key = null;
+				cells.each(function(j, cell){
+					cell = $(cell);
+					var content = cell.text().trim();
+					//orbital element ky is in cell 0
+					if(j === 0){
+						key = content;
+					}
+					//value is in cell 1
+					if(j === 1) {
+						//period has two values, the first one is "days"
+						if(key==='period'){
+							content = content.split(/\n/);
+							content = content[0] && content[0].trim();
+						}
+						orbitalElements[key] = Number(content);
+					}
+				});
+			});
+
+			bodies['_'+this.name] = _.extend({
+				title : this.name,
+				orbit: {
+					epoch : epochDate,
+					base : {
+						a : orbitalElements.a * ns.AU,
+						e : orbitalElements.e,
+						w : orbitalElements.peri,
+						M : orbitalElements.M,
+						i : orbitalElements.i,
+						o : orbitalElements.node
+					},
+					day : {
+						M : 360 / orbitalElements.period
+					}	
+				}
+			}, baseNEO);
+
+			//console.log(orbitalElements);
+			//$('<div class="debug">').append(table).appendTo('body');
+		};
+
+
 
 		var baseNEO = {
 			mass : 1,
@@ -23,6 +147,22 @@ define(
 		var cnf = {
 			name : 'NEO',
 			title : 'Near Earth Objects',
+			load : (function(){
+				var ready;
+				return function(){
+
+					if(ready) return ready.promise();
+					var loaded = $.ajax({
+						url: neoPath,
+						type: 'get',
+						dataType: 'html'
+					});
+
+					loaded.fail(onLoadError);
+					ready = loaded.then(onListLoaded);
+					return ready.promise();
+				};
+			})(),
 			/*calculateAll : true,
 			usePhysics : true,/**/
 			commonBodies : [
@@ -33,80 +173,13 @@ define(
 				'moon',
 				'mars'
 			],
-			bodies : {
-				_2013XY20 : _.extend({
-					title : '2013 XY8',
-					orbit: {
-						epoch : new Date('2013-11-04T00:00:00'),
-						base : {
-							a : 2.235306826006964 * ns.AU,
-							e : 0.573857831623473,
-							w : 24.30287877488278,
-							M : 343.0917919285855,
-							i : 1.781235616802272,
-							o : 81.04754838999639
-						},
-						day : {
-							a : 0,
-							e : 0,
-							i : 0,
-							M : 360 / 1220.686505021548,
-							w : 0,
-							o : 0
-						}	
-					}
-				}, baseNEO),
-				_2009RR : _.extend({
-					title : '2009 RR',
-					orbit: {
-						epoch : new Date('2013-11-04T00:00:00'),
-						base : {
-							a : 1.405605721694525 * ns.AU,
-							e : 0.4654947695576891,
-							w : 256.7957983490506,
-							M : 141.9424462052399,
-							i : 6.089886990370658,
-							o : 174.2548411481731
-						},
-						day : {
-							a : 0,
-							e : 0,
-							i : 0,
-							M : 360 / 608.6865444259238,
-							w : 0,
-							o : 0
-						}	
-					}
-				}, baseNEO),
-				/*_872Holda : _.extend({
-					title : '872 Holda',
-					orbit: {
-						epoch : new Date('2013-11-04T00:00:00'),
-						base : {
-							a : 2.730657032711904 * ns.AU,
-							e : 0.08026874050863506	,
-							w : 18.3897992393082,
-							M : 148.9717777681654,
-							i : 7.369124707264008,
-							o : 194.798325258132
-						},
-						day : {
-							a : 0,
-							e : 0,
-							i : 0,
-							M : 360 / 1648.159210943693,
-							w : 0,
-							o : 0
-						}	
-					}
-				}, baseNEO)/**/
-			},
+			bodies : bodies,
 			secondsPerTick : 3600,
 			calculateAll : false,
 			defaultGuiSettings : { 
 				planetScale : 10
 			},
-			help : "This scenario shows selected objects from Nasa's Near Earth Object Project (<a href=\"http://neo.jpl.nasa.gov/\" target=\"_blank\">http://neo.jpl.nasa.gov/</a>."
+			help : "This scenario shows the next 10 passages closer than 0.05 AU of near Earth objects from Nasa's Near Earth Object Project (<a href=\"http://neo.jpl.nasa.gov/\" target=\"_blank\">http://neo.jpl.nasa.gov/</a>."
 		};
 
 		return cnf;

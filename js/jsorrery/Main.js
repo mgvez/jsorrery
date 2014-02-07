@@ -32,7 +32,19 @@ define(
 			}
 
 			activeScenario = Object.create(Universe);
-			var onSceneReady = activeScenario.init(scenarioConfig, defaultParams);
+
+			var getSceneReady = function(){
+				return activeScenario.init(scenarioConfig, defaultParams);
+			}
+
+			//some scenarios need to load data before they are ready
+			var onSceneReady;
+			if(scenarioConfig.load) {
+				onSceneReady = scenarioConfig.load();
+				onSceneReady.done(getSceneReady);
+			} else {
+				onSceneReady = getSceneReady();
+			}
 			onSceneReady.then(removePreloader);
 		};
 

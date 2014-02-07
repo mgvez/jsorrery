@@ -19,7 +19,6 @@ define(
 			title : 'Artificial satellites around the Earth',
 			commonBodies : ['earth'],
 			usePhysics: false,
-			calculateAll : true,
 			bodies : {
 				/*earth: {
 					map : 'img/earthmap1k_KSC.jpg'
@@ -119,35 +118,7 @@ define(
 							o : 0
 						}	
 					}
-				},
-				gps : {
-					title : 'Typical GPS Satellite',
-					mass : 1,
-					radius : 2,
-					color : '#00aaff',
-					orbit: {
-						relativeTo : 'earth',
-						base : {
-							a : 26600,
-							e : 0,
-							w : 0,
-							M : 0,
-							i : 55,
-							o : 0
-						},
-						day : {
-							a : 0,
-							e : 0,
-							i : 0,
-							M : (360 / (11*3600 + 58*60)) * ns.DAY,
-							w : 0,
-							o : 0
-						}	
-					}
-					
-				}/**/
-
-				
+				}
 			},
 			
 			secondsPerTick : 5,

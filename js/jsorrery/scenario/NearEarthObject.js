@@ -172,7 +172,6 @@ define(
 			],
 			bodies : bodies,
 			secondsPerTick : 3600,
-			calculateAll : false,
 			defaultGuiSettings : { 
 				planetScale : 10
 			},

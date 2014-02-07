@@ -37,7 +37,7 @@
 
 		ns.J2000 = new Date('2000-01-01T12:00:00-00:00');
 
-		ns.defaultCalculationsPerTick = 200;
+		ns.defaultCalculationsPerTick = 10;
 
 		//in universe size (so depends on max orbit among all bodies)
 		ns.vertexDist = 1/50;

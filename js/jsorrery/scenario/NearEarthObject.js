@@ -34,7 +34,7 @@ define(
 			var matches = html.match(reg);
 			if(!matches) return onLoadError(res, null, 'No links found');
 
-			var allRequests = [];
+			var allReady;
 			for(var i = 0; i<10 && i<matches.length; i++) {
 				(function(i){
 					var url = matches[i];
@@ -52,20 +52,17 @@ define(
 
 					loadDef.fail(onLoadError);
 					loadDef.then(onObjectLoaded);
-					allRequests.push(loadDef);
+					allReady = (allReady && allReady.then(function() {
+						return loadDef.promise();
+					})) || loadDef;
 					
 				})(i);
 			}
-
-			var allReady = $.when.apply($, allRequests);
-
-			return allReady;
-
+			return allReady.promise();
 		};
 
 
 		var onObjectLoaded = function(res) {
-			//console.log(res);
 
 			var html = res.results && res.results[0];
 			if(!html) return onLoadError(res, null, 'No result');

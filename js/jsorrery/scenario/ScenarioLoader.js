@@ -11,6 +11,7 @@ define(
 		,'jsorrery/scenario/ArtificialSatellites'
 		,'jsorrery/scenario/JupiterMoon'
 		,'jsorrery/scenario/NearEarthObject'
+		,'jsorrery/scenario/BigJupiter'
 		//,'jsorrery/scenario/MoonSOI'
 	],
 	function($, ns, common){

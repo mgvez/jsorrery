@@ -126,7 +126,7 @@ define(
 				} else if(this.sun){
 					var sunPos = this.centralBody.getBody3D().getPosition();
 					this.sun.setPosition(sunPos);/**/
-					this.sun.setFlarePosition(camPos.clone().multiplyScalar(0.2));/**/
+					this.sun.setFlarePosition(camPos.clone().sub(sunPos).multiplyScalar(0.2));/**/
 					this.sun.setFlareSize(this.centralBody.getBody3D().getScreenSizeRatio(camPos, CameraManager.getCamera().fov), this.height);/**/
 				}
 

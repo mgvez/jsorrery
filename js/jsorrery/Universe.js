@@ -113,6 +113,7 @@ define(
 
 				$.each(this.bodies, function(name, body){
 					if((typeof scenario.calculateAll === 'undefined' || !scenario.calculateAll) && !body.isCentral){
+						console.log(body.name, 1);
 						body.mass = 1;
 					}
 					body.init();

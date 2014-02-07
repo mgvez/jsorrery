@@ -4,17 +4,17 @@ define(
 	[
 		'jsorrery/NameSpace',
 		'jsorrery/scenario/CommonCelestialBodies',
-		'jsorrery/scenario/ApolloNumbers',
+		'jsorrery/scenario/NasaNumbers',
 		'jsorrery/graphics2d/Labels'
 	], 
-	function(ns, common, apolloNumbers, Labels) {
+	function(ns, common, nasaNumbers, Labels) {
 		//apollo 10, 11, 13 & 17 don't work. 13 and 17 in particular seem to have errors in the numbers, as the orbits are very far from the moon. 10 & 11 need a correction of about 1° to seem more accurate
 		var g = window.location.search.match(/apollo=([0-9]+)/);
 		var apolloNumber = (g && g[1]) || '8';
 		var earthRadius = common.earth.radius;
 		var earthTilt = common.earth.tilt;
-		var apolloEarthOrbit = apolloNumbers.get('earth', 'Apollo'+apolloNumber);
-		var apolloTLIOrbit = apolloNumbers.get('TLI', 'Apollo'+apolloNumber);
+		var apolloEarthOrbit = nasaNumbers.get('earth', 'Apollo'+apolloNumber);
+		var apolloTLIOrbit = nasaNumbers.get('TLI', 'Apollo'+apolloNumber);
 		var epoch = apolloTLIOrbit.epoch;
 
 		var apolloBase = {
@@ -30,7 +30,7 @@ define(
 			},
 			logForces : true
 		};
-		
+		var dbg;
 		var apolloTLI = _.extend(
 			{},
 			apolloBase,
@@ -38,8 +38,10 @@ define(
 				customInitialize : function(){
 					this.data = {};
 				},
-				afterCompleteMove : function(elapsedTime, absoluteDate, deltaT){
+				customAfterTick : function(elapsedTime, absoluteDate, deltaT){
 					var dist;
+
+					
 					
 					if(!this.data.isOnReturnTrip) {
 						if(!this.data.hasTLILabel && this.relativePosition.x != 0){
@@ -61,10 +63,22 @@ define(
 							this.data.isOnReturnTrip = true;
 							//ns.U.stop();
 						}
+						/*
+						if(((dist)/1.60934)<= (32999)) {
+							dbg.text(((dist/1.60934))+' miles from moon, '+(this.speed*3.28084)+' ft/s ('+(moonSpeed*3.28084)+' ft/s rel to moon)'); 
+							ns.U.playing=false;
+						}/**/
 
 						this.data.lastMoonDist = dist;
 						this.data.minMoonSpeed = !this.data.minMoonSpeed || (this.data.minMoonSpeed > moonSpeed) ? moonSpeed : this.data.minMoonSpeed;
 						this.data.minSpeed = !this.data.minSpeed || (this.data.minSpeed > this.speed) ? this.speed : this.data.minSpeed;
+
+						/*dbg = dbg || $('<div style="position:absolute;top:60px;left:20px">').appendTo('body');
+						this.data.maxspeed = this.data.maxspeed || 0;
+						if(this.data.maxspeed < this.speed) this.data.maxspeed = this.speed;  /**/
+						//dbg.text((this.speed*3.28084)+' ft/s'); 
+						//dbg.html((this.speed)+' m/s ( max '+this.data.maxspeed+' )<br>moon speed '+moonSpeed+ '( min '+this.data.minMoonSpeed+' )');
+
 
 					} else {
 						dist = (Math.abs(this.position.clone().sub(ns.U.getBody('earth').position).length()) / 1000 ) - ns.U.getBody('earth').radius;
@@ -88,8 +102,8 @@ define(
 			name : 'Apollo',
 			title : 'Apollo '+apolloNumber+' free return trajectory',
 			commonBodies : ['earth', 'moon'/*, 'sun', 'mercury', 'venus', 'mars'/**/],
-			secondsPerTick : 200,
-			calculationsPerTick : 400,
+			secondsPerTick : 100,
+			calculationsPerTick : 10,
 			calculateAll : true,
 			forcedGuiSettings : {
 				date: epoch//epoch

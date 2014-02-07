@@ -7,9 +7,10 @@ Corrections have been added to element's altitude to compensate for imprecisions
 define(
 	[
 		'jsorrery/NameSpace',
-		'jsorrery/scenario/CommonCelestialBodies'
+		'jsorrery/scenario/CommonCelestialBodies',
+		'jsorrery/scenario/NasaNumbers'
 	], 
-	function(ns, common) {
+	function(ns, common, nasaNumbers) {
 
 		var earthRadius = common.earth.radius;
 		var earthTilt = common.earth.tilt;
@@ -17,6 +18,7 @@ define(
 			name : 'Artificial',
 			title : 'Artificial satellites around the Earth',
 			commonBodies : ['earth'],
+			usePhysics: false,
 			bodies : {
 				/*earth: {
 					map : 'img/earthmap1k_KSC.jpg'
@@ -29,7 +31,7 @@ define(
 					orbit : {
 						relativeTo : 'earth',
 						base : {
-							a : (earthRadius + 40 + 159) ,
+							a : ((earthRadius * 2) + 159 + 265) / 2 ,
 							e : 0.00804,
 							w : 0,
 							M : 0,
@@ -46,6 +48,26 @@ define(
 						}	
 					}
 				},
+				mercury7 : 
+					_.extend({
+							title : 'Mercury 7',
+							mass : 1,
+							radius : 2,
+							color : "#ffffff"
+						},
+						nasaNumbers.get('earth', 'Mercury7')
+					)
+				,
+				Mercury8 : 
+					_.extend({
+							title : 'Mercury 8',
+							mass : 1,
+							radius : 2,
+							color : "#ffffff"
+						},
+						nasaNumbers.get('earth', 'Mercury8')
+					)
+				,
 				hubble : {
 					title : 'Hubble ST',
 					mass : 11110,
@@ -80,7 +102,7 @@ define(
 					orbit: {
 						relativeTo : 'earth',
 						base : {
-							a : (earthRadius + 2 + 300) ,
+							a : ((earthRadius * 2) + 161 + 259.4) / 2 ,
 							e : 0.0003,
 							w : 0,
 							M : 0,
@@ -96,35 +118,7 @@ define(
 							o : 0
 						}	
 					}
-				},
-				gps : {
-					title : 'Typical GPS Satellite',
-					mass : 1,
-					radius : 2,
-					color : '#00aaff',
-					orbit: {
-						relativeTo : 'earth',
-						base : {
-							a : 26600,
-							e : 0,
-							w : 0,
-							M : 0,
-							i : 55,
-							o : 0
-						},
-						day : {
-							a : 0,
-							e : 0,
-							i : 0,
-							M : (360 / (11*3600 + 58*60)) * ns.DAY,
-							w : 0,
-							o : 0
-						}	
-					}
-					
-				}/**/
-
-				
+				}
 			},
 			
 			secondsPerTick : 5,

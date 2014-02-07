@@ -27,11 +27,10 @@ define(
 			],
 			bodies : {
 				moon : {
-					isPerturbedOrbit : true
+					calculateFromElements : true
 				}
 			},
 			secondsPerTick : 3600,//3600 * 24 * 2,
-			calculateAll : true,
 			defaultGuiSettings : { 
 				planetScale : 10
 			},

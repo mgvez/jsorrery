@@ -135,6 +135,9 @@ define(
 					body.reset();
 					body.setPositionFromDate(this.currentTime, true);
 				}.bind(this));
+
+				Ticker.tick(false, this.currentTime);
+
 				//adjust position depending on other bodies' position (for example a satellite is relative to its main body)
 				$.each(this.bodies, function(name, body){
 					body.afterInitialized();

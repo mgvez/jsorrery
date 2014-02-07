@@ -44,7 +44,7 @@ define(
 				this.position = this.isCentral ? new THREE.Vector3() : this.orbitalElements.getPositionFromElements(this.orbitalElements.calculateElements(epochTime));
 				this.relativePosition = new THREE.Vector3();
 				if(calculateVelocity) {
-					this.velocity = this.isCentral ? new THREE.Vector3() : this.orbitalElements.calculateVelocity(epochTime, this.relativeTo, this.isPerturbedOrbit);
+					this.velocity = this.isCentral ? new THREE.Vector3() : this.orbitalElements.calculateVelocity(epochTime, this.relativeTo, this.calculateFromElements);
 				}				
 			},
 			
@@ -73,7 +73,7 @@ define(
 
 				if(this.customInitialize) this.customInitialize();
 				
-				if(this.afterCompleteMove) this.afterCompleteMove(ns.U.epochTime, ns.U.date);
+				if(this.customAfterTick) this.customAfterTick(ns.U.epochTime, ns.U.date);
 			},
 
 			positionRelativeTo : function(){
@@ -183,7 +183,7 @@ define(
 						if(this.onOrbitCompleted) this.onOrbitCompleted();
 					}
 				}
-				if(this.afterCompleteMove) this.afterCompleteMove(ns.U.epochTime, ns.U.date, deltaT);
+				if(this.customAfterTick) this.customAfterTick(ns.U.epochTime, ns.U.date, deltaT);
 
 			},
 

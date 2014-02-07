@@ -112,9 +112,7 @@ define(
 					}
 				}
 			},
-			secondsPerTick : 500,
-			calculationsPerTick : 500,
-			calculateAll : true
+			secondsPerTick : 500
 		};
 
 

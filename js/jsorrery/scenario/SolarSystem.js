@@ -32,7 +32,6 @@ define(
 				'halley'
 			],
 			secondsPerTick : 3600 * 5,
-			calculateAll : false,
 			defaultGuiSettings : { 
 				planetScale : 10
 			},

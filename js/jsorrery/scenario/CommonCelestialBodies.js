@@ -154,7 +154,7 @@ define(
 				fov : 1,
 				relativeTo : 'earth',
 				orbitCalculator : MoonRealOrbit,
-				isPerturbedOrbit : true,
+				calculateFromElements : true,
 				orbit: {
 					base : {
 						a : 384400,
@@ -184,7 +184,7 @@ define(
 					this.baseMapRotation = this.getMapRotation(this.getAngleTo('earth'));
 					this.nextCheck = this.sideralDay;
 				},
-				afterCompleteMove : function(time){
+				customAfterTick : function(time){
 					if(this.relativeTo !== 'earth') return;
 					//when a sideral day has passed, make sure that the near side is still facing the earth. Since the moon's orbit is heavily disturbed, some imprecision occurs in its orbit, and its duration is not always the same, especially in an incomplete scenario (where there are no sun/planets). Therefore, a correction is brought to the base map rotation, tweened so that is is not jerky.
 					if(time >= this.nextCheck){

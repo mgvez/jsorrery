@@ -22,7 +22,6 @@ define(
 				'mercury',
 				'venus',
 				'earth',
-				//'moon',
 				'mars',
 				'jupiter',
 				'saturn',
@@ -30,37 +29,50 @@ define(
 				'neptune',
 				'pluto'
 			],
-
+			
 			bodies:{
+				sun : {
+					forceTrace: true,
+					traceRelativeTo : 'universe'
+				},
 				jupiter:{
 					mass: 5.6846e26 * 1000,
-					forceTrace: true
+					forceTrace: true,
+					traceRelativeTo : 'universe'
 				},
 				mercury:{
-					forceTrace: true
+					forceTrace: true,
+					traceRelativeTo : 'universe'
 				},
 				venus:{
-					forceTrace: true
+					forceTrace: true,
+					traceRelativeTo : 'universe'
 				},
 				earth:{
-					forceTrace: true
+					forceTrace: true,
+					traceRelativeTo : 'universe'
 				},
 				mars:{
-					forceTrace: true
+					forceTrace: true,
+					traceRelativeTo : 'universe'
 				},
 				saturn:{
-					forceTrace: true
+					forceTrace: true,
+					traceRelativeTo : 'universe'
 				},
 				uranus:{
-					forceTrace: true
+					forceTrace: true,
+					traceRelativeTo : 'universe'
 				},
 				neptune:{
-					forceTrace: true
+					forceTrace: true,
+					traceRelativeTo : 'universe'
 				},
 				pluto:{
-					forceTrace: true
+					forceTrace: true,
+					traceRelativeTo : 'universe'
 				}
-			},
+			},/**/
 			secondsPerTick : 3600 * 5,
 			calculaionsPerTick : 100,
 			usePhysics: true,

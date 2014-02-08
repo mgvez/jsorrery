@@ -38,7 +38,7 @@ define(
 			},
 
 			addTracer : function(tracingBody, traceFromBody) {
-				if(!traceFromBody || !tracingBody) return;
+				if(!tracingBody) return;
 				var tracer = tracingBody.tracer;
 				if(!tracer) return;
 				tracer.setTraceFrom(traceFromBody);
@@ -62,8 +62,8 @@ define(
 			draw : function() {
 				if(this.deferredForceTraceBody) {
 					this.deferredForceTraceBody.map(function(tracingBody){
-						var traceFromBody = ns.U.getBody(tracingBody.celestial.traceRelativeTo || tracingBody.celestial.relativeTo).getBody3D();
-						this.addTracer(tracingBody, traceFromBody);
+						var traceFromBody = ns.U.getBody(tracingBody.celestial.traceRelativeTo || tracingBody.celestial.relativeTo);
+						this.addTracer(tracingBody, traceFromBody && traceFromBody.getBody3D());
 					}.bind(this));
 					this.deferredForceTraceBody = null;
 				}
@@ -73,7 +73,7 @@ define(
 
 				this.bodies3d.push(body3d);
 
-				if(body3d.celestial.isCentral) return;
+				if(body3d.celestial.isCentral && !body3d.celestial.forceTrace) return;
 
 				var tracer = Object.create(Tracer);
 				tracer.init(body3d.celestial.traceColor || body3d.celestial.color, N_VERTICES, body3d.celestial.name);

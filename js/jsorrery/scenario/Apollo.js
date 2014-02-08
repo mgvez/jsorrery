@@ -110,7 +110,9 @@ define(
 			},
 			bodies : {
 				earth:{
-					isStill : true
+				//	isStill : true
+					forceTrace : true,
+					traceRelativeTo : 'universe'
 				},/**/		
 				apolloTLI : _.extend({},
 					apolloTLI,

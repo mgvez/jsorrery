@@ -26,7 +26,7 @@ define(
 				body.force.multiplyScalar(body.invMass);//force is in newtons, need to divide it by the mass to get number of m/s*s of accel
 				body.force.multiplyScalar(deltaT);
 				body.velocity.add(body.force);
-				var correctedVel = body.velocity.clone();
+				var correctedVel = body.getVelocity();
 				correctedVel.multiplyScalar(deltaT);//speed needs to take deltaT into account
 				body.position.add(correctedVel);
 			}

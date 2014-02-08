@@ -172,6 +172,10 @@ define(
 				TracerManager.addBody(body3d);
 			},
 
+			getRoot : function(){
+				return this.root;
+			},
+
 			setCentralBody : function(centralBody){
 				this.centralBody = centralBody;
 				//make sure that any celestial body cannot be larger than the central celestial body
@@ -189,7 +193,6 @@ define(
 				//console.log(maxScaleVal);
 				this.setSun();
 			},
-
 
 			kill : function(){
 				CameraManager.kill();

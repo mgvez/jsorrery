@@ -101,10 +101,12 @@ define(
 				//this.getOrbitContainer().remove(this.ellipticOrbitLine.getDisplayObject());
 			},
 
-			//the orbit is drawn around the main body
-			getOrbitContainer : function(){
-				return ns.U.getBody(this.celestial.relativeTo).getBody3D().getDisplayObject();
-			},
+			//the orbit is drawn around the main body OR the universe (scene)
+ 			getOrbitContainer : function(){
+ 				//return ns.U.getScene().getRoot();
+				var centralBody = ns.U.getBody(this.celestial.traceRelativeTo || this.celestial.relativeTo);
+				return (centralBody && centralBody.getBody3D().getDisplayObject()) || ns.U.getScene().getRoot();
+ 			},
 
 			kill : function(){
 				this.recalculateListener && this.celestial.removeEventListener('revolution', this.recalculateListener);

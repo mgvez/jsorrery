@@ -153,8 +153,8 @@ define(
 				tilt : 1.5424,
 				fov : 1,
 				relativeTo : 'earth',
-				//orbitCalculator : MoonRealOrbit,
-				//calculateFromElements : true,
+				orbitCalculator : MoonRealOrbit,
+				calculateFromElements : true,
 				orbit: {
 					base : {
 						a : 384400,

@@ -30,7 +30,7 @@ define(
 			},
 			logForces : true
 		};
-		var dbg;
+
 		var apolloTLI = _.extend(
 			{},
 			apolloBase,
@@ -41,8 +41,6 @@ define(
 				customAfterTick : function(elapsedTime, absoluteDate, deltaT){
 					var dist;
 
-					
-					
 					if(!this.data.isOnReturnTrip) {
 						if(!this.data.hasTLILabel && this.relativePosition.x != 0){
 							Labels.addEventLabel('Trans Lunar Injection', this.relativePosition.clone(), ns.U.getBody(this.relativeTo));
@@ -63,22 +61,10 @@ define(
 							this.data.isOnReturnTrip = true;
 							//ns.U.stop();
 						}
-						/*
-						if(((dist)/1.60934)<= (32999)) {
-							dbg.text(((dist/1.60934))+' miles from moon, '+(this.speed*3.28084)+' ft/s ('+(moonSpeed*3.28084)+' ft/s rel to moon)'); 
-							ns.U.playing=false;
-						}/**/
 
 						this.data.lastMoonDist = dist;
 						this.data.minMoonSpeed = !this.data.minMoonSpeed || (this.data.minMoonSpeed > moonSpeed) ? moonSpeed : this.data.minMoonSpeed;
 						this.data.minSpeed = !this.data.minSpeed || (this.data.minSpeed > this.speed) ? this.speed : this.data.minSpeed;
-
-						/*dbg = dbg || $('<div style="position:absolute;top:60px;left:20px">').appendTo('body');
-						this.data.maxspeed = this.data.maxspeed || 0;
-						if(this.data.maxspeed < this.speed) this.data.maxspeed = this.speed;  /**/
-						//dbg.text((this.speed*3.28084)+' ft/s'); 
-						//dbg.html((this.speed)+' m/s ( max '+this.data.maxspeed+' )<br>moon speed '+moonSpeed+ '( min '+this.data.minMoonSpeed+' )');
-
 
 					} else {
 						dist = (Math.abs(this.position.clone().sub(ns.U.getBody('earth').position).length()) / 1000 ) - ns.U.getBody('earth').radius;
@@ -101,7 +87,7 @@ define(
 			usePhysics : true,
 			name : 'Apollo',
 			title : 'Apollo '+apolloNumber+' free return trajectory',
-			commonBodies : ['earth', 'moon'/*, 'sun', 'mercury', 'venus', 'mars'/**/],
+			commonBodies : ['earth', 'moon'],
 			secondsPerTick : 100,
 			calculationsPerTick : 10,
 			calculateAll : true,
@@ -110,15 +96,16 @@ define(
 			},
 			bodies : {
 				earth:{
-				//	isStill : true
-					forceTrace : true,
-					traceRelativeTo : 'universe'
-				},/**/		
+				
+				},
+				moon : {
+					calculateFromElements : false
+				},		
 				apolloTLI : _.extend({},
 					apolloTLI,
 					apolloTLIOrbit,
 					{
-						title : 'Apollo '+apolloNumber,
+						title : 'Apollo '+ apolloNumber,
 					}
 				)/*,
 				apolloEO : _.extend({},

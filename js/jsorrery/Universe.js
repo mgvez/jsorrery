@@ -20,6 +20,7 @@ define(
 		var Universe = {
 			init : function(scenario, qstrSettings){
 				ResourceLoader.reset();
+				this.settings = scenario;
 				this.name = scenario.name;
 				var initialSettings = _.extend({}, scenario.defaultGuiSettings, qstrSettings, scenario.forcedGuiSettings);
 				//console.log(initialSettings);
@@ -112,7 +113,6 @@ define(
 
 				_.each(this.bodies, function(body, name){
 					if((typeof scenario.calculateAll === 'undefined' || !scenario.calculateAll) && !body.isCentral){
-						console.log(body.name, 1);
 						body.mass = 1;
 					}
 					body.init();
@@ -135,52 +135,38 @@ define(
 			},
 
 			setBarycenter : function(){
-				//return;
-				if(!this.usePhysics) return;
 				var central = this.centralBody;
-				var totalMass = 0;
+				if(!this.usePhysics || central.isStill || this.settings.setBarycenter === false) return;
+				var massRatio;
 				var massCenter = {
 					mass : 0,
 					pos : new THREE.Vector3(),
-					momentum : new THREE.Vector3(),
-					vel : new THREE.Vector3(),
+					momentum : new THREE.Vector3()
 				};
-				var massRatio;
-				var dst;
 				_.each(this.bodies, function(b){
 					if(b === central) return;
-
 					massCenter.mass += b.mass;
 					massRatio = b.mass / massCenter.mass;
-					dst = b.getPosition().sub(massCenter.pos).length();
-					//console.log(b.name, b.getPosition().length()/1000, massRatio, dst*massRatio);
 					massCenter.pos = massCenter.pos.add(b.getPosition().multiplyScalar(massRatio));
-
-					console.log(b.name, b.getVelocity().length() / 1000);
-
 					massCenter.momentum = massCenter.momentum.add(b.getVelocity().multiplyScalar(b.mass));
-					
 				});
 
-				/*
-				_.each(this.bodies, function(b){
-					if(b === central) return;
-					massRatio = b.mass / massCenter.mass;
-					massCenter.vel = (b.getVelocity().multiplyScalar(massRatio)).add(massCenter.vel);
-				});/**/
-
 				massCenter.momentum.multiplyScalar(1 / massCenter.mass);
-				//console.log('momentum', massCenter.momentum.length() / 1000);
-
 				massRatio = massCenter.mass / central.mass;
 				central.velocity = massCenter.momentum.multiplyScalar(massRatio * -1);
 				central.position = massCenter.pos.clone().multiplyScalar(massRatio * -1);
-				//console.log('ratio', massRatio);
-				//console.log('vel', central.velocity.length()/1000);
-				var baryDist = massCenter.pos.length()/1000;
-				//console.log(baryDist / central.radius);
-				//console.log(massCenter.mass, baryDist);
-
+				_.each(this.bodies, function(b){
+					if(b === central || (b.relativeTo && b.relativeTo != central.name)) return;
+					b.velocity.add(central.velocity);
+					//if central body's mass is way bigger than the object, we assume that the central body is the center of rotation. Otherwise, it's the barycenter
+					if(central.mass / b.mass > 100000000) {
+						console.log(b.name+ ' not barycentric');
+						//b.position.add(central.position);
+					} else if(b.relativeTo === central.name) {
+						b.relativeTo = false;
+						console.log(b.name+ ' barycentric');
+					}
+				});
 			},
 
 			repositionBodies : function(){

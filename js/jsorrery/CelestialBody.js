@@ -79,10 +79,9 @@ define(
 			positionRelativeTo : function(){
 				if(this.relativeTo) {
 					var central = ns.U.getBody(this.relativeTo);
-					console.log(this.relativeTo);
-					if(central /*&& central!==ns.U.getBody()/**/) {
+					if(central) {
 						this.position.add(central.position);
-						console.log(this.name, central.velocity.length());
+						//console.log(this.name+' pos rel to ' + this.relativeTo);
 						this.velocity && central.velocity && this.velocity.add(central.velocity);
 					}
 				}

@@ -104,8 +104,12 @@ define(
 			//the orbit is drawn around the main body OR the universe (scene)
  			getOrbitContainer : function(){
  				//return ns.U.getScene().getRoot();
-				var centralBody = ns.U.getBody(this.celestial.traceRelativeTo || this.celestial.relativeTo);
-				return (centralBody && centralBody.getBody3D().getDisplayObject()) || ns.U.getScene().getRoot();
+				var thisCentralBody;
+				var centralName = this.celestial.traceRelativeTo || this.celestial.relativeTo;
+				if(centralName) {
+					thisCentralBody = ns.U.getBody(centralName);
+				}
+				return (thisCentralBody && thisCentralBody.getBody3D().getDisplayObject()) || ns.U.getScene().getRoot();
  			},
 
 			kill : function(){

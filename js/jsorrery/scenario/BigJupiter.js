@@ -16,7 +16,7 @@ define(
 
 		var cnf = {
 			name : 'BigJupiter',
-			title : 'If Jupiter was 5000X its mass',
+			title : 'If Jupiter was 1000X its mass',
 			commonBodies : [
 				'sun',
 				'mercury',
@@ -77,10 +77,11 @@ define(
 			calculaionsPerTick : 100,
 			usePhysics: true,
 			calculateAll : true,
+			setBarycenter : false,
 			defaultGuiSettings : { 
 				planetScale : 10
 			},
-			help : "This scenario shows what would happen if, at this moment, Jupiter's mass was 5000 times larger."
+			help : "This scenario shows what would happen if, instantaneously at this moment, Jupiter's mass grew 1000 times larger."
 		};
 
 		return cnf;

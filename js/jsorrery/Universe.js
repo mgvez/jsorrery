@@ -20,7 +20,6 @@ define(
 		var Universe = {
 			init : function(scenario, qstrSettings){
 				ResourceLoader.reset();
-				this.settings = scenario;
 				this.name = scenario.name;
 				var initialSettings = _.extend({}, scenario.defaultGuiSettings, qstrSettings, scenario.forcedGuiSettings);
 				//console.log(initialSettings);
@@ -113,6 +112,7 @@ define(
 
 				_.each(this.bodies, function(body, name){
 					if((typeof scenario.calculateAll === 'undefined' || !scenario.calculateAll) && !body.isCentral){
+						console.log(body.name, 1);
 						body.mass = 1;
 					}
 					body.init();
@@ -136,7 +136,7 @@ define(
 
 			setBarycenter : function(){
 				var central = this.centralBody;
-				if(!this.usePhysics || central.isStill || this.settings.setBarycenter === false) return;
+				if(!this.usePhysics || central.isStill) return;
 				var massRatio;
 				var massCenter = {
 					mass : 0,
@@ -159,12 +159,11 @@ define(
 					if(b === central || (b.relativeTo && b.relativeTo != central.name)) return;
 					b.velocity.add(central.velocity);
 					//if central body's mass is way bigger than the object, we assume that the central body is the center of rotation. Otherwise, it's the barycenter
-					if(central.mass / b.mass > 100000000) {
-						console.log(b.name+ ' not barycentric');
-						//b.position.add(central.position);
+					if(central.mass / b.mass > 100000) {
+						
+						b.position.add(central.position);
 					} else if(b.relativeTo === central.name) {
 						b.relativeTo = false;
-						console.log(b.name+ ' barycentric');
 					}
 				});
 			},

@@ -8,7 +8,6 @@ define(
 		'jsorrery/graphics2d/Labels'
 	], 
 	function(ns, common, nasaNumbers, Labels) {
-		//apollo 10, 11, 13 & 17 don't work. 13 and 17 in particular seem to have errors in the numbers, as the orbits are very far from the moon. 10 & 11 need a correction of about 1° to seem more accurate
 		var g = window.location.search.match(/apollo=([0-9]+)/);
 		var apolloNumber = (g && g[1]) || '8';
 		var earthRadius = common.earth.radius;
@@ -17,6 +16,12 @@ define(
 		var apolloTLIOrbit = nasaNumbers.get('TLI', 'Apollo'+apolloNumber);
 		var epoch = apolloTLIOrbit.epoch;
 
+		//apollo 8, 10, 12, 15, 16 work better with moon position calculated from physics
+		//apollo 11, 14 work better with moon position always calculated from elements
+		//apollo 13, 17 don't work at all
+		//I chose to use the way it works better for each mission. Even if it seems like cheating, the goal of the simulation is to show an approximation of the free return trajectory, and it does not pretend to be as accurate as Nasa could get it. All the numbers involved come from different sources, and I don't know how accurate they are anyway, so better show something plausible instead of seeking perfect accuracy. 
+		var calculateFromElements = [11, 14].indexOf(Number(apolloNumber)) > -1;
+		
 		var apolloBase = {
 			title : 'Apollo '+apolloNumber,
 			relativeTo : 'earth',
@@ -30,7 +35,7 @@ define(
 			},
 			logForces : true
 		};
-		var dbg;
+
 		var apolloTLI = _.extend(
 			{},
 			apolloBase,
@@ -41,8 +46,6 @@ define(
 				customAfterTick : function(elapsedTime, absoluteDate, deltaT){
 					var dist;
 
-					
-					
 					if(!this.data.isOnReturnTrip) {
 						if(!this.data.hasTLILabel && this.relativePosition.x != 0){
 							Labels.addEventLabel('Trans Lunar Injection', this.relativePosition.clone(), ns.U.getBody(this.relativeTo));
@@ -63,22 +66,10 @@ define(
 							this.data.isOnReturnTrip = true;
 							//ns.U.stop();
 						}
-						/*
-						if(((dist)/1.60934)<= (32999)) {
-							dbg.text(((dist/1.60934))+' miles from moon, '+(this.speed*3.28084)+' ft/s ('+(moonSpeed*3.28084)+' ft/s rel to moon)'); 
-							ns.U.playing=false;
-						}/**/
 
 						this.data.lastMoonDist = dist;
 						this.data.minMoonSpeed = !this.data.minMoonSpeed || (this.data.minMoonSpeed > moonSpeed) ? moonSpeed : this.data.minMoonSpeed;
 						this.data.minSpeed = !this.data.minSpeed || (this.data.minSpeed > this.speed) ? this.speed : this.data.minSpeed;
-
-						/*dbg = dbg || $('<div style="position:absolute;top:60px;left:20px">').appendTo('body');
-						this.data.maxspeed = this.data.maxspeed || 0;
-						if(this.data.maxspeed < this.speed) this.data.maxspeed = this.speed;  /**/
-						//dbg.text((this.speed*3.28084)+' ft/s'); 
-						//dbg.html((this.speed)+' m/s ( max '+this.data.maxspeed+' )<br>moon speed '+moonSpeed+ '( min '+this.data.minMoonSpeed+' )');
-
 
 					} else {
 						dist = (Math.abs(this.position.clone().sub(ns.U.getBody('earth').position).length()) / 1000 ) - ns.U.getBody('earth').radius;
@@ -101,22 +92,25 @@ define(
 			usePhysics : true,
 			name : 'Apollo',
 			title : 'Apollo '+apolloNumber+' free return trajectory',
-			commonBodies : ['earth', 'moon'/*, 'sun', 'mercury', 'venus', 'mars'/**/],
-			secondsPerTick : 100,
-			calculationsPerTick : 10,
+			commonBodies : ['earth', 'moon'],
+			secondsPerTick : 200,
+			calculationsPerTick : 100,
 			calculateAll : true,
 			forcedGuiSettings : {
 				date: epoch//epoch
 			},
 			bodies : {
 				earth:{
-					isStill : true
-				},/**/		
+				
+				},
+				moon : {
+					calculateFromElements : calculateFromElements
+				},		
 				apolloTLI : _.extend({},
 					apolloTLI,
 					apolloTLIOrbit,
 					{
-						title : 'Apollo '+apolloNumber,
+						title : 'Apollo '+ apolloNumber,
 					}
 				)/*,
 				apolloEO : _.extend({},

@@ -79,8 +79,9 @@ define(
 			positionRelativeTo : function(){
 				if(this.relativeTo) {
 					var central = ns.U.getBody(this.relativeTo);
-					if(central && central!==ns.U.getBody()) {
+					if(central && central!==ns.U.getBody()/**/) {
 						this.position.add(central.position);
+						//console.log(this.name+' pos rel to ' + this.relativeTo);
 						this.velocity && central.velocity && this.velocity.add(central.velocity);
 					}
 				}
@@ -193,6 +194,10 @@ define(
 
 			getPosition : function(){
 				return this.position.clone();
+			},
+
+			getVelocity : function(){
+				return this.velocity && this.velocity.clone();
 			},
 			//return true/false if this body is orbiting the requested body
 			isOrbitAround : function(celestial){

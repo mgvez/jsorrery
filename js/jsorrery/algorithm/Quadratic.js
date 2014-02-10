@@ -25,7 +25,7 @@ define(
 			//find accel at t0 and pos at t0.5
 			for(i=0; i<this.bodies.length; i++){
 				b = this.bodies[i];
-
+				if(b.isStill) continue;
 				b.beforeMove(deltaT);
 
 				if(b.calculateFromElements) {
@@ -39,7 +39,7 @@ define(
 						b.position.clone(),
 						//pos0.5 = pos0 + ((deltat/2) * vel0) + (0.5 * Math.pow((deltat / 2), 2)) * accel);
 						b.position.clone()
-							.add(b.velocity.clone().multiplyScalar(this.halfDeltaT))
+							.add(b.getVelocity().multiplyScalar(this.halfDeltaT))
 							.add(n[i].accel[0].clone().multiplyScalar(this.onehalf_halfDeltaTSq))
 					];
 					b.position.copy(n[i].pos[1]);
@@ -52,6 +52,7 @@ define(
 			//find accel at t0.5 and positions at t1
 			for(i=0; i<this.bodies.length; i++){
 				b = this.bodies[i];
+				if(b.isStill) continue;
 				if(b.calculateFromElements) {
 					b.setPositionFromDate(epochTime + deltaT);
 				} else {
@@ -60,7 +61,7 @@ define(
 					//pos1 = pos0 + (vel0 * deltat) + (accel05 * 0.5 * Math.pow(deltaT, 2))
 					n[i].pos.push(
 						n[i].pos[0].clone()
-							.add(b.velocity.clone().multiplyScalar(deltaT))
+							.add(b.getVelocity().multiplyScalar(deltaT))
 							.add(n[i].accel[1].clone().multiplyScalar(this.onehalf_deltaTSq))
 					);
 					b.position.copy(n[i].pos[2]);
@@ -73,6 +74,7 @@ define(
 			//find accel at t1
 			for(i=0; i<this.bodies.length; i++){
 				b = this.bodies[i];
+				if(b.isStill) continue;
 				if(!b.calculateFromElements) {
 					n[i].accel.push(b.force.clone().multiplyScalar(b.invMass));
 				}
@@ -83,7 +85,7 @@ define(
 			for(i=0; i<this.bodies.length; i++){		
 
 				b = this.bodies[i];
-				if(!b.calculateFromElements) {
+				if(!b.calculateFromElements  && !b.isStill) {
 					c1 = n[i].accel[0].clone().multiplyScalar(-3)
 						.sub(n[i].accel[2])
 						.add(n[i].accel[1].clone().multiplyScalar(4))
@@ -100,7 +102,7 @@ define(
 						.add(c1.clone().multiplyScalar((this.onehalf_deltaTSq)))
 						.add(c2.clone().multiplyScalar((this.onethird_deltaT3rd)));
 
-					deltaP = b.velocity.clone()
+					deltaP = b.getVelocity()
 						.multiplyScalar(deltaT)
 						.add(n[i].accel[0].clone().multiplyScalar(this.onehalf_deltaTSq))
 						.add(c1.clone().multiplyScalar((this.onesixth_deltaT3rd)))

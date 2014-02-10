@@ -21,6 +21,7 @@ define(
 			init : function(scenario, qstrSettings){
 				ResourceLoader.reset();
 				this.name = scenario.name;
+				this.scenario = scenario;
 				var initialSettings = _.extend({}, scenario.defaultGuiSettings, qstrSettings, scenario.forcedGuiSettings);
 				//console.log(initialSettings);
 				Gui.setDefaults(initialSettings);
@@ -60,7 +61,6 @@ define(
 				this.scene.createStage(scenario);
 
 				this.initBodies(scenario);
-				this.scene.setCentralBody(this.centralBody);
 				Ticker.setSecondsPerTick(scenario.secondsPerTick);
 				Ticker.setCalculationsPerTick(scenario.calculationsPerTick || ns.defaultCalculationsPerTick);
 				var onSceneReady = ResourceLoader.getOnReady();
@@ -95,7 +95,7 @@ define(
 				var bodies = [];
 				this.bodies = {};
 				
-				$.each(scenario.bodies, function(name, config){
+				_.each(scenario.bodies, function(config, name){
 					var body = Object.create(CelestialBody);
 					$.extend(body, config);
 					body.name = name;
@@ -111,7 +111,7 @@ define(
 
 			initBodies : function(scenario){
 
-				$.each(this.bodies, function(name, body){
+				_.each(this.bodies, function(body, name){
 					if((typeof scenario.calculateAll === 'undefined' || !scenario.calculateAll) && !body.isCentral){
 						body.mass = 1;
 					}
@@ -120,26 +120,65 @@ define(
 					
 				}.bind(this));
 
+				this.setBarycenter();
+
 				//after all is inialized
-				$.each(this.bodies, function(name, body){
+				_.each(this.bodies, function(body, name){
 					this.scene.addBody(body);
 					body.afterInitialized();
 					//console.log(body.name, body.isCentral);
 				}.bind(this));
 				
+				this.scene.setCentralBody(this.centralBody);
+
 				Ticker.setBodies(this.bodies);
+			},
+			/* balance the system by calculating hte masses of the non-central bodies and placing the central body to balance it.*/
+			setBarycenter : function(){
+				var central = this.centralBody;
+				if(!this.usePhysics || central.isStill || this.scenario.useBarycenter === false) return;
+				var massRatio;
+				var massCenter = {
+					mass : 0,
+					pos : new THREE.Vector3(),
+					momentum : new THREE.Vector3()
+				};
+				_.each(this.bodies, function(b){
+					if(b === central) return;
+					massCenter.mass += b.mass;
+					massRatio = b.mass / massCenter.mass;
+					massCenter.pos = massCenter.pos.add(b.getPosition().multiplyScalar(massRatio));
+					massCenter.momentum = massCenter.momentum.add(b.getVelocity().multiplyScalar(b.mass));
+				});
+
+				massCenter.momentum.multiplyScalar(1 / massCenter.mass);
+				massRatio = massCenter.mass / central.mass;
+				central.velocity = massCenter.momentum.multiplyScalar(massRatio * -1);
+				central.position = massCenter.pos.clone().multiplyScalar(massRatio * -1);
+				_.each(this.bodies, function(b){
+					if(b === central || (b.relativeTo && b.relativeTo != central.name)) return;
+					b.velocity.add(central.velocity);
+					//if central body's mass is way bigger than the object, we assume that the central body is the center of rotation. Otherwise, it's the barycenter
+					if(central.mass / b.mass > 10e10) {
+						b.position.add(central.position);
+					} else if(b.relativeTo === central.name) {
+						b.relativeTo = false;
+					}
+				});
 			},
 
 			repositionBodies : function(){
-				$.each(this.bodies, function(name, body){
+				_.each(this.bodies, function(body, name){
 					body.reset();
 					body.setPositionFromDate(this.currentTime, true);
 				}.bind(this));
 
 				Ticker.tick(false, this.currentTime);
 
+				this.setBarycenter();
+
 				//adjust position depending on other bodies' position (for example a satellite is relative to its main body)
-				$.each(this.bodies, function(name, body){
+				_.each(this.bodies, function(body, name){
 					body.afterInitialized();
 				}.bind(this));
 			},
@@ -196,6 +235,10 @@ define(
 				}
 				
 				requestAnimFrame(this.ticker);
+			},
+
+			getScene : function(){
+				return this.scene;
 			},
 
 			getEpochTime : function(userDate) {

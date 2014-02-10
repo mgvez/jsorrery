@@ -21,6 +21,7 @@ define(
 		'use strict';
 
 		var stats;
+		var renderer;
 
 		var drawBody = function(b){
 			b.drawMove();
@@ -34,12 +35,12 @@ define(
 				this.container = $('<div id="universe" width="'+this.width+'" height="'+this.height+'">').appendTo('body');
 				this.root = new THREE.Scene();				
 
-				this.renderer = new THREE.WebGLRenderer({antialias: true, preserveDrawingBuffer: true});
+				renderer = renderer || new THREE.WebGLRenderer({antialias: true, preserveDrawingBuffer: true});
 
-				if(ns.capture) this.screenshot = Object.create(Screenshot).init(this.renderer);
+				if(ns.capture) this.screenshot = Object.create(Screenshot).init(renderer);
 
-				//this.renderer.shadowMapEnabled = true;
-				this.renderer.setSize(this.width, this.height);
+				//renderer.shadowMapEnabled = true;
+				renderer.setSize(this.width, this.height);
 
 				var ambiance = new THREE.DirectionalLight(0xFFFFFF, 0.1);
 				ambiance.position.x = 0;
@@ -54,7 +55,7 @@ define(
 					$('body').append( stats.domElement );
 				}
 
-				this.container.append(this.renderer.domElement);
+				this.container.append(renderer.domElement);
 				
 				Gui.addSlider(Gui.PLANET_SCALE_ID, function(val){
 					_.each(this.bodies3d, function(body3d){
@@ -126,7 +127,7 @@ define(
 				} else if(this.sun){
 					var sunPos = this.centralBody.getBody3D().getPosition();
 					this.sun.setPosition(sunPos);/**/
-					this.sun.setFlarePosition(camPos.clone().multiplyScalar(0.2));/**/
+					this.sun.setFlarePosition(camPos.clone().sub(sunPos).multiplyScalar(0.2));/**/
 					this.sun.setFlareSize(this.centralBody.getBody3D().getScreenSizeRatio(camPos, CameraManager.getCamera().fov), this.height);/**/
 				}
 
@@ -135,7 +136,7 @@ define(
 				//center the milkyway to the camera position, to make it look infinite
 				this.milkyway && this.milkyway.setPosition(camPos);
 
-				this.renderer.render(this.root, CameraManager.getCamera());
+				renderer.render(this.root, CameraManager.getCamera());
 				this.screenshot && this.screenshot.capture();
 
 				//place planets labels. We need the camera position relative to the world in order to compute planets screen sizes, and hide/show labels depending on it
@@ -172,6 +173,10 @@ define(
 				TracerManager.addBody(body3d);
 			},
 
+			getRoot : function(){
+				return this.root;
+			},
+
 			setCentralBody : function(centralBody){
 				this.centralBody = centralBody;
 				//make sure that any celestial body cannot be larger than the central celestial body
@@ -189,7 +194,6 @@ define(
 				//console.log(maxScaleVal);
 				this.setSun();
 			},
-
 
 			kill : function(){
 				CameraManager.kill();

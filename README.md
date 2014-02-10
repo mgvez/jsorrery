@@ -14,6 +14,7 @@ Credits
 * Stars coordinates from [AstroNexus](http://astronexus.com/) and [Nasa](http://heasarc.gsfc.nasa.gov/docs/archive.html).
 * David Eagle for orbital calculations of the moon, based on "Lunar Tables and Programs From 4000 B.C. TO A.D. 8000" by Michelle Chapront-Touze and Jean Chapront. See [mathworks.com](http://www.mathworks.com/matlabcentral/fileexchange/39130-orbital-elements-of-the-moon).
 * Bob Braeunig for calculations of [Apollo missions free return trajectories](http://www.braeunig.us/apollo/).
+* Quadratic integrations from [http://orbit.medphys.ucl.ac.uk/](Orbiter)'s documentaion by Martin Schweiger.
 * Some techniques are inspired by Michael Chang's [tutorial](http://www.html5rocks.com/en/tutorials/casestudies/100000stars/) of [100,000 stars](http://workshop.chromeexperiments.com/stars/)
 * And of course, many thanks to [Mr Doob](http://www.mrdoob.com/) for the excellent [three.js](http://threejs.org/)
 

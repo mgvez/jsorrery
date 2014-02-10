@@ -173,7 +173,7 @@ define(
 			bodies : bodies,
 			secondsPerTick : 3600,
 			defaultGuiSettings : { 
-				planetScale : 10
+				planetScale : 1
 			},
 			help : "This scenario shows the next 10 passages closer than 0.05 AU of near Earth objects from Nasa's Near Earth Object Project (<a href=\"http://neo.jpl.nasa.gov/\" target=\"_blank\">http://neo.jpl.nasa.gov/</a>."
 		};

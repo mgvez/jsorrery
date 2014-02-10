@@ -77,7 +77,7 @@ define(
 			calculaionsPerTick : 100,
 			usePhysics: true,
 			calculateAll : true,
-			setBarycenter : false,
+			useBarycenter : false,
 			defaultGuiSettings : { 
 				planetScale : 10
 			},

@@ -81,7 +81,7 @@ define(
 					var central = ns.U.getBody(this.relativeTo);
 					if(central && central!==ns.U.getBody()/**/) {
 						this.position.add(central.position);
-						console.log(this.name+' pos rel to ' + this.relativeTo);
+						//console.log(this.name+' pos rel to ' + this.relativeTo);
 						this.velocity && central.velocity && this.velocity.add(central.velocity);
 					}
 				}

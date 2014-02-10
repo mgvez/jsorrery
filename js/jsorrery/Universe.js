@@ -21,6 +21,7 @@ define(
 			init : function(scenario, qstrSettings){
 				ResourceLoader.reset();
 				this.name = scenario.name;
+				this.scenario = scenario;
 				var initialSettings = _.extend({}, scenario.defaultGuiSettings, qstrSettings, scenario.forcedGuiSettings);
 				//console.log(initialSettings);
 				Gui.setDefaults(initialSettings);
@@ -112,7 +113,6 @@ define(
 
 				_.each(this.bodies, function(body, name){
 					if((typeof scenario.calculateAll === 'undefined' || !scenario.calculateAll) && !body.isCentral){
-						console.log(body.name, 1);
 						body.mass = 1;
 					}
 					body.init();
@@ -133,10 +133,10 @@ define(
 
 				Ticker.setBodies(this.bodies);
 			},
-
+			/* balance the system by calculating hte masses of the non-central bodies and placing the central body to balance it.*/
 			setBarycenter : function(){
 				var central = this.centralBody;
-				if(!this.usePhysics || central.isStill) return;
+				if(!this.usePhysics || central.isStill || this.scenario.useBarycenter === false) return;
 				var massRatio;
 				var massCenter = {
 					mass : 0,
@@ -159,8 +159,7 @@ define(
 					if(b === central || (b.relativeTo && b.relativeTo != central.name)) return;
 					b.velocity.add(central.velocity);
 					//if central body's mass is way bigger than the object, we assume that the central body is the center of rotation. Otherwise, it's the barycenter
-					if(central.mass / b.mass > 100000) {
-						
+					if(central.mass / b.mass > 10e10) {
 						b.position.add(central.position);
 					} else if(b.relativeTo === central.name) {
 						b.relativeTo = false;

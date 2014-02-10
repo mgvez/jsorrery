@@ -8,7 +8,6 @@ define(
 		'jsorrery/graphics2d/Labels'
 	], 
 	function(ns, common, nasaNumbers, Labels) {
-		//apollo 10, 11, 13 & 17 don't work. 13 and 17 in particular seem to have errors in the numbers, as the orbits are very far from the moon. 10 & 11 need a correction of about 1° to seem more accurate
 		var g = window.location.search.match(/apollo=([0-9]+)/);
 		var apolloNumber = (g && g[1]) || '8';
 		var earthRadius = common.earth.radius;
@@ -17,6 +16,12 @@ define(
 		var apolloTLIOrbit = nasaNumbers.get('TLI', 'Apollo'+apolloNumber);
 		var epoch = apolloTLIOrbit.epoch;
 
+		//apollo 8, 10, 12, 15, 16 work better with moon position calculated from physics
+		//apollo 11, 14 work better with moon position always calculated from elements
+		//apollo 13, 17 don't work at all
+		//I chose to use the way it works better for each mission. Even if it seems like cheating, the goal of the simulation is to show an approximation of the free return trajectory, and it does not pretend to be as accurate as Nasa could get it. All the numbers involved come from different sources, and I don't know how accurate they are anyway, so better show something plausible instead of seeking perfect accuracy. 
+		var calculateFromElements = [11, 14].indexOf(Number(apolloNumber)) > -1;
+		
 		var apolloBase = {
 			title : 'Apollo '+apolloNumber,
 			relativeTo : 'earth',
@@ -88,8 +93,8 @@ define(
 			name : 'Apollo',
 			title : 'Apollo '+apolloNumber+' free return trajectory',
 			commonBodies : ['earth', 'moon'],
-			secondsPerTick : 100,
-			calculationsPerTick : 10,
+			secondsPerTick : 200,
+			calculationsPerTick : 100,
 			calculateAll : true,
 			forcedGuiSettings : {
 				date: epoch//epoch
@@ -99,7 +104,7 @@ define(
 				
 				},
 				moon : {
-					calculateFromElements : false
+					calculateFromElements : calculateFromElements
 				},		
 				apolloTLI : _.extend({},
 					apolloTLI,

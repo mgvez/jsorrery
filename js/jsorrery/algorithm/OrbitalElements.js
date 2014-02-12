@@ -200,20 +200,6 @@ define(
 				computed.w = ns.DEG_TO_RAD * computed.w;
 				computed.M = ns.DEG_TO_RAD * computed.M;
 
-				/*
-				computed.E = computed.M + computed.e * Math.sin(computed.M) * (1 + computed.e * Math.cos(computed.M));
-
-				var En = computed.E;
-				var dE = 0;
-				var dM;
-				var i = 0;
-				do{
-					En = En + dE;
-					dM = computed.M - (En - computed.e * Math.sin(En));
-					dE = dM / (1 - (computed.e * Math.cos(En)));
-					i++;
-				} while(Math.abs(dE) > maxDE && i <= maxIterationsForEccentricAnomaly);/**/
-
 				computed.E = this.solveEccentricAnomaly(computed.e, computed.M);
 
 				computed.E = computed.E % ns.CIRCLE;
@@ -240,26 +226,13 @@ define(
 
 				if(!computed) return new THREE.Vector3(0,0,0);
 
-				var quats = [];
-				//if object is orbiting a tilted body, we need to rotate to that value first
-				if(computed.tilt){
-					quats.push(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), computed.tilt));
-				}
+				var a1 = new THREE.Euler(computed.tilt || 0, 0, computed.o, 'XYZ');
+				var q1 = new THREE.Quaternion().setFromEuler(a1);
+				var a2 = new THREE.Euler(computed.i, 0, computed.w, 'XYZ');
+				var q2 = new THREE.Quaternion().setFromEuler(a2);
 
-				//add, in order, the rotations for longitude of ascending node, inclination and arg of periapsis
-				quats.push(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), computed.o));
-				quats.push(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), computed.i));
-				quats.push(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), computed.w));
-				var planeQuat = new THREE.Quaternion();
-
-				planeQuat.multiplyQuaternions(quats.shift(), quats.shift());
-				var q;
-				while(q = quats.shift()){
-					planeQuat.multiply(q);
-				}
-							
+				var planeQuat = new THREE.Quaternion().multiplyQuaternions(q1, q2);
 				computed.pos.applyQuaternion(planeQuat);
-
 				return computed.pos;
 			},
 

@@ -47,7 +47,6 @@ define(
 
 				this.ticker = this.tick.bind(this);
 				
-				this.deltaT = scenario.secondsPerTick;
 				this.playing = false;
 				this.epochTime = 0;
 
@@ -61,7 +60,7 @@ define(
 				this.scene.createStage(scenario);
 
 				this.initBodies(scenario);
-				Ticker.setSecondsPerTick(scenario.secondsPerTick);
+				Ticker.setSecondsPerTick(scenario.secondsPerTick.initial);
 				Ticker.setCalculationsPerTick(scenario.calculationsPerTick || ns.defaultCalculationsPerTick);
 				var onSceneReady = ResourceLoader.getOnReady();
 
@@ -71,6 +70,11 @@ define(
 					this.scene.setCameraDefaults(initialSettings.cameraSettings);
 					this.scene.draw();
 					this.tick();
+				}.bind(this));
+
+				//delta T slider
+				Gui.addSlider(Gui.DELTA_T_ID, scenario.secondsPerTick, function(val){
+					Ticker.setSecondsPerTick(val);
 				}.bind(this));
 
 				return onSceneReady.promise();
@@ -223,7 +227,7 @@ define(
 				if(this.killed) return;
 				if(this.playing) {
 					
-					this.epochTime += this.deltaT;
+					this.epochTime += Ticker.getDeltaT();
 					this.currentTime = this.startEpochTime + this.epochTime;
 					Ticker.tick(this.usePhysics, this.currentTime);
 					

@@ -171,7 +171,7 @@ define(
 				'mars'
 			],
 			bodies : bodies,
-			secondsPerTick : 3600,
+			secondsPerTick : {min: 60, max: 3600 * 5, initial:3600},
 			defaultGuiSettings : { 
 				planetScale : 1
 			},

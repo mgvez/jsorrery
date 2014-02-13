@@ -31,7 +31,7 @@ define(
 				'pluto',
 				'halley'
 			],
-			secondsPerTick : 3600 * 5,
+			secondsPerTick : {min: 3600*5, max: 3600 * 25, initial:3600 * 10},
 			defaultGuiSettings : { 
 				planetScale : 10
 			},

@@ -42,13 +42,8 @@ define(
 				//renderer.shadowMapEnabled = true;
 				renderer.setSize(this.width, this.height);
 
-				var ambiance = new THREE.DirectionalLight(0xFFFFFF, 0.1);
-				ambiance.position.x = 0;
-				ambiance.position.y = 5 * this.stageSize;
-				ambiance.position.z = 5 * this.stageSize;
-
 				var light = new THREE.AmbientLight( 0x202020 );
-				this.root.add( light );
+				this.root.add( light );/**/
 
 				if(!stats) {
 					stats = new Stats();
@@ -57,7 +52,8 @@ define(
 
 				this.container.append(renderer.domElement);
 				
-				Gui.addSlider(Gui.PLANET_SCALE_ID, function(val){
+				//planet scale
+				Gui.addSlider(Gui.PLANET_SCALE_ID, null, function(val){
 					_.each(this.bodies3d, function(body3d){
 						body3d.setScale(val);
 					});

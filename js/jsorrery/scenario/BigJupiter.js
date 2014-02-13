@@ -73,7 +73,7 @@ define(
 					traceRelativeTo : 'universe'
 				}
 			},/**/
-			secondsPerTick : 3600 * 5,
+			secondsPerTick : {min: 3600, max: 3600 * 15, initial:3600 * 5},
 			calculaionsPerTick : 100,
 			usePhysics: true,
 			calculateAll : true,

@@ -247,8 +247,8 @@ define(
 					value : defaultVal || (options && options.initial) || 1
 				};
 
-				if(options.min) params.min = options.min;
-				if(options.max) params.max = options.max;
+				if(options && options.min) params.min = options.min;
+				if(options && options.max) params.max = options.max;
 
 				var slider = $('<div>').appendTo(container).slider(params);
 

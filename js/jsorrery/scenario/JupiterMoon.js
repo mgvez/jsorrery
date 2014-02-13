@@ -112,7 +112,7 @@ define(
 					}
 				}
 			},
-			secondsPerTick : 500
+			secondsPerTick : {min: 100, max: 3600, initial: 500}
 		};
 
 

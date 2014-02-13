@@ -39,8 +39,12 @@
 					<div id="lookAtCont" class="inputContainer"></div>
 				</label>
 				<label id="planetScaleLabel">
-					<div>Planet Scale <span class="valDisplay"></span> <span class="help" data-for="helpScale">&#59140;</span></div>
+					<div>Planet Scale <span class="valDisplay"></span>x <span class="help" data-for="helpScale">&#59140;</span></div>
 					<div id="planetScaleCont" class="inputContainer"></div>
+				</label>
+				<label id="deltaTLabel">
+					<div>Animation speed <span class="help" data-for="helpDeltaT">&#59140;</span></div>
+					<div id="deltaTCont" class="inputContainer"></div>
 				</label>
 
 				<label id="shareLabel">
@@ -66,7 +70,7 @@
 			<a class="close">&#10062;</a>
 			<h2>Date</h2>
 			<p>The <a href="http://en.wikipedia.org/wiki/Orbital_elements" target="_blank">orbital elements</a> of the planets are used to calculate their original position when picking a date. These calculations produce a very good approximation of the positions : you can compare the stars and constellations that you see in the background from other sources, provided that you place the point of view on The Earth.</p>
-			<p>The velocity of each planet is also derived from these calculations, so that when the animation is playing, the positions are no longer calculated from the elements, but from the gravity that is acting between the different bodies. The calculation of these forces is also an approximation using a simple Verlet algorithm, and its precision decays over time. This decay is more pronounced in some scenarios.</p>
+			<p>Some scenarios are set to be animated by calculating positions from the orbital elements, but in some cases the velocity of each planet is derived from these calculations so that the positions are no longer calculated from the elements, but from the gravity that is acting between the different bodies. The calculation of these forces is also an approximation using a Quadratic integration, and its precision decays over time. This decay is more pronounced in some scenarios.</p>
 			<p>You can find on the internet the dates of celestial events, for example eclipses or lunar phases, and check if you can observe them in this simulation.</p>
 		</div>
 		<div class="helpContent" id="helpLookFrom">
@@ -86,6 +90,11 @@
 			<h2>Planet scale</h2>
 			<p>When the scale is at 1x, the planets sizes are in 1:1 scale to the size of the orbits, and of the universe. Since the distances in the Solar System are so huge, we can't even see the planets at this scale, so I made it possible to make the planets larger to see them more easily. I left the possibility to view them at their real size, because I feel it gives a better hint about the vastness of our Solar System.</p>
 		</div>
+		<div class="helpContent" id="helpDeltaT">
+			<a class="close">&#10062;</a>
+			<h2>Speed</h2>
+			<p>Move the slider to change animation speed. Depending on the scenario, precision of positions can decay with increased speed.</p>
+		</div>
 		<div class="helpContent" id="helpCredits">
 			<a class="close">&#10062;</a>
 			<h2>Credits</h2>
@@ -104,6 +113,7 @@
 				<li>Stars coordinates from <a href="http://astronexus.com/">AstroNexus</a> and <a href="http://heasarc.gsfc.nasa.gov/docs/archive.html">Nasa</a>.</li>
 				<li>David Eagle for orbital calculations of the moon, based on "Lunar Tables and Programs From 4000 B.C. TO A.D. 8000" by Michelle Chapront-Touze and Jean Chapront. See <a href="http://www.mathworks.com/matlabcentral/fileexchange/39130-orbital-elements-of-the-moon">mathworks.com</a>.</li>
 				<li><a href="http://www.braeunig.us/apollo/">Bob Braeunig</a> for calculations of Apollo missions trans lunar injection trajectories.</li>
+				<li>Quadratic integrations from <a href="http://orbit.medphys.ucl.ac.uk/">Orbiter</a>'s documentaion by Martin Schweiger.</li>
 				<li><a href="http://clowder.net/hop/index.html">Hop David</a> for vis viva calculation of velocity.</li>
 				<li>I have found answers to many questions on random places across the internetz, places like <a href="http://stackoverflow.com">StackOverflow</a> or <a href="http://www.orbiter-forum.com/">Orbiter Forum</a>. There are a lot of helpful people out there.</li>
 				<li>Some techniques are inspired by Michael Chang's <a href="http://www.html5rocks.com/en/tutorials/casestudies/100000stars/">tutorial</a> of <a href="http://workshop.chromeexperiments.com/stars/">100,000 stars</a></li>

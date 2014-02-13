@@ -14,6 +14,7 @@ define(
 		*/
 
 		var calculationsPerTick = 1;
+		var actualCalculationsPerTick = 1;
 		var secondsPerTick = 1;
 		var deltaTIncrement = 1;
 		var bodies = [];
@@ -21,11 +22,17 @@ define(
 		
 		var setDT = function (){
 			if(!calculationsPerTick || !secondsPerTick) return;
-			deltaTIncrement = secondsPerTick / calculationsPerTick;
+			if(secondsPerTick < calculationsPerTick) {
+				actualCalculationsPerTick = secondsPerTick;
+			} else {
+				actualCalculationsPerTick = calculationsPerTick;
+			}
+			deltaTIncrement = Math.round(secondsPerTick / actualCalculationsPerTick);
+			secondsPerTick = deltaTIncrement * actualCalculationsPerTick;
 		};
 		
 		var moveByGravity = function(epochTime){
-			for(var t=0; t < calculationsPerTick; t++){
+			for(var t=1; t <= actualCalculationsPerTick; t++){
 				integration.moveBodies(epochTime + (t * deltaTIncrement), deltaTIncrement);
 			}
 		};
@@ -68,6 +75,10 @@ define(
 			setSecondsPerTick : function(s) {
 				secondsPerTick = s;
 				setDT();
+			},
+
+			getDeltaT : function(){
+				return secondsPerTick;
 			}
 		};
 

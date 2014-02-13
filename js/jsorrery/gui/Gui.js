@@ -94,6 +94,7 @@ define(
 			DATE_ID : 'date',
 			LOOKAT_ID : 'lookAt',
 			LOOKFROM_ID : 'lookFrom',
+			DELTA_T_ID : 'deltaT',
 
 			init : function(universe){
 				this.root = $('#gui');
@@ -230,27 +231,31 @@ define(
 				return date;
 			},
 
-			addSlider : function(id, onChange) {
+			addSlider : function(id, options, onChange) {
 				removeElement(id);
 				var container = getContainer(id);
-				var valDisplay = getLabel(id).find('.valDisplay').text('1x');
+				var valDisplay = getLabel(id).find('.valDisplay').text('1');
 
 				var defaultVal = Number(this.defaultSettings[id]);
-
-				var slider = $('<div>').appendTo(container).slider({
+				var params = {
 					slide : function(evt, ui){
 						var val = ui.value;
 						val = val < 1 ? 1 : val;
 						ExportValues.setVal(id, val);
 						setSlideValue(val);
 					},
-					value : defaultVal || 1
-				});
+					value : defaultVal || (options && options.initial) || 1
+				};
+
+				params.min = options && options.min;
+				params.max = options && options.max;
+
+				var slider = $('<div>').appendTo(container).slider(params);
 
 				elements[id] = slider;
 
 				var setSlideValue = function(val){
-					valDisplay.text(val+'x');
+					valDisplay.text(val);
 					onChange(val);
 				};
 

@@ -15,7 +15,7 @@ a{color:#fff}
 #credits{position:absolute;bottom:10px;right:10px;cursor:pointer}
 .ui-datepicker{background:rgba(25,25,25,0.95);border:1px #333 solid;padding:20px;display:none}.ui-datepicker td{width:18px;height:18px;text-align:center;background:rgba(255,255,255,0.1)}
 .ui-datepicker a{color:white;text-decoration:none}
-.ui-slider{border-bottom:1px #333 solid;height:10px;position:relative;width:200px}.ui-slider .ui-slider-handle{background:#333;width:10px;height:10px;-webkit-border-radius:50%;-moz-border-radius:50%;border-radius:50%;position:absolute;top:6px}
+.ui-slider{border-bottom:1px #333 solid;height:10px;position:relative;width:100px}.ui-slider .ui-slider-handle{background:#333;width:10px;height:10px;-webkit-border-radius:50%;-moz-border-radius:50%;border-radius:50%;position:absolute;top:6px}
 nav{position:absolute;z-index:500;top:0;left:0;height:45px;width:100%;background:rgba(0,0,0,0.3);border-bottom:1px #555 solid}nav .help{top:-2px;display:inline-block;font-family:"EntypoRegular";font-size:18px;line-height:inherit;height:18px;width:18px;margin-left:3px;font-weight:normal;cursor:pointer;opacity:0.7}nav .help:hover{opacity:1}
 nav #gui{padding:3px}nav #gui .inputContainer{position:relative;min-height:20px}
 nav #gui .dropdown .display,nav #gui .dropdown li{cursor:pointer;overflow:hidden}
@@ -25,7 +25,8 @@ nav #gui .dropdown ul li.disabled{font-weight:normal;color:#aaa;opacity:0.4}
 nav #gui .dropdown:hover ul{display:block}
 nav #gui label{position:relative;display:block;float:left;width:140px;margin:0px 8px}nav #gui label>div{display:block;font-weight:bold}
 nav #gui label#scenarioLabel{width:210px}
-nav #gui label#planetScaleLabel{width:200px}
+nav #gui label#planetScaleLabel{width:120px}
+nav #gui label#deltaTLabel{width:120px}
 nav #gui label#startLabel{width:auto}
 nav #gui label#shareLabel{float:right;width:auto}
 nav #gui input,nav #gui button{font-family:helvetica,arial,sans-serif;font-size:11px}

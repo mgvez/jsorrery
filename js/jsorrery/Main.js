@@ -41,7 +41,7 @@ define(
 			var onSceneReady;
 			if(scenarioConfig.load) {
 				onSceneReady = scenarioConfig.load();
-				onSceneReady.done(getSceneReady);
+				onSceneReady.then(getSceneReady);
 			} else {
 				onSceneReady = getSceneReady();
 			}

@@ -27,7 +27,7 @@ define(
 				Gui.setDefaults(initialSettings);
 				//Universe is, well, global
 				ns.U = this;
-
+				
 				this.usePhysics = scenario.usePhysics || ns.USE_PHYSICS_BY_DEFAULT;
 				
 				Labels.init(); 
@@ -68,6 +68,7 @@ define(
 					this.showDate();
 					Gui.putDefaults();
 					this.scene.setCameraDefaults(initialSettings.cameraSettings);
+
 					this.scene.draw();
 					this.tick();
 				}.bind(this));

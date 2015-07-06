@@ -23,13 +23,15 @@ define(
 		var onLoadError = function(jqXHR, textStatus, errorThrown){
 			alert('Error loading NEO definitions. See console.');
 			console.log(textStatus, errorThrown);
+			console.log(jqXHR);
 		};
 
+		
 
 		var onListLoaded = function(res) {
 			var html = res.results && res.results[0];
 			if(!html) return onLoadError(res, null, 'No result');
-
+			
 			var reg = /http\:\/\/ssd\.jpl\.nasa\.gov\/sbdb\.cgi\?sstr\=([^";]+)/g;
 			var matches = html.match(reg);
 			if(!matches) return onLoadError(res, null, 'No links found');
@@ -41,7 +43,7 @@ define(
 					var name = decodeURI(url.substring(url.indexOf('sstr=')+5));
 
 					var loadDef = $.ajax({
-						url: url,
+						url: url.replace(' ', ''),
 						type: 'get',
 						dataType: 'html',
 						context: {
@@ -63,7 +65,6 @@ define(
 
 
 		var onObjectLoaded = function(res) {
-
 			var html = res.results && res.results[0];
 			if(!html) return onLoadError(res, null, 'No result');
 
@@ -103,7 +104,9 @@ define(
 					if(j === 1) {
 						//period has two values, the first one is "days"
 						if(key==='period'){
-							content = content.split(/\n/);
+							//console.log(content);
+							content = cell.html().trim().replace('<br>', '--').replace(/(<([^>]+)>)/ig,"");
+							content = content.split(/--/);
 							content = content[0] && content[0].trim();
 						}
 						orbitalElements[key] = Number(content);

@@ -91,47 +91,57 @@ define(
 				this.scene.kill();
 				this.centralBody = null;
 				this.scene = null;
-				this.bodies = {};
+				this.bodies = [];
+				this.bodiesByName = {};
 
 				Labels.kill();
 			},
 
 			createBodies : function(scenario) {
-				var bodies = [];
-				this.bodies = {};
 				
-				_.each(scenario.bodies, function(config, name){
+				var bodiesNames = Object.keys(scenario.bodies);
+				this.bodies = bodiesNames.map(function(name){
+					var config = scenario.bodies[name];
 					var body = Object.create(CelestialBody);
 					$.extend(body, config);
 					body.name = name;
-					this.centralBody = this.centralBody && this.centralBody.mass > body.mass ? this.centralBody : body;
-					this.bodies[body.name] = body;
+					return body;
+				});
 
-					bodies.push(body);
-				}.bind(this));
+				this.centralBody = this.bodies.reduce(function(current, candidate) {
+					return current && current.mass > candidate.mass ? current : candidate;
+				}, null);
+
+				this.bodiesByName = this.bodies.reduce(function(byName, body) {
+					byName[body.name] = body;
+					return byName;
+				}, {});
+
+				this.bodies.sort(function(a, b){
+					return ((a.relativeTo || 0) && 1) - ((b.relativeTo || 0) && 1)
+				});
 
 				this.centralBody.isCentral = true;
-
+				// console.log(this.bodies);
 			},
 
 			initBodies : function(scenario){
-
-				_.each(this.bodies, function(body, name){
+				this.bodies.forEach(function(body){
 					if((typeof scenario.calculateAll === 'undefined' || !scenario.calculateAll) && !body.isCentral){
 						body.mass = 1;
 					}
 					body.init();
 					body.setPositionFromDate(this.currentTime, true);
-					
 				}.bind(this));
 
 				this.setBarycenter();
 
 				//after all is inialized
-				_.each(this.bodies, function(body, name){
+				this.bodies.forEach(function(body){
+					// console.log(body.name, body.isCentral);
+
 					this.scene.addBody(body);
-					body.afterInitialized();
-					//console.log(body.name, body.isCentral);
+					body.afterInitialized(true);
 				}.bind(this));
 				
 				this.scene.setCentralBody(this.centralBody);
@@ -148,7 +158,8 @@ define(
 					pos : new THREE.Vector3(),
 					momentum : new THREE.Vector3()
 				};
-				_.each(this.bodies, function(b){
+
+				this.bodies.forEach(function(b){
 					if(b === central) return;
 					massCenter.mass += b.mass;
 					massRatio = b.mass / massCenter.mass;
@@ -160,7 +171,7 @@ define(
 				massRatio = massCenter.mass / central.mass;
 				central.velocity = massCenter.momentum.multiplyScalar(massRatio * -1);
 				central.position = massCenter.pos.clone().multiplyScalar(massRatio * -1);
-				_.each(this.bodies, function(b){
+				this.bodies.forEach(function(b){
 					if(b === central || (b.relativeTo && b.relativeTo != central.name)) return;
 					b.velocity.add(central.velocity);
 					//if central body's mass is way bigger than the object, we assume that the central body is the center of rotation. Otherwise, it's the barycenter
@@ -173,9 +184,12 @@ define(
 			},
 
 			repositionBodies : function(){
-				_.each(this.bodies, function(body, name){
+				// console.log(this.bodies);
+
+				this.bodies.forEach(function(body){
 					body.reset();
 					body.setPositionFromDate(this.currentTime, true);
+					// console.log(body.name);
 				}.bind(this));
 
 				Ticker.tick(false, this.currentTime);
@@ -183,29 +197,29 @@ define(
 				this.setBarycenter();
 
 				//adjust position depending on other bodies' position (for example a satellite is relative to its main body)
-				_.each(this.bodies, function(body, name){
-					body.afterInitialized();
-				}.bind(this));
+				this.bodies.forEach(function(body){
+					body.afterInitialized(false);
+				});
 			},
 
 			getBody : function(name) {
 				if(name === 'central' || !name) {
 					return this.centralBody;
 				}
-				return this.bodies[name];
+				return this.bodiesByName[name];
 			},
 
 			calculateDimensions : function(){
 				var centralBodyName = this.getBody().name;
 				//find the largest radius in km among all bodies
-				var largestRadius = _.reduce(this.bodies, function(memo, body){
+				var largestRadius = this.bodies.reduce(function(memo, body){
 					return memo < body.radius ? body.radius : memo;
 				}, 0);
 				//find the largest semi major axis in km among all bodies
-				var largestSMA = _.reduce(this.bodies, function(memo, body){ 
+				var largestSMA = this.bodies.reduce(function(memo, body){ 
 					return (!body.isCentral && body.orbit && body.orbit.base.a > memo) ? body.orbit.base.a : memo;
 				}, 0);
-				var smallestSMA = _.reduce(this.bodies, function(memo, body){ 
+				var smallestSMA = this.bodies.reduce(function(memo, body){ 
 					return (!body.isCentral && body.orbit && (!body.relativeTo || body.relativeTo == centralBodyName) && (!memo || body.orbit.base.a < memo)) ? body.orbit.base.a : memo;
 				}, 0);
 				smallestSMA *= ns.KM;

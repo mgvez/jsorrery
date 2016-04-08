@@ -39,7 +39,7 @@ define(
 			},
 
 			setPositionFromDate : function(epochTime, calculateVelocity) {
-
+				// console.log(epochTime);
 				epochTime = this.getEpochTime(epochTime);
 				this.position = this.isCentral ? new THREE.Vector3() : this.orbitalElements.getPositionFromElements(this.orbitalElements.calculateElements(epochTime));
 				this.relativePosition = new THREE.Vector3();
@@ -65,12 +65,12 @@ define(
 				return 0;
 			},
 
-			afterInitialized : function(){
-
-				this.previousRelativePosition = this.position.clone();
-
-				this.positionRelativeTo();
-
+			afterInitialized : function(isSetRelativeTo){
+				// console.log(this.title);
+				if(isSetRelativeTo) {
+					this.previousRelativePosition = this.position.clone();
+					this.positionRelativeTo();
+				}
 				if(this.customInitialize) this.customInitialize();
 				
 				if(this.customAfterTick) this.customAfterTick(ns.U.epochTime, ns.U.date);
@@ -78,6 +78,7 @@ define(
 
 			positionRelativeTo : function(){
 				if(this.relativeTo) {
+
 					var central = ns.U.getBody(this.relativeTo);
 					if(central && central!==ns.U.getBody()/**/) {
 						this.position.add(central.position);

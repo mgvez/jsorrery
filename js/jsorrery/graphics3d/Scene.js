@@ -54,7 +54,7 @@ define(
 				
 				//planet scale
 				Gui.addSlider(Gui.PLANET_SCALE_ID, null, function(val){
-					_.each(this.bodies3d, function(body3d){
+					this.bodies3d.forEach(function(body3d){
 						body3d.setScale(val);
 					});
 					this.draw();
@@ -110,7 +110,7 @@ define(
 
 			draw : function(){
 				
-				_.each(this.bodies3d, drawBody);
+				this.bodies3d.forEach(drawBody);
 				//after all bodies have been positionned, update camera matrix (as camera might be attached to a body)
 				CameraManager.updateCameraMatrix();
 				var camPos = (CameraManager.getCamera().getAbsolutePos && CameraManager.getCamera().getAbsolutePos() ) || CameraManager.getCamera().position;
@@ -159,7 +159,7 @@ define(
 
 			addBody : function(celestialBody) {
 				var body3d = Object.create(Body3D);
-
+				// console.log(celestialBody);
 				body3d.init(celestialBody);
 				this.bodies3d.push(body3d);
 				body3d.setParentDisplayObject(this.root);
@@ -183,7 +183,7 @@ define(
 
 				var maxDim = central3d.maxScale * centralBody.radius*ns.KM;
 				var maxScaleVal = 0;
-				_.each(this.bodies3d, function(body3d){
+				this.bodies3d.forEach(function(body3d){
 					body3d.maxScale = (maxDim / (body3d.celestial.radius*ns.KM));
 					maxScaleVal = maxScaleVal > body3d.maxScale ? maxScaleVal : body3d.maxScale;
 				});

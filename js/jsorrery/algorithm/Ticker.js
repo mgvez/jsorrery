@@ -38,6 +38,7 @@ define(
 		};
 
 		var moveByElements = function(epochTime){
+			// console.log(bodies.length);
 			for(var i=0; i<bodies.length; i++){
 				bodies[i].setPositionFromDate(epochTime, false);
 			}
@@ -61,8 +62,8 @@ define(
 			
 			setBodies : function(b){
 				bodies.length = 0;
-				_.each(b, function(body, name){
-					bodies.push(body);
+				bodies = b.map(function(body){
+					return body;
 				});
 				integration = Quadratic.init(bodies);
 			},

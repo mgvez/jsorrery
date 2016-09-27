@@ -4,7 +4,6 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="author" content="Martin Vézina, La Grange">
-		<script data-main="./js/app.js" src="./js/require.js"></script>
 		<title>jsOrrery - Javascript Solar System Simulator</title>
 
 		<meta property="og:title" content="jsOrrery - Solar System Simulator" /> 
@@ -13,7 +12,9 @@
 		<meta property="og:url" content=" " />
 
 		<link href='http://fonts.googleapis.com/css?family=Quattrocento' rel='stylesheet' type='text/css'>
-
+		<script>
+			window.GreenSockGlobals = window.GreenSockGlobals || {};
+		</script>
 		<link rel="stylesheet" type="text/css" href="css/master.css">
 	</head>
 	<body>
@@ -130,6 +131,7 @@
 		</div>
 
 		<div id="credits" class="help" data-for="helpCredits">credits</div>
+		<script src="dist/bundle.js"></script>
 
 	</body>
 </html>

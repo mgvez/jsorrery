@@ -1,0 +1,57 @@
+{
+  "name": "jsorrery",
+  "title": "jsOrrery - Solar System and orbital mechanics simulator",
+  "description": "jsOrrery is a Solar System / orbital mechanics simulation, or orrery, that I wrote in WebGL and Javascript. The main feature of jsOrrery is that the planets positions are accurate in regards to the date you set, and it has the consequence that you can observe things that happen in the real Solar System.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mgvez/jsorrery.git"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "lint": "eslint src"
+  },
+  "version": "1.0.0",
+  "homepage": "http://la-grange.ca",
+  "author": {
+    "name": "Martin Vézina",
+    "email": "info@la-grange.ca"
+  },
+  "devDependencies": {
+    "autoprefixer": "^6.3.7",
+    "babel-core": "^6.11.4",
+    "babel-eslint": "^4.1.8",
+    "babel-loader": "^6.2.4",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "babel-preset-stage-1": "^6.5.0",
+    "bootstrap-sass": "^3.3.7",
+    "bootstrap-webpack": "0.0.5",
+    "csswring": "^4.2.3",
+    "eslint": "^3.2.2",
+    "eslint-config-airbnb": "^10.0.0",
+    "eslint-loader": "^1.5.0",
+    "eslint-plugin-import": "^1.12.0",
+    "eslint-plugin-jsx-a11y": "^2.0.1",
+    "eslint-plugin-react": "^6.0.0",
+    "estraverse-fb": "^1.3.1",
+    "express": "^4.14.0",
+    "express-open-in-editor": "^1.2.0",
+    "extract-text-webpack-plugin": "^0.8.2",
+    "morgan": "^1.7.0",
+    "sass-loader": "^3.2.3",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.13.1",
+    "webpack-dev-middleware": "^1.6.1",
+    "webpack-dev-server": "^1.14.1",
+    "webpack-hot-middleware": "^2.12.2"
+  },
+  "keywords": [],
+  "dependencies": {
+    "bluebird": "^3.4.1",
+    "gsap": "^1.19.0",
+    "jquery": "^3.1.0"
+  }
+}

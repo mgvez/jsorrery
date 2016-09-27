@@ -1,0 +1,32 @@
+{
+	"extends": "airbnb",
+	"parser": "babel-eslint",
+	env: {
+		"browser": true,
+	},
+	rules: {
+		"strict": [2, "global"],
+		"space-before-function-paren": [2, "never"],
+		"indent": [2, "tab"],
+		"spaced-comment": 0,
+		"padded-blocks": [0],
+		"camelcase": [0],
+		"no-nested-ternary": [0],
+		"no-unused-vars": [1],
+		"no-trailing-spaces": [0],
+		"arrow-body-style": [0],
+		"newline-per-chained-call": [0],
+		"prefer-template": [0],
+		"import/no-unresolved": [0],
+		"no-return-assign": [0],
+		"max-len": [0],
+		"global-require": [0],
+		"no-console": ["warn", { allow: ["warn", "error"] }],
+		"no-param-reassign": ["error", { "props": false }],
+		"no-underscore-dangle": ["error", { "allowAfterThis": true }],
+		"consistent-return": ["error", { "treatUndefinedAsUnspecified": true }],
+	},
+	"ecmaFeatures" : {
+		"experimentalObjectRestSpread":true
+	}
+}

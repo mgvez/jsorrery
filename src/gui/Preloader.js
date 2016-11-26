@@ -1,4 +1,5 @@
-import { TweenMax } from '../utils/Greensock';
+
+import { TweenMax } from 'gsap';
 
 let preloader;
 function getNode() {

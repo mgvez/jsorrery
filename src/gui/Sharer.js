@@ -8,22 +8,23 @@ const baseLink = `${window.location.protocol}//${window.location.host}${window.l
 
 function twitterParseAttempt() {
 	const twttr = window.twttr || null;
-	if(twttr) {
+	if (twttr) {
 		twttr.widgets.load();
-		return null;
+	} else {
+		setTimeout(twitterParseAttempt, 100);
 	}
-	setTimeout(twitterParseAttempt, 100);
-};
+}
 
 function setup() {
-	if(widget) return null;
+	if (widget) return null;
 	widget = $('#shareWidget');
 	twitterContainer = $('#twitterShare');
 	urlInput = $('#shareUrl');
 	widget.on('click.sharer', (e) => {
 		e.stopPropagation();
 	});
-};
+	return null;
+}
 
 export default {
 	
@@ -31,47 +32,44 @@ export default {
 		setup();
 
 		const exportVals = ExportValues.getExport();
-		var qstr = _.reduce(_.pairs(exportVals), function(memo, pair){
-			memo.push(pair.join('='));
-			return memo;
-		}, []).join('&');
-
+		const qstr = Object.keys(exportVals).map(key => `${key}=${exportVals[key]}`).join('&');
 		const completeLink = `${baseLink}?${qstr}`;
 
-		var onShortened = $.Deferred();
-		if(ns.gapi && ns.gapi.client.urlshortener) {
-			var request = ns.gapi.client.urlshortener.url.insert({
-				resource: {
-					longUrl: completeLink
-				}
-			});
-			request.execute(function(response) {
-				onShortened.resolve(response.id || completeLink);
-			});
+		const onShortened = new Promise(resolve => {
+			if (window.gapi && window.gapi.client.urlshortener) {
+				const request = window.gapi.client.urlshortener.url.insert({
+					resource: {
+						longUrl: completeLink,
+					},
+				});
+				request.execute((response) => {
+					resolve(response.id || completeLink);
+				});
 
-		} else {
-			onShortened.resolve(completeLink);
-		}
+			} else {
+				resolve(completeLink);
+			}
+		});
 
-		onShortened.then(function(link){
+		onShortened.then(link => {
 
 			urlInput.val(link);
-			var twLink = '<a href="https://twitter.com/share" class="twitter-share-button" data-counturl="'+baseLink+'" data-url="' + link +'" data-via="'+twitterContainer.data('via')+'">Tweet</a>';
+			const twLink = `<a href="https://twitter.com/share" class="twitter-share-button" data-counturl="${baseLink}" data-url="${link}" data-via="` + twitterContainer.data('via') + '">Tweet</a>';
 			twitterContainer.html(twLink);
 			twitterParseAttempt();
 
-			widget.fadeIn(200, function(){
+			widget.fadeIn(200, () => {
 				urlInput.get(0).select();
 			});
 
-			var b = $('html');
-			b.on('click.sharer', function(){
+			const b = $('html');
+			b.on('click.sharer', () => {
 				b.off('.sharer');
 				widget.fadeOut(200);
 			});
 
 		});
 		
-	}
+	},
 
 };

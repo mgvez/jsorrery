@@ -35,3 +35,4 @@ _unused
 _reference
 _workdir
 build
+npm-debug.log

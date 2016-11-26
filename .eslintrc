@@ -15,6 +15,7 @@
 		"no-unused-vars": [1],
 		"no-trailing-spaces": [0],
 		"arrow-body-style": [0],
+		"no-mixed-operators": [0],
 		"newline-per-chained-call": [0],
 		"prefer-template": [0],
 		"import/no-unresolved": [0],

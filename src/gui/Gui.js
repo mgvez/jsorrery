@@ -1,7 +1,7 @@
 
 import $ from 'jquery';
 import { Promise } from 'bluebird';
-import { TweenMax } from '../utils/Greensock';
+import { TweenMax } from 'gsap';
 import ExportValues from './ExportValues';
 
 const BTNS_LABELS = {
@@ -138,7 +138,7 @@ export default {
 			options: {},
 		};
 
-		const list = controls[id] = selector.list;
+		controls[id] = selector.list;
 		const input = selector.input;
 
 		selects[id].clickHandler = (e) => {

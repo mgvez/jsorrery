@@ -1,11 +1,10 @@
+
 // 		'jsorrery/Universe',
-// 		'jsorrery/gui/Gui',
-// 		'jsorrery/gui/Sharer',
-// 		'jsorrery/scenario/ScenarioLoader',
 import $ from 'jquery';
 import Gui, { SCENARIO_ID, SHARE_ID } from './gui/Gui';
 import Sharer from './gui/Sharer';
 import Preloader from './gui/Preloader';
+import ScenarioLoader from './scenario/Loader';
 
 function getQueryString() {
 	const parts = window.location.search.substr(1).split('&');

@@ -1,125 +1,113 @@
 
 // source http://ssd.jpl.nasa.gov/?sat_elem
+import { jupiter } from './CommonCelestialBodies';
 
-define(
-	[
-		'jsorrery/NameSpace',
-		'jsorrery/scenario/CommonCelestialBodies'
-	], 
-	function(ns, common) {
-
-		
-		var system =  {
-			name : 'JupiterMoon',
-			title : 'Jupiter and Gallilean satellites',
-			help : 'This scenario was included to see if it was possible to simulate <a href="http://en.wikipedia.org/wiki/Orbital_resonance" target="_blank">Laplace resonance</a>.',
-			commonBodies : ['jupiter'],
-			bodies : {
-				io : {
-					title : 'Io',
-					mass : 893.2e20,
-					radius:1821.6,
-					color : '#999999',
-					orbit: {
-						base : {
-							a : 421800,
-							e : 0.0041,
-							w : 84.129,
-							M : 342.021,
-							i : 0.036,
-							o : 43.977
-						},
-						day : {
-							a : 0,
-							e : 0,
-							i : 0,
-							M : 203.4889583,
-							w : 0,
-							o : 0
-						}	
-					}
+export default {
+	name: 'JupiterMoon',
+	title: 'Jupiter and Gallilean satellites',
+	help: 'This scenario was included to see if it was possible to simulate <a href="http://en.wikipedia.org/wiki/Orbital_resonance" target="_blank">Laplace resonance</a>.',
+	commonBodies: [jupiter],
+	bodies: {
+		io: {
+			title: 'Io',
+			mass: 893.2e20,
+			radius: 1821.6,
+			color: '#999999',
+			orbit: {
+				base: {
+					a: 421800,
+					e: 0.0041,
+					w: 84.129,
+					M: 342.021,
+					i: 0.036,
+					o: 43.977,
 				},
-				europa : {
-					title : 'Europa',
-					mass : 480.0e20,
-					radius:1560.8,
-					color : '#999999',
-					orbit: {
-						base : {
-							a : 671100,
-							e : 0.0094,
-							w : 88.970,
-							M : 171.016,
-							i : 0.466,
-							o : 219.106
-						},
-						day : {
-							a : 0,
-							e : 0,
-							i : 0,
-							M : 101.3747242,
-							w : 0,
-							o : 0
-						}	
-					}
+				day: {
+					a: 0,
+					e: 0,
+					i: 0,
+					M: 203.4889583,
+					w: 0,
+					o: 0,
 				},
-				ganymede : {
-					title : 'Ganymede',
-					mass : 1481.9e20,
-					radius:2631.2,
-					color : '#999999',
-					orbit: {
-						base : {
-							a : 1070400,
-							e : 0.0013,
-							w : 192.417,
-							M : 317.540,
-							i : 0.177,
-							o : 63.552
-						},
-						day : {
-							a : 0,
-							e : 0,
-							i : 0,
-							M : 50.3176072,
-							w : 0,
-							o : 0
-						}	
-					}
-				},
-				callisto : {
-					title : 'Callisto',
-					mass : 1075.9e20,
-					radius:2410.3,
-					color : '#999999',
-					orbit: {
-						base : {
-							a : 1882700,
-							e : 0.0074,
-							w : 52.643,
-							M : 181.408,
-							i : 0.192,
-							o : 298.848
-						},
-						day : {
-							a : 0,
-							e : 0,
-							i : 0,
-							M : 21.5710728,
-							w : 0,
-							o : 0
-						}	
-					}
-				}
 			},
-			secondsPerTick : {min: 100, max: 3600, initial: 500}
-		};
+		},
+		europa: {
+			title: 'Europa',
+			mass: 480.0e20,
+			radius: 1560.8,
+			color: '#999999',
+			orbit: {
+				base: {
+					a: 671100,
+					e: 0.0094,
+					w: 88.970,
+					M: 171.016,
+					i: 0.466,
+					o: 219.106,
+				},
+				day: {
+					a: 0,
+					e: 0,
+					i: 0,
+					M: 101.3747242,
+					w: 0,
+					o: 0,
+				},
+			},
+		},
+		ganymede: {
+			title: 'Ganymede',
+			mass: 1481.9e20,
+			radius: 2631.2,
+			color: '#999999',
+			orbit: {
+				base: {
+					a: 1070400,
+					e: 0.0013,
+					w: 192.417,
+					M: 317.540,
+					i: 0.177,
+					o: 63.552,
+				},
+				day: {
+					a: 0,
+					e: 0,
+					i: 0,
+					M: 50.3176072,
+					w: 0,
+					o: 0,
+				},
+			},
+		},
+		callisto: {
+			title: 'Callisto',
+			mass: 1075.9e20,
+			radius: 2410.3,
+			color: '#999999',
+			orbit: {
+				base: {
+					a: 1882700,
+					e: 0.0074,
+					w: 52.643,
+					M: 181.408,
+					i: 0.192,
+					o: 298.848,
+				},
+				day: {
+					a: 0,
+					e: 0,
+					i: 0,
+					M: 21.5710728,
+					w: 0,
+					o: 0,
+				},
+			},
+		},
+	},
+	secondsPerTick: { min: 100, max: 3600, initial: 500 },
+};
 
-
-		return system;
-		
-	}
-);
 /*
 Io	421800.	0.0041	84.129	342.021	0.036	43.977	203.4889583	1.769	1.625	7.420	268.057	64.495	0.000	11
 Europa	671100.	0.0094	88.970	171.016	0.466	219.106	101.3747242	3.551	1.394	30.184	268.084	64.506	0.016	11

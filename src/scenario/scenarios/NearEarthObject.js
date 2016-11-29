@@ -16,17 +16,15 @@ define(
 	function(ns, common) {
 
 
-		var bodies = {};
+		const bodies = {};
 
-		var neoPath = 'http://neo.jpl.nasa.gov/cgi-bin/neo_ca?type=NEO&hmax=all&sort=date&sdir=ASC&tlim=far_future&dmax=0.05AU&max_rows=0&action=Display+Table&show=1';
+		const neoPath = 'http://neo.jpl.nasa.gov/cgi-bin/neo_ca?type=NEO&hmax=all&sort=date&sdir=ASC&tlim=far_future&dmax=0.05AU&max_rows=0&action=Display+Table&show=1';
 
-		var onLoadError = function(jqXHR, textStatus, errorThrown){
+		function onLoadError(jqXHR, textStatus, errorThrown) {
 			alert('Error loading NEO definitions. See console.');
 			console.log(textStatus, errorThrown);
 			console.log(jqXHR);
-		};
-
-		
+		}
 
 		var onListLoaded = function(res) {
 			var html = res.results && res.results[0];

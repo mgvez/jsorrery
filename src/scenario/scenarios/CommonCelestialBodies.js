@@ -1,6 +1,6 @@
 
 import { TweenMax, Sine } from 'gsap';
-import THREE from 'three';
+import { Color } from 'three';
 import { AU, SIDERAL_DAY, NM_TO_KM, DAY, YEAR } from '../../constants';
 import MoonRealOrbit from './MoonRealOrbit';
 
@@ -13,7 +13,7 @@ export const sun = {
 	map: 'img/sunmap.jpg',
 	k: 0.01720209895, //gravitational constant (μ)
 	material: {
-		emissive: new THREE.Color(0xdddd33),
+		emissive: new Color(0xdddd33),
 	},
 };
 
@@ -76,7 +76,7 @@ export const earth = {
 	color: '#1F7CDA',
 	map: 'img/earthmap1k_clouds.jpg',
 	material: {
-		specular: new THREE.Color('grey'),
+		specular: new Color('grey'),
 	},
 	sideralDay: SIDERAL_DAY,
 	tilt: 23 + (26 / 60) + (21 / 3600),

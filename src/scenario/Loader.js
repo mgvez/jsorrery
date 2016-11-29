@@ -11,36 +11,48 @@
 // 		,'jsorrery/scenario/BigJupiter'
 // 		//,'jsorrery/scenario/MoonSOI'
 
-import commonBodies from './CommonCelestialBodies';
+import solarSystem from './scenarios/SolarSystem';
+import innerSolarSystem from './scenarios/InnerSolarSystem';
+import apollo from './scenarios/Apollo';
+import earthMoon from './scenarios/EarthMoon';
+import artificialSatellites from './scenarios/ArtificialSatellites';
+import jupiterMoon from './scenarios/JupiterMoon';
+// import nearEarthObject from './scenarios/NearEarthObject';
+import bigJupiter from './scenarios/BigJupiter';
+import moonSOI from './scenarios/MoonSOI';
 
-	const scenarios = {};
-	const list = [];
+const all = [
+	solarSystem,
+	innerSolarSystem,
+	apollo,
+	earthMoon,
+	artificialSatellites,
+	jupiterMoon,
+	// nearEarthObject,
+	bigJupiter,
+	moonSOI,
+];
 
-	let scenario;
-	for(var i = 3; i< arguments.length; i++) {
-		scenario = arguments[i];
-		scenario.bodies = scenario.bodies || {};
-
-		if(scenario.commonBodies){
-			$.each(scenario.commonBodies, function(i, bodyName) {
-				scenario.bodies[bodyName] = $.extend({}, common[bodyName], scenario.bodies[bodyName]);
-			});
-		}
-		scenarios[scenario.name] = scenario;
-		list.push({
-			name : scenario.name,
-			title : scenario.title || scenario.name,
-			help : scenario.help || ''
-		});
+const scenarios = all.map(scenario => {
+	scenario.bodies = scenario.bodies || {};
+	if (scenario.commonBodies) {
+		scenario.bodies = scenario.commonBodies.reduce((carry, current) => {
+			const { name } = current;
+			carry[name] = Object.assign({}, current, scenario.bodies[name]);
+			return carry;
+		}, scenario.bodies);
 	}
+	scenario.title = scenario.title || scenario.name;
+	scenario.help = scenario.help || '';
+	return scenario;
+});
 
 
 export default {
-	get : function(which) {
-		return scenarios[which];
+	get(which) {
+		return scenarios.find(scenario => scenario.name === which);
 	},
-	getList : function(){
-		return list;
-	}
+	getList() {
+		return scenarios;
+	},
 };
-

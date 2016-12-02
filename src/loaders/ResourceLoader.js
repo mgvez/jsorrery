@@ -1,0 +1,94 @@
+
+import { ImageUtils, UVMapping } from 'three';
+import $ from 'jquery';
+import Promise from 'bluebird';
+
+const SHADER_PATH = 'shaders/';
+const SHADER_TYPES = [
+	{
+		ext: 'vsh',
+		type: 'vertex',
+	},
+	{
+		ext: 'fsh',
+		type: 'fragment',
+	},
+];
+
+const allLoaders = {};
+let currentScenarioLoaders;
+
+function getCached(id) {
+	if (allLoaders[id]) {
+		currentScenarioLoaders.push(allLoaders[id]);
+		return allLoaders[id];
+	}
+	return null;
+}
+
+export default {
+	
+	reset() {
+		currentScenarioLoaders = [];
+	},
+
+	getOnReady() {
+		return Promise.all(currentScenarioLoaders);
+	},
+
+	loadTexture(mapSrc) {
+		
+		const onLoaded = new Promise(resolve => {
+			ImageUtils.loadTexture(mapSrc, new UVMapping(), () => {
+				resolve();
+			});
+		});
+		currentScenarioLoaders.push(onLoaded);
+		return onLoaded;
+
+	},
+
+	loadJSON(dataSrc) {
+
+		let onDataLoaded = getCached(dataSrc);
+		if (onDataLoaded) return onDataLoaded;
+
+		onDataLoaded = $.ajax({
+			url: dataSrc,
+			dataType: 'json',
+		});
+
+		allLoaders[dataSrc] = onDataLoaded;
+		currentScenarioLoaders.push(onDataLoaded);
+		return onDataLoaded;
+	},
+
+	loadShaders(shader) {
+		const shaderId = `shader.${shader}`;
+
+		const shaderDfd = getCached(shaderId);
+		if (shaderDfd) return shaderDfd;
+
+		const dfds = SHADER_TYPES.map(shaderType => {
+			const { ext, type } = shaderType;
+			return $.ajax({
+				url: `${SHADER_PATH}${shader}.${ext}`,
+				dataType: 'text',
+			});
+		});
+
+
+		const finalDfd = Promise.all(dfds).then((vsh, fsh) => {
+			console.log(vsh, fsh);
+			return {
+				vertex: vsh[0],
+				fragment: fsh[0],
+			};
+		});
+
+		allLoaders[shaderId] = finalDfd;
+		currentScenarioLoaders.push(finalDfd);
+		return finalDfd;
+
+	},
+};

@@ -14,6 +14,7 @@ import $ from 'jquery';
 
 import { DEG_TO_RAD } from '../constants';
 import Dimensions from '../graphics3d/Dimensions';
+import CameraManager from '../graphics3d/CameraManager';
 
 const EVENT_LABEL_LINE_H = 100;
 const EVENT_LABEL_MAX_ANGLE = 45;

@@ -1,21 +1,10 @@
 
-
-// define(
-// 	[
-// 		'jsorrery/NameSpace',
-// 		'jquery',
-// 		'jsorrery/graphics3d/OrbitLinesManager',
-// 		'jsorrery/graphics3d/TracerManager',
-// 		'jsorrery/graphics3d/Dimensions',
-// 		'jsorrery/gui/Gui',
-// 		'jsorrery/gui/ExportValues',
-// 		'three/controls/OrbitControls',
-// 		'three'
-// 	], 
-
 import { Vector3, PerspectiveCamera, OrbitControls } from 'three';
 import Universe from '../Universe';
 import Dimensions from './Dimensions';
+import TracerManager from './TracerManager';
+import OrbitLinesManager from './OrbitLinesManager';
+import ExportValues from '../gui/ExportValues';
 import Gui, { LOOKFROM_ID, LOOKAT_ID } from '../gui/Gui';
 import { DEG_TO_RAD } from '../constants';
 

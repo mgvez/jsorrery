@@ -17,7 +17,7 @@ let date;
 
 function removeControl(elId) {
 	const el = controls[elId];
-	el.remove();
+	if (el) el.remove();
 }
 
 function getContainer(id) {
@@ -127,6 +127,7 @@ export default {
 			} 
 		});
 	},
+
 	addDropdown(id, callback) {
 		removeControl(id);
 		const dropdownContainer = getContainer(id).empty().addClass('dropdown');

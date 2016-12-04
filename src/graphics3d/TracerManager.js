@@ -3,7 +3,7 @@
 */
 
 import Tracer from './Tracer';
-import Universe from '../Universe';
+import { getUniverse } from '../JSOrrery';
 
 //number of tracing vertices. It was previously taken directly from the orbit's size, but a constant number is more convenient
 const N_VERTICES = 1000;
@@ -55,7 +55,7 @@ export default {
 	draw() {
 		if (this.deferredForceTraceBody) {
 			this.deferredForceTraceBody.forEach(tracingBody => {
-				const traceFromBody = Universe.getBody(tracingBody.celestial.traceRelativeTo || tracingBody.celestial.relativeTo);
+				const traceFromBody = getUniverse().getBody(tracingBody.celestial.traceRelativeTo || tracingBody.celestial.relativeTo);
 				this.addTracer(tracingBody, traceFromBody && traceFromBody.getBody3D());
 			});
 			this.deferredForceTraceBody = null;

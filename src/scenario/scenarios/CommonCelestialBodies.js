@@ -7,6 +7,7 @@ import MoonRealOrbit from './MoonRealOrbit';
 
 export const sun = {
 	title: 'The Sun',
+	name: 'sun',
 	mass: 1.9891e30,
 	radius: 6.96342e5,
 	color: '#ffff00',
@@ -19,6 +20,7 @@ export const sun = {
 
 export const mercury = {
 	title: 'Mercury',
+	name: 'mercury',
 	mass: 3.3022e23,
 	radius: 2439,
 	color: '#588a7b',
@@ -45,6 +47,7 @@ export const mercury = {
 
 export const venus = {
 	title: 'Venus',
+	name: 'venus',
 	mass: 4.868e24,
 	radius: 6051,
 	color: '#fda700',
@@ -71,6 +74,7 @@ export const venus = {
 
 export const earth = {
 	title: 'The Earth',
+	name: 'earth',
 	mass: 5.9736e24,
 	radius: 3443.9307 * NM_TO_KM,
 	color: '#1F7CDA',
@@ -102,6 +106,7 @@ export const earth = {
 
 export const mars = {
 	title: 'Mars',
+	name: 'mars',
 	mass: 6.4185e23,
 	radius: 3376,
 	color: '#ff3300',
@@ -129,6 +134,7 @@ export const mars = {
 
 export const jupiter = {
 	title: 'Jupiter',
+	name: 'jupiter',
 	mass: 1.8986e27,
 	radius: 71492,
 	color: '#ff9932',
@@ -155,6 +161,7 @@ export const jupiter = {
 
 export const saturn = {
 	title: 'Saturn',
+	name: 'saturn',
 	mass: 5.6846e26,
 	radius: 58232,
 	color: '#ffcc99',
@@ -187,6 +194,7 @@ export const saturn = {
 
 export const uranus = {
 	title: 'Uranus',
+	name: 'uranus',
 	mass: 8.6810e25,
 	radius: 25559,
 	color: '#99ccff',
@@ -213,6 +221,7 @@ export const uranus = {
 
 export const neptune = {
 	title: 'Neptune',
+	name: 'neptune',
 	mass: 1.0243e26,
 	radius: 24764,
 	color: '#3299ff',
@@ -239,6 +248,7 @@ export const neptune = {
 
 export const pluto = {
 	title: 'Pluto',
+	name: 'pluto',
 	mass: 1.305e22 + 1.52e21,
 	radius: 1153,
 	color: '#aaaaaa',
@@ -265,6 +275,7 @@ export const pluto = {
 
 export const halley = {
 	title: 'Halley\'s Comet',
+	name: 'halley',
 	mass: 2.2e14,
 	radius: 50,
 	color: '#999999',
@@ -290,6 +301,7 @@ export const halley = {
 
 export const moon = {
 	title: 'The Moon',
+	name: 'moon',
 	mass: 7.3477e22,
 	radius: 1738.1,
 	color: '#ffffff',

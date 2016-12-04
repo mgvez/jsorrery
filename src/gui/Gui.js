@@ -132,7 +132,7 @@ export default {
 		removeControl(id);
 		const dropdownContainer = getContainer(id).empty().addClass('dropdown');
 		const dropdownDisplay = $('<div class="display">').appendTo(dropdownContainer);
-		const selector = this.selects[id] = {
+		const selector = selects[id] = {
 			input: $(`<input id="${id}_inp">`).on('change.jsorrery', callback),
 			display: dropdownDisplay,
 			list: $(`<ul id="${id}">`).appendTo(dropdownContainer),
@@ -146,11 +146,11 @@ export default {
 			listClicked(id, selector, $(e.currentTarget), input);
 		};
 
-		return this.selects[id].input;
+		return selects[id].input;
 	},
 
 	addOption(selectName, label, val, isSelected) {
-		const sel = this.selects[selectName];
+		const sel = selects[selectName];
 		if (!sel) return;
 
 		const option = sel.options[val] = $(`<li data-value="${val}">${label}</li>`);
@@ -174,11 +174,11 @@ export default {
 	},
 
 	toggleOptions(selectName, toToggle, isShow) {
-		const options = this.selects[selectName].options;
+		const options = selects[selectName].options;
 		const toggleFcn = isShow ? 'removeClass' : 'addClass';
-		const curVal = this.selects[selectName].input.val();
+		const curVal = selects[selectName].input.val();
 		if (!isShow && !~toToggle.indexOf(curVal)) {
-			this.selects[selectName].input.val('');
+			selects[selectName].input.val('');
 		}
 		toToggle.forEach((optId) => {
 			if (options[optId]) options[optId][toggleFcn]('disabled');
@@ -249,7 +249,8 @@ export default {
 		if (options && options.min) params.min = options.min;
 		if (options && options.max) params.max = options.max;
 
-		const slider = $('<div>').appendTo(container).slider(params);
+		console.warn('replace slider jq ui');
+		const slider = $('<div>').appendTo(container);//.slider(params);
 
 		controls[id] = slider;
 

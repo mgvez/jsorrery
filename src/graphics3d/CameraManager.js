@@ -1,6 +1,7 @@
 
-import { Vector3, PerspectiveCamera, OrbitControls } from 'three';
-import Universe from '../Universe';
+import { Vector3, PerspectiveCamera } from 'three';
+import { OrbitControls } from '../utils/ThreeExamples';
+import { getUniverse } from '../JSOrrery';
 import Dimensions from './Dimensions';
 import TracerManager from './TracerManager';
 import OrbitLinesManager from './OrbitLinesManager';
@@ -109,7 +110,7 @@ function onMouseWheel(event, delta, deltaX, deltaY) {
 }
 
 function onControlsUpdate() {
-	if (!Universe.isPlaying()) scene.draw();
+	if (!getUniverse().isPlaying()) scene.draw();
 }
 
 function getDistanceFromFov(dimToSee, fov) {
@@ -167,7 +168,7 @@ export default {
 		Gui.addOption(LOOKFROM_ID, 'Free camera', 'orbital');
 		Gui.addOption(LOOKAT_ID, 'System', 'universe');
 
-		if (Universe.getBody().name === 'sun') {
+		if (getUniverse().getBody().name === 'sun') {
 			Gui.addOption(LOOKAT_ID, 'Night (away from the sun)', 'night');
 		}
 		

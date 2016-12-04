@@ -1,5 +1,5 @@
 
-import { ImageUtils, UVMapping } from 'three';
+import { ImageUtils } from 'three';
 import $ from 'jquery';
 import Promise from 'bluebird';
 
@@ -39,7 +39,7 @@ export default {
 	loadTexture(mapSrc) {
 		
 		const onLoaded = new Promise(resolve => {
-			ImageUtils.loadTexture(mapSrc, new UVMapping(), () => {
+			ImageUtils.loadTexture(mapSrc, undefined, () => {
 				resolve();
 			});
 		});
@@ -78,8 +78,9 @@ export default {
 		});
 
 
-		const finalDfd = Promise.all(dfds).then((vsh, fsh) => {
-			console.log(vsh, fsh);
+		const finalDfd = Promise.all(dfds).then((shaders) => {
+			const [vsh, fsh] = shaders;
+			// console.log(vsh, fsh);
 			return {
 				vertex: vsh[0],
 				fragment: fsh[0],

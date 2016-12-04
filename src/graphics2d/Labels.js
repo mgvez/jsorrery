@@ -9,12 +9,12 @@
 // 	function(ns, $, CameraManager, Dimensions) {
 // 		'use strict';
 import { TweenMax } from 'gsap';
-import { Projector } from 'three';
 import $ from 'jquery';
 
 import { DEG_TO_RAD } from '../constants';
 import Dimensions from '../graphics3d/Dimensions';
 import CameraManager from '../graphics3d/CameraManager';
+import { Projector } from '../utils/ThreeExamples';
 
 const EVENT_LABEL_LINE_H = 100;
 const EVENT_LABEL_MAX_ANGLE = 45;

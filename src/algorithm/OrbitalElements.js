@@ -2,7 +2,7 @@
 import { Vector3, Euler, Quaternion } from 'three';
 
 import { sinh, sign, cosh } from './Math';
-import Universe from '../Universe';
+import { getUniverse } from '../JSOrrery';
 import { G, CENTURY, DAY, KM, DEG_TO_RAD, CIRCLE, AU } from '../constants';
 
 const maxIterationsForEccentricAnomaly = 10;
@@ -55,7 +55,7 @@ export default {
 	setDefaultOrbit(orbitalElements, calculator) {
 		this.orbitalElements = orbitalElements;
 		if (orbitalElements && orbitalElements.epoch) {
-			this.epochCorrection = Universe.getEpochTime(orbitalElements.epoch);
+			this.epochCorrection = getUniverse().getEpochTime(orbitalElements.epoch);
 		}
 		this.calculator = calculator;
 	},
@@ -76,7 +76,7 @@ export default {
 		} else {
 			//vis viva to calculate speed (not velocity, i.e not a vector)
 			const el = this.calculateElements(timeEpoch);
-			const speed = Math.sqrt(G * Universe.getBody(relativeTo).mass * ((2 / (el.r)) - (1 / (el.a))));
+			const speed = Math.sqrt(G * getUniverse().getBody(relativeTo).mass * ((2 / (el.r)) - (1 / (el.a))));
 
 			//now calculate velocity orientation, that is, a vector tangent to the orbital ellipse
 			const k = el.r / el.a;
@@ -208,7 +208,7 @@ export default {
 		computed.r = computed.pos.length();
 		computed.v = Math.atan2(computed.pos.y, computed.pos.x);
 		if (orbitalElements.relativeTo) {
-			const relativeTo = Universe.getBody(orbitalElements.relativeTo);
+			const relativeTo = getUniverse().getBody(orbitalElements.relativeTo);
 			if (relativeTo.tilt) {
 				computed.tilt = -relativeTo.tilt * DEG_TO_RAD;
 			}
@@ -234,8 +234,8 @@ export default {
 		let period;
 		if (this.orbitalElements && this.orbitalElements.day && this.orbitalElements.day.M) {
 			period = 360 / this.orbitalElements.day.M;
-		} else if (Universe.getBody(relativeTo) && Universe.getBody(relativeTo).k && elements) {
-			period = 2 * Math.PI * Math.sqrt(Math.pow(elements.a / (AU * 1000), 3)) / Universe.getBody(relativeTo).k;
+		} else if (getUniverse().getBody(relativeTo) && getUniverse().getBody(relativeTo).k && elements) {
+			period = 2 * Math.PI * Math.sqrt(Math.pow(elements.a / (AU * 1000), 3)) / getUniverse().getBody(relativeTo).k;
 		}
 		period *= DAY;//in seconds
 		return period;

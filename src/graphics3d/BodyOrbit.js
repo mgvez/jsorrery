@@ -1,6 +1,6 @@
 
 import OrbitLine from './OrbitLine';
-import Universe from '../Universe';
+import { getUniverse } from '../JSOrrery';
 
 export default {
 			
@@ -29,11 +29,11 @@ export default {
 			orbitVertices = this.celestial.getOrbitVertices(true);
 
 			//does this body revolves around the system's main body? If so, draw its ecliptic
-			if (!this.celestial.relativeTo || this.celestial.relativeTo === Universe.getBody().name) {
+			if (!this.celestial.relativeTo || this.celestial.relativeTo === getUniverse().getBody().name) {
 				const eclipticVertices = orbitVertices.map(val => val.clone().negate());
 				if (!this.eclipticLine) {
 					this.eclipticLine = Object.create(OrbitLine);
-					this.eclipticLine.init(this.celestial.name, Universe.getBody().color);
+					this.eclipticLine.init(this.celestial.name, getUniverse().getBody().color);
 				}
 				this.eclipticLine.setLine(eclipticVertices);
 			}/**/
@@ -102,9 +102,9 @@ export default {
 		let thisCentralBody;
 		const centralName = this.celestial.traceRelativeTo || this.celestial.relativeTo;
 		if (centralName) {
-			thisCentralBody = Universe.getBody(centralName);
+			thisCentralBody = getUniverse().getBody(centralName);
 		}
-		return (thisCentralBody && thisCentralBody.getBody3D().getDisplayObject()) || Universe.getScene().getRoot();
+		return (thisCentralBody && thisCentralBody.getBody3D().getDisplayObject()) || getUniverse().getScene().getRoot();
 	},
 
 	kill() {

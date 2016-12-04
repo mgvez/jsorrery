@@ -211,6 +211,7 @@ export default {
 	},
 
 	getBody(name) {
+		// console.log(this);
 		if (name === 'central' || !name) {
 			return this.centralBody;
 		}

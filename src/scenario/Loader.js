@@ -39,6 +39,7 @@ const scenarios = all.map(scenario => {
 		scenario.bodies = scenario.commonBodies.reduce((carry, current) => {
 			const { name } = current;
 			carry[name] = Object.assign({}, current, scenario.bodies[name]);
+			// console.log(name);
 			return carry;
 		}, scenario.bodies);
 	}

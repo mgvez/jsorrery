@@ -1,7 +1,7 @@
 import { earth, moon } from './CommonCelestialBodies';
 import { getMissionFromName } from './NasaNumbers';
-import Universe from '../../Universe';
 import Labels from '../../graphics2d/Labels';
+import { getUniverse } from '../../JSOrrery';
 
 
 const g = window.location.search.match(/apollo=([0-9]+)/);
@@ -42,12 +42,12 @@ const apolloTLI = Object.assign(
 
 			if (!this.data.isOnReturnTrip) {
 				if (!this.data.hasTLILabel && this.relativePosition.x !== 0) {
-					Labels.addEventLabel('Trans Lunar Injection', this.relativePosition.clone(), Universe.getBody(this.relativeTo));
+					Labels.addEventLabel('Trans Lunar Injection', this.relativePosition.clone(), getUniverse().getBody(this.relativeTo));
 					this.data.hasTLILabel = true;
 				}
 
 
-				dist = (Math.abs(this.position.clone().sub(Universe.getBody('moon').position).length()) / 1000) - Universe.getBody('moon').radius;
+				dist = (Math.abs(this.position.clone().sub(getUniverse().getBody('moon').position).length()) / 1000) - getUniverse().getBody('moon').radius;
 				let moonSpeed = 0;
 				if (this.data.lastMoonDist) {
 					moonSpeed = ((this.data.lastMoonDist - dist) / deltaT) * 1000;
@@ -56,7 +56,7 @@ const apolloTLI = Object.assign(
 				if (!this.data.minMoonDist || dist < this.data.minMoonDist) {
 					this.data.minMoonDist = dist;
 				} else if (this.data.lastMoonDist === this.data.minMoonDist) {
-					Labels.addEventLabel('Closest distance to<br>the Moon: ' + Math.round(this.data.minMoonDist) + ' km', this.previousRelativePosition.clone(), Universe.getBody(this.relativeTo));
+					Labels.addEventLabel('Closest distance to<br>the Moon: ' + Math.round(this.data.minMoonDist) + ' km', this.previousRelativePosition.clone(), getUniverse().getBody(this.relativeTo));
 					this.data.isOnReturnTrip = true;
 					//Universe.stop();
 				}
@@ -66,12 +66,12 @@ const apolloTLI = Object.assign(
 				this.data.minSpeed = !this.data.minSpeed || (this.data.minSpeed > this.speed) ? this.speed : this.data.minSpeed;
 
 			} else {
-				dist = (Math.abs(this.position.clone().sub(Universe.getBody('earth').position).length()) / 1000) - Universe.getBody('earth').radius;
+				dist = (Math.abs(this.position.clone().sub(getUniverse().getBody('earth').position).length()) / 1000) - getUniverse().getBody('earth').radius;
 				if (!this.data.minEarthDist || dist < this.data.minEarthDist) {
 					this.data.minEarthDist = dist;
-				} else if (this.data.lastEarthDist === this.data.minEarthDist && dist < (Math.abs(this.position.clone().sub(Universe.getBody('moon').position).length()) / 1000)) {
-					Labels.addEventLabel('Closest distance to<br>the Earth: ' + Math.round(this.data.minEarthDist) + ' km<br>Simulation stopped', this.previousRelativePosition.clone(), Universe.getBody(this.relativeTo));
-					Universe.stop();
+				} else if (this.data.lastEarthDist === this.data.minEarthDist && dist < (Math.abs(this.position.clone().sub(getUniverse().getBody('moon').position).length()) / 1000)) {
+					Labels.addEventLabel('Closest distance to<br>the Earth: ' + Math.round(this.data.minEarthDist) + ' km<br>Simulation stopped', this.previousRelativePosition.clone(), getUniverse().getBody(this.relativeTo));
+					getUniverse().stop();
 				}
 
 				this.data.lastEarthDist = dist;

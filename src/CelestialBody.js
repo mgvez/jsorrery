@@ -2,7 +2,7 @@
 import { EventDispatcher, Vector3 } from 'three';
 import OrbitalElements from './algorithm/OrbitalElements';
 import { J2000, DEG_TO_RAD, RAD_TO_DEG, DAY, CIRCLE } from './constants';
-import { Universe } from './Universe';
+import { getUniverse } from './JSOrrery';
 
 export default Object.assign(Object.create(EventDispatcher.prototype), {
 	init() {
@@ -42,7 +42,7 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 	},
 	
 	getAngleTo(bodyName) {
-		const ref = Universe.getBody(bodyName);
+		const ref = getUniverse().getBody(bodyName);
 		if (ref) {
 			
 			const eclPos = this.position.clone().sub(ref.getPosition()).normalize();
@@ -66,14 +66,14 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 		}
 		if (this.customInitialize) this.customInitialize();
 		
-		if (this.customAfterTick) this.customAfterTick(Universe.epochTime, Universe.date);
+		if (this.customAfterTick) this.customAfterTick(getUniverse().epochTime, getUniverse().date);
 	},
 
 	positionRelativeTo() {
 		if (this.relativeTo) {
 
-			const central = Universe.getBody(this.relativeTo);
-			if (central && central !== Universe.getBody()/**/) {
+			const central = getUniverse().getBody(this.relativeTo);
+			if (central && central !== getUniverse().getBody()/**/) {
 				this.position.add(central.position);
 				//console.log(this.name+' pos rel to ' + this.relativeTo);
 				if (this.velocity && central.velocity) this.velocity.add(central.velocity);
@@ -89,7 +89,7 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 	*/
 	getOrbitVertices(isElliptic) {
 
-		let startTime = this.getEpochTime(Universe.currentTime);
+		let startTime = this.getEpochTime(getUniverse().currentTime);
 		const elements = this.orbitalElements.calculateElements(startTime);
 		const period = this.orbitalElements.calculatePeriod(elements, this.relativeTo);
 		if (!period) return null;
@@ -164,7 +164,7 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 				this.positionRelativeTo();
 			}
 
-			const relativeToPos = Universe.getBody(this.relativeTo).getPosition();
+			const relativeToPos = getUniverse().getBody(this.relativeTo).getPosition();
 			this.relativePosition.copy(this.position).sub(relativeToPos);
 			this.movement.copy(this.relativePosition).sub(this.previousRelativePosition);
 			this.speed = this.movement.length() / deltaT;
@@ -177,7 +177,7 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 				if (this.onOrbitCompleted) this.onOrbitCompleted();
 			}
 		}
-		if (this.customAfterTick) this.customAfterTick(Universe.epochTime, Universe.date, deltaT);
+		if (this.customAfterTick) this.customAfterTick(getUniverse().epochTime, getUniverse().date, deltaT);
 
 	},
 

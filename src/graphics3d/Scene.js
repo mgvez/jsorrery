@@ -1,12 +1,13 @@
 
 
 import $ from 'jquery';
-import { Scene, WebGLRenderer, AmbientLight, Stats } from 'three';
+import { Scene, WebGLRenderer, AmbientLight } from 'three';
+import { Stats } from '../utils/ThreeExamples';
 
 import Body3D from './Body3d';
 import MilkyWay from './MilkyWayParticles';
 import Sun from './Sun';
-import Universe from '../Universe';
+import { getUniverse } from '../JSOrrery';
 import CameraManager from './CameraManager';
 import OrbitLinesManager from './OrbitLinesManager';
 import TracerManager from './TracerManager';
@@ -116,7 +117,7 @@ export default {
 
 		//move sun, if its not a body shown. This assumes that the central body, if it has an orbit, revolves around the sun
 		if (this.sun && this.centralBody && this.centralBody.orbit) {
-			const pos = this.centralBody.calculatePosition(Universe.currentTime);
+			const pos = this.centralBody.calculatePosition(getUniverse().currentTime);
 			pos.setLength(this.stageSize * 4).negate();
 			this.sun.setPosition(pos);
 		} else if (this.sun) {

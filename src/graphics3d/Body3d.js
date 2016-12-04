@@ -4,7 +4,8 @@ import Labels from '../graphics2d/Labels';
 import ResourceLoader from '../loaders/ResourceLoader';
 import Dimensions from './Dimensions';
 import { KM, DEG_TO_RAD, CIRCLE } from '../constants';
-import Universe from '../Universe';
+import { getUniverse } from '../JSOrrery';
+
 
 export default {
 
@@ -118,8 +119,8 @@ export default {
 	drawMove() {
 		const pos = this.getPosition();
 		this.root.position.copy(pos);
-		if (this.celestial.sideralDay && Universe.deltaT <= this.maxDeltaForSideralDay) {
-			const curRotation = (Universe.epochTime / this.celestial.sideralDay) * CIRCLE;
+		if (this.celestial.sideralDay && getUniverse().deltaT <= this.maxDeltaForSideralDay) {
+			const curRotation = (getUniverse().epochTime / this.celestial.sideralDay) * CIRCLE;
 			this.planet.rotation.y = (this.celestial.baseMapRotation || 0) + curRotation;
 		}
 		if (this.tracer) this.tracer.doTrace(pos);

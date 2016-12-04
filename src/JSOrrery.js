@@ -45,7 +45,7 @@ function loadScenario(name, defaultParams) {
 	}
 
 	activeScenario = Object.create(Universe);
-
+	console.log(activeScenario);
 	function getSceneReady() {
 		return activeScenario.init(scenarioConfig, defaultParams);
 	}
@@ -61,46 +61,48 @@ function loadScenario(name, defaultParams) {
 	onSceneReady.then(Preloader.remove);
 }
 
-export default {
-	init() {
-		console.log('inited');
-		Preloader.remove();
-		Gui.init();
+export default function jsOrrery() {
+	console.log('inited');
+	Preloader.remove();
+	Gui.init();
 
-		const defaultParams = Object.assign({}, getQueryString());
-		Gui.setDefaults(defaultParams);
+	const defaultParams = Object.assign({}, getQueryString());
+	Gui.setDefaults(defaultParams);
 
-		const scenarios = ScenarioLoader.getList();
-		const scenarioChanger = Gui.addDropdown(SCENARIO_ID, () => {
-			Preloader.show();
-			loadScenario(scenarioChanger.val());
-		});
-		
-		Gui.addBtn(SHARE_ID, SHARE_ID, () => {
-			Sharer.show();
-		});
-		
-		//dump scenarios specific descriptions in the scenario help panel
-		const help = scenarios.reduce((carry, scenario) => {
-			return `${carry} <h3>${scenario.title}</h3><p>${scenario.help}</p>`;
-		}, '');
+	const scenarios = ScenarioLoader.getList();
+	const scenarioChanger = Gui.addDropdown(SCENARIO_ID, () => {
+		Preloader.show();
+		loadScenario(scenarioChanger.val());
+	});
+	
+	Gui.addBtn(SHARE_ID, SHARE_ID, () => {
+		Sharer.show();
+	});
+	
+	//dump scenarios specific descriptions in the scenario help panel
+	const help = scenarios.reduce((carry, scenario) => {
+		return `${carry} <h3>${scenario.title}</h3><p>${scenario.help}</p>`;
+	}, '');
 
-		const defaultScenario = scenarios.reduce((carry, scenario, idx) => {
-			//find ID of loaded scenario
-			if (defaultParams.scenario && scenario.name === defaultParams.scenario) {
-				return idx;
-			}
-			return carry;
-		}, 0);	
+	const defaultScenario = scenarios.reduce((carry, scenario, idx) => {
+		//find ID of loaded scenario
+		if (defaultParams.scenario && scenario.name === defaultParams.scenario) {
+			return idx;
+		}
+		return carry;
+	}, 0);	
 
-		//add scenarios to dropdown
-		scenarios.forEach((scenario, idx) => {
-			Gui.addOption(SCENARIO_ID, scenario.title, scenario.name, idx === defaultScenario);
-		});
+	//add scenarios to dropdown
+	scenarios.forEach((scenario, idx) => {
+		Gui.addOption(SCENARIO_ID, scenario.title, scenario.name, idx === defaultScenario);
+	});
 
-		const scenarioHelpContainer = $('#helpScenario');
-		scenarioHelpContainer.append(help);
+	const scenarioHelpContainer = $('#helpScenario');
+	scenarioHelpContainer.append(help);
 
-		loadScenario(scenarios[defaultScenario].name, defaultParams);
-	},
-};
+	loadScenario(scenarios[defaultScenario].name, defaultParams);
+}
+
+export function getUniverse() {
+	return activeScenario;
+}

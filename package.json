@@ -54,5 +54,10 @@
     "gsap": "^1.19.0",
     "jquery": "^3.1.0",
     "three": "^0.82.1"
+  },
+  "browser": {
+	  "three.Projector": "./node_modules/three/examples/js/renderers/Projector.js",
+	  "three.OrbitControls": "./node_modules/three/examples/js/controls/OrbitControls.js",
+	  "three.Stats": "./node_modules/three/examples/js/libs/stats.min.js"
   }
 }

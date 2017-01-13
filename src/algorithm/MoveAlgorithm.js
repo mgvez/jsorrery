@@ -1,6 +1,6 @@
 export default {
 	init(bodies) {
-		console.log(this.name);
+		// console.log(this.name);
 		const algo = Object.create(this);
 		algo.bodies = bodies;
 		return algo;

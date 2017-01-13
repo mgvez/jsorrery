@@ -13,27 +13,13 @@ import Ticker from './algorithm/Ticker';
 import CelestialBody from './CelestialBody';
 import Gui, { START_ID, DELTA_T_ID } from './gui/Gui';
 
-// define(
-// 	[
-// 		'jsorrery/NameSpace',
-// 		'jquery',
-// 		'jsorrery/CelestialBody',
-// 		'jsorrery/algorithm/Ticker',
-// 		'jsorrery/graphics3d/Scene',
-// 		'jsorrery/gui/Gui',
-// 		'jsorrery/graphics2d/Labels',
-// 		'jsorrery/graphics3d/loaders/ResourceLoader',
-// 		'_'
-// 	], 
-// 	function(ns, $, CelestialBody, Ticker, Scene, Gui, Labels, ResourceLoader) {
-// 		'use strict';
 export default {
 	init(scenario, qstrSettings) {
 		ResourceLoader.reset();
 		this.name = scenario.name;
 		this.scenario = scenario;
 		const initialSettings = Object.assign({}, scenario.defaultGuiSettings, qstrSettings, scenario.forcedGuiSettings);
-		//console.log(initialSettings);
+		// console.log(initialSettings);
 		Gui.setDefaults(initialSettings);
 		
 		this.usePhysics = scenario.usePhysics || USE_PHYSICS_BY_DEFAULT;
@@ -62,7 +48,6 @@ export default {
 		this.currentTime = this.startEpochTime = this.getEpochTime(this.date);
 		
 		this.createBodies(scenario);
-
 		this.scene = Object.create(Scene);
 		this.calculateDimensions();
 		this.scene.createStage(scenario);
@@ -76,7 +61,6 @@ export default {
 			this.showDate();
 			Gui.putDefaults();
 			this.scene.setCameraDefaults(initialSettings.cameraSettings);
-
 			this.scene.draw();
 			this.tick();
 		});
@@ -86,7 +70,7 @@ export default {
 			Ticker.setSecondsPerTick(val);
 		});
 
-		return onSceneReady.promise();
+		return onSceneReady;
 
 	},
 

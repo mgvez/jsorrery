@@ -10,7 +10,6 @@ import { Geometry, Sphere, Vector3, Vector2, Face3 } from 'three';
  * Celestia-like ring textures.
  */
 function RingGeometry2(innerRadius, outerRadius, thetaSegmentsP, phiSegmentsP, thetaStart = 0, thetaLength = Math.PI * 2) {
-
 	Geometry.call(this);
 
 	const thetaSegments = thetaSegmentsP !== undefined ? Math.max(3, thetaSegmentsP) : 8;
@@ -54,7 +53,7 @@ function RingGeometry2(innerRadius, outerRadius, thetaSegmentsP, phiSegmentsP, t
 			v1 = o + (thetaSegments * i) + i;
 			v2 = o + (thetaSegments * i) + thetaSegments + i;
 			v3 = o + (thetaSegments * i) + thetaSegments + 1 + i;
-			
+
 			this.faces.push(new Face3(v1, v2, v3, [n, n, n]));
 			this.faceVertexUvs[0].push([uvs[v1], uvs[v2], uvs[v3]]);
 			
@@ -68,7 +67,6 @@ function RingGeometry2(innerRadius, outerRadius, thetaSegmentsP, phiSegmentsP, t
 		}
 	}
 	
-	this.computeCentroids();
 	this.computeFaceNormals();
 
 	this.boundingSphere = new Sphere(new Vector3(), radius); 

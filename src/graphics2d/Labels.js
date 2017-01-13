@@ -1,33 +1,22 @@
 
-// define(
-// 	[
-// 		'jsorrery/NameSpace',
-// 		'jquery',
-// 		'jsorrery/graphics3d/CameraManager',
-// 		'jsorrery/graphics3d/Dimensions'
-// 	], 
-// 	function(ns, $, CameraManager, Dimensions) {
-// 		'use strict';
 import { TweenMax } from 'gsap';
 import $ from 'jquery';
 
 import { DEG_TO_RAD } from '../constants';
 import Dimensions from '../graphics3d/Dimensions';
 import CameraManager from '../graphics3d/CameraManager';
-import { Projector } from '../utils/ThreeExamples';
 
 const EVENT_LABEL_LINE_H = 100;
 const EVENT_LABEL_MAX_ANGLE = 45;
 
 let labels;
-let projector;
 let sceneW;
 let sceneH;
 let halfSceneW;
 
 //project scene position to 2d screen coordinates. Returns null if position is out of screen.
 function toScreenCoords(pos) {
-	const vector = projector.projectVector(pos, CameraManager.getCamera());
+	const vector = pos.project(CameraManager.getCamera());
 	vector.x = Math.round((vector.x + 1) / 2 * sceneW);
 	vector.y = Math.round(-(vector.y - 1) / 2 * sceneH);/**/
 
@@ -105,7 +94,6 @@ export default {
 	init() {
 		if (labels) this.kill();
 		labels = [];
-		projector = projector || new Projector();
 		sceneW = $(window).width();
 		sceneH = $(window).height();
 		halfSceneW = sceneW / 2;

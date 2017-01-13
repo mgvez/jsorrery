@@ -1,17 +1,5 @@
-// define(
-// 	[
-// 		'jsorrery/NameSpace',
-// 		'jquery',
-// 		'jsorrery/data/Constellations',
-// 		'jsorrery/graphics3d/loaders/ResourceLoader',
-// 		'_'
-// 	], 
-// 	function(ns, $, Constellations, ResourceLoader){
 
-
-// 		'use strict';
-
-import { LineBasicMaterial, Geometry, Line, Color, Object3D, Vector3, ShaderMaterial, AdditiveBlending, ParticleSystem } from 'three';
+import { LineBasicMaterial, Geometry, BufferAttribute, BufferGeometry, Line, Color, Object3D, Vector3, ShaderMaterial, AdditiveBlending, Points } from 'three';
 import Promise from 'bluebird';
 
 import Constellations from '../data/Constellations';
@@ -48,7 +36,6 @@ const spectralColors = [
 
 const namedStars = {};
 
-let starTexture;
 
 function lightenDarkenColor(hex, amount) {
 	let col = [hex >> 16, (hex >> 8) & 0x00FF, hex & 0x0000FF];
@@ -82,25 +69,9 @@ function drawConstellations() {
 	});
 }
 
-function getShaderAttr() {
-	return {
-		uniforms: {
-			color: { type: 'c', value: new Color(0xffffff) },
-			starTexture: { type: 't', value: starTexture },
-		},
-
-		attributes: {
-			size: { type: 'f', value: [] },
-			customColor: { type: 'c', value: [] },
-		},
-	};
-}
-
-function generateStars(shaders, stars, size) {
+function generateStars(shaders, stars, starTexture, size) {
 	
-	const shaderAttr = getShaderAttr();
-
-	const pGeo = new Geometry();
+	const geometry = new BufferGeometry();
 	const count = stars.length;
 
 	let star;
@@ -109,58 +80,68 @@ function generateStars(shaders, stars, size) {
 	let name;
 	let spectralType;
 	let starColor;
+	let color;
 
-	for (let i = 0; i < count; i++) {
+	const positions = new Float32Array(count * 3);
+	const colors = new Float32Array(count * 3);
+	const sizes = new Float32Array(count);
+
+	for (let i = 0, i3 = 0; i < count; i++, i3 += 3) {
 		star = stars[i];
 
 		starVect = new Vector3(star[X], star[Y], star[Z]);
 		if (starVect.x === 0) continue;//dont add the sun
 		starVect.normalize().multiplyScalar(size);
 
-		mag = starVect.mag = (star[MAG] - MIN_MAG) + 1;
+		mag = (star[MAG] - MIN_MAG) + 1;
 		name = star[NAME];
 		spectralType = String(star[SPECT]).toUpperCase();
-		starColor = spectralColors[spectralType] || spectralColors.F;
-
+		starColor = spectralColors[spectralType] || spectralColors[10];
 		if (name) namedStars[name] = starVect;
 
-		if (starVect.mag < 7) {
+		if (mag < 7) {
 			//starVect.size = 2 + Math.pow((2 / starVect.mag), 1.2);
-			starColor = lightenDarkenColor(starColor, Math.pow(1 / starVect.mag, 0.5));
+			starColor = lightenDarkenColor(starColor, Math.pow(1 / mag, 0.5));
 		} else {
 			//starVect.size = 2;
-			starColor = lightenDarkenColor(starColor, Math.pow(1 / starVect.mag, 1.1));
+			starColor = lightenDarkenColor(starColor, Math.pow(1 / mag, 1.1));
 		}			
 		/**/
-		starVect.size = pxRatio * Math.floor(10 * (2 + (1 / mag))) / 10;
-		//starColor = lightenDarkenColor(starColor, Math.pow(1.5/mag, 1.1));
 
-		pGeo.vertices.push(starVect);
-		pGeo.colors.push(new Color(starColor));
+		positions[i3 + 0] = starVect.x;
+		positions[i3 + 1] = starVect.y;
+		positions[i3 + 2] = starVect.z;
+
+		color = new Color(starColor);
+		colors[i3 + 0] = color.r;
+		colors[i3 + 1] = color.g;
+		colors[i3 + 2] = color.b;
+
+		sizes[i] = pxRatio * Math.floor(10 * (2 + (1 / mag))) / 12;
+
 	}
 
+	geometry.addAttribute('position', new BufferAttribute(positions, 3));
+	geometry.addAttribute('customColor', new BufferAttribute(colors, 3));
+	geometry.addAttribute('size', new BufferAttribute(sizes, 1));
+
+	// console.warn('voir exemple: view-source:https://threejs.org/examples/webgl_buffergeometry_custom_attributes_particles.html');
 	const shaderMaterial = new ShaderMaterial({
-		uniforms: shaderAttr.uniforms,
-		attributes: shaderAttr.attributes,
+		uniforms: {
+			color: { type: 'c', value: new Color(0xffffff) },
+			starTexture: { type: 't', value: starTexture },
+		},
 		vertexShader: shaders.vertex,
 		fragmentShader: shaders.fragment,
 		blending: AdditiveBlending,
 		transparent:	true,
 	});
 
-	const particleSystem = new ParticleSystem(pGeo, shaderMaterial);
+	const particleSystem = new Points(geometry, shaderMaterial);
 	
-	//	set the values to the shader
-	const values_size = shaderAttr.attributes.size.value;
-	const values_color = shaderAttr.attributes.customColor.value;
-
-	for (let v = 0; v < pGeo.vertices.length; v++) {
-		values_size[v] = pGeo.vertices[v].size;
-		values_color[v] = pGeo.colors[v];
-	}
-
 	rendered.add(particleSystem);
 	drawConstellations();
+
 }
 
 export default {
@@ -170,16 +151,18 @@ export default {
 		
 		// create the particle system
 		rendered = this.displayObj = new Object3D();
-		//var particleSystem = new THREE.ParticleSystem(particles, pMaterial);
+		//var particleSystem = new Points(particles, pMaterial);
 		rendered.rotation.x = -((23 + (26 / 60) + (21 / 3600)) * DEG_TO_RAD);
 
 		const onDataLoaded = ResourceLoader.loadJSON(this.dataSrc);
 		const onShaderLoaded = ResourceLoader.loadShaders('stars');
 
-		starTexture = ResourceLoader.loadTexture('img/star.png');
+		const starTextureLoader = ResourceLoader.loadTexture('img/star.png');
 		
-		return Promise.all([onShaderLoaded, onDataLoaded]).then((shaderResponse, dataResponse) => {
-			generateStars(shaderResponse, dataResponse[0], size);
+		return Promise.all([onShaderLoaded, onDataLoaded, starTextureLoader]).then(response => {
+			const [shaderResponse, dataResponse, textureResponse] = response;
+			// console.log(dataResponse);
+			generateStars(shaderResponse, dataResponse, textureResponse, size);
 		});
 	},
 

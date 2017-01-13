@@ -1,5 +1,4 @@
 
-// 		'jsorrery/Universe',
 import $ from 'jquery';
 import Gui, { SCENARIO_ID, SHARE_ID } from './gui/Gui';
 import Sharer from './gui/Sharer';
@@ -45,7 +44,7 @@ function loadScenario(name, defaultParams) {
 	}
 
 	activeScenario = Object.create(Universe);
-	console.log(activeScenario);
+	// console.log(activeScenario);
 	function getSceneReady() {
 		return activeScenario.init(scenarioConfig, defaultParams);
 	}
@@ -58,11 +57,13 @@ function loadScenario(name, defaultParams) {
 	} else {
 		onSceneReady = getSceneReady();
 	}
-	onSceneReady.then(Preloader.remove);
+	onSceneReady.then(Preloader.remove).catch(e => {
+		console.log(e);	
+	});
 }
 
 export default function jsOrrery() {
-	console.log('inited');
+
 	Preloader.remove();
 	Gui.init();
 

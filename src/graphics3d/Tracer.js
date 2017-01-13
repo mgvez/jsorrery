@@ -18,7 +18,7 @@ export default {
 		this.tracePosition = new Vector3();
 	},
 
-	getDisplayObjectfunction() {
+	getDisplayObject() {
 		return this.root;
 	},
 

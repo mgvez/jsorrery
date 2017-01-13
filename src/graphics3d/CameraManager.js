@@ -127,7 +127,7 @@ function getNewCamera(isOrbital) {
 		cam.jsorrery = cam.jsorrery || {};
 		cam.jsorrery.controls = controls;
 		controls.addEventListener('change', onControlsUpdate);
-		controls.center.set(0, 0, 0);
+		controls.target.set(0, 0, 0);
 		controls.enabled = false;
 	}
 
@@ -136,7 +136,7 @@ function getNewCamera(isOrbital) {
 }
 
 function disableControls() {
-	allCameras.forEeach(cam => {
+	allCameras.forEach(cam => {
 		if (cam.jsorrery && cam.jsorrery.controls) cam.jsorrery.controls.enabled = false;
 	});
 }

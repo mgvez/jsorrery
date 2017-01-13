@@ -1,5 +1,4 @@
 
-// import { default as THREE } from 'three';
 import jsOrrery from './JSOrrery';
 
 if (!window.WebGLRenderingContext) {

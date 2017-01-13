@@ -1,11 +1,11 @@
 
-import { Object3D, MeshPhongMaterial, Mesh, SphereGeometry, MeshLambertMaterial, DoubleSide, RingGeometry2 } from 'three';
+import { Object3D, MeshPhongMaterial, Mesh, SphereGeometry, MeshLambertMaterial, DoubleSide } from 'three';
+import RingGeometry2 from '../three/RingGeometry2';
 import Labels from '../graphics2d/Labels';
 import ResourceLoader from '../loaders/ResourceLoader';
 import Dimensions from './Dimensions';
 import { KM, DEG_TO_RAD, CIRCLE } from '../constants';
 import { getUniverse } from '../JSOrrery';
-
 
 export default {
 
@@ -40,48 +40,52 @@ export default {
 	setPlanet() {
 		const map = this.celestial.map;
 		const matOptions = {};
+		let onMaterialReady;
 		if (map) {
-			matOptions.map = ResourceLoader.loadTexture(map);
+			onMaterialReady = ResourceLoader.loadTexture(map).then((planetMap) => {
+				matOptions.map = planetMap;
+				return matOptions;
+			});
 		} else {
 			matOptions.color = this.celestial.color;
+			onMaterialReady = Promise.resolve(matOptions);
 		}
-
-		const mat = Object.assign(new MeshPhongMaterial(matOptions), this.celestial.material || {});
-
-		const radius = this.getPlanetSize();
-		const segments = 50;
-		const rings = 50;
-		const sphere = new Mesh(
-			new SphereGeometry(radius, segments, rings),
-			mat,
-		);
-
-		//console.log(this.celestial.name+' size ',radius, ' m');
-
 		this.planet = new Object3D();
-		this.planet.add(sphere);
+
+		onMaterialReady.then((def) => {
+			const mat = Object.assign(new MeshPhongMaterial(def), this.celestial.material || {});
+			const radius = this.getPlanetSize();
+			const segments = 50;
+			const rings = 50;
+			const sphere = new Mesh(
+				new SphereGeometry(radius, segments, rings),
+				mat,
+			);
+			//console.log(this.celestial.name+' size ',radius, ' m');
+			this.planet.add(sphere);
+		});
 
 		if (this.celestial.ring) {
-			const ringSize = [
-				Dimensions.getScaled(this.celestial.ring.innerRadius * KM),
-				Dimensions.getScaled(this.celestial.ring.outerRadius * KM),
-			];
-			
-			const ringMap = ResourceLoader.loadTexture(this.celestial.ring.map);
+			ResourceLoader.loadTexture(this.celestial.ring.map).then(ringMap => {
+				const ringSize = [
+					Dimensions.getScaled(this.celestial.ring.innerRadius * KM),
+					Dimensions.getScaled(this.celestial.ring.outerRadius * KM),
+				];
+				
+				const ringMaterial = new MeshLambertMaterial({
+					map: ringMap,
+					transparent: true,
+					side: DoubleSide,
+				});
 
-			const ringMaterial = new MeshLambertMaterial({
-				map: ringMap,
-				transparent: true,
-				side: DoubleSide,
+				//var ringGeometry = new THREE.TorusGeometry(ringSize[1], ringSize[1] - ringSize[0], 2, 40);
+				const ringGeometry = new RingGeometry2(ringSize[1], ringSize[0], 180, 1, 0, Math.PI * 2);
+				ringGeometry.computeFaceNormals();
+
+				const ring = new Mesh(ringGeometry, ringMaterial);
+				ring.rotation.x = -Math.PI / 2;
+				this.planet.add(ring);
 			});
-
-			//var ringGeometry = new THREE.TorusGeometry(ringSize[1], ringSize[1] - ringSize[0], 2, 40);
-			const ringGeometry = new RingGeometry2(ringSize[1], ringSize[0], 180, 1, 0, Math.PI * 2);
-			ringGeometry.computeFaceNormals();
-
-			const ring = new Mesh(ringGeometry, ringMaterial);
-			ring.rotation.x = -Math.PI / 2;
-			this.planet.add(ring);
 			
 		}
 		

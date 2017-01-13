@@ -114,6 +114,7 @@ Quadratic.moveBodies = (epochTime, deltaT) => {
 		}
 
 		b.afterMove(deltaT);
+
 	}
 };
 

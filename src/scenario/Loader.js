@@ -1,16 +1,4 @@
 
-
-// 		,'jsorrery/scenario/CommonCelestialBodies'
-// 		,'jsorrery/scenario/SolarSystem'
-// 		,'jsorrery/scenario/InnerSolarSystem'
-// 		,'jsorrery/scenario/Apollo'
-// 		,'jsorrery/scenario/EarthMoon'
-// 		,'jsorrery/scenario/ArtificialSatellites'
-// 		,'jsorrery/scenario/JupiterMoon'
-// 		,'jsorrery/scenario/NearEarthObject'
-// 		,'jsorrery/scenario/BigJupiter'
-// 		//,'jsorrery/scenario/MoonSOI'
-
 import solarSystem from './scenarios/SolarSystem';
 import innerSolarSystem from './scenarios/InnerSolarSystem';
 import apollo from './scenarios/Apollo';

@@ -35,7 +35,11 @@ export default {
 		this.container = $(`<div id="universe" width="${this.width}" height="${this.height}">`).appendTo('body');
 		this.root = new Scene();				
 
-		renderer = renderer || new WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
+		renderer = renderer || new WebGLRenderer({
+			antialias: true,
+			preserveDrawingBuffer: true,
+			alpha: true,
+		});
 
 		if (is_capture) this.screenshot = Object.create(Screenshot).init(renderer);
 

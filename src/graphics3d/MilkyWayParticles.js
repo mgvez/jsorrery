@@ -101,10 +101,10 @@ function generateStars(shaders, stars, starTexture, size) {
 
 		if (mag < 7) {
 			//starVect.size = 2 + Math.pow((2 / starVect.mag), 1.2);
-			starColor = lightenDarkenColor(starColor, Math.pow(1 / mag, 0.5));
+			starColor = lightenDarkenColor(starColor, Math.pow(1 / mag, 0.4));
 		} else {
 			//starVect.size = 2;
-			starColor = lightenDarkenColor(starColor, Math.pow(1 / mag, 1.1));
+			starColor = lightenDarkenColor(starColor, Math.pow(1 / mag, 0.9));
 		}			
 		/**/
 
@@ -117,8 +117,8 @@ function generateStars(shaders, stars, starTexture, size) {
 		colors[i3 + 1] = color.g;
 		colors[i3 + 2] = color.b;
 
-		sizes[i] = pxRatio * Math.floor(10 * (2 + (1 / mag))) / 12;
-
+		sizes[i] = pxRatio * 1.2;// * (Math.floor(10 * (2 + (1 / mag))) / 10);
+		if (!(i % 100)) console.log(mag, sizes[i]);
 	}
 
 	geometry.addAttribute('position', new BufferAttribute(positions, 3));

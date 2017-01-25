@@ -28,6 +28,7 @@ export default {
 
 		const material = new LineBasicMaterial({
 			color: this.color,
+			lineWidth: 4,
 		});
 
 		this.geom = new Geometry();
@@ -35,6 +36,7 @@ export default {
 			this.geom.vertices.push(new Vector3(0, 0, 0));
 		}
 		this.line = new Line(this.geom, material);
+		this.line.frustumCulled = false;
 		this.currentVertex = 0;
 		this.initCallback = this.changeVertex.bind(this);
 		this.attachTrace();

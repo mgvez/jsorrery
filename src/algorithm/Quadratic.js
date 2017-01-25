@@ -6,7 +6,7 @@ import Gravity from './Gravity';
 const Quadratic = Object.create(MoveAlgorithm);
 
 Quadratic.name = 'Quadratic';
-Quadratic.moveBodies = (epochTime, deltaT) => {
+Quadratic.moveBodies = function moveBodies(epochTime, deltaT) {
 
 	this.computeDeltaT(deltaT);
 
@@ -20,7 +20,7 @@ Quadratic.moveBodies = (epochTime, deltaT) => {
 	//find accel at t0 and pos at t0.5
 	for (i = 0; i < this.bodies.length; i++) {
 		b = this.bodies[i];
-		if (b.isStill) {
+		if (!b.isStill) {
 			b.beforeMove(deltaT);
 
 			if (b.calculateFromElements) {
@@ -48,7 +48,7 @@ Quadratic.moveBodies = (epochTime, deltaT) => {
 	//find accel at t0.5 and positions at t1
 	for (i = 0; i < this.bodies.length; i++) {
 		b = this.bodies[i];
-		if (b.isStill) {
+		if (!b.isStill) {
 			if (b.calculateFromElements) {
 				b.setPositionFromDate(epochTime + deltaT);
 			} else {
@@ -71,10 +71,8 @@ Quadratic.moveBodies = (epochTime, deltaT) => {
 	//find accel at t1
 	for (i = 0; i < this.bodies.length; i++) {
 		b = this.bodies[i];
-		if (!b.isStill) {
-			if (!b.calculateFromElements) {
-				n[i].accel.push(b.force.clone().multiplyScalar(b.invMass));
-			}
+		if (!b.isStill && !b.calculateFromElements) {
+			n[i].accel.push(b.force.clone().multiplyScalar(b.invMass));
 		}
 	}
 

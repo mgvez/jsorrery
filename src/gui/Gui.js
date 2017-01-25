@@ -11,7 +11,6 @@ const BTNS_LABELS = {
 
 const controls = {};
 const selects = {};
-let rootEl;
 let dateDisplay;
 let date;
 
@@ -99,7 +98,6 @@ export const DELTA_T_ID = 'deltaT';
 
 export default {
 	init() {
-		rootEl = $('#gui');
 		setupHelp();
 	},
 

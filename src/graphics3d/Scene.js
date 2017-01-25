@@ -2,7 +2,7 @@
 
 import $ from 'jquery';
 import { Scene, WebGLRenderer, AmbientLight } from 'three';
-import { Stats } from '../utils/ThreeExamples';
+// import { Stats } from '../utils/ThreeExamples';
 
 import Body3D from './Body3d';
 import MilkyWay from './MilkyWayParticles';
@@ -17,10 +17,9 @@ import Labels from '../graphics2d/Labels';
 import Gui, { PLANET_SCALE_ID } from '../gui/Gui';
 import { is_capture, DEG_TO_RAD, KM } from '../constants';
 
-// 'vendor/jquery.mousewheel',
 // 		'three/stats',
 		
-let stats;
+// let stats;
 let renderer;
 
 function drawBody(b) {
@@ -45,14 +44,15 @@ export default {
 
 		//renderer.shadowMapEnabled = true;
 		renderer.setSize(this.width, this.height);
+		renderer.setPixelRatio(window.devicePixelRatio);
 
 		const light = new AmbientLight(0x202020);
 		this.root.add(light);/**/
 
-		if (!stats) {
-			stats = new Stats();
-			$('body').append(stats.domElement);
-		}
+		// if (!stats) {
+		// 	stats = new Stats();
+		// 	$('body').append(stats.domElement);
+		// }
 
 		this.container.append(renderer.domElement);
 		
@@ -146,7 +146,7 @@ export default {
 		camPos.applyMatrix4(CameraManager.getCamera().matrixWorld);
 		Labels.draw(camPos, radFov);
 		/**/
-		stats.update();
+		// stats.update();
 	},
 
 	//camera might move and/or look at a different point depending on bodies movements

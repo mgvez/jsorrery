@@ -1,5 +1,5 @@
 
-import { $ } from 'jquery';
+import $ from 'jquery';
 import jsOrrery from './JSOrrery';
 
 //shim jquery plugins

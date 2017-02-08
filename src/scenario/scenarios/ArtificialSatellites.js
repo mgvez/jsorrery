@@ -15,6 +15,32 @@ export default {
 		/*earth: {
 			map: 'img/earthmap1k_KSC.jpg'
 		},/**/
+		//https://books.google.ca/books?id=lZWZXbOKZvEC&pg=PA107&lpg=PA107&dq=sputnik+1+argument+of+perigee&source=bl&ots=UjcyyLTQBQ&sig=4UAJgXkoSVUSkiLkbvSM5-jm3vM&hl=en&sa=X&ved=0ahUKEwjcwqTq1u3RAhVj7YMKHZV4DN44ChDoAQg1MAQ#v=onepage&q=sputnik%201%20argument%20of%20perigee&f=false
+		sputnik1: {
+			title: 'Sputnik 1',
+			mass: 84,
+			radius: 2,
+			color: '#ffffff',
+			orbit: {
+				relativeTo: 'earth',
+				base: {
+					a: ((earth.radius * 2) + 228 + 947) / 2,
+					e: 0.0517,
+					w: 41,
+					M: 0,
+					i: 65.128,
+					o: 0,
+				},
+				day: {
+					a: 0,
+					e: 0,
+					i: 0,
+					M: (360 / (96.17 * 60)) * DAY,
+					w: 0.432,
+					o: 0,
+				},
+			},
+		},
 		mercury6: {
 			title: 'Mercury 6',
 			mass: 1224.7,

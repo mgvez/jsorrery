@@ -5,7 +5,7 @@ import apollo from './scenarios/Apollo';
 import earthMoon from './scenarios/EarthMoon';
 import artificialSatellites from './scenarios/ArtificialSatellites';
 import jupiterMoon from './scenarios/JupiterMoon';
-// import nearEarthObject from './scenarios/NearEarthObject';
+import nearEarthObject from './scenarios/NearEarthObject';
 import bigJupiter from './scenarios/BigJupiter';
 import moonSOI from './scenarios/MoonSOI';
 
@@ -16,7 +16,7 @@ const all = [
 	earthMoon,
 	artificialSatellites,
 	jupiterMoon,
-	// nearEarthObject,
+	nearEarthObject,
 	bigJupiter,
 	moonSOI,
 ];

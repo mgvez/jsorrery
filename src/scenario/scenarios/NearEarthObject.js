@@ -7,179 +7,130 @@ radius: km
 
 */
 
-define(
-	[
-		'jsorrery/NameSpace',
-		'jsorrery/scenario/CommonCelestialBodies',
-		'vendor/jquery.xdomainajax'
-	], 
-	function(ns, common) {
+import Promise from 'bluebird';
+import $ from 'jquery';
+import { sun, mercury, venus, earth, mars, moon } from './CommonCelestialBodies';
 
+import { J2000, AU } from '../../constants';
 
-		const bodies = {};
+const baseNEO = {
+	mass: 1,
+	radius: 2000,
+	color: '#ffffff',
+};
 
-		const neoPath = 'http://neo.jpl.nasa.gov/cgi-bin/neo_ca?type=NEO&hmax=all&sort=date&sdir=ASC&tlim=far_future&dmax=0.05AU&max_rows=0&action=Display+Table&show=1';
+const N_TO_SHOW = 10;
+const MIN_DIST = 0.05;
+const NASA_API = '';
 
-		function onLoadError(jqXHR, textStatus, errorThrown) {
-			alert('Error loading NEO definitions. See console.');
-			console.log(textStatus, errorThrown);
-			console.log(jqXHR);
-		}
+function onLoadError(jqXHR, textStatus, errorThrown) {
+	alert('Error loading NEO definitions. See console.');
+	console.log(textStatus, errorThrown);
+	console.log(jqXHR);
+}
 
-		var onListLoaded = function(res) {
-			var html = res.results && res.results[0];
-			if(!html) return onLoadError(res, null, 'No result');
-			
-			var reg = /http\:\/\/ssd\.jpl\.nasa\.gov\/sbdb\.cgi\?sstr\=([^";]+)/g;
-			var matches = html.match(reg);
-			if(!matches) return onLoadError(res, null, 'No links found');
-
-			var allReady;
-			for(var i = 0; i<10 && i<matches.length; i++) {
-				(function(i){
-					var url = matches[i];
-					var name = decodeURI(url.substring(url.indexOf('sstr=')+5));
-
-					var loadDef = $.ajax({
-						url: url.replace(' ', ''),
-						type: 'get',
-						dataType: 'html',
-						context: {
-							name: name,
-							url: url
-						},
-					});
-
-					loadDef.fail(onLoadError);
-					loadDef.then(onObjectLoaded);
-					allReady = (allReady && allReady.then(function() {
-						return loadDef.promise();
-					})) || loadDef;
-					
-				})(i);
-			}
-			return allReady.promise();
-		};
-
-
-		var onObjectLoaded = function(res) {
-			var html = res.results && res.results[0];
-			if(!html) return onLoadError(res, null, 'No result');
-
-			var startStr = 'Orbital Elements at Epoch';
-			var from = html.indexOf(startStr);
-			var to = html.indexOf('show covariance matrix');
-
-			html = html.substring(from, to);
-
-			//find epoch
-			var epoch = Number(html.substring(startStr.length, html.indexOf('(')).replace(/\s/g, ''));
-			var tsSinceJ2000 = (epoch-2451545) * (60*60*24*1000);
-			epoch = ns.J2000.getTime() + tsSinceJ2000;
-			var epochDate = new Date(epoch);
-
-			//parse table containing elements. Its the second one in the substring.
-			from = html.indexOf('<table', html.indexOf('<table')+1);
-			to = html.indexOf('</table>');
-			
-			html = html.substring(from, to+9);
-			var table = $(html);
-			//console.log(table);
-
-			var orbitalElements = {};
-			var rows = table.find('tr');
-			rows.each(function(i, row){
-				var cells = $(row).find('td');
-				var key = null;
-				cells.each(function(j, cell){
-					cell = $(cell);
-					var content = cell.text().trim();
-					//orbital element ky is in cell 0
-					if(j === 0){
-						key = content;
-					}
-					//value is in cell 1
-					if(j === 1) {
-						//period has two values, the first one is "days"
-						if(key==='period'){
-							//console.log(content);
-							content = cell.html().trim().replace('<br>', '--').replace(/(<([^>]+)>)/ig,"");
-							content = content.split(/--/);
-							content = content[0] && content[0].trim();
-						}
-						orbitalElements[key] = Number(content);
-					}
-				});
-			});
-
-			bodies['_'+this.name] = _.extend({
-				title : this.name,
-				orbit: {
-					epoch : epochDate,
-					base : {
-						a : orbitalElements.a * ns.AU,
-						e : orbitalElements.e,
-						w : orbitalElements.peri,
-						M : orbitalElements.M,
-						i : orbitalElements.i,
-						o : orbitalElements.node
-					},
-					day : {
-						M : 360 / orbitalElements.period
-					}	
+function onListLoaded(res) {
+	// console.log(res);
+	if (res.near_earth_objects) {
+		const allLinks = Object.keys(res.near_earth_objects).reduce((neoLinks, day) => {
+			const dayNeos = res.near_earth_objects[day];
+			return neoLinks.concat(dayNeos.map((neoDef) => {
+				const { close_approach_data } = neoDef;
+				const missData = close_approach_data && close_approach_data[0];
+				const missDist = missData && Number(missData.miss_distance.astronomical);
+				if (missDist && missDist < MIN_DIST) {
+					return {
+						dist: missDist,
+						url: neoDef.links && neoDef.links.self,
+					};
 				}
-			}, baseNEO);
-
-			//console.log(orbitalElements);
-			//$('<div class="debug">').append(table).appendTo('body');
-		};
-
-
-
-		var baseNEO = {
-			mass : 1,
-			radius : 2000,
-			color : '#ffffff'
-		};
-
-		var cnf = {
-			name : 'NEO',
-			title : 'Near Earth Objects',
-			load : (function(){
-				var ready;
-				return function(){
-
-					if(ready) return ready.promise();
-					var loaded = $.ajax({
-						url: neoPath,
-						type: 'get',
-						dataType: 'html'
-					});
-
-					loaded.fail(onLoadError);
-					ready = loaded.then(onListLoaded);
-					return ready.promise();
-				};
-			})(),
-			/*calculateAll : true,
-			usePhysics : true,/**/
-			commonBodies : [
-				'sun',
-				'mercury',
-				'venus',
-				'earth',
-				'moon',
-				'mars'
-			],
-			bodies : bodies,
-			secondsPerTick : {min: 60, max: 3600 * 5, initial:3600},
-			defaultGuiSettings : { 
-				planetScale : 1
-			},
-			help : "This scenario shows the next 10 passages closer than 0.05 AU of near Earth objects from Nasa's Near Earth Object Project (<a href=\"http://neo.jpl.nasa.gov/\" target=\"_blank\">http://neo.jpl.nasa.gov/</a>."
-		};
-
-		return cnf;
-		
+				return null;
+			}).filter(a => a).sort((a, b) => a - b));
+		}, []);
+		allLinks.length = N_TO_SHOW;
+		const allLoaded = allLinks.map(loadNeo);
+		return Promise.all(allLoaded).then((allNeo) => {
+			return allNeo.reduce((neos, neo) => {
+				neos[neo.name] = neo;
+				return neos;
+			}, {});
+		});
 	}
-);
+	return Promise.reject();
+}
+
+function loadNeo(neoData) {
+	return $.ajax({
+		url: neoData.url,
+		dataType: 'json',
+		crossDomain: true,
+	}).then(onObjectLoaded, onLoadError);
+}
+
+function onObjectLoaded(res) {
+	const { name, orbital_data } = res;
+	// console.log(res);
+
+	const tsSinceJ2000 = (Number(orbital_data.epoch_osculation) - 2451545) * (60 * 60 * 24 * 1000);
+	const epochTime = J2000.getTime() + tsSinceJ2000;
+	const epoch = new Date(epochTime);
+	return Object.assign({
+		name,
+		title: name,
+		orbit: {
+			epoch,
+			base: {
+				a: Number(orbital_data.semi_major_axis) * AU,
+				e: Number(orbital_data.eccentricity),
+				w: Number(orbital_data.perihelion_argument),
+				M: Number(orbital_data.mean_anomaly),
+				i: Number(orbital_data.inclination),
+				o: Number(orbital_data.ascending_node_longitude),
+			},
+			day: {
+				M: 360 / Number(orbital_data.orbital_period),
+			},
+		},
+	}, baseNEO);
+}
+
+let scenarioReady;
+const cnf = {
+	name: 'NEO',
+	title: 'Near Earth Objects',
+	load: () => {
+		if (scenarioReady) return scenarioReady.promise();
+		
+		scenarioReady = $.ajax({
+			url: 'https://api.nasa.gov/neo/rest/v1/feed',
+			data: {
+				start_date: (new Date()).toISOString().substring(0, 10),
+				api_key: NASA_API,
+			},
+			dataType: 'json',
+			crossDomain: true,
+		}).then(onListLoaded, onLoadError).then(neos => {
+			console.log(neos);
+			cnf.bodies = Object.assign(cnf.bodies, neos);
+		});
+
+		return scenarioReady;
+	},
+	/*calculateAll : true,
+	usePhysics : true,/**/
+	commonBodies: [
+		sun,
+		mercury,
+		venus,
+		earth,
+		moon,
+		mars,
+	],
+	secondsPerTick: { min: 60, max: 3600 * 5, initial: 3600 },
+	defaultGuiSettings: { 
+		planetScale: 1,
+	},
+	help: `This scenario shows the next ${N_TO_SHOW} passages closer than ${MIN_DIST} AU of near Earth objects from Nasa\'s Near Earth Object Project (<a href="http://neo.jpl.nasa.gov/" target="_blank">http://neo.jpl.nasa.gov/</a>.`,
+};
+
+export default cnf;

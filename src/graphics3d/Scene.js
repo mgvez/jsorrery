@@ -39,6 +39,7 @@ export default {
 			preserveDrawingBuffer: true,
 			alpha: true,
 		});
+		renderer.autoClear = false;
 
 		if (is_capture) this.screenshot = Object.create(Screenshot).init(renderer);
 
@@ -118,7 +119,7 @@ export default {
 
 		//after all bodies have been positionned, update camera matrix (as camera might be attached to a body)
 		CameraManager.updateCameraMatrix();
-		let camPos = (CameraManager.getCamera().getAbsolutePos && CameraManager.getCamera().getAbsolutePos()) || CameraManager.getCamera().position;
+		const camPos = (CameraManager.getCamera().getAbsolutePos && CameraManager.getCamera().getAbsolutePos()) || CameraManager.getCamera().position;
 
 		//move sun, if its not a body shown. This assumes that the central body, if it has an orbit, revolves around the sun
 		if (this.sun && this.centralBody && this.centralBody.orbit) {
@@ -136,15 +137,19 @@ export default {
 
 		//center the milkyway to the camera position, to make it look infinite
 		if (this.milkyway) this.milkyway.setPosition(camPos);
+		Labels.draw(camPos, CameraManager.getLookAt());
 
+		renderer.clear();
 		renderer.render(this.root, CameraManager.getCamera());
+		renderer.clearDepth();
+		renderer.render(Labels.scene, Labels.camera);
+
 		if (this.screenshot) this.screenshot.capture();
 
 		//place planets labels. We need the camera position relative to the world in order to compute planets screen sizes, and hide/show labels depending on it
-		const radFov = CameraManager.getCamera().fov * DEG_TO_RAD;
-		camPos = CameraManager.getCamera().position.clone();
-		camPos.applyMatrix4(CameraManager.getCamera().matrixWorld);
-		Labels.draw(camPos, radFov);
+		// const radFov = CameraManager.getCamera().fov * DEG_TO_RAD;
+		// camPos = CameraManager.getCamera().position.clone();
+		// camPos.applyMatrix4(CameraManager.getCamera().matrixWorld);
 		/**/
 		// stats.update();
 	},

@@ -1,10 +1,14 @@
 
 import { TweenMax } from 'gsap';
+import { Vector3, Texture, Sprite, SpriteMaterial, OrthographicCamera, Scene } from 'three'
+;
 import $ from 'jquery';
 
 import { DEG_TO_RAD } from '../constants';
 import Dimensions from '../graphics3d/Dimensions';
 import CameraManager from '../graphics3d/CameraManager';
+
+const BASE_SIZE = 40;
 
 const EVENT_LABEL_LINE_H = 100;
 const EVENT_LABEL_MAX_ANGLE = 45;
@@ -14,48 +18,70 @@ let sceneW;
 let sceneH;
 let halfSceneW;
 
+function createLabel(tx) {
+
+	const canvas = document.createElement('canvas');
+	const context = canvas.getContext('2d');
+	canvas.width = 1024;
+	canvas.height = 64;
+	context.font = `${BASE_SIZE}px Sans-serif`;	
+	context.fillStyle = 'rgba(255, 255, 255, 1.0)';
+	const dim = context.measureText(tx);
+	// console.log(dim);
+	const centerX = canvas.width / 2;
+	const centerY = canvas.height / 2;
+
+	const radius = 30;
+	context.fillText(tx, centerX - (dim.width + radius * 1.2), BASE_SIZE);
+
+	context.beginPath();
+	context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+	context.lineWidth = 2;
+	context.strokeStyle = 'rgba(100, 100, 100, 1)';
+	context.stroke();
+
+	const texture = new Texture(canvas);
+	texture.needsUpdate = true;
+
+	const spriteMaterial = new SpriteMaterial({ map: texture });
+	const sprite = new Sprite(spriteMaterial);
+	// const scale = Dimensions.getScaled(new Vector3(1024 * 1000, 64 * 1000, 1));
+	sprite.scale.set(canvas.width / 4, canvas.height / 4, 1);
+	// console.log(scale);
+	sprite.position.set(1, 1, 1);
+	return sprite;	
+}
+
+
 //project scene position to 2d screen coordinates. Returns null if position is out of screen.
 function toScreenCoords(pos) {
 	const vector = pos.project(CameraManager.getCamera());
-	vector.x = Math.round((vector.x + 1) / 2 * sceneW);
-	vector.y = Math.round(-(vector.y - 1) / 2 * sceneH);/**/
-
-	if (vector.z < 1 && vector.z > 0 && vector.x > 0 && vector.x < sceneW && vector.y > 0 && vector.y < sceneH) {
-		return vector;
-	}
-	return null;
+	vector.x = Math.round(vector.x * (sceneW / 2));
+	vector.y = Math.round(vector.y * (sceneH / 2));
+	return vector;
 }
 
 //map callback, executed at each frame for each label.
 function positionLabel(label) {
-	label.callback(this.camPos, this.fov);
+	if (label.callback) label.callback(this.camPos);
 }
 
 //planet label specific positioning callback
 function getPlanetLabelCallback(el, body3d) {
-	let screenCoords;
-	let dist;
-	let visibleHeight;
-	let isVisible;
 
-	return (camPos, fov) => {
-		screenCoords = toScreenCoords(body3d.getPosition());
+	return (camPos) => {
+		const screenCoords = toScreenCoords(body3d.getPosition());
 		if (screenCoords) {
-			el.css({ left: screenCoords.x + 'px', top: screenCoords.y + 'px' }).show();
-
-			dist = body3d.root.position.distanceTo(camPos);
-			visibleHeight = 2 * Math.tan(fov / 2) * dist;
-			//if planet is larger than 10% of screen height, hide label
-			isVisible = (body3d.getPlanetStageSize() / visibleHeight) < 0.1;
-			if (isVisible !== el.data('shown')) {
-				el.data('shown', isVisible);
-				TweenMax.killTweensOf(el);
-				TweenMax.to(el, 1, { css: { opacity: isVisible ? 1 : 0 } });
-			}
-
-		} else {
-			el.hide();
+			el.position.set(screenCoords.x, screenCoords.y, 1);
+			// console.log(screenCoords.z);
+			let scale = (1 - screenCoords.z) * 100000;
+			if (scale > 1) scale = 1;
+			if (scale < 0.1) scale = 0.1;
+			// console.log(scale);
+			el.scale.set(1024 * 0.25 * scale, 64 * 0.25 * scale, 1);
 		}
+		// const pos = body3d.getPosition();
+		// el.position.set(pos);
 	};
 }
 
@@ -97,11 +123,15 @@ export default {
 		sceneW = $(window).width();
 		sceneH = $(window).height();
 		halfSceneW = sceneW / 2;
+
+		this.camera = new OrthographicCamera(-sceneW / 2, sceneW / 2, sceneH / 2, -sceneH / 2, 1, 10);
+		this.camera.position.z = 10;
+		this.scene = new Scene();
 	},
 
 	addPlanetLabel(title, body3d) {
-		const el = $(`<div class="planetSpot" data-shown="true"><div class="planetLabel">${title}</div></div>`).appendTo('body');
-		
+		const el = createLabel(title);
+		this.scene.add(el);
 		labels.push({
 			el,
 			callback: getPlanetLabelCallback(el, body3d),
@@ -109,22 +139,22 @@ export default {
 	},
 
 	addEventLabel(tx, pos, relativeTo) {
-		const el = $(`<div class="eventLabel"><div class="line"></div><div class="tx">${tx}</div></div>`).appendTo('body');
+		const el = createLabel(tx);
+
 		labels.push({
 			el,
-			callback: getEventLabelCallback(el, pos, relativeTo),
+			// callback: getEventLabelCallback(el, pos, relativeTo),
 		});
 	},
 
-	draw(camPos, fov) {
-		labels.map(positionLabel, { camPos, fov });
+	draw(camPos, lookAt) {
+		// this.camera.position.set(camPos);
+		// this.camera.lookAt(lookAt);
+		this.camera.updateProjectionMatrix();
+		labels.map(positionLabel, { camPos });
 	},
 
 	kill() {
-		if (!labels) return;
-		labels.forEach(label => {
-			label.el.remove();
-		});
 		labels = null;
 	},
 };

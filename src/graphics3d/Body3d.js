@@ -23,7 +23,8 @@ export default {
 		};
 
 		Labels.addPlanetLabel(this.celestial.title || this.celestial.name, this);
-
+		// this.label = new Label(this.celestial.title || this.celestial.name);
+		// this.root.add(this.label.getDisplayObject());
 	},
 
 	addEventLabel() {},
@@ -128,6 +129,7 @@ export default {
 			this.planet.rotation.y = (this.celestial.baseMapRotation || 0) + curRotation;
 		}
 		if (this.tracer) this.tracer.doTrace(pos);
+
 		return pos;
 	},
 

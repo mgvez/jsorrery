@@ -96,7 +96,7 @@ function updateCamera() {
 		} else {
 			lookAt.set(0, 0, 0).sub(lookFromBody.getPosition());
 		}
-	
+		
 		currentCamera.lookAt(lookAt);
 	}
 }
@@ -217,6 +217,10 @@ export default {
 	getCamera() {
 		if (typeof viewSettings.lookFrom === 'undefined') toggleCamera();
 		return currentCamera;
+	},
+
+	getLookAt() {
+		return lookAt;
 	},
 
 	updateCameraMatrix() {

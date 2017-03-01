@@ -279,7 +279,7 @@ export default {
 	},
 
 	getDefaultCameraPos() {
-		return;
+
 	},
 
 	setDefaults(defaultSettings) {

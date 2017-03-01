@@ -58,7 +58,7 @@ export default {
 			const rings = 50;
 			const sphere = new Mesh(
 				new SphereGeometry(radius, segments, rings),
-				mat,
+				mat
 			);
 			//console.log(this.celestial.name+' size ',radius, ' m');
 			this.planet.add(sphere);

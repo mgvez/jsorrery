@@ -56,12 +56,12 @@ function getMissionNumbers(orbitType) {
 
 	const v = numbers.spaceVel * FT_TO_M;
 	const r = (numbers.altitude * FT_TO_M) + (earth.radius * KM);
-	const C = (2 * GM) / (r * Math.pow(v, 2));
+	const C = (2 * GM) / (r * (v ** 2));
 
 	const pathAngle = DEG_TO_RAD * numbers.pathAngle;
-	const cosPathSq = Math.pow(Math.cos(pathAngle), 2);
-	const sinPathSq = Math.pow(Math.sin(pathAngle), 2);
-	const CSquared = Math.pow(C, 2);
+	const cosPathSq = Math.cos(pathAngle) ** 2;
+	const sinPathSq = Math.sin(pathAngle) ** 2;
+	const CSquared = C ** 2;
 	const arg1 = Math.sqrt(CSquared - 4 * (1 - C) * -cosPathSq);
 	const arg2 = (2 * (1 - C));
 	//radius perigee
@@ -69,11 +69,11 @@ function getMissionNumbers(orbitType) {
 	//radius apogee
 	const ra = ((-C - arg1) / arg2) * r;
 	//eccentricity
-	const e = Math.sqrt(Math.pow((((r * Math.pow(v, 2)) / GM) - 1), 2) * cosPathSq + sinPathSq);
+	const e = Math.sqrt(((((r * (v ** 2)) / GM) - 1) ** 2) * cosPathSq + sinPathSq);
 	//semimajor axis
 	const a = (r + ra) / 2;
 
-	const rvgm = r * Math.pow(v, 2) / GM;
+	const rvgm = r * (v ** 2) / GM;
 	//true anomaly
 	const trueAnomaly = Math.atan((rvgm * Math.cos(pathAngle) * Math.sin(pathAngle)) / (rvgm * cosPathSq - 1));/**/
 	
@@ -95,7 +95,7 @@ function getMissionNumbers(orbitType) {
 
 	const E = Math.acos((e + Math.cos(trueAnomaly)) / (1 + e * Math.cos(trueAnomaly)));
 	const M = E - e * Math.sin(E);
-	const N = Math.sqrt(GM / Math.pow(a, 3));
+	const N = Math.sqrt(GM / (a ** 3));
 	const T = M / N;
 	
 	/*

@@ -235,7 +235,7 @@ export default {
 		if (this.orbitalElements && this.orbitalElements.day && this.orbitalElements.day.M) {
 			period = 360 / this.orbitalElements.day.M;
 		} else if (getUniverse().getBody(relativeTo) && getUniverse().getBody(relativeTo).k && elements) {
-			period = 2 * Math.PI * Math.sqrt(Math.pow(elements.a / (AU * 1000), 3)) / getUniverse().getBody(relativeTo).k;
+			period = 2 * Math.PI * Math.sqrt(((elements.a / (AU * 1000)) ** 3)) / getUniverse().getBody(relativeTo).k;
 		}
 		period *= DAY;//in seconds
 		return period;

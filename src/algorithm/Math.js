@@ -4,7 +4,7 @@ export function sinh(a) {
 }
 
 export function cosh(a) {
-	return (Math.pow(Math.E, a) + Math.pow(Math.E, -a)) / 2;
+	return ((Math.E ** a) + (Math.E ** -a)) / 2;
 }
 
 export function sign(a) {

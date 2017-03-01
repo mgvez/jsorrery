@@ -100,10 +100,10 @@ function generateStars(shaders, stars, starTexture, size) {
 
 		if (mag < 7) {
 			//starVect.size = 2 + Math.pow((2 / starVect.mag), 1.2);
-			starColor = lightenDarkenColor(starColor, Math.pow(1 / mag, 0.4));
+			starColor = lightenDarkenColor(starColor, ((1 / mag) ** 0.4));
 		} else {
 			//starVect.size = 2;
-			starColor = lightenDarkenColor(starColor, Math.pow(1 / mag, 1.1));
+			starColor = lightenDarkenColor(starColor, ((1 / mag) ** 1.1));
 		}			
 		/**/
 

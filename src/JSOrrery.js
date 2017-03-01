@@ -57,7 +57,7 @@ function loadScenario(name, defaultParams) {
 	} else {
 		onSceneReady = getSceneReady();
 	}
-	onSceneReady.then(Preloader.remove).catch(e => {
+	onSceneReady.then(Preloader.remove).catch((e) => {
 		console.log(e);	
 	});
 }

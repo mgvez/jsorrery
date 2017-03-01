@@ -8,7 +8,6 @@ import ResourceLoader from '../loaders/ResourceLoader';
 
 let rendered;
 
-const pxRatio = (window.devicePixelRatio || 1);
 
 //keys of the loaded array
 const NAME = 0;
@@ -50,7 +49,7 @@ function lightenDarkenColor(hex, amount) {
 function drawConstellations() {
 
 	const material = new LineBasicMaterial({
-		color: pxRatio === 1 ? 0x111111 : 0x222222,
+		color: 0x222222,
 	});
 
 	Object.keys(Constellations).forEach(fromName => {

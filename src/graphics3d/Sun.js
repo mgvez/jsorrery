@@ -6,37 +6,38 @@ import { Object3D, Color, LensFlare, AdditiveBlending, PointLight, DirectionalLi
 import ResourceLoader from '../loaders/ResourceLoader';
 
 export default {
-	flareMapSrc: 'img/sunflare.png',
+	flareMapSrc: '/img/sunflare.png',
 	init(size) {
 		this.root = new Object3D();
-		const flareTx = ResourceLoader.loadTexture(this.flareMapSrc);
-		const flareColor = new Color(0xffffff);
-		flareColor.setHSL(0.57, 0.80, 0.97);
+		const flareTx = ResourceLoader.loadTexture(this.flareMapSrc).then(tx => {
+			const flareColor = new Color(0xffffff);
+			flareColor.setHSL(0.57, 0.80, 0.97);
 
-		const flareParams = this.flareParams = { size: 400 };
-		this.sunFlare = new LensFlare(flareTx, this.flareParams.size, 0.0, AdditiveBlending, flareColor);
+			const flareParams = this.flareParams = { size: 400 };
+			this.sunFlare = new LensFlare(tx, this.flareParams.size, 0.0, AdditiveBlending, flareColor);
 
-		function lensFlareUpdateCallback(object) {
-			let f;
-			const fl = object.lensFlares.length;
-			let flare;
-			const vecX = -object.positionScreen.x * 2;
-			const vecY = -object.positionScreen.y * 2;
+			function lensFlareUpdateCallback(object) {
+				let f;
+				const fl = object.lensFlares.length;
+				let flare;
+				const vecX = -object.positionScreen.x * 2;
+				const vecY = -object.positionScreen.y * 2;
 
-			for (f = 0; f < fl; f++) {
-				flare = this.lensFlares[f];
-				flare.x = this.positionScreen.x + vecX * flare.distance;
-				flare.y = this.positionScreen.y + vecY * flare.distance;
-				flare.size = flareParams.size;
-				//console.log(flare.size);
-				flare.wantedRotation = flare.x * Math.PI * 0.5;
-				flare.rotation += (flare.wantedRotation - flare.rotation) * 0.5;
+				for (f = 0; f < fl; f++) {
+					flare = this.lensFlares[f];
+					flare.x = this.positionScreen.x + vecX * flare.distance;
+					flare.y = this.positionScreen.y + vecY * flare.distance;
+					flare.size = flareParams.size;
+					// console.log(flare.size);
+					flare.wantedRotation = flare.x * Math.PI * 0.5;
+					flare.rotation += (flare.wantedRotation - flare.rotation) * 0.5;
+				}
 			}
-		}
 
-		this.sunFlare.customUpdateCallback = lensFlareUpdateCallback;
+			this.sunFlare.customUpdateCallback = lensFlareUpdateCallback;
 
-		this.root.add(this.sunFlare);
+			this.root.add(this.sunFlare);
+		});
 	},
 
 	setLight(hasCelestial) {

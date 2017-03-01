@@ -1,4 +1,53 @@
 
+$serif : 'Quattrocento', serif;
+$sans:  helvetica, arial, sans-serif;
+$entypo : "EntypoRegular";
+
+$formFont : $sans;
+$titleFont : $serif;
+$textFont : $serif;
+
+
+$widgetBorderCol : #555;
+$inputBorderCol : #333;
+$inputBg : rgba(255, 255, 255, 0.1);
+$selectActiveBg : rgba(25, 25, 25, 0.9);
+$calendarBg : rgba(25, 25, 25, 0.95);
+$labelBg : rgba(25, 25, 25, 0.7);
+$txCol : #aaa;
+$prelaodCol : #444;
+$labelLineCol : #333;
+
+$menuH : 45px;
+
+//====================================================== MIXINS
+
+@mixin unselectable(){
+	cursor: default !important;
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events:none;
+}
+
+
+@mixin inputBox($bg : $inputBg){
+	background: $bg;
+	border: 1px $inputBorderCol solid;
+	color:white;
+}
+
+
+
+%button{
+
+	font-family:$entypo;
+	font-size:32px;
+	line-height:22px;
+	width:32px;
+}
 	
 @font-face {
 	font-family: 'EntypoRegular';
@@ -11,33 +60,12 @@
 	font-style: normal;
 }
 
-@serif : 'Quattrocento', serif;
-@sans:  helvetica, arial, sans-serif;
-@entypo : "EntypoRegular";
-
-@formFont : @sans;
-@titleFont : @serif;
-@textFont : @serif;
-
-
-@widgetBorderCol : #555;
-@inputBorderCol : #333;
-@inputBg : rgba(255, 255, 255, 0.1);
-@selectActiveBg : rgba(25, 25, 25, 0.9);
-@calendarBg : rgba(25, 25, 25, 0.95);
-@labelBg : rgba(25, 25, 25, 0.7);
-@txCol : #aaa;
-@prelaodCol : #444;
-@labelLineCol : #333;
-
-@menuH : 45px;
-
 body{
 	margin:0;
 	padding:0;
-	font-family:@formFont;
+	font-family:$formFont;
 	font-size:10px;
-	color: @txCol;
+	color: $txCol;
 	background: black;
 	overflow:hidden;
 	 -webkit-font-smoothing: antialiased;
@@ -46,7 +74,7 @@ body{
 
 
 h1, h2{
-	font-family:@titleFont;
+	font-family:$titleFont;
 	font-weight:normal;
 }
 
@@ -54,7 +82,7 @@ a{
 	color:#fff;
 }
 
-#preload{
+#preload {
 	width:100%;
 	height:100%;
 	background:#000;
@@ -63,10 +91,10 @@ a{
 	left:0;
 	z-index:1000;
 
-	.title{
+	.title {
 		/*border-top: 1px #240a00 solid;
 		border-bottom: 1px #151d37 solid;/**/
-		color: @prelaodCol;
+		color: $prelaodCol;
 		position:relative;
 		top:50%;
 		height:90px;
@@ -88,7 +116,7 @@ a{
 			letter-spacing: 6px;
 			text-transform:uppercase;
 			margin:16px 0;
-			.transition-duration(1s);
+			transition-duration:1s;
 			color: #aaa;
 			text-shadow: 0 0 2px #555;
 
@@ -103,28 +131,28 @@ a{
 
 	}
 
-	.orbit{
-		@orbitSz : 200px;
-		@planetSz: 6px;
-		width:@orbitSz;
-		height:@orbitSz;
-		.border-radius(@orbitSz/2);
+	.orbit {
+		$orbitSz : 200px;
+		$planetSz: 6px;
+		width:$orbitSz;
+		height:$orbitSz;
+		border-radius: $orbitSz/2;
 		border:1px #333 solid;
 		position:absolute;
 		top:50%;
-		margin-top:-@orbitSz/2;
+		margin-top:-$orbitSz/2;
 		left:50%;
-		margin-left:-@orbitSz/2;
+		margin-left:-$orbitSz/2;
 		-webkit-animation: orbit 2s infinite linear;
 
-		.planet{
-			width:@planetSz;
-			height:@planetSz;
-			.border-radius(@planetSz/2);
+		.planet {
+			width:$planetSz;
+			height:$planetSz;
+			border-radius: $planetSz/2;
 			background:#333;
 			position:absolute;
-			top:(@orbitSz / 2)-(@planetSz/2) ;
-			left:-@planetSz/2;
+			top:($orbitSz / 2)-($planetSz/2) ;
+			left:-$planetSz/2;
 		}
 	}
 }
@@ -164,8 +192,8 @@ a{
 }
 
 .ui-datepicker{
-	background:@calendarBg;
-	border: 1px @inputBorderCol solid;
+	background:$calendarBg;
+	border: 1px $inputBorderCol solid;
 	padding:20px;
 	display:none;
 
@@ -173,7 +201,7 @@ a{
 		width:18px;
 		height:18px;
 		text-align:center;
-		background: @inputBg;
+		background: $inputBg;
 	}
 
 	a{
@@ -183,16 +211,16 @@ a{
 }
 
 .ui-slider{
-	border-bottom:1px @inputBorderCol solid;
+	border-bottom:1px $inputBorderCol solid;
 	height:10px;
 	position:relative;
 	width:100px;
 
 	.ui-slider-handle{
-		background: @inputBorderCol;
+		background: $inputBorderCol;
 		width:10px;
 		height:10px;
-		.border-radius(50%);
+		border-radius: 50%;
 		position:absolute;
 		top:6px;
 	}
@@ -208,16 +236,16 @@ nav{
 	z-index:500;
 	top:0;
 	left:0;
-	height: @menuH;
+	height: $menuH;
 	width: 100%;
 	background: rgba(0, 0, 0, 0.3);
-	border-bottom:1px @widgetBorderCol solid;
+	border-bottom:1px $widgetBorderCol solid;
 
 	.help{
 		//position:absolute;
 		top:-2px;
 		display:inline-block;
-		font-family:@entypo;
+		font-family:$entypo;
 		font-size:18px;
 		line-height:inherit;
 		height:18px;
@@ -256,7 +284,7 @@ nav{
 				font-weight:normal;
 				position:absolute;
 				display:none;
-				.inputBox(@selectActiveBg);
+				@include inputBox($selectActiveBg);
 				z-index:1000;
 
 				li{
@@ -266,7 +294,7 @@ nav{
 					white-space: nowrap;
 
 					&.selected{
-						.inputBox();
+						@include inputBox();
 					}
 
 					&:hover, &.selected{
@@ -276,7 +304,7 @@ nav{
 
 					&.disabled{
 						font-weight:normal;
-						color:@txCol;
+						color:$txCol;
 						opacity:0.4;
 					}
 				}
@@ -321,23 +349,23 @@ nav{
 		
 
 		input, button{
-			font-family:@formFont;
+			font-family:$formFont;
 			font-size:11px;
 		}
 
 		input, .display{
-			.inputBox();
+			@include inputBox();
 			padding:1px 3px;
 			margin: 2px 0 0 0;
 		}
 
 		button{
-			.inputBox();
-			.button();
+			@include inputBox();
+			@extend button;
 			margin-top:6px;
 			cursor:pointer;
 			text-transform: uppercase;
-			.transition-duration(0.5s);
+			transition-duration: 0.5s;
 			&:hover{
 				opacity: 0.7;
 			}
@@ -345,11 +373,11 @@ nav{
 
 		#shareWidget{
 			position:absolute;
-			top:@menuH + 5px;
+			top:$menuH + 5px;
 			right: 5px;
 			padding:12px;
 			background: rgba(0, 0, 0, 1);
-			border:1px @widgetBorderCol solid;
+			border:1px $widgetBorderCol solid;
 			display:none;
 	
 			input#shareUrl{
@@ -358,7 +386,7 @@ nav{
 			}
 
 			#social{
-				.clearfix();
+
 			}
 			#twitterShare{
 				float:left;
@@ -368,17 +396,13 @@ nav{
 
 }
 
-.inputBox(@bg : @inputBg){
-	background: @bg;
-	border: 1px @inputBorderCol solid;
-	color:white;
-}
-
 .planetLabel{
-	.unselectable();
+	@include unselectable();
 	position:absolute;
+	top:0;
+	left:0;
 	color:#fff;
-	background:@labelBg;
+	background:$labelBg;
 	padding:3px;
 	font-size:9px;
 	left: 24px;
@@ -387,48 +411,51 @@ nav{
 }
 
 .eventLabel{
-	.unselectable();
+	@include unselectable();
 	position:absolute;
 	color:#fff;
 	width:2px;
 	height:2px;
-	.border-radius(1px);
+	border-radius: 1px;
 	margin-left:-1px;
 	margin-top:-1px;
 	background:#fff;
 	//display:none !important;
 
 	.line{
-		.transform-origin(0 0);
+		transform-origin: 0 0;
 		width:1px;
 		height:100px;
-		border-left:1px @labelLineCol solid;
+		border-left:1px $labelLineCol solid;
 		position:absolute;
 		left:1px;
 	}
 
 	.tx{
 		position:absolute;
-		background:@labelBg;
+		background:$labelBg;
 		font-size: 9px;
 		padding:3px;
 		white-space: nowrap;
-		border-bottom:1px @labelLineCol solid;
+		border-bottom:1px $labelLineCol solid;
 		text-align:center;
 	}
 }
 
 .planetSpot {
-	.unselectable();
-	@sz : 20px;
-	width:@sz;
-	height:@sz;
+	@include unselectable();
+	$sz : 20px;
+	width:$sz;
+	height:$sz;
 	position:absolute;
-	border:1px @labelLineCol solid;
-	.border-radius(50%);
-	margin-top:-@sz / 2;
-	margin-left:-@sz / 2;
+	top:0;
+	left:0;
+	border:0.5px rgba(255, 255, 255, 0.2) solid;
+	border-radius: 50%;
+	margin-top:-$sz / 2;
+	margin-left:-$sz / 2;
 	//display:none !important;
+
 }
 
 .debug{
@@ -451,20 +478,13 @@ nav{
 	}
 }
 
-.button{
-
-	font-family:@entypo;
-	font-size:32px;
-	line-height:22px;
-	width:32px;
-}
 
 
 
 .helpContent{
 	display:none;
 	position:absolute;
-	top:@menuH;
+	top:$menuH;
 	left:0;
 	z-index:150;
 	background: rgba(0, 0, 0, 0.6);
@@ -473,7 +493,7 @@ nav{
 	max-height: 80%;
 	padding: 30px 20%;
 	border-bottom: 1px #222 solid;
-	font-family:@textFont;
+	font-family:$textFont;
 	font-size: 16px;
 	letter-spacing: 0.5px;
 	line-height: 1.8em;
@@ -495,116 +515,9 @@ nav{
 	top: 10px;
 	right:10px;
 	font-size:45px;
-	font-family:@entypo;
-	.transition-duration(0.5s);
+	font-family:$entypo;
+	transition-duration: 0.5s;
 	&:hover{
 		color:#fff;
 	}
 }
-
-//====================================================== MIXINS
-
-.unselectable(){
-	cursor: default !important;
-	-moz-user-select: -moz-none;
-	-khtml-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	pointer-events:none;
-}
-
-// Drop shadows
-.box-shadow(@shadow) {
-  -webkit-box-shadow: @shadow;
-     -moz-box-shadow: @shadow;
-          box-shadow: @shadow;
-}
-
-// Border Radius
-.border-radius(@radius) {
-  -webkit-border-radius: @radius;
-     -moz-border-radius: @radius;
-          border-radius: @radius;
-}
-
-// Transitions
-.transition(@transition) {
-  -webkit-transition: @transition;
-     -moz-transition: @transition;
-       -o-transition: @transition;
-          transition: @transition;
-}
-.transition-delay(@transition-delay) {
-  -webkit-transition-delay: @transition-delay;
-     -moz-transition-delay: @transition-delay;
-       -o-transition-delay: @transition-delay;
-          transition-delay: @transition-delay;
-}
-.transition-duration(@transition-duration) {
-  -webkit-transition-duration: @transition-duration;
-     -moz-transition-duration: @transition-duration;
-       -o-transition-duration: @transition-duration;
-          transition-duration: @transition-duration;
-}
-
-// Transformations
-.rotate(@degrees) {
-  -webkit-transform: rotate(@degrees);
-      -ms-transform: rotate(@degrees); // IE9+
-          transform: rotate(@degrees);
-}
-.scale(@ratio) {
-  -webkit-transform: scale(@ratio);
-      -ms-transform: scale(@ratio); // IE9+
-          transform: scale(@ratio);
-}
-.translate(@x; @y) {
-  -webkit-transform: translate(@x, @y);
-      -ms-transform: translate(@x, @y); // IE9+
-          transform: translate(@x, @y);
-}
-.translate3d(@x; @y; @z) {
-  -webkit-transform: translate3d(@x, @y, @z);
-          transform: translate3d(@x, @y, @z);
-}
-
-.rotateX(@degrees) {
-  -webkit-transform: rotateX(@degrees);
-      -ms-transform: rotateX(@degrees); // IE9+
-          transform: rotateX(@degrees);
-}
-.rotateY(@degrees) {
-  -webkit-transform: rotateY(@degrees);
-      -ms-transform: rotateY(@degrees); // IE9+
-          transform: rotateY(@degrees);
-}
-.perspective(@perspective) {
-  -webkit-perspective: @perspective;
-     -moz-perspective: @perspective;
-          perspective: @perspective;
-}
-.perspective-origin(@perspective) {
-  -webkit-perspective-origin: @perspective;
-     -moz-perspective-origin: @perspective;
-          perspective-origin: @perspective;
-}
-.transform-origin(@origin){
-  -webkit-transform-origin: @origin;
-     -moz-transform-origin: @origin;
-          transform-origin: @origin;
-}
-
-.clearfix {
-  *zoom: 1;
-  &:before,
-  &:after {
-    display: table;
-    content: "";
-  }
-  &:after {
-    clear: both;
-  }
-}
-
-

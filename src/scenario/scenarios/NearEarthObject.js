@@ -130,7 +130,7 @@ const cnf = {
 	defaultGuiSettings: { 
 		planetScale: 1,
 	},
-	help: `This scenario shows the next ${N_TO_SHOW} passages closer than ${MIN_DIST} AU of near Earth objects from Nasa\'s Near Earth Object Project (<a href="http://neo.jpl.nasa.gov/" target="_blank">http://neo.jpl.nasa.gov/</a>.`,
+	help: `This scenario shows the next ${N_TO_SHOW} passages closer than ${MIN_DIST} AU of near Earth objects from Nasa's Near Earth Object Project (<a href="http://neo.jpl.nasa.gov/" target="_blank">http://neo.jpl.nasa.gov/</a>.`,
 };
 
 export default cnf;

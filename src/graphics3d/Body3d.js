@@ -23,8 +23,6 @@ export default {
 		};
 
 		Labels.addPlanetLabel(this.celestial.title || this.celestial.name, this);
-		// this.label = new Label(this.celestial.title || this.celestial.name);
-		// this.root.add(this.label.getDisplayObject());
 	},
 
 	addEventLabel() {},
@@ -124,7 +122,8 @@ export default {
 	drawMove() {
 		const pos = this.getPosition();
 		this.root.position.copy(pos);
-		if (this.celestial.sideralDay && getUniverse().deltaT <= this.maxDeltaForSideralDay) {
+
+		if (this.celestial.sideralDay) {
 			const curRotation = (getUniverse().epochTime / this.celestial.sideralDay) * CIRCLE;
 			this.planet.rotation.y = (this.celestial.baseMapRotation || 0) + curRotation;
 		}

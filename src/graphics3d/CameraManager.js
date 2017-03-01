@@ -219,10 +219,6 @@ export default {
 		return currentCamera;
 	},
 
-	getLookAt() {
-		return lookAt;
-	},
-
 	updateCameraMatrix() {
 		if (currentCamera && currentCamera.parent) currentCamera.parent.updateMatrixWorld();
 	},

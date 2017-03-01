@@ -39,7 +39,6 @@ export default {
 			preserveDrawingBuffer: true,
 			alpha: true,
 		});
-		renderer.autoClear = false;
 
 		if (is_capture) this.screenshot = Object.create(Screenshot).init(renderer);
 
@@ -137,19 +136,17 @@ export default {
 
 		//center the milkyway to the camera position, to make it look infinite
 		if (this.milkyway) this.milkyway.setPosition(camPos);
-		Labels.draw(camPos, CameraManager.getLookAt());
 
-		renderer.clear();
 		renderer.render(this.root, CameraManager.getCamera());
-		renderer.clearDepth();
-		renderer.render(Labels.scene, Labels.camera);
 
 		if (this.screenshot) this.screenshot.capture();
 
 		//place planets labels. We need the camera position relative to the world in order to compute planets screen sizes, and hide/show labels depending on it
-		// const radFov = CameraManager.getCamera().fov * DEG_TO_RAD;
+		const radFov = CameraManager.getCamera().fov * DEG_TO_RAD;
 		// camPos = CameraManager.getCamera().position.clone();
 		// camPos.applyMatrix4(CameraManager.getCamera().matrixWorld);
+		Labels.draw(camPos, radFov);
+
 		/**/
 		// stats.update();
 	},

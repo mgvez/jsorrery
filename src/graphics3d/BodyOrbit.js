@@ -16,8 +16,8 @@ export default {
 
 	setOrbitLines() {
 		let orbitVertices = this.celestial.getOrbitVertices(false);
-		
 		if (orbitVertices) {
+			// console.log(this.celestial.name, orbitVertices.length);
 			//get orbit line calculated from precise locations instead of assumed ellipse
 			if (!this.perturbedOrbitLine) {
 				this.perturbedOrbitLine = Object.create(OrbitLine);

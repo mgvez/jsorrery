@@ -99,6 +99,7 @@ function updateCamera() {
 		
 		currentCamera.lookAt(lookAt);
 	}
+
 }
 
 function onMouseWheel(event, delta, deltaX, deltaY) {

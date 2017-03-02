@@ -15,13 +15,16 @@ let sceneH;
 let halfSceneW;
 
 //project scene position to 2d screen coordinates. Returns null if position is out of screen.
-function toScreenCoords(pos) {
-	const vector = pos.project(CameraManager.getCamera());
+function toScreenCoords(pos, camPos, fov) {
+	const cam = CameraManager.getCamera();
+	const vector = pos.clone().project(cam);
 	vector.x = (vector.x + 1) / 2 * sceneW;
 	vector.y = -(vector.y - 1) / 2 * sceneH;
-	vector.z = 0.4 + Math.log10(1 + ((1 - vector.z) * 100000));
-	// console.log(vector.z);
-	if (vector.z > 0 && vector.x > 0 && vector.x < sceneW && vector.y > 0 && vector.y < sceneH) {
+	if (vector.z < 1 && vector.x > 0 && vector.x < sceneW && vector.y > 0 && vector.y < sceneH) {
+		const dst = camPos.distanceTo(pos);
+		const span = Math.atan(fov / 2) * dst;
+		const factor = 1 / (1 + Math.log10(span));
+		vector.z = 0.3 + factor;
 		return vector;
 	}
 	return null;
@@ -35,25 +38,12 @@ function positionLabel(label) {
 //planet label specific positioning callback
 function getPlanetLabelCallback(el, body3d) {
 	let screenCoords;
-	let dist;
-	let visibleHeight;
-	let isVisible;
 
 	return (camPos, fov) => {
-		screenCoords = toScreenCoords(body3d.getPosition());
+		screenCoords = toScreenCoords(body3d.getPosition(), camPos, fov);
 		if (screenCoords) {
 			const alpha = 1 / screenCoords.z; 
 			el.css({ transform: `translate(${screenCoords.x}px, ${screenCoords.y}px) scale(${screenCoords.z})`, opacity: alpha }).show();
-			// dist = body3d.root.position.distanceTo(camPos);
-			// visibleHeight = 2 * Math.tan(fov / 2) * dist;
-			// //if planet is larger than 10% of screen height, hide label
-			// isVisible = (body3d.getPlanetStageSize() / visibleHeight) < 0.1;
-			// if (isVisible !== el.data('shown')) {
-			// 	el.data('shown', isVisible);
-			// 	TweenMax.killTweensOf(el);
-			// 	TweenMax.to(el, 1, { css: { opacity: isVisible ? 1 : 0 } });
-			// }
-
 		} else {
 			el.hide();
 		}
@@ -71,9 +61,10 @@ function getEventLabelCallback(el, pos, relativeTo) {
 	let radAngle;
 	let tipPos;
 	let cssRot;
-	return () => {
+	return (camPos) => {
 		screenCoords = toScreenCoords(
-			Dimensions.getScaled(pos.clone().add(relativeTo.getPosition()))
+			Dimensions.getScaled(pos.clone().add(relativeTo.getPosition())),
+			camPos
 		);
 		if (screenCoords) {
 			angle = ((screenCoords.x - halfSceneW) / halfSceneW) * EVENT_LABEL_MAX_ANGLE;
@@ -118,6 +109,7 @@ export default {
 	},
 
 	draw(camPos, fov) {
+		// currentCamera.getWorldPosition();
 		labels.map(positionLabel, { camPos, fov });
 	},
 

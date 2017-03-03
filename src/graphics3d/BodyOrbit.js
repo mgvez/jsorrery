@@ -15,34 +15,27 @@ export default {
 	},
 
 	setOrbitLines() {
-		let orbitVertices = this.celestial.getOrbitVertices(false);
+		const orbitVertices = this.celestial.getOrbitVertices(false);
 		if (orbitVertices) {
 			// console.log(this.celestial.name, orbitVertices.length);
 			//get orbit line calculated from precise locations instead of assumed ellipse
-			if (!this.perturbedOrbitLine) {
-				this.perturbedOrbitLine = Object.create(OrbitLine);
-				this.perturbedOrbitLine.init(this.celestial.name, this.celestial.color);
+			if (!this.orbitLine) {
+				this.orbitLine = Object.create(OrbitLine);
+				//if body is tracing its path as well as showing its computed orbit, we show the orbit as a solid faded line
+				this.orbitLine.init(this.celestial.name, this.celestial.color, this.celestial.forceTrace);
 			}
-			this.perturbedOrbitLine.setLine(orbitVertices);
-
-			//get new orbit vertices, but elliptical (not perturbed)
-			orbitVertices = this.celestial.getOrbitVertices(true);
+			this.orbitLine.setLine(orbitVertices);
 
 			//does this body revolves around the system's main body? If so, draw its ecliptic
 			if (!this.celestial.relativeTo || this.celestial.relativeTo === getUniverse().getBody().name) {
 				const eclipticVertices = orbitVertices.map(val => val.clone().negate());
 				if (!this.eclipticLine) {
 					this.eclipticLine = Object.create(OrbitLine);
-					this.eclipticLine.init(this.celestial.name, getUniverse().getBody().color);
+					this.eclipticLine.init(this.celestial.name, getUniverse().getBody().color, true);
 				}
 				this.eclipticLine.setLine(eclipticVertices);
 			}/**/
 
-			if (!this.ellipticOrbitLine) {
-				this.ellipticOrbitLine = Object.create(OrbitLine);
-				this.ellipticOrbitLine.init(this.celestial.name, this.celestial.color);
-			}
-			this.ellipticOrbitLine.setLine(orbitVertices);
 
 			if (this.celestial.calculateFromElements) {
 				this.recalculateListener = () => {
@@ -50,7 +43,6 @@ export default {
 				};
 				this.celestial.addEventListener('revolution', this.recalculateListener);
 			}
-			this.orbitLine = this.celestial.calculateFromElements ? this.perturbedOrbitLine : this.ellipticOrbitLine;
 
 		}
 	},

@@ -91,6 +91,7 @@ export default {
 	calculateAll: true,
 	forcedGuiSettings: {
 		date: epoch,
+		scale: 1,
 	},
 	bodies: {
 		earth: {

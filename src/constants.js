@@ -31,7 +31,5 @@ export const J2000 = new Date('2000-01-01T12:00:00-00:00');
 
 export const DEFAULT_CALCULATIONS_PER_TICK = 10;
 
-//in universe size (so depends on max orbit among all bodies)
-export const vertexDist = 1 / 50;
-
-export const is_capture = false;
+export const IS_SCREENSHOT = true;
+export const IS_CAPTURE = false;

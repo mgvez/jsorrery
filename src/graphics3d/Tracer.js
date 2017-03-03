@@ -1,6 +1,7 @@
 
 import { Vector3, Object3D, LineBasicMaterial, Geometry, Line } from 'three';
 import { darken, hexToRgb, rgbToHex } from '../utils/ColorUtils';
+import { IS_SCREENSHOT, IS_CAPTURE } from '../constants';
 
 //a change of direction of x radians triggers a vertex switch in the path (equivalent to adding a vertex);
 const SWITCH_TRESHOLD = 0.005;
@@ -9,7 +10,7 @@ const vNorm = new Vector3(1, 0, 0);
 export default {
 	init(color, nVertices, name) {
 		this.name = name;
-		this.color = rgbToHex(darken(hexToRgb(color), 0.7));
+		this.color = IS_SCREENSHOT || IS_CAPTURE ? color : rgbToHex(darken(hexToRgb(color), 0.7));
 		this.points = [];
 		this.nVertices = nVertices;
 		this.lastVertexIdx = this.nVertices - 1;

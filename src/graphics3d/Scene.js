@@ -15,7 +15,7 @@ import Dimensions from './Dimensions';
 import Screenshot from './Screenshot';
 import Labels from '../graphics2d/Labels';
 import Gui, { PLANET_SCALE_ID } from '../gui/Gui';
-import { is_capture, DEG_TO_RAD, KM } from '../constants';
+import { IS_CAPTURE, DEG_TO_RAD, KM } from '../constants';
 
 // 		'three/stats',
 		
@@ -40,7 +40,7 @@ export default {
 			alpha: true,
 		});
 
-		if (is_capture) this.screenshot = Object.create(Screenshot).init(renderer);
+		if (IS_CAPTURE) this.screenshot = Object.create(Screenshot).init(renderer);
 
 		//renderer.shadowMapEnabled = true;
 		renderer.setSize(this.width, this.height);
@@ -57,7 +57,7 @@ export default {
 		this.container.append(renderer.domElement);
 		
 		//planet scale
-		Gui.addSlider(PLANET_SCALE_ID, { min: 1, max: 100, initial: 10 }, val => {
+		Gui.addSlider(PLANET_SCALE_ID, { min: 1, max: 100, initial: (scenario.forcedGuiSettings && scenario.forcedGuiSettings.scale) || 10 }, val => {
 			this.bodies3d.forEach(body3d => {
 				body3d.setScale(val);
 			});

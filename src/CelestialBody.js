@@ -85,44 +85,27 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 	afterMove(deltaTIncrement) {},
 
 	/**
-	Calculates orbit line from orbital elements. By default, the orbital elements might not be osculating, i.e. they might account for perturbations. But the given orbit would thus be different slightly from the planet's path, as the velocity is calculated by considering that the orbit is elliptic.
+	Calculates orbit line from orbital elements.
 	*/
-	getOrbitVertices(isElliptic) {
+	getOrbitVertices() {
 
-		let startTime = this.getEpochTime(getUniverse().currentTime);
+		const startTime = this.getEpochTime(getUniverse().currentTime);
 		const elements = this.orbitalElements.calculateElements(startTime);
 		const period = this.orbitalElements.calculatePeriod(elements, this.relativeTo);
 		if (!period) return null;
-						
-		let incr = period / 360;
+
+		const incr = period / 360;
 		const points = [];
 		let lastPoint;
 		let point;
 		let angle;
 		let step;
 		let total = 0;
-		let defaultOrbitalElements;
 		let computed;
 		let angleToPrevious;
 
-
-		//if we want an elliptic orbit from the current planet's position (i.e. the ellipse from which the velocity was computed with vis-viva), setup fake orbital elements from the position
-		if (isElliptic) {
-			defaultOrbitalElements = {
-				base: this.orbitalElements.calculateElements(startTime, null, true),
-			};
-			defaultOrbitalElements.day = { M: 1 };
-			defaultOrbitalElements.base.a /= 1000;
-			defaultOrbitalElements.base.i /= DEG_TO_RAD;
-			defaultOrbitalElements.base.o /= DEG_TO_RAD;
-			defaultOrbitalElements.base.w /= DEG_TO_RAD;
-			defaultOrbitalElements.base.M /= DEG_TO_RAD;
-			incr = DAY;
-			startTime = 0;
-		}				
-
 		for (let i = 0; total < 360; i++) {
-			computed = this.orbitalElements.calculateElements(startTime + (incr * i), defaultOrbitalElements);
+			computed = this.orbitalElements.calculateElements(startTime + (incr * i));
 			//if(this.name=='moon')console.log(startTime+(incr*i));
 			point = this.orbitalElements.getPositionFromElements(computed);
 			if (lastPoint) {
@@ -131,7 +114,7 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 				if (angle > 1.3 || ((angle + total) > 360.5)) {
 					for (let j = 0; j < angle; j++) {
 						step = (incr * (i - 1)) + ((incr / angle) * j);
-						computed = this.orbitalElements.calculateElements(startTime + step, defaultOrbitalElements);
+						computed = this.orbitalElements.calculateElements(startTime + step);
 						point = this.orbitalElements.getPositionFromElements(computed);
 						//when finishing the circle try to avoid going too far over 360 (break after first point going over 360)
 						if (total > 358) {

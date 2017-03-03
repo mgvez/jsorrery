@@ -67,6 +67,7 @@ export default {
 
 		//delta T slider
 		Gui.addSlider(DELTA_T_ID, scenario.secondsPerTick, (val) => {
+			// console.log(val, scenario.secondsPerTick);
 			Ticker.setSecondsPerTick(val);
 		});
 

@@ -226,39 +226,36 @@ export default {
 	addSlider(id, options, onChange) {
 		removeControl(id);
 		const container = getContainer(id);
-		const valDisplay = getLabel(id).find('.valDisplay').text('1');
+		const defaultVal = Number(this.defaultSettings[id]) || (options && options.initial) || 1;
+		const valDisplay = getLabel(id).find('.valDisplay').text(defaultVal);
+
+		const min = (options && options.min) || 1;
+		const max = (options && options.max) || 100;
+		const step = (options && options.step) || min;
+
+		const slider = $(`<input type ="range" min="${min}" max="${max}" step="${step}" value ="${defaultVal}"/>`).appendTo(container);
+
+		slider.off('input').on('input.jsorrery', () => {
+			const val = slider.val();
+			valDisplay.text(val);
+			ExportValues.setVal(id, val);
+			onChange(val);
+		});
 
 		function setSlideValue(val) {
-			valDisplay.text(val);
-			onChange(val);
+			slider.val(val);
 		}
-
-		const defaultVal = Number(this.defaultSettings[id]);
-		const params = {
-			slide(evt, ui) {
-				let val = ui.value;
-				val = val < 1 ? 1 : val;
-				ExportValues.setVal(id, val);
-				setSlideValue(val);
-			},
-			value: defaultVal || (options && options.initial) || 1,
-		};
-
-		if (options && options.min) params.min = options.min;
-		if (options && options.max) params.max = options.max;
-
-		console.warn('replace slider jq ui');
-		const slider = $('<div>').appendTo(container);//.slider(params);
 
 		controls[id] = slider;
 
 		if (defaultVal) {
 			this.pushDefaultsCallbacks(() => {
 				setSlideValue(defaultVal);
+				onChange(defaultVal);
 			});
 		}
 
-		ExportValues.setVal(id, defaultVal || 1);
+		ExportValues.setVal(id, defaultVal);
 
 		return slider;
 	},

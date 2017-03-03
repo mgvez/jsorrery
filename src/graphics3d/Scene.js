@@ -57,7 +57,7 @@ export default {
 		this.container.append(renderer.domElement);
 		
 		//planet scale
-		Gui.addSlider(PLANET_SCALE_ID, null, val => {
+		Gui.addSlider(PLANET_SCALE_ID, { min: 1, max: 100, initial: 10 }, val => {
 			this.bodies3d.forEach(body3d => {
 				body3d.setScale(val);
 			});
@@ -105,8 +105,8 @@ export default {
 	},/**/
 
 	setDimension(largestSMA, smallestSMA, largestRadius) {
-		this.width = $(window).width();
-		this.height = $(window).height();
+		this.width = window.innerWidth;
+		this.height = window.innerHeight;
 		Dimensions.setLargestDimension(largestSMA);
 		this.stageSize = Dimensions.getScaled(largestSMA);
 		this.smallestSMA = smallestSMA;

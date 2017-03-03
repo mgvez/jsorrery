@@ -16,7 +16,7 @@ export default {
 			calculateFromElements: true,
 		},
 	},
-	secondsPerTick: { min: 3600, max: 3600 * 15, initial: 3600 * 5 }, //3600 * 24 * 2,
+	secondsPerTick: { min: 60, max: 3600 * 15, initial: 3600 }, //3600 * 24 * 2,
 	defaultGuiSettings: { 
 		planetScale: 10,
 	},

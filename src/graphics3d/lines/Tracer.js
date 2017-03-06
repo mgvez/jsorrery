@@ -1,7 +1,7 @@
 
 import { Vector3, Object3D, LineBasicMaterial, Geometry, Line } from 'three';
-import { darken, hexToRgb, rgbToHex } from '../utils/ColorUtils';
-import { IS_SCREENSHOT, IS_CAPTURE } from '../constants';
+import { darken, hexToRgb, rgbToHex } from 'utils/ColorUtils';
+import { IS_SCREENSHOT, IS_CAPTURE } from 'constants';
 
 //a change of direction of x radians triggers a vertex switch in the path (equivalent to adding a vertex);
 const SWITCH_TRESHOLD = 0.005;
@@ -65,7 +65,7 @@ export default {
 		if (this.currentVertex < this.lastVertexIdx) this.currentVertex++;
 	},
 
-	doTrace(fromPos) {
+	draw(fromPos) {
 		if (!this.geom) return;
 		const pos = this.setTracePos(fromPos);
 		if (this.geom.vertices[this.currentVertex] && this.geom.vertices[this.currentVertex].distanceTo(pos) === 0) return;

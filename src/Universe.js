@@ -5,13 +5,13 @@
 
 import { Vector3 } from 'three';
 
-import { USE_PHYSICS_BY_DEFAULT, DEFAULT_CALCULATIONS_PER_TICK, KM, J2000 } from './constants';
-import Labels from './graphics2d/Labels';
-import Scene from './graphics3d/Scene';
-import ResourceLoader from './loaders/ResourceLoader';
-import Ticker from './algorithm/Ticker';
-import CelestialBody from './CelestialBody';
-import Gui, { START_ID, DELTA_T_ID } from './gui/Gui';
+import { USE_PHYSICS_BY_DEFAULT, DEFAULT_CALCULATIONS_PER_TICK, KM, J2000 } from 'constants';
+import Labels from 'graphics2d/Labels';
+import Scene from 'graphics3d/Scene';
+import ResourceLoader from 'loaders/ResourceLoader';
+import Ticker from 'algorithm/Ticker';
+import CelestialBody from 'CelestialBody';
+import Gui, { START_ID, DELTA_T_ID } from 'gui/Gui';
 
 export default {
 	init(scenario, qstrSettings) {
@@ -132,7 +132,6 @@ export default {
 		//after all is inialized
 		this.bodies.forEach(body => {
 			// console.log(body.name, body.isCentral);
-
 			this.scene.addBody(body);
 			body.afterInitialized(true);
 		});

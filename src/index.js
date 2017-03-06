@@ -2,7 +2,7 @@
 import $ from 'jquery';
 import 'style!scss/master.scss';
 
-import jsOrrery from './JSOrrery';
+import jsOrrery from 'JSOrrery';
 
 //shim jquery plugins
 window.$ = $;

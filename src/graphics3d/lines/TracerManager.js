@@ -2,8 +2,8 @@
 	Controls the trace of a body relative to another. Traces are not orbit lines, they are the path trace of a body relative to another
 */
 
-import Tracer from './Tracer';
-import { getUniverse } from '../JSOrrery';
+import Tracer from 'graphics3d/lines/Tracer';
+import { getUniverse } from 'JSOrrery';
 
 //number of tracing vertices. It was previously taken directly from the orbit's size, but a constant number is more convenient
 const N_VERTICES = 1000;
@@ -70,7 +70,7 @@ export default {
 
 		const tracer = Object.create(Tracer);
 		tracer.init(body3d.celestial.traceColor || body3d.celestial.color, N_VERTICES, body3d.celestial.name);
-		body3d.tracer = tracer;
+		body3d.setTracer(tracer);
 
 		if (body3d.celestial.forceTrace) {
 			this.deferredForceTraceBody = this.deferredForceTraceBody || [];

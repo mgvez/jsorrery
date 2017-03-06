@@ -1,6 +1,6 @@
 
-import OrbitLine from './OrbitLine';
-import { getUniverse } from '../JSOrrery';
+import { getUniverse } from 'JSOrrery';
+import OrbitLine from 'graphics3d/lines/OrbitLine';
 
 export default {
 			
@@ -48,7 +48,7 @@ export default {
 	},
 
 	recalculateOrbitLine(isForced) {
-		if (!isForced && (!this.perturbedOrbitLine || !this.celestial.calculateFromElements)) return;
+		if (!isForced && !this.celestial.calculateFromElements) return;
 		//console.log('recalculate '+this.celestial.name+' perturbed:'+this.celestial.calculateFromElements);
 		const orbitVertices = this.celestial.getOrbitVertices(!this.celestial.calculateFromElements);
 		if (orbitVertices) {
@@ -97,6 +97,12 @@ export default {
 			thisCentralBody = getUniverse().getBody(centralName);
 		}
 		return (thisCentralBody && thisCentralBody.getBody3D().getDisplayObject()) || getUniverse().getScene().getRoot();
+	},
+
+	draw(pos) {
+		if (this.orbitLine && this.orbitLine.added && this.orbitLine.isGradient) {
+			this.orbitLine.updatePos(pos);
+		}
 	},
 
 	kill() {

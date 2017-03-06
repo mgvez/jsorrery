@@ -36,6 +36,7 @@
 		"no-underscore-dangle": ["error", { "allowAfterThis": true }],
 		"consistent-return": ["error", { "treatUndefinedAsUnspecified": true }],
 		"import/no-webpack-loader-syntax": [0],
+		"import/extensions": [0],
 		"comma-dangle": ["error", {
 			"arrays": "only-multiline",
 			"objects": "only-multiline",

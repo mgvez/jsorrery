@@ -2,9 +2,9 @@
 import { LineBasicMaterial, Geometry, BufferAttribute, BufferGeometry, Line, Color, Object3D, Vector3, ShaderMaterial, AdditiveBlending, Points } from 'three';
 import Promise from 'bluebird';
 
-import Constellations from '../data/Constellations';
-import { DEG_TO_RAD } from '../constants';
-import ResourceLoader from '../loaders/ResourceLoader';
+import Constellations from 'data/Constellations';
+import { DEG_TO_RAD } from 'constants';
+import ResourceLoader from 'loaders/ResourceLoader';
 
 let rendered;
 

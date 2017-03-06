@@ -3,7 +3,7 @@
 number of calculations of gravity per tick. Adding more calculation has the effect of checking the position of bodies more often at each tick, so that the forces are not a multiplication of their values of the beginning of the tick. Since each body moves at each second, their relative position is not the same at the beginning of tick as at the end. The force they produce is'nt either. If we want to be more precise we have to "move" each body a given number of time at each tick so the forces are calculated from their new position, depending on the precision of the integration.
 */
 
-import Quadratic from './Quadratic';
+import Quadratic from 'algorithm/Quadratic';
 
 let calculationsPerTick = 1;
 let actualCalculationsPerTick = 1;

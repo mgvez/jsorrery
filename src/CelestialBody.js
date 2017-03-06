@@ -1,8 +1,8 @@
 
 import { EventDispatcher, Vector3 } from 'three';
-import OrbitalElements from './algorithm/OrbitalElements';
-import { J2000, DEG_TO_RAD, RAD_TO_DEG, DAY, CIRCLE } from './constants';
-import { getUniverse } from './JSOrrery';
+import OrbitalElements from 'algorithm/OrbitalElements';
+import { J2000, DEG_TO_RAD, RAD_TO_DEG, DAY, YEAR, CIRCLE } from 'constants';
+import { getUniverse } from 'JSOrrery';
 
 export default Object.assign(Object.create(EventDispatcher.prototype), {
 	init() {
@@ -92,6 +92,7 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 		const startTime = this.getEpochTime(getUniverse().currentTime);
 		const elements = this.orbitalElements.calculateElements(startTime);
 		const period = this.orbitalElements.calculatePeriod(elements, this.relativeTo);
+
 		if (!period) return null;
 
 		const incr = period / 360;
@@ -105,7 +106,7 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 		let angleToPrevious;
 
 		for (let i = 0; total < 360; i++) {
-			computed = this.orbitalElements.calculateElements(startTime + (incr * i));
+			computed = this.orbitalElements.calculateElements(startTime - (incr * i));
 			//if(this.name=='moon')console.log(startTime+(incr*i));
 			point = this.orbitalElements.getPositionFromElements(computed);
 			if (lastPoint) {
@@ -114,18 +115,18 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 				if (angle > 1.3 || ((angle + total) > 360.5)) {
 					for (let j = 0; j < angle; j++) {
 						step = (incr * (i - 1)) + ((incr / angle) * j);
-						computed = this.orbitalElements.calculateElements(startTime + step);
+						computed = this.orbitalElements.calculateElements(startTime - step);
 						point = this.orbitalElements.getPositionFromElements(computed);
 						//when finishing the circle try to avoid going too far over 360 (break after first point going over 360)
 						if (total > 358) {
-							angleToPrevious = point.angleTo(points[points.length - 1]) * RAD_TO_DEG;
+							angleToPrevious = point.angleTo(points[0]) * RAD_TO_DEG;
 							if ((angleToPrevious + total) > 360) {
-								points.push(point);
+								points.unshift(point);
 								break;
 							} 
 						}
 
-						points.push(point);
+						points.unshift(point);
 						
 					}
 					total += point.angleTo(lastPoint) * RAD_TO_DEG;
@@ -134,7 +135,7 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 				}
 				total += angle;					
 			}
-			points.push(point);
+			points.unshift(point);
 			lastPoint = point;
 		}
 		return points;

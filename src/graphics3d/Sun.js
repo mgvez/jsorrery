@@ -3,7 +3,7 @@ Source : http://threejs.org/examples/webgl_lensflares.html
 */
 
 import { Object3D, Color, LensFlare, AdditiveBlending, PointLight, DirectionalLight } from 'three';
-import ResourceLoader from '../loaders/ResourceLoader';
+import ResourceLoader from 'loaders/ResourceLoader';
 
 export default {
 	flareMapSrc: '/img/sunflare.png',

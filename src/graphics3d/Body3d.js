@@ -1,11 +1,11 @@
 
 import { Object3D, MeshPhongMaterial, Mesh, SphereGeometry, MeshLambertMaterial, DoubleSide } from 'three';
-import RingGeometry2 from '../three/RingGeometry2';
-import Labels from '../graphics2d/Labels';
-import ResourceLoader from '../loaders/ResourceLoader';
-import Dimensions from './Dimensions';
-import { KM, DEG_TO_RAD, CIRCLE } from '../constants';
-import { getUniverse } from '../JSOrrery';
+import RingGeometry2 from 'three/RingGeometry2';
+import Labels from 'graphics2d/Labels';
+import ResourceLoader from 'loaders/ResourceLoader';
+import Dimensions from 'graphics3d/Dimensions';
+import { KM, DEG_TO_RAD, CIRCLE } from 'constants';
+import { getUniverse } from 'JSOrrery';
 
 export default {
 
@@ -34,6 +34,14 @@ export default {
 	setParentDisplayObject(object3d) {
 		this.parentContainer = object3d;
 		this.parentContainer.add(this.root);
+	},
+
+	setTracer(tracer) {
+		this.tracer = tracer;
+	},
+
+	setOrbitLines(orbitLines) {
+		this.orbitLines = orbitLines;
 	},
 
 	setPlanet() {
@@ -127,7 +135,9 @@ export default {
 			const curRotation = (getUniverse().epochTime / this.celestial.sideralDay) * CIRCLE;
 			this.planet.rotation.y = (this.celestial.baseMapRotation || 0) + curRotation;
 		}
-		if (this.tracer) this.tracer.doTrace(pos);
+
+		if (this.tracer) this.tracer.draw(pos);
+		if (this.orbitLines) this.orbitLines.draw(pos);
 
 		return pos;
 	},

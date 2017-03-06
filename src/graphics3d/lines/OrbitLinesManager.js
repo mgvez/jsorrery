@@ -2,7 +2,7 @@
 	Controls the display/hiding of orbit lines depending on the camera that is active
 */
 
-import BodyOrbit from './BodyOrbit';
+import BodyOrbitLines from 'graphics3d/lines/BodyOrbitLines';
 
 export default {
 	init(rootContainer) {
@@ -40,8 +40,9 @@ export default {
 	},
 
 	addBody(body3d) {
-		const orbit = Object.create(BodyOrbit);
+		const orbit = Object.create(BodyOrbitLines);
 		orbit.init(body3d);
+		body3d.setOrbitLines(orbit);
 		const idx = this.findOrbitIndex(body3d.getName());
 		if (!~idx) {
 			this.orbits.push(orbit);

@@ -4,18 +4,18 @@ import $ from 'jquery';
 import { Scene, WebGLRenderer, AmbientLight } from 'three';
 // import { Stats } from '../utils/ThreeExamples';
 
-import Body3D from './Body3d';
-import MilkyWay from './MilkyWayParticles';
-import Sun from './Sun';
-import { getUniverse } from '../JSOrrery';
-import CameraManager from './CameraManager';
-import OrbitLinesManager from './OrbitLinesManager';
-import TracerManager from './TracerManager';
-import Dimensions from './Dimensions';
-import Screenshot from './Screenshot';
-import Labels from '../graphics2d/Labels';
-import Gui, { PLANET_SCALE_ID } from '../gui/Gui';
-import { IS_CAPTURE, DEG_TO_RAD, KM } from '../constants';
+import Body3D from 'graphics3d/Body3d';
+import MilkyWay from 'graphics3d/MilkyWayParticles';
+import Sun from 'graphics3d/Sun';
+import { getUniverse } from 'JSOrrery';
+import CameraManager from 'graphics3d/CameraManager';
+import OrbitLinesManager from 'graphics3d/lines/OrbitLinesManager';
+import TracerManager from 'graphics3d/lines/TracerManager';
+import Dimensions from 'graphics3d/Dimensions';
+import Screenshot from 'graphics3d/Screenshot';
+import Labels from 'graphics2d/Labels';
+import Gui, { PLANET_SCALE_ID } from 'gui/Gui';
+import { IS_CAPTURE, DEG_TO_RAD, KM } from 'constants';
 
 // 		'three/stats',
 		

@@ -47,8 +47,8 @@ export default {
 
 		const origColor = hexToRgb(this.color);
 		const colors = orbitVertices.map((v, i) => {
-			// return origColor;
-			return darken(origColor, 1 - i / l);
+			return origColor;
+			// return darken(origColor, 1 - i / l);
 		}).reduce((a, c, i) => {
 			const n = i * 3;			
 			a[n] = c.r / 255;
@@ -92,12 +92,9 @@ export default {
 		this.orbitVertices.forEach(v => DebugPoint.add(v, 0xaaaaaa));
 	},
 
-
 	updatePos(pos, vel) {
-		DebugPoint.removeAll();
-		
-		DebugPoint.addArrow(pos, vel, 1, 0x00aaff);
-		const numberBehind = this.getNVerticesBehindPos(pos, vel);
+
+		const numberBehind = this.getNVerticesBehindPos(pos);
 		this.geometry.attributes.position.needsUpdate = true;
 		
 		if (numberBehind) {
@@ -129,48 +126,52 @@ export default {
 		let current;
 		let previous1;
 		let previous2;
-		console.clear();
-		
+		// console.log('----');
 		for (let i = 0; i < this.nVertices; i++) {
 			// console.log(i);
 			const vertex = this.orbitVertices[i];
-			const next = this.orbitVertices[i + 1];
-			if (!next) return null;
+			const dist = pos.distanceTo(vertex);
+			const data = { i, dist, vertex };
 
-			const diff = vertex.clone().sub(next);
-			const angle = diff.angleTo(vel);
-			DebugPoint.addArrow(vertex, diff, diff.length());
-
-			const data = { i, vertex, angle };
 			previous2 = previous1;
 			previous1 = current;
 			current = data;
-			console.log(angle);
+
 			//we need at least 2
 			if (!previous1) continue;
-			//vectro between this vertex and the previous one. We are searching for the segment that matches velocity the most.
-			
-			// const angle = current.diff.angleTo(previous1.diff);
-			// if (angle > 0.5) return previous1.i + 1;
-			
-			//if distance between pos and first vertex is smaller than distance between first 2 vertices, we ar enot passed first
-			// if (i === 1 && current.vertex.distanceTo(previous1.vertex) >= previous1.dist) return null;
-			// //distance begins to rise. We are past our vertex. It's either the previous one or the one before.
-			if (angle > previous1.angle) {
+			// DebugPoint.removeAll();
+			//distance begins to rise. We are past our vertex. It's either the previous one or the one before.
+			if (dist > previous1.dist) {
 				if (previous2) {
-					//angle between positions will tell us if the first passed vertex is the last one or the one before
-					// const angle = current.diff.angleTo(previous1.diff);
-					// // console.log(angle);
-					// if (angle > 1) {
-					// 	// DebugPoint.add(previous2.vertex, 0x55ff00);
-					// 	// DebugPoint.add(previous1.vertex, 0x777777);
-					// 	// DebugPoint.add(current.vertex, 0x777777);
-					// 	// getUniverse().stop(true);
-					// 	return previous2.i + 1;
-					// }	
+					
+					// console.log(i);
+					// console.clear();
+					// console.log(previous2.dist);
+					// console.log(previous1.dist);
+					// console.log(current.dist);
+					// console.log(i + 1);
+					if (previous2.dist < current.dist) {
+						// DebugPoint.add(previous2.vertex, 0x55ff00);
+						// DebugPoint.add(previous1.vertex, 0x777777);
+						// DebugPoint.add(current.vertex, 0x777777);
+						// getUniverse().stop(true);
+						return previous2.i + 1;
+					}
+					// DebugPoint.add(previous2.vertex, 0x777777);
+					// DebugPoint.add(previous1.vertex, 0xff5555);
+					// DebugPoint.add(current.vertex, 0x777777);
+					
+					// getUniverse().stop(true);
 					return previous1.i + 1;
 				}
-
+				//nearest vertex is the first one. we need to know if it's behind our pos. If so, pos's distance is further than previous to current
+				if (dist < previous1.vertex.distanceTo(vertex)) {
+					// DebugPoint.add(previous1.vertex, 0x0055ff);
+					// DebugPoint.add(current.vertex, 0x777777);
+					// getUniverse().stop(true);
+					return previous1.i + 1;
+				}
+				// console.log('first behind');
 				return null;
 			}
 		}

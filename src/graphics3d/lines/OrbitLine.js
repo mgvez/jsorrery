@@ -2,8 +2,10 @@
 
 import { LineBasicMaterial, BufferGeometry, Geometry, Line, BufferAttribute, VertexColors, Vector3 } from 'three';
 import Dimensions from 'graphics3d/Dimensions';
+import DebugPoint from 'graphics3d/utils/DebugPoint';
 import { darken, hexToRgb, rgbToHex } from 'utils/ColorUtils';
 import { IS_SCREENSHOT, IS_CAPTURE } from 'constants';
+import { getUniverse } from 'JSOrrery';
 
 
 export default {
@@ -45,8 +47,8 @@ export default {
 
 		const origColor = hexToRgb(this.color);
 		const colors = orbitVertices.map((v, i) => {
-			return origColor;
-			// return darken(origColor, 1 - i / l);
+			// return origColor;
+			return darken(origColor, 1 - i / l);
 		}).reduce((a, c, i) => {
 			const n = i * 3;			
 			a[n] = c.r / 255;
@@ -85,64 +87,95 @@ export default {
 		this.line = this.isSolid ? this.createSolidLine(orbitVertices) : this.createGradientLine(orbitVertices);
 	},
 
-	updatePos(pos) {
+	showAllVertices() {
+		DebugPoint.removeAll();
+		this.orbitVertices.forEach(v => DebugPoint.add(v, 0xaaaaaa));
+	},
 
-		const distToLast = pos.distanceTo(this.orbitVertices[0]);
+
+	updatePos(pos, vel) {
+		DebugPoint.removeAll();
+		
+		DebugPoint.addArrow(pos, vel, 1, 0x00aaff);
+		const numberBehind = this.getNVerticesBehindPos(pos, vel);
 		this.geometry.attributes.position.needsUpdate = true;
 		
-		if (this.distToLast && this.distToLast < distToLast) {
+		if (numberBehind) {
 			const sorted = [];
-			for (let inc = 0, index = 1; inc < this.nVertices; inc++, index++) {
+			for (let inc = 0, index = numberBehind; inc < this.nVertices; inc++, index++) {
 				if (index === this.nVertices) index = 0;
-				// console.log('shift', inc, index);
 				sorted[inc] = this.orbitVertices[index];
 			}
-			this.orbitVertices[this.nVertices - 1] = new Vector3(this.positions[this.nPos], this.positions[this.nPos + 1], this.positions[this.nPos + 2]);
+			const startVertex = sorted[this.nVertices - 2];
+			const dumpedVertex = sorted[this.nVertices - 1];
+			const vLen = startVertex.distanceTo(dumpedVertex);
+			const newVertex = pos.clone().sub(startVertex).setLength(vLen).add(startVertex);
+			// DebugPoint.add(newVertex, 0xffffaa);
+			
+			sorted[this.nVertices - 1] = newVertex;
 			this.orbitVertices = sorted;
+			// this.showAllVertices();
 			this.buildPositions();
 		}
-		this.distToLast = distToLast;
+
 		this.positions[this.nPos] = pos.x;
 		this.positions[this.nPos + 1] = pos.y;
 		this.positions[this.nPos + 2] = pos.z;
 
+	},
+	
+
+	getNVerticesBehindPos(pos, vel) {
+		let current;
+		let previous1;
+		let previous2;
+		console.clear();
 		
-	},
+		for (let i = 0; i < this.nVertices; i++) {
+			// console.log(i);
+			const vertex = this.orbitVertices[i];
+			const next = this.orbitVertices[i + 1];
+			if (!next) return null;
 
+			const diff = vertex.clone().sub(next);
+			const angle = diff.angleTo(vel);
+			DebugPoint.addArrow(vertex, diff, diff.length());
 
-	findClosest(pos, startIndex = 1) {
-
-		//look forward & backwards
-		const closests = [1, -1].map((direction) => {
-			let closest;
-			for (let inc = 0, index = startIndex; inc < this.nVertices; inc++, index += direction) {
-				if (index === this.nVertices) index = 0;
-				if (index === -1) index += this.nVertices;
-				const dist = pos.distanceTo(this.orbitVertices[index]);
-				// console.log(direction, index, dist);
-				if (closest && dist > closest.dist) {
-					break;
+			const data = { i, vertex, angle };
+			previous2 = previous1;
+			previous1 = current;
+			current = data;
+			console.log(angle);
+			//we need at least 2
+			if (!previous1) continue;
+			//vectro between this vertex and the previous one. We are searching for the segment that matches velocity the most.
+			
+			// const angle = current.diff.angleTo(previous1.diff);
+			// if (angle > 0.5) return previous1.i + 1;
+			
+			//if distance between pos and first vertex is smaller than distance between first 2 vertices, we ar enot passed first
+			// if (i === 1 && current.vertex.distanceTo(previous1.vertex) >= previous1.dist) return null;
+			// //distance begins to rise. We are past our vertex. It's either the previous one or the one before.
+			if (angle > previous1.angle) {
+				if (previous2) {
+					//angle between positions will tell us if the first passed vertex is the last one or the one before
+					// const angle = current.diff.angleTo(previous1.diff);
+					// // console.log(angle);
+					// if (angle > 1) {
+					// 	// DebugPoint.add(previous2.vertex, 0x55ff00);
+					// 	// DebugPoint.add(previous1.vertex, 0x777777);
+					// 	// DebugPoint.add(current.vertex, 0x777777);
+					// 	// getUniverse().stop(true);
+					// 	return previous2.i + 1;
+					// }	
+					return previous1.i + 1;
 				}
-				closest = { index, dist }; 
+
+				return null;
 			}
-			return closest;
-		}, {});
-		// console.log(closest);
-
-		//Au tour suivant, si celui qui était le plus proche s'est rapproché on recalcule
-
-		if (closests[0].dist < closests[1].dist) return closests[0];
-		return closests[1];
-	},
-
-	hasPassedLast(pos) {
-		return this.orbitVertices.reduce((carry, cur, i) => {
-			const dist = pos.distanceTo(cur);
-			if (!carry || dist < carry.dist) {
-				return { i, dist };
-			}
-			return carry;
-		}, null);
+		}
+		// console.log('none');
+		return null;
 	},
 
 	getDisplayObject() {

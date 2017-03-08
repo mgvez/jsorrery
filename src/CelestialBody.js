@@ -36,9 +36,9 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 		const realEpochTime = this.getEpochTime(epochTime);
 		this.position = this.isCentral ? new Vector3() : this.orbitalElements.getPositionFromElements(this.orbitalElements.calculateElements(realEpochTime));
 		this.relativePosition = new Vector3();
-		if (calculateVelocity) {
-			this.velocity = this.isCentral ? new Vector3() : this.orbitalElements.calculateVelocity(realEpochTime, this.relativeTo, this.calculateFromElements);
-		}				
+		// if (calculateVelocity) {
+		this.velocity = this.isCentral ? new Vector3() : this.orbitalElements.calculateVelocity(realEpochTime, this.relativeTo, this.calculateFromElements);
+		// }
 	},
 	
 	getAngleTo(bodyName) {

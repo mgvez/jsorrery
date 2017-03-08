@@ -29,7 +29,7 @@ export default {
 		//start/stop
 		Gui.addBtn('play', START_ID, () => {
 			this.playing = !this.playing;
-		});
+		}, 'p');
 
 		this.dateDisplay = Gui.addDate(() => {
 			this.playing = false;
@@ -39,7 +39,7 @@ export default {
 			this.scene.onDateReset();
 		});
 
-		this.ticker = this.tick.bind(this);
+		this.ticker = () => this.tick();
 		
 		this.playing = false;
 		this.epochTime = 0;
@@ -234,7 +234,6 @@ export default {
 	tick() {
 		if (this.killed) return;
 		if (this.playing) {
-			
 			this.epochTime += Ticker.getDeltaT();
 			this.currentTime = this.startEpochTime + this.epochTime;
 			Ticker.tick(this.usePhysics, this.currentTime);
@@ -245,8 +244,9 @@ export default {
 		} else {
 			this.scene.updateCamera();
 		}
-		
+
 		window.requestAnimationFrame(this.ticker);
+		
 	},
 
 	getScene() {
@@ -262,8 +262,9 @@ export default {
 		return this.playing;
 	},
 
-	stop() {
+	stop(skipRender) {
 		this.playing = false;
+		if (skipRender) return;
 		this.scene.updateCamera();
 		this.scene.draw();
 	},

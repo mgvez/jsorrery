@@ -99,9 +99,9 @@ export default {
 		return (thisCentralBody && thisCentralBody.getBody3D().getDisplayObject()) || getUniverse().getScene().getRoot();
 	},
 
-	draw(pos) {
+	draw(pos, vel) {
 		if (this.orbitLine && this.orbitLine.added && this.orbitLine.isGradient) {
-			this.orbitLine.updatePos(pos);
+			this.orbitLine.updatePos(pos, vel);
 		}
 	},
 

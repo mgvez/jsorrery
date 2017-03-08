@@ -101,7 +101,7 @@ export default {
 		setupHelp();
 	},
 
-	addBtn(labelParam, id, callback) {
+	addBtn(labelParam, id, callback, key) {
 		removeControl(id);
 		const label = BTNS_LABELS[id] || labelParam;
 		let labelOff;
@@ -124,6 +124,15 @@ export default {
 				btn.html(labelOff);
 			} 
 		});
+
+		if (key) {
+			const keyCode = key.toUpperCase().charCodeAt(0);
+			$(window).on('keyup.jsorrery', (e) => {
+				// console.log(e.keyCode, keyCode);
+				// console.log(String.fromCharCode(e.keyCode), String.fromCharCode(keyCode));
+				if (e.keyCode === keyCode) btn.trigger('click');
+			});
+		}
 	},
 
 	addDropdown(id, callback) {

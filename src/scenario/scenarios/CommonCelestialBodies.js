@@ -279,6 +279,7 @@ export const halley = {
 	mass: 2.2e14,
 	radius: 50,
 	color: '#999999',
+	epoch: new Date('1994-02-17T00:00:00.000Z'),
 	orbit: {
 		base: {
 			a: 17.8341442925537 * AU,
@@ -304,7 +305,7 @@ export const moon = {
 	name: 'moon',
 	mass: 7.3477e22,
 	radius: 1738.1,
-	color: '#ffffff',
+	color: '#555555',
 	map: 'img/moonmap4k_levels.jpg',
 	sideralDay: (27.3215782 * DAY),
 	tilt: 1.5424,

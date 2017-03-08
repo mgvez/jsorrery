@@ -2,7 +2,7 @@
 
 import $ from 'jquery';
 import { Scene, WebGLRenderer, AmbientLight } from 'three';
-// import { Stats } from '../utils/ThreeExamples';
+import { Stats } from 'utils/ThreeExamples';
 
 import Body3D from 'graphics3d/Body3d';
 import MilkyWay from 'graphics3d/MilkyWayParticles';
@@ -16,10 +16,8 @@ import Screenshot from 'graphics3d/Screenshot';
 import Labels from 'graphics2d/Labels';
 import Gui, { PLANET_SCALE_ID } from 'gui/Gui';
 import { IS_CAPTURE, DEG_TO_RAD, KM } from 'constants';
-
-// 		'three/stats',
 		
-// let stats;
+let stats;
 let renderer;
 
 function drawBody(b) {
@@ -49,10 +47,13 @@ export default {
 		const light = new AmbientLight(0x202020);
 		this.root.add(light);/**/
 
-		// if (!stats) {
-		// 	stats = new Stats();
-		// 	$('body').append(stats.domElement);
-		// }
+		if (!stats) {
+			stats = new Stats();
+			const st = stats.domElement.style;
+			st.top = 'auto';
+			st.bottom = 0;
+			$('body').append(stats.domElement);
+		}
 
 		this.container.append(renderer.domElement);
 		
@@ -148,7 +149,7 @@ export default {
 		Labels.draw(camPos, radFov);
 
 		/**/
-		// stats.update();
+		stats.update();
 	},
 
 	//camera might move and/or look at a different point depending on bodies movements

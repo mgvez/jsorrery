@@ -4,7 +4,7 @@ import OrbitalElements from 'algorithm/OrbitalElements';
 import { J2000, DEG_TO_RAD, RAD_TO_DEG, DAY, YEAR, CIRCLE } from 'constants';
 import { getUniverse } from 'JSOrrery';
 
-export default Object.assign(Object.create(EventDispatcher.prototype), {
+export default {
 	init() {
 		this.reset();
 		this.movement = new Vector3();
@@ -35,7 +35,7 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 		// console.log(epochTime);
 		const currentEpochTime = this.currentEpochTime = this.getEpochTime(epochTime);
 		this.position = this.isCentral ? new Vector3() : this.orbitalElements.getPositionFromElements(this.orbitalElements.calculateElements(currentEpochTime));
-		this.relativePosition = new Vector3();
+		this.relativePosition = this.position.clone();
 		this.absvelocity = null;
 		this.relvelocity = null;
 	},
@@ -74,8 +74,8 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 			const central = getUniverse().getBody(this.relativeTo);
 			if (central && central !== getUniverse().getBody()/**/) {
 				this.position.add(central.position);
-				//console.log(this.name+' pos rel to ' + this.relativeTo);
-				this.addToAbsoluteVelcity(central.getAbsoluteVelocity());
+				// console.log(this.name + ' pos rel to ' + this.relativeTo);
+				this.addToAbsoluteVelocity(central.getAbsoluteVelocity());
 			}
 		}
 	},
@@ -85,8 +85,9 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 
 	/**
 	Calculates orbit line from orbital elements.
+	isFuture indicate if we want the elements for future orbit or for passed orbit (it changes for perturbed orbits)
 	*/
-	getOrbitVertices() {
+	getOrbitVertices(isFuture) {
 
 		const startTime = this.getEpochTime(getUniverse().currentTime);
 		const elements = this.orbitalElements.calculateElements(startTime);
@@ -101,31 +102,30 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 		let angle;
 		let step;
 		let total = 0;
-		let computed;
 		let angleToPrevious;
 
+		const multiplyer = isFuture ? 1 : -1;
+		const arrayAction = isFuture ? 'push' : 'unshift';
 		for (let i = 0; total < 360; i++) {
-			computed = this.orbitalElements.calculateElements(startTime - (incr * i));
+			point = this.calculatePosition(startTime + (multiplyer * incr * i));
 			//if(this.name=='moon')console.log(startTime+(incr*i));
-			point = this.orbitalElements.getPositionFromElements(computed);
 			if (lastPoint) {
 				angle = point.angleTo(lastPoint) * RAD_TO_DEG;
 				//make sure we do not go over 360.5 
 				if (angle > 1.3 || ((angle + total) > 360.5)) {
 					for (let j = 0; j < angle; j++) {
 						step = (incr * (i - 1)) + ((incr / angle) * j);
-						computed = this.orbitalElements.calculateElements(startTime - step);
-						point = this.orbitalElements.getPositionFromElements(computed);
+						point = this.calculatePosition(startTime + (multiplyer * step));
 						//when finishing the circle try to avoid going too far over 360 (break after first point going over 360)
 						if (total > 358) {
 							angleToPrevious = point.angleTo(points[0]) * RAD_TO_DEG;
 							if ((angleToPrevious + total) > 360) {
-								points.unshift(point);
+								points[arrayAction](point);
 								break;
 							} 
 						}
 
-						points.unshift(point);
+						points[arrayAction](point);
 						
 					}
 					total += point.angleTo(lastPoint) * RAD_TO_DEG;
@@ -134,7 +134,7 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 				}
 				total += angle;					
 			}
-			points.unshift(point);
+			points[arrayAction](point);
 			lastPoint = point;
 		}
 		return points;
@@ -156,12 +156,15 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 
 			if (this.angle > CIRCLE) {
 				this.angle = this.angle % CIRCLE;
-				this.dispatchEvent({ type: 'revolution' });
-				if (this.onOrbitCompleted) this.onOrbitCompleted();
+				if (this.onRevolution) this.onRevolution();
 			}
 		}
 		if (this.customAfterTick) this.customAfterTick(getUniverse().epochTime, getUniverse().date, deltaT);
 
+	},
+
+	setOnRevolution(cb) {
+		this.onRevolution = cb;
 	},
 
 	calculatePosition(t) {
@@ -170,6 +173,10 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 
 	getPosition() {
 		return this.position.clone();
+	},
+
+	getRelativePosition() {
+		return this.relativePosition.clone();
 	},
 
 	setVelocity(v) {
@@ -185,17 +192,17 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 
 	//absolute velocity
 	getAbsoluteVelocity() {
-		return this.absvelocity && this.absvelocity.clone();
+		return (this.absvelocity && this.absvelocity.clone()) || this.getRelativeVelocity();
 	},
 
 	//velocity relative to central body for this object's orbit
 	getRelativeVelocity() {
 		if (this.relvelocity) return this.relvelocity.clone();
-		this.relvelocity = this.isCentral ? new Vector3() : this.orbitalElements.calculateVelocity(this.currentEpochTime);
+		this.relvelocity = this.isCentral ? new Vector3() : this.orbitalElements.calculateVelocity(this.currentEpochTime, this.relativeTo);
 		return this.relvelocity.clone();
 	},
 	//return true/false if this body is orbiting the requested body
 	isOrbitAround(celestial) {
 		return celestial.name === this.relativeTo;
 	},
-});
+};

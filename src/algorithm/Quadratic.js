@@ -34,7 +34,7 @@ Quadratic.moveBodies = function moveBodies(epochTime, deltaT) {
 					b.position.clone(),
 					//pos0.5 = pos0 + ((deltat/2) * vel0) + (0.5 * Math.pow((deltat / 2), 2)) * accel);
 					b.position.clone()
-						.add(b.getVelocity().multiplyScalar(this.halfDeltaT))
+						.add(b.getAbsoluteVelocity().multiplyScalar(this.halfDeltaT))
 						.add(n[i].accel[0].clone().multiplyScalar(this.onehalf_halfDeltaTSq)),
 				];
 				b.position.copy(n[i].pos[1]);
@@ -57,7 +57,7 @@ Quadratic.moveBodies = function moveBodies(epochTime, deltaT) {
 				//pos1 = pos0 + (vel0 * deltat) + (accel05 * 0.5 * Math.pow(deltaT, 2))
 				n[i].pos.push(
 					n[i].pos[0].clone()
-						.add(b.getVelocity().multiplyScalar(deltaT))
+						.add(b.getAbsoluteVelocity().multiplyScalar(deltaT))
 						.add(n[i].accel[1].clone().multiplyScalar(this.onehalf_deltaTSq))
 				);
 				b.position.copy(n[i].pos[2]);
@@ -101,7 +101,7 @@ Quadratic.moveBodies = function moveBodies(epochTime, deltaT) {
 				.add(c1.clone().multiplyScalar((this.onehalf_deltaTSq)))
 				.add(c2.clone().multiplyScalar((this.onethird_deltaT3rd)));
 
-			deltaP = b.getVelocity()
+			deltaP = b.getAbsoluteVelocity()
 				.multiplyScalar(deltaT)
 				.add(n[i].accel[0].clone().multiplyScalar(this.onehalf_deltaTSq))
 				.add(c1.clone().multiplyScalar((this.onesixth_deltaT3rd)))

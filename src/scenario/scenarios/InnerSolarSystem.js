@@ -11,11 +11,6 @@ export default {
 		moon,
 		mars,
 	],
-	bodies: {
-		moon: {
-			calculateFromElements: true,
-		},
-	},
 	secondsPerTick: { min: 60, max: 3600 * 15, initial: 3600 }, //3600 * 24 * 2,
 	defaultGuiSettings: { 
 		planetScale: 10,

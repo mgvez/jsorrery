@@ -305,14 +305,14 @@ export const moon = {
 	name: 'moon',
 	mass: 7.3477e22,
 	radius: 1738.1,
-	color: '#555555',
+	color: '#aaaaaa',
 	map: 'img/moonmap4k_levels.jpg',
 	sideralDay: (27.3215782 * DAY),
 	tilt: 1.5424,
 	fov: 1,
 	relativeTo: 'earth',
 	orbitCalculator: MoonRealOrbit,
-	calculateFromElements: true,
+	osculatingOrbit: true,
 	orbit: {
 		base: {
 			a: 384400,

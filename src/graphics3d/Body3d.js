@@ -129,6 +129,7 @@ export default {
 	
 	drawMove() {
 		const pos = this.getPosition();
+		// console.log(pos, this.celestial.name);
 		this.root.position.copy(pos);
 
 		if (this.celestial.sideralDay) {
@@ -138,9 +139,9 @@ export default {
 
 		if (this.tracer) this.tracer.draw(pos);
 		
-		if (this.orbitLines) this.orbitLines.draw(pos, this.celestial.getRelativeVelocity());
-		// if (this.celestial.name === 'venus' && this.orbitLines) this.orbitLines.draw(pos, this.celestial.getRelativeVelocity());
-
+		// if (this.celestial.name === 'moon' && this.orbitLines) this.orbitLines.draw(Dimensions.getScaled(this.celestial.getRelativePosition()));
+		// if (this.orbitLines) this.orbitLines.draw(pos);
+		if (this.orbitLines) this.orbitLines.draw(Dimensions.getScaled(this.celestial.getRelativePosition()));
 		return pos;
 	},
 

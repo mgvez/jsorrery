@@ -1,6 +1,7 @@
 
 import { getUniverse } from 'JSOrrery';
 import OrbitLine from 'graphics3d/lines/OrbitLine';
+import Ticker from 'algorithm/Ticker';
 
 export default {
 			
@@ -8,6 +9,21 @@ export default {
 		this.body3d = body3d;
 		this.celestial = body3d.celestial;
 		this.setOrbitLines();
+
+		//retrieves n vertices to draw orbit points since last tick. Needed for pertrbed orbits, whose path changes for each revolution
+		if (this.celestial.osculatingOrbit) {
+			this.computeVerticesInDeltaT = (n) => {
+				const dt = Ticker.getDeltaT();
+				const curTime = getUniverse().currentTime - dt;
+				const inc = dt / n;
+				const v = [];
+				for (let i = 0; i < n; i++) {
+					const t = curTime + (i * inc);
+					v.push(this.celestial.calculatePosition(t));
+				}
+				return v;
+			};
+		}
 	},
 
 	getName() {
@@ -15,14 +31,14 @@ export default {
 	},
 
 	setOrbitLines() {
-		const orbitVertices = this.celestial.getOrbitVertices(false);
+		const orbitVertices = this.celestial.getOrbitVertices(this.celestial.showSolidOrbit);
 		if (orbitVertices) {
 			// console.log(this.celestial.name, orbitVertices.length);
 			//get orbit line calculated from precise locations instead of assumed ellipse
 			if (!this.orbitLine) {
 				this.orbitLine = Object.create(OrbitLine);
 				//if body is tracing its path as well as showing its computed orbit, we show the orbit as a solid faded line
-				this.orbitLine.init(this.celestial.name, this.celestial.color, this.celestial.forceTrace);
+				this.orbitLine.init(this.celestial.name, this.celestial.color, this.celestial.showSolidOrbit);
 			}
 			this.orbitLine.setLine(orbitVertices);
 
@@ -36,21 +52,18 @@ export default {
 				this.eclipticLine.setLine(eclipticVertices);
 			}/**/
 
-
-			if (this.celestial.calculateFromElements) {
-				this.recalculateListener = () => {
-					this.recalculateOrbitLine(false);
-				};
-				this.celestial.addEventListener('revolution', this.recalculateListener);
+			//if we need to compute the osculating orbit, i.e. if this body's orbit is heavily perturbed, we recompute the path at each revolution
+			if (this.celestial.osculatingOrbit && this.celestial.showSolidOrbit) {
+				this.celestial.setOnRevolution(() => this.recalculateOrbitLine(false));
 			}
 
 		}
 	},
 
 	recalculateOrbitLine(isForced) {
-		if (!isForced && !this.celestial.calculateFromElements) return;
-		//console.log('recalculate '+this.celestial.name+' perturbed:'+this.celestial.calculateFromElements);
-		const orbitVertices = this.celestial.getOrbitVertices(!this.celestial.calculateFromElements);
+		if (!isForced && !this.celestial.osculatingOrbit) return;
+		//console.log('recalculate '+this.celestial.name+' perturbed:'+this.celestial.osculatingOrbit);
+		const orbitVertices = this.celestial.getOrbitVertices(this.celestial.showSolidOrbit);
 		if (orbitVertices) {
 			const wasAdded = this.orbitLine.added;
 			this.hideOrbit();
@@ -99,14 +112,14 @@ export default {
 		return (thisCentralBody && thisCentralBody.getBody3D().getDisplayObject()) || getUniverse().getScene().getRoot();
 	},
 
-	draw(pos, vel) {
+	draw(pos) {
 		if (this.orbitLine && this.orbitLine.added && this.orbitLine.isGradient) {
-			this.orbitLine.updatePos(pos, vel);
+			this.orbitLine.updatePos(pos, this.celestial.getRelativeVelocity(), this.computeVerticesInDeltaT);
 		}
 	},
 
 	kill() {
-		if (this.recalculateListener) this.celestial.removeEventListener('revolution', this.recalculateListener);
+		this.celestial.setOnRevolution(null);
 	},
 
 };

@@ -35,6 +35,8 @@ const spectralColors = [
 
 const namedStars = {};
 
+const pxRatio = (window.devicePixelRatio || 1);
+
 
 function lightenDarkenColor(hex, amount) {
 	let col = [hex >> 16, (hex >> 8) & 0x00FF, hex & 0x0000FF];
@@ -49,7 +51,7 @@ function lightenDarkenColor(hex, amount) {
 function drawConstellations() {
 
 	const material = new LineBasicMaterial({
-		color: 0x222222,
+		color: pxRatio === 1 ? 0x222222 : 0x333333
 	});
 
 	Object.keys(Constellations).forEach(fromName => {
@@ -84,7 +86,6 @@ function generateStars(shaders, stars, starTexture, size) {
 	const positions = new Float32Array(count * 3);
 	const colors = new Float32Array(count * 3);
 	const sizes = new Float32Array(count);
-
 	for (let i = 0, i3 = 0; i < count; i++, i3 += 3) {
 		star = stars[i];
 
@@ -100,10 +101,10 @@ function generateStars(shaders, stars, starTexture, size) {
 
 		if (mag < 7) {
 			//starVect.size = 2 + Math.pow((2 / starVect.mag), 1.2);
-			starColor = lightenDarkenColor(starColor, ((1 / mag) ** 0.4));
+			starColor = lightenDarkenColor(starColor, ((1 / mag) ** 0.3));
 		} else {
 			//starVect.size = 2;
-			starColor = lightenDarkenColor(starColor, ((1 / mag) ** 1.1));
+			starColor = lightenDarkenColor(starColor, ((1 / mag) ** 0.8));
 		}			
 		/**/
 
@@ -116,10 +117,9 @@ function generateStars(shaders, stars, starTexture, size) {
 		colors[i3 + 1] = color.g;
 		colors[i3 + 2] = color.b;
 
-		sizes[i] = (Math.floor(10 * (2 + (1 / mag))) / 10);
+		sizes[i] = pxRatio * (1.5 + Math.floor(10 * (1 / mag)) / 10);
 
 	}
-
 	geometry.addAttribute('position', new BufferAttribute(positions, 3));
 	geometry.addAttribute('customColor', new BufferAttribute(colors, 3));
 	geometry.addAttribute('size', new BufferAttribute(sizes, 1));
@@ -144,8 +144,8 @@ function generateStars(shaders, stars, starTexture, size) {
 }
 
 export default {
-	dataSrc: 'js/jsorrery/data/milkyway.json',
-	//dataSrc : 'js/jsorrery/data/milkyway_heasarc_468k.json',
+	// dataSrc: 'js/jsorrery/data/milkyway.json',
+	dataSrc: 'js/jsorrery/data/milkyway_heasarc_468k.json',
 	init(size) {
 		
 		// create the particle system

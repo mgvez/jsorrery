@@ -89,32 +89,46 @@ export default {
 
 	showAllVertices() {
 		DebugPoint.removeAll();
-		this.orbitVertices.forEach(v => DebugPoint.add(v, 0xaaaaaa));
+		this.orbitVertices.forEach(v => DebugPoint.add(v, 0xaaaaaa, 0.01));
 	},
 
-	updatePos(pos, vel) {
+	updatePos(pos, vel, getNewVertices) {
 
 		const numberBehind = this.getNVerticesBehindPos(pos, vel);
 		this.geometry.attributes.position.needsUpdate = true;
 		
 		if (numberBehind) {
-			console.log('shift %s', numberBehind);
-			console.warn('for osculating orbits, we cannot use passedpoints, we need to compute more');
+			// console.log(numberBehind);
+			//if orbit is heavily perturbed, we'll have a callback to gen new orbit vertices when we delete some
+			const newVertices = getNewVertices && getNewVertices(numberBehind).map(val => Dimensions.getScaled(val));
+
 			const sorted = [];
+			let verticesDeck = this.orbitVertices;
 			for (let inc = 0, index = numberBehind; inc < this.nVertices; inc++, index++) {
-				if (index === this.nVertices) index = 0;
-				sorted[inc] = this.orbitVertices[index];
+				if (index === this.nVertices) {
+					index = 0;
+					//if we have new vertices, add them at the end of array. Otherwise, shift the ones from the beginning of the exting ones.
+					verticesDeck = newVertices || this.orbitVertices;
+				}
+				sorted[inc] = verticesDeck[index];
 			}
-			const startVertex = sorted[this.nVertices - 2];
-			const dumpedVertex = sorted[this.nVertices - 1];
-			const vLen = startVertex.distanceTo(dumpedVertex);
-			const newVertex = pos.clone().sub(startVertex).setLength(vLen).add(startVertex);
-			// DebugPoint.add(newVertex, 0xffffaa);
-			
-			sorted[this.nVertices - 1] = newVertex;
+			if (!newVertices) {
+				const startVertex = sorted[this.nVertices - 2];
+				const dumpedVertex = sorted[this.nVertices - 1];
+				const vLen = startVertex.distanceTo(dumpedVertex);
+				const newVertex = pos.clone().sub(startVertex).setLength(vLen).add(startVertex);
+				// DebugPoint.add(newVertex, 0xffffaa);
+				sorted[this.nVertices - 1] = newVertex;
+			}
+		
 			this.orbitVertices = sorted;
-			// this.showAllVertices();
 			this.buildPositions();
+
+			// this.showAllVertices();
+			// DebugPoint.add(sorted[this.nVertices - (numberBehind + 1)], 0x44ff44, 0.014);
+			// for (let i = 0; i < numberBehind + 2; i++) {
+				// DebugPoint.add(sorted[this.nVertices - (i + 1)], 0xff4444, 0.014);
+			// }
 		}
 
 		this.positions[this.nPos] = pos.x;
@@ -134,7 +148,7 @@ export default {
 			// console.log(i);
 			const vertex = this.orbitVertices[i];
 			const diff = vertex.clone().sub(pos);
-			DebugPoint.addArrow(pos, diff, diff.length(), 0x888888);
+			// DebugPoint.addArrow(pos, diff, diff.length(), 0x888888);
 			const angle = diff.angleTo(lookAway);
 			// console.log(angle);
 			//point is not behind. If this happens, we assume that all that came before are behind, since the count starts from begining of line, where the planet was at previous frame. It means though that the planet cannot move more than half a circle per tick.

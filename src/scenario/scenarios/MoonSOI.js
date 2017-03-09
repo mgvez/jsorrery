@@ -8,6 +8,9 @@ export default {
 	secondsPerTick: { min: 3600, max: 3600 * 15, initial: 3600 * 5 },
 	calculationsPerTick: 1000,
 	calculateAll: true,
+	forcedGuiSettings: {
+		scale: 1,
+	},
 	help: "This scenario tests the Sphere of inlufence of the Moon's gravitational field over the Earth's. We have bodies orbiting the Moon that are set inside or outside of the Moon's SOI, to observe what happens.",
 	bodies: {
 		moon: {

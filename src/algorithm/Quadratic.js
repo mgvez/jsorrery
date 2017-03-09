@@ -108,7 +108,7 @@ Quadratic.moveBodies = function moveBodies(epochTime, deltaT) {
 				.add(c2.clone().multiplyScalar((this.onetwelvth_deltaT4th)));
 
 			this.bodies[i].position.copy(n[i].pos[0]).add(deltaP);	
-			this.bodies[i].velocity.add(deltaV);
+			this.bodies[i].addToAbsoluteVelocity(deltaV);
 		}
 
 		b.afterMove(deltaT);

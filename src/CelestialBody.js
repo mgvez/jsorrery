@@ -31,14 +31,13 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 		return epochTime;
 	},
 
-	setPositionFromDate(epochTime, calculateVelocity) {
+	setPositionFromDate(epochTime) {
 		// console.log(epochTime);
-		const realEpochTime = this.getEpochTime(epochTime);
-		this.position = this.isCentral ? new Vector3() : this.orbitalElements.getPositionFromElements(this.orbitalElements.calculateElements(realEpochTime));
+		const currentEpochTime = this.currentEpochTime = this.getEpochTime(epochTime);
+		this.position = this.isCentral ? new Vector3() : this.orbitalElements.getPositionFromElements(this.orbitalElements.calculateElements(currentEpochTime));
 		this.relativePosition = new Vector3();
-		// if (calculateVelocity) {
-		this.velocity = this.isCentral ? new Vector3() : this.orbitalElements.calculateVelocity(realEpochTime, this.relativeTo, this.calculateFromElements);
-		// }
+		this.absvelocity = null;
+		this.relvelocity = null;
 	},
 	
 	getAngleTo(bodyName) {
@@ -76,7 +75,7 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 			if (central && central !== getUniverse().getBody()/**/) {
 				this.position.add(central.position);
 				//console.log(this.name+' pos rel to ' + this.relativeTo);
-				if (this.velocity && central.velocity) this.velocity.add(central.velocity);
+				this.addToAbsoluteVelcity(central.getAbsoluteVelocity());
 			}
 		}
 	},
@@ -173,8 +172,27 @@ export default Object.assign(Object.create(EventDispatcher.prototype), {
 		return this.position.clone();
 	},
 
-	getVelocity() {
-		return this.velocity && this.velocity.clone();
+	setVelocity(v) {
+		this.absvelocity = v;
+		this.relvelocity = v.clone();
+	},
+
+	addToAbsoluteVelocity(v) {
+		if (!v) return;
+		this.absvelocity = this.absvelocity || this.getRelativeVelocity();
+		this.absvelocity.add(v);
+	},
+
+	//absolute velocity
+	getAbsoluteVelocity() {
+		return this.absvelocity && this.absvelocity.clone();
+	},
+
+	//velocity relative to central body for this object's orbit
+	getRelativeVelocity() {
+		if (this.relvelocity) return this.relvelocity.clone();
+		this.relvelocity = this.isCentral ? new Vector3() : this.orbitalElements.calculateVelocity(this.currentEpochTime);
+		return this.relvelocity.clone();
 	},
 	//return true/false if this body is orbiting the requested body
 	isOrbitAround(celestial) {

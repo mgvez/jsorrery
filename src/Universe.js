@@ -124,7 +124,7 @@ export default {
 				body.mass = 1;
 			}
 			body.init();
-			body.setPositionFromDate(this.currentTime, true);
+			body.setPositionFromDate(this.currentTime);
 		});
 
 		this.setBarycenter();
@@ -156,16 +156,16 @@ export default {
 			massCenter.mass += b.mass;
 			massRatio = b.mass / massCenter.mass;
 			massCenter.pos = massCenter.pos.add(b.getPosition().multiplyScalar(massRatio));
-			massCenter.momentum = massCenter.momentum.add(b.getVelocity().multiplyScalar(b.mass));
+			massCenter.momentum = massCenter.momentum.add(b.getAbsoluteVelocity().multiplyScalar(b.mass));
 		});
 
 		massCenter.momentum.multiplyScalar(1 / massCenter.mass);
 		massRatio = massCenter.mass / central.mass;
-		central.velocity = massCenter.momentum.multiplyScalar(massRatio * -1);
+		central.setVelocity(massCenter.momentum.multiplyScalar(massRatio * -1));
 		central.position = massCenter.pos.clone().multiplyScalar(massRatio * -1);
 		this.bodies.forEach((b) => {
 			if (b === central || (b.relativeTo && b.relativeTo !== central.name)) return;
-			b.velocity.add(central.velocity);
+			b.addToAbsoluteVelocity(central.getAbsoluteVelocity());
 			//if central body's mass is way bigger than the object, we assume that the central body is the center of rotation. Otherwise, it's the barycenter
 			if (central.mass / b.mass > 10e10) {
 				b.position.add(central.position);
@@ -180,7 +180,7 @@ export default {
 
 		this.bodies.forEach(body => {
 			body.reset();
-			body.setPositionFromDate(this.currentTime, true);
+			body.setPositionFromDate(this.currentTime);
 			// console.log(body.name);
 		});
 

@@ -64,12 +64,12 @@ export default {
 		this.name = name;
 	},
 
-	calculateVelocity(timeEpoch, relativeTo, isFromDelta) {
+	calculateVelocity(timeEpoch, relativeTo) {
 		if (!this.orbitalElements) return new Vector3(0, 0, 0);
 
 		let eclipticVelocity;
 		
-		if (isFromDelta) {
+		if (!relativeTo) {
 			const pos1 = this.calculatePosition(timeEpoch);
 			const pos2 = this.calculatePosition(timeEpoch + 60);
 			eclipticVelocity = pos2.sub(pos1).multiplyScalar(1 / 60);

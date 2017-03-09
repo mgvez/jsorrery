@@ -32,7 +32,7 @@ function moveByGravity(epochTime) {
 function moveByElements(epochTime) {
 	// console.log(bodies.length);
 	for (let i = 0; i < bodies.length; i++) {
-		bodies[i].setPositionFromDate(epochTime, false);
+		bodies[i].setPositionFromDate(epochTime);
 	}
 }
 

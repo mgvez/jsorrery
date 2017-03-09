@@ -7,6 +7,7 @@ export const G = 6.6742e-11;
 //astronomical unit in km
 export const AU = 149597870;
 export const CIRCLE = 2 * Math.PI;
+export const QUARTER_CIRCLE = Math.PI / 2;
 export const KM = 1000;
 export const DEG_TO_RAD = Math.PI / 180;
 export const RAD_TO_DEG = 180 / Math.PI;

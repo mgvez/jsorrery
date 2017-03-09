@@ -4,7 +4,7 @@ import { LineBasicMaterial, BufferGeometry, Geometry, Line, BufferAttribute, Ver
 import Dimensions from 'graphics3d/Dimensions';
 import DebugPoint from 'graphics3d/utils/DebugPoint';
 import { darken, hexToRgb, rgbToHex } from 'utils/ColorUtils';
-import { IS_SCREENSHOT, IS_CAPTURE } from 'constants';
+import { IS_SCREENSHOT, IS_CAPTURE, QUARTER_CIRCLE } from 'constants';
 import { getUniverse } from 'JSOrrery';
 
 
@@ -47,8 +47,8 @@ export default {
 
 		const origColor = hexToRgb(this.color);
 		const colors = orbitVertices.map((v, i) => {
-			return origColor;
-			// return darken(origColor, 1 - i / l);
+			// return origColor;
+			return darken(origColor, 1 - i / l);
 		}).reduce((a, c, i) => {
 			const n = i * 3;			
 			a[n] = c.r / 255;
@@ -94,10 +94,12 @@ export default {
 
 	updatePos(pos, vel) {
 
-		const numberBehind = this.getNVerticesBehindPos(pos);
+		const numberBehind = this.getNVerticesBehindPos(pos, vel);
 		this.geometry.attributes.position.needsUpdate = true;
 		
 		if (numberBehind) {
+			console.log('shift %s', numberBehind);
+			console.warn('for osculating orbits, we cannot use passedpoints, we need to compute more');
 			const sorted = [];
 			for (let inc = 0, index = numberBehind; inc < this.nVertices; inc++, index++) {
 				if (index === this.nVertices) index = 0;
@@ -123,59 +125,25 @@ export default {
 	
 
 	getNVerticesBehindPos(pos, vel) {
-		let current;
-		let previous1;
-		let previous2;
-		// console.log('----');
+
+		// console.clear();
+		// DebugPoint.removeAll();
+		const lookAway = vel.negate();
+
 		for (let i = 0; i < this.nVertices; i++) {
 			// console.log(i);
 			const vertex = this.orbitVertices[i];
-			const dist = pos.distanceTo(vertex);
-			const data = { i, dist, vertex };
-
-			previous2 = previous1;
-			previous1 = current;
-			current = data;
-
-			//we need at least 2
-			if (!previous1) continue;
-			// DebugPoint.removeAll();
-			//distance begins to rise. We are past our vertex. It's either the previous one or the one before.
-			if (dist > previous1.dist) {
-				if (previous2) {
-					
-					// console.log(i);
-					// console.clear();
-					// console.log(previous2.dist);
-					// console.log(previous1.dist);
-					// console.log(current.dist);
-					// console.log(i + 1);
-					if (previous2.dist < current.dist) {
-						// DebugPoint.add(previous2.vertex, 0x55ff00);
-						// DebugPoint.add(previous1.vertex, 0x777777);
-						// DebugPoint.add(current.vertex, 0x777777);
-						// getUniverse().stop(true);
-						return previous2.i + 1;
-					}
-					// DebugPoint.add(previous2.vertex, 0x777777);
-					// DebugPoint.add(previous1.vertex, 0xff5555);
-					// DebugPoint.add(current.vertex, 0x777777);
-					
-					// getUniverse().stop(true);
-					return previous1.i + 1;
-				}
-				//nearest vertex is the first one. we need to know if it's behind our pos. If so, pos's distance is further than previous to current
-				if (dist < previous1.vertex.distanceTo(vertex)) {
-					// DebugPoint.add(previous1.vertex, 0x0055ff);
-					// DebugPoint.add(current.vertex, 0x777777);
-					// getUniverse().stop(true);
-					return previous1.i + 1;
-				}
-				// console.log('first behind');
-				return null;
+			const diff = vertex.clone().sub(pos);
+			DebugPoint.addArrow(pos, diff, diff.length(), 0x888888);
+			const angle = diff.angleTo(lookAway);
+			// console.log(angle);
+			//point is not behind. If this happens, we assume that all that came before are behind, since the count starts from begining of line, where the planet was at previous frame. It means though that the planet cannot move more than half a circle per tick.
+			if (angle >= QUARTER_CIRCLE) {
+				// getUniverse().stop(true);
+				return i;
 			}
+			// DebugPoint.add(vertex, 0x55ff00, 1);
 		}
-		// console.log('none');
 		return null;
 	},
 

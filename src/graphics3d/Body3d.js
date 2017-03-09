@@ -138,8 +138,8 @@ export default {
 
 		if (this.tracer) this.tracer.draw(pos);
 		
-		// if (this.orbitLines) this.orbitLines.draw(pos, this.celestial.getVelocity());
-		if (this.celestial.name === 'venus' && this.orbitLines) this.orbitLines.draw(pos, this.celestial.getVelocity());
+		if (this.orbitLines) this.orbitLines.draw(pos, this.celestial.getRelativeVelocity());
+		// if (this.celestial.name === 'venus' && this.orbitLines) this.orbitLines.draw(pos, this.celestial.getRelativeVelocity());
 
 		return pos;
 	},

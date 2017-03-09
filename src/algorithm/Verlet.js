@@ -46,7 +46,7 @@ define(
 			for(var i=0; i<this.bodies.length; i++){
 				this.bodies[i].beforeMove(deltaT);
 				if(this.bodies[i].calculateFromElements){
-					this.bodies[i].setPositionFromDate(epochTime + deltaT, false);
+					this.bodies[i].setPositionFromDate(epochTime + deltaT);
 				} else if(!this.bodies[i].isStill){
 					moveBody(this.bodies[i], deltaT, this.deltaTSq, i);
 				}

@@ -104,6 +104,7 @@ function generateStars(shaders, stars, starTexture, size) {
 			starColor = lightenDarkenColor(starColor, ((1 / mag) ** 0.3));
 		} else {
 			//starVect.size = 2;
+			// starColor = lightenDarkenColor(starColor, ((1 / mag) ** 0.8));
 			starColor = lightenDarkenColor(starColor, ((1 / mag) ** 0.8));
 		}			
 		/**/
@@ -144,8 +145,8 @@ function generateStars(shaders, stars, starTexture, size) {
 }
 
 export default {
-	// dataSrc: 'js/jsorrery/data/milkyway.json',
-	dataSrc: 'js/jsorrery/data/milkyway_heasarc_468k.json',
+	dataSrc: 'js/jsorrery/data/milkyway.json',
+	// dataSrc: 'js/jsorrery/data/milkyway_heasarc_468k.json',
 	init(size) {
 		
 		// create the particle system

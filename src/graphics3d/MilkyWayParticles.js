@@ -121,6 +121,7 @@ function generateStars(shaders, stars, starTexture, size) {
 		sizes[i] = pxRatio * (1.5 + Math.floor(10 * (1 / mag)) / 10);
 
 	}
+
 	geometry.addAttribute('position', new BufferAttribute(positions, 3));
 	geometry.addAttribute('customColor', new BufferAttribute(colors, 3));
 	geometry.addAttribute('size', new BufferAttribute(sizes, 1));
@@ -145,8 +146,8 @@ function generateStars(shaders, stars, starTexture, size) {
 }
 
 export default {
-	dataSrc: 'js/jsorrery/data/milkyway.json',
-	// dataSrc: 'js/jsorrery/data/milkyway_heasarc_468k.json',
+	// dataSrc: 'js/jsorrery/data/milkyway.json',
+	dataSrc: 'js/jsorrery/data/milkyway_heasarc_204k.json',
 	init(size) {
 		
 		// create the particle system

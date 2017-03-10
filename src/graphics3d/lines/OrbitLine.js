@@ -21,16 +21,17 @@ export default {
 		const material = new LineBasicMaterial({
 			color: IS_SCREENSHOT || IS_CAPTURE ? this.color : rgbToHex(darken(hexToRgb(this.color), 0.5)),
 		});
-		orbitVertices.forEach(val => Dimensions.getScaled(val));
+		this.orbitVertices = orbitVertices.map(val => Dimensions.getScaled(val.clone()));
 		const orbitGeom = new Geometry();
-		orbitGeom.vertices = orbitVertices;
+		orbitGeom.vertices = this.orbitVertices;
+
 		return new Line(orbitGeom, material);
 	},
 
 	createGradientLine(orbitVertices) {
 		const l = orbitVertices.length;
 		this.orbitVertices = orbitVertices.map((val) => {
-			return Dimensions.getScaled(val);
+			return Dimensions.getScaled(val.clone());
 		});
 
 		this.nVertices = this.orbitVertices.length;

@@ -50,6 +50,7 @@ export default {
 					this.eclipticLine.init(this.celestial.name, getUniverse().getBody().color, true);
 				}
 				this.eclipticLine.setLine(eclipticVertices);
+				// console.log(this.eclipticLine);
 			}/**/
 
 			//if we need to compute the osculating orbit, i.e. if this body's orbit is heavily perturbed, we recompute the path at each revolution
@@ -78,6 +79,7 @@ export default {
 		if (!this.eclipticLine) return;
 		this.eclipticLine.added = true;
 		this.body3d.getDisplayObject().add(this.eclipticLine.getDisplayObject());
+		// this.eclipticLine.showAllVertices();
 	},
 
 	hideEcliptic() {

@@ -9,10 +9,15 @@ import { saturn } from './bodies/saturn';
 import { uranus } from './bodies/uranus';
 import { neptune } from './bodies/neptune';
 import { pluto } from './bodies/pluto';
+import { halley } from './bodies/halley';
+import { ceres } from './bodies/ceres';
+import { eris } from './bodies/eris';
+import { makemake } from './bodies/makemake';
+import { haumea } from './bodies/haumea';
 
 export default {
-	name: 'SolarSystem',
-	title: 'Solar System',
+	name: 'SolarSystemDwarves',
+	title: 'Solar System with dwarves',
 	commonBodies: [
 		sun,
 		mercury,
@@ -24,10 +29,15 @@ export default {
 		uranus,
 		neptune,
 		pluto,
+		halley,
+		eris,
+		ceres,
+		makemake,
+		haumea,
 	],
 	secondsPerTick: { min: 3600 * 5, max: 3600 * 25, initial: 3600 * 10 },
 	defaultGuiSettings: { 
 		planetScale: 10,
 	},
-	help: 'This scenario shows all the planets of the Solar System.',
+	help: "This scenario shows all the planets of the Solar System plus dwarf planets. Also included is Halley's comet, but its orbit is an approximation, as it is perturbed by the planet's masses.",
 };

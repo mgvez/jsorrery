@@ -1,7 +1,9 @@
-import { earth, moon } from './CommonCelestialBodies';
+
+import Labels from 'graphics2d/Labels';
+import { getUniverse } from 'JSOrrery';
 import { getMissionFromName } from './NasaNumbers';
-import Labels from '../../graphics2d/Labels';
-import { getUniverse } from '../../JSOrrery';
+import { earth } from './bodies/earth';
+import { moon } from './bodies/moon';
 
 
 const g = window.location.search.match(/apollo=([0-9]+)/);

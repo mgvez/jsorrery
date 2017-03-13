@@ -9,9 +9,14 @@ radius: km
 
 import Promise from 'bluebird';
 import $ from 'jquery';
-import { sun, mercury, venus, earth, mars, moon } from './CommonCelestialBodies';
+import { J2000, AU } from 'constants';
+import { moon } from './bodies/moon';
+import { sun } from './bodies/sun';
+import { mercury } from './bodies/mercury';
+import { venus } from './bodies/venus';
+import { earth } from './bodies/earth';
+import { mars } from './bodies/mars';
 
-import { J2000, AU } from '../../constants';
 
 const baseNEO = {
 	mass: 1,
@@ -20,7 +25,7 @@ const baseNEO = {
 };
 
 const N_TO_SHOW = 10;
-const MIN_DIST = 0.05;
+const MIN_DIST = 0.1;
 const NASA_API = '';
 
 function onLoadError(jqXHR, textStatus, errorThrown) {
@@ -38,6 +43,7 @@ function onListLoaded(res) {
 				const { close_approach_data } = neoDef;
 				const missData = close_approach_data && close_approach_data[0];
 				const missDist = missData && Number(missData.miss_distance.astronomical);
+				// console.log(neoDef.name);
 				if (missDist && missDist < MIN_DIST) {
 					return {
 						dist: missDist,
@@ -45,12 +51,18 @@ function onListLoaded(res) {
 					};
 				}
 				return null;
-			}).filter(a => a).sort((a, b) => a - b));
+			}).filter(a => a).sort((a, b) => a.dist - b.dist));
 		}, []);
-		allLinks.length = N_TO_SHOW;
+		// console.log(allLinks.length);
+		allLinks.length = allLinks.length > N_TO_SHOW ? N_TO_SHOW : allLinks.length;
+		// console.log(allLinks);
+		
 		const allLoaded = allLinks.map(loadNeo);
 		return Promise.all(allLoaded).then((allNeo) => {
+			// console.log(allNeo);
+			
 			return allNeo.reduce((neos, neo) => {
+				// console.log(neo);
 				neos[neo.name] = neo;
 				return neos;
 			}, {});
@@ -60,6 +72,7 @@ function onListLoaded(res) {
 }
 
 function loadNeo(neoData) {
+	// console.log('load ', neoData.url);
 	return $.ajax({
 		url: neoData.url,
 		dataType: 'json',
@@ -68,8 +81,8 @@ function loadNeo(neoData) {
 }
 
 function onObjectLoaded(res) {
-	const { name, orbital_data } = res;
 	// console.log(res);
+	const { name, orbital_data } = res;
 
 	const tsSinceJ2000 = (Number(orbital_data.epoch_osculation) - 2451545) * (60 * 60 * 24 * 1000);
 	const epochTime = J2000.getTime() + tsSinceJ2000;
@@ -102,15 +115,17 @@ const cnf = {
 		if (scenarioReady) return scenarioReady.promise();
 		
 		scenarioReady = $.ajax({
-			url: 'https://api.nasa.gov/neo/rest/v1/feed',
-			data: {
-				start_date: (new Date()).toISOString().substring(0, 10),
-				api_key: NASA_API,
-			},
+			// url: 'http://mvezina.com/jsorrery/feed-2017-03-01',
+			url: 'http://mvezina.com/jsorrery/feed-' + (new Date(new Date().getTime() + 24 * 60 * 60 * 1000)).toISOString().substring(0, 10),
+			// url: 'https://api.nasa.gov/neo/rest/v1/feed',
+			// data: {
+			// 	start_date: (new Date()).toISOString().substring(0, 10),
+			// 	api_key: NASA_API,
+			// },
 			dataType: 'json',
 			crossDomain: true,
 		}).then(onListLoaded, onLoadError).then(neos => {
-			console.log(neos);
+			// console.log(neos);
 			cnf.bodies = Object.assign(cnf.bodies, neos);
 		});
 

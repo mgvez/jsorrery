@@ -1,4 +1,15 @@
-import { sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto, halley } from './CommonCelestialBodies';
+
+import { sun } from './bodies/sun';
+import { mercury } from './bodies/mercury';
+import { venus } from './bodies/venus';
+import { earth } from './bodies/earth';
+import { mars } from './bodies/mars';
+import { jupiter } from './bodies/jupiter';
+import { saturn } from './bodies/saturn';
+import { uranus } from './bodies/uranus';
+import { neptune } from './bodies/neptune';
+import { pluto } from './bodies/pluto';
+
 
 export default {
 	name: 'BigJupiter',
@@ -14,7 +25,6 @@ export default {
 		uranus,
 		neptune,
 		pluto,
-		halley,
 	],
 	bodies: {
 		sun: {

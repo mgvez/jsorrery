@@ -1,4 +1,10 @@
-import { sun, mercury, venus, earth, moon, mars } from './CommonCelestialBodies';
+
+import { sun } from './bodies/sun';
+import { moon } from './bodies/moon';
+import { mercury } from './bodies/mercury';
+import { venus } from './bodies/venus';
+import { earth } from './bodies/earth';
+import { mars } from './bodies/mars';
 
 export default {
 	name: 'InnerSolarSystem',

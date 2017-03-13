@@ -1,5 +1,7 @@
 
-import { earth, moon } from './CommonCelestialBodies';
+import { earth } from './bodies/earth';
+import { moon } from './bodies/moon';
+
 
 export default {
 	name: 'EarthMoon',

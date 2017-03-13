@@ -1,5 +1,6 @@
 
 import solarSystem from './scenarios/SolarSystem';
+import solarSystemDwarves from './scenarios/SolarSystemDwarves';
 import innerSolarSystem from './scenarios/InnerSolarSystem';
 import apollo from './scenarios/Apollo';
 import earthMoon from './scenarios/EarthMoon';
@@ -11,6 +12,7 @@ import moonSOI from './scenarios/MoonSOI';
 
 const all = [
 	solarSystem,
+	solarSystemDwarves,
 	innerSolarSystem,
 	apollo,
 	earthMoon,

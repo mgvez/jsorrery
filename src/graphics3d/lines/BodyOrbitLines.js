@@ -5,7 +5,8 @@ import Ticker from 'algorithm/Ticker';
 
 export default {
 			
-	init(body3d) {
+	init(body3d, isForceSolidLines) {
+		this.isForceSolidLines = isForceSolidLines;
 		this.body3d = body3d;
 		this.celestial = body3d.celestial;
 		this.setOrbitLines();
@@ -38,7 +39,7 @@ export default {
 			if (!this.orbitLine) {
 				this.orbitLine = Object.create(OrbitLine);
 				//if body is tracing its path as well as showing its computed orbit, we show the orbit as a solid faded line
-				this.orbitLine.init(this.celestial.name, this.celestial.color, this.celestial.showSolidOrbit);
+				this.orbitLine.init(this.celestial.name, this.celestial.color, this.celestial.showSolidOrbit || this.isForceSolidLines);
 			}
 			this.orbitLine.setLine(orbitVertices);
 

@@ -67,7 +67,7 @@ export default {
 
 		//this.drawAxis();
 		CameraManager.init(this, this.width / this.height, scenario.fov, this.stageSize, this.container);
-		OrbitLinesManager.init(this.root);
+		OrbitLinesManager.init(scenario.calculateAll);
 		TracerManager.init(this.root);
 
 		this.setMilkyway();

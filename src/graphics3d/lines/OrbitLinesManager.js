@@ -5,7 +5,11 @@
 import BodyOrbitLines from 'graphics3d/lines/BodyOrbitLines';
 
 export default {
-	init() {
+	/**
+	 When paths are computed through phisics, orbits are always shown as solid lines, because we cannot recompute them from positions
+	 */
+	init(isForceSolidLines) {
+		this.isForceSolidLines = isForceSolidLines;
 		this.orbits = [];
 	},
 
@@ -41,7 +45,7 @@ export default {
 
 	addBody(body3d) {
 		const orbit = Object.create(BodyOrbitLines);
-		orbit.init(body3d);
+		orbit.init(body3d, this.isForceSolidLines);
 		body3d.setOrbitLines(orbit);
 		const idx = this.findOrbitIndex(body3d.getName());
 		if (!~idx) {

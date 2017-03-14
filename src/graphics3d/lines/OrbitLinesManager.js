@@ -5,7 +5,7 @@
 import BodyOrbitLines from 'graphics3d/lines/BodyOrbitLines';
 
 export default {
-	init(rootContainer) {
+	init() {
 		this.orbits = [];
 	},
 

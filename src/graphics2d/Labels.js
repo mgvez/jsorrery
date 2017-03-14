@@ -1,5 +1,4 @@
 
-import { TweenMax } from 'gsap';
 import $ from 'jquery';
 
 import { DEG_TO_RAD } from 'constants';

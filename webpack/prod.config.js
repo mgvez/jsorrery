@@ -6,7 +6,6 @@ var csswring = require('csswring');
 
 
 module.exports = {
-	devtool: 'source-map',
 	entry: [
 		'./src/index',
 	],

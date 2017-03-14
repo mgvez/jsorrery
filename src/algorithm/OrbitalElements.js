@@ -5,9 +5,6 @@ import { sinh, sign, cosh } from 'algorithm/Math';
 import { getUniverse } from 'JSOrrery';
 import { G, CENTURY, DAY, KM, DEG_TO_RAD, CIRCLE, AU } from 'constants';
 
-const maxIterationsForEccentricAnomaly = 10;
-const maxDE = 1e-15;
-
 function solveEccentricAnomaly(f, x0, maxIter) {
 		
 	let x = 0;

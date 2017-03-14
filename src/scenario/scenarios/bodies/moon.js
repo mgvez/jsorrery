@@ -8,7 +8,7 @@ export const moon = {
 	mass: 7.3477e22,
 	radius: 1738.1,
 	color: '#aaaaaa',
-	map: 'img/moonmap4k_levels.jpg',
+	map: './img/moonmap4k_levels.jpg',
 	sideralDay: (27.3215782 * DAY),
 	tilt: 1.5424,
 	fov: 1,

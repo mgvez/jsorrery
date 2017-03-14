@@ -26,12 +26,11 @@ const baseNEO = {
 
 const N_TO_SHOW = 10;
 const MIN_DIST = 0.1;
-const NASA_API = '';
 
 function onLoadError(jqXHR, textStatus, errorThrown) {
-	alert('Error loading NEO definitions. See console.');
-	console.log(textStatus, errorThrown);
-	console.log(jqXHR);
+	alert('Error loading NEO definitions. See console.');// eslint-disable-line
+	console.log(textStatus, errorThrown);// eslint-disable-line
+	console.log(jqXHR);// eslint-disable-line
 }
 
 function onListLoaded(res) {

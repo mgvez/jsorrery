@@ -58,7 +58,7 @@ function loadScenario(name, defaultParams) {
 		onSceneReady = getSceneReady();
 	}
 	onSceneReady.then(Preloader.remove).catch((e) => {
-		console.log(e);	
+		console.log(e);	// eslint-disable-line
 	});
 }
 

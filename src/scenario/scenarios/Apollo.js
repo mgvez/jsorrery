@@ -8,7 +8,7 @@ import { moon } from './bodies/moon';
 
 const g = window.location.search.match(/apollo=([0-9]+)/);
 const apolloNumber = (g && g[1]) || '8';
-const apolloEarthOrbit = getMissionFromName(`Apollo${apolloNumber}`).getNumbers('earth');
+// const apolloEarthOrbit = getMissionFromName(`Apollo${apolloNumber}`).getNumbers('earth');
 const apolloTLIOrbit = getMissionFromName(`Apollo${apolloNumber}`).getNumbers('TLI');
 const epoch = apolloTLIOrbit.epoch;
 

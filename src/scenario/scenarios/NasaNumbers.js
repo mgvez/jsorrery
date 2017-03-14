@@ -65,7 +65,7 @@ function getMissionNumbers(orbitType) {
 	const arg1 = Math.sqrt(CSquared - 4 * (1 - C) * -cosPathSq);
 	const arg2 = (2 * (1 - C));
 	//radius perigee
-	const rp = ((-C + arg1) / arg2) * r;
+	// const rp = ((-C + arg1) / arg2) * r;
 	//radius apogee
 	const ra = ((-C - arg1) / arg2) * r;
 	//eccentricity
@@ -96,7 +96,7 @@ function getMissionNumbers(orbitType) {
 	const E = Math.acos((e + Math.cos(trueAnomaly)) / (1 + e * Math.cos(trueAnomaly)));
 	const M = E - e * Math.sin(E);
 	const N = Math.sqrt(GM / (a ** 3));
-	const T = M / N;
+	// const T = M / N;
 	
 	/*
 	console.log('**************************************** '+orbitType);

@@ -6,7 +6,6 @@ export default function(t) {
 	const t2 = t * t;
 	const t3 = t * t2;
 	const t4 = t * t3;
-	const t5 = t * t4;
 
 	const t2e4 = t2 * 1e-4;
 	const t3e6 = t3 * 1e-6;

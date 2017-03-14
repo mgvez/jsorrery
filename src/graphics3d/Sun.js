@@ -7,9 +7,9 @@ import ResourceLoader from 'loaders/ResourceLoader';
 
 export default {
 	flareMapSrc: '/img/sunflare.png',
-	init(size) {
+	init() {
 		this.root = new Object3D();
-		const flareTx = ResourceLoader.loadTexture(this.flareMapSrc).then(tx => {
+		ResourceLoader.loadTexture(this.flareMapSrc).then(tx => {
 			const flareColor = new Color(0xffffff);
 			flareColor.setHSL(0.57, 0.80, 0.97);
 

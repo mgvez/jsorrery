@@ -2,7 +2,6 @@
 import { Vector3, PerspectiveCamera } from 'three';
 import { OrbitControls } from 'utils/ThreeExamples';
 import { getUniverse } from 'JSOrrery';
-import Dimensions from 'graphics3d/Dimensions';
 import TracerManager from 'graphics3d/lines/TracerManager';
 import OrbitLinesManager from 'graphics3d/lines/OrbitLinesManager';
 import ExportValues from 'gui/ExportValues';
@@ -69,10 +68,6 @@ function toggleCamera() {
 	scene.draw();
 }
 
-function getScaledVector(v) {
-	return Dimensions.getScaled(v.clone());
-}
-
 function updateCamera() {
 
 	if (typeof viewSettings.lookFrom === 'undefined') toggleCamera();
@@ -102,7 +97,7 @@ function updateCamera() {
 
 }
 
-function onMouseWheel(event, delta, deltaX, deltaY) {
+function onMouseWheel(event, delta) {
 	const deltaDir = delta / Math.abs(delta);
 	currentCamera.fov += currentCamera.fov * 0.1 * -deltaDir;
 	if (currentCamera.fov > MAX_FOV) currentCamera.fov = MAX_FOV;

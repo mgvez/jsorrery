@@ -1,11 +1,10 @@
 
 
-import { LineBasicMaterial, BufferGeometry, Geometry, Line, BufferAttribute, VertexColors, Vector3 } from 'three';
+import { LineBasicMaterial, BufferGeometry, Geometry, Line, BufferAttribute, VertexColors } from 'three';
 import Dimensions from 'graphics3d/Dimensions';
 import DebugPoint from 'graphics3d/utils/DebugPoint';
 import { darken, hexToRgb, rgbToHex } from 'utils/ColorUtils';
 import { IS_SCREENSHOT, IS_CAPTURE, QUARTER_CIRCLE } from 'constants';
-import { getUniverse } from 'JSOrrery';
 
 
 export default {

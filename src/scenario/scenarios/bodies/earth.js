@@ -8,7 +8,7 @@ export const earth = {
 	mass: 5.9736e24,
 	radius: 3443.9307 * NM_TO_KM,
 	color: '#1F7CDA',
-	map: 'img/earthmap1k_clouds.jpg',
+	map: './img/earthmap1k_clouds.jpg',
 	material: {
 		specular: new Color('grey'),
 	},

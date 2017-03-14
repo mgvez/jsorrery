@@ -1,7 +1,7 @@
 
-import { EventDispatcher, Vector3 } from 'three';
+import { Vector3 } from 'three';
 import OrbitalElements from 'algorithm/OrbitalElements';
-import { J2000, DEG_TO_RAD, RAD_TO_DEG, DAY, YEAR, CIRCLE } from 'constants';
+import { J2000, RAD_TO_DEG, CIRCLE } from 'constants';
 import { getUniverse } from 'JSOrrery';
 
 export default {
@@ -80,8 +80,8 @@ export default {
 		}
 	},
 
-	beforeMove(deltaTIncrement) {},
-	afterMove(deltaTIncrement) {},
+	beforeMove() {},
+	afterMove() {},
 
 	/**
 	Calculates orbit line from orbital elements.

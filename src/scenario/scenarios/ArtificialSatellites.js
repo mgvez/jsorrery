@@ -13,7 +13,7 @@ export default {
 	commonBodies: [earth],
 	bodies: {
 		/*earth: {
-			map: 'img/earthmap1k_KSC.jpg'
+			map: './img/earthmap1k_KSC.jpg'
 		},/**/
 		//https://books.google.ca/books?id=lZWZXbOKZvEC&pg=PA107&lpg=PA107&dq=sputnik+1+argument+of+perigee&source=bl&ots=UjcyyLTQBQ&sig=4UAJgXkoSVUSkiLkbvSM5-jm3vM&hl=en&sa=X&ved=0ahUKEwjcwqTq1u3RAhVj7YMKHZV4DN44ChDoAQg1MAQ#v=onepage&q=sputnik%201%20argument%20of%20perigee&f=false
 		sputnik1: {

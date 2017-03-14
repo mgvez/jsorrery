@@ -7,7 +7,7 @@ export const pluto = {
 	mass: 1.305e22 + 1.52e21,
 	radius: 1153,
 	color: '#aaaaaa',
-	map: 'img/plutomap1k.jpg',
+	map: './img/plutomap1k.jpg',
 	orbit: {
 		base: {
 			a: 39.48211675 * AU,

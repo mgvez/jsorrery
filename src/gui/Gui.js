@@ -1,7 +1,5 @@
 
 import $ from 'jquery';
-import { Promise } from 'bluebird';
-import { TweenMax } from 'gsap';
 import ExportValues from './ExportValues';
 
 const FA = 'fa ';

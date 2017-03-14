@@ -146,8 +146,8 @@ function generateStars(shaders, stars, starTexture, size) {
 }
 
 export default {
-	// dataSrc: 'js/jsorrery/data/milkyway.json',
-	dataSrc: 'js/jsorrery/data/milkyway_heasarc_204k.json',
+	// dataSrc: './data/milkyway.json',
+	dataSrc: './data/milkyway_heasarc_204k.json',
 	init(size) {
 		
 		// create the particle system
@@ -158,7 +158,7 @@ export default {
 		const onDataLoaded = ResourceLoader.loadJSON(this.dataSrc);
 		const onShaderLoaded = ResourceLoader.loadShaders('stars');
 
-		const starTextureLoader = ResourceLoader.loadTexture('img/star.png');
+		const starTextureLoader = ResourceLoader.loadTexture('./img/star.png');
 		
 		return Promise.all([onShaderLoaded, onDataLoaded, starTextureLoader]).then(response => {
 			const [shaderResponse, dataResponse, textureResponse] = response;

@@ -1,5 +1,5 @@
 
-import { ImageUtils, TextureLoader } from 'three';
+import { TextureLoader } from 'three';
 
 import $ from 'jquery';
 import Promise from 'bluebird';
@@ -72,7 +72,7 @@ export default {
 		if (shaderDfd) return shaderDfd;
 
 		const dfds = SHADER_TYPES.map(shaderType => {
-			const { ext, type } = shaderType;
+			const { ext } = shaderType;
 			return $.ajax({
 				url: `${SHADER_PATH}${shader}.${ext}`,
 				dataType: 'text',

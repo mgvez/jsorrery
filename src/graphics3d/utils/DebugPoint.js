@@ -1,5 +1,5 @@
 
-import { Object3D, MeshBasicMaterial, Mesh, SphereGeometry, ArrowHelper } from 'three';
+import { MeshBasicMaterial, Mesh, SphereGeometry, ArrowHelper } from 'three';
 import { getUniverse } from 'JSOrrery';
 
 const points = [];

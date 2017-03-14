@@ -6,8 +6,8 @@ export default {
 		return algo;
 	},
 
-	moveBodies(epochTime, deltaT) {
-		console.log('Move function undefined');
+	moveBodies() {
+		console.log('Move function undefined');// eslint-disable-line
 	},
 
 	//precompute all variations of deltaT, only if it changed since last pass

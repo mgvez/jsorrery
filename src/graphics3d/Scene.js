@@ -2,7 +2,7 @@
 
 import $ from 'jquery';
 import { Scene, WebGLRenderer, AmbientLight } from 'three';
-import { Stats } from 'utils/ThreeExamples';
+import { Stats } from 'utils/ThreeExamples';// eslint-disable-line
 
 import Body3D from 'graphics3d/Body3d';
 import MilkyWay from 'graphics3d/MilkyWayParticles';
@@ -105,7 +105,7 @@ export default {
 		this.root.add( object );
 	},/**/
 
-	setDimension(largestSMA, smallestSMA, largestRadius) {
+	setDimension(largestSMA, smallestSMA) {
 		this.width = window.innerWidth;
 		this.height = window.innerHeight;
 		Dimensions.setLargestDimension(largestSMA);

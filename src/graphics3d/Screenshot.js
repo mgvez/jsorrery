@@ -24,11 +24,11 @@ export default {
 					im: img,
 					i: this.i,
 				},
-				success(data) {
+				success(data) {// eslint-disable-line
 					//console.log(data)
 				},
 				error(a, b, c) {
-					console.log(a, b, c);
+					console.log(a, b, c);// eslint-disable-line
 				},
 			});
 		}

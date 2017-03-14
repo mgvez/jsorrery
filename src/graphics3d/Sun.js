@@ -6,7 +6,7 @@ import { Object3D, Color, LensFlare, AdditiveBlending, PointLight, DirectionalLi
 import ResourceLoader from 'loaders/ResourceLoader';
 
 export default {
-	flareMapSrc: '/img/sunflare.png',
+	flareMapSrc: './img/sunflare.png',
 	init() {
 		this.root = new Object3D();
 		ResourceLoader.loadTexture(this.flareMapSrc).then(tx => {

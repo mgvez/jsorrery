@@ -116,7 +116,7 @@ const cnf = {
 		
 		scenarioReady = $.ajax({
 			// url: 'http://mvezina.com/jsorrery/feed-2017-03-01',
-			url: 'http://mvezina.com/jsorrery/feed-' + (new Date(new Date().getTime() + 24 * 60 * 60 * 1000)).toISOString().substring(0, 10),
+			url: 'https://mvezina.com/jsorrery/feed-' + (new Date(new Date().getTime() + 24 * 60 * 60 * 1000)).toISOString().substring(0, 10),
 			// url: 'https://api.nasa.gov/neo/rest/v1/feed',
 			// data: {
 			// 	start_date: (new Date()).toISOString().substring(0, 10),

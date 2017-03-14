@@ -40,27 +40,7 @@ $menuH : 45px;
 }
 
 
-
-%button{
-
-	font-family:$entypo;
-	font-size:32px;
-	line-height:22px;
-	width:32px;
-}
-	
-@font-face {
-	font-family: 'EntypoRegular';
-	src: url('./assets/entypo.eot');
-	src: url('./assets/entypo.eot?#iefix') format('embedded-opentype'),
-	url('./assets/entypo.woff') format('woff'),
-	url('./assets/entypo.ttf') format('truetype'),
-	url('./assets/entypo.svg#EntypoRegular') format('svg');
-	font-weight: normal;
-	font-style: normal;
-}
-
-body{
+body {
 	margin:0;
 	padding:0;
 	font-family:$formFont;
@@ -211,26 +191,24 @@ a{
 }
 
 
-#universe{
+#universe {
 
 }
 
-nav{
+nav {
 	position:absolute;
 	z-index:500;
 	top:0;
 	left:0;
-	height: $menuH;
 	width: 100%;
 	background: rgba(0, 0, 0, 0.3);
 	border-bottom:1px $widgetBorderCol solid;
 
-	.help{
+	.help {
 		//position:absolute;
 		top:-2px;
 		display:inline-block;
-		font-family:$entypo;
-		font-size:18px;
+		font-size:10px;
 		line-height:inherit;
 		height:18px;
 		width:18px;
@@ -243,15 +221,14 @@ nav{
 		}
 	}
 
-	#gui{
+	#gui {
 		padding: 3px;
+		display: flex;
 		
 		.inputContainer{
 			position:relative;
 			min-height: 20px;
 		}
-
-
 
 		.dropdown{
 
@@ -301,19 +278,19 @@ nav{
 			}
 		}
 
-		label{
+
+		label {
 			position:relative;
-			display:block;
-			float:left;
 			width:140px;
 			margin: 0px 8px;
+			height: $menuH;
 			& > div{
 				display:block;
 				font-weight:bold;
 			}
 
 			&#scenarioLabel{
-				width: 210px;
+				width: 150px;
 			}
 			&#planetScaleLabel{
 				width: 120px;
@@ -325,16 +302,19 @@ nav{
 				width:auto;
 			}
 			&#shareLabel{
-				float:right;
+				// float:right;
 				width:auto;
 			}
 		}
 
 		
 
-		input, button{
-			font-family:$formFont;
+		input, button {
+		}
+
+		input {
 			font-size:11px;
+			font-family:$formFont;
 		}
 
 		input, .display{
@@ -344,14 +324,20 @@ nav{
 		}
 
 		button{
-			@include inputBox();
-			@extend button;
+			background:transparent;
+			color: white;
+			border:0;
+			opacity: 0.7;
+			font-size:22px;
+			// line-height:22px;
+			text-align:center;
+			height: 32px;
+			width:32px;
 			margin-top:6px;
 			cursor:pointer;
-			text-transform: uppercase;
 			transition-duration: 0.5s;
 			&:hover{
-				opacity: 0.7;
+				opacity: 1;
 			}
 		}
 
@@ -556,7 +542,7 @@ nav{
 
 
 .helpContent{
-	display:none;
+	height:0;
 	position:absolute;
 	top:$menuH;
 	left:0;
@@ -574,7 +560,14 @@ nav{
 	color:#aaa;
 	text-align:justify;
 	overflow-y:scroll;
-
+	transition: all 0.3s;
+	opacity: 0;
+	
+	&.shown {
+		display:block;
+		opacity:1;
+		height: auto;
+	}
 
 	h2{
 		color:#fff;
@@ -588,8 +581,8 @@ nav{
 	position:absolute;
 	top: 10px;
 	right:10px;
-	font-size:45px;
-	font-family:$entypo;
+	border:0;
+	font-size:22px;
 	transition-duration: 0.5s;
 	&:hover{
 		color:#fff;

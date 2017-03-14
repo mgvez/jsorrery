@@ -4,10 +4,12 @@ import { Promise } from 'bluebird';
 import { TweenMax } from 'gsap';
 import ExportValues from './ExportValues';
 
-const BTNS_LABELS = {
-	share: '&#59196;',
-	start: ['&#9654;', '&#8214;'],
+const FA = 'fa ';
+const BTNS_CLASS = {
+	share: FA + 'fa-share-alt',
+	start: [FA + 'fa-play-circle', FA + 'fa-pause-circle'],
 };
+
 
 const controls = {};
 const selects = {};
@@ -28,53 +30,32 @@ function getLabel(id) {
 }
 
 function hideContent(content) {
-	const shown = content.filter('.shown');
-	return new Promise(resolve => {
-		if (shown.length > 0) {
-			TweenMax.killTweensOf(shown);
-			TweenMax.to(
-				shown,
-				0.5,
-				{ 
-					css: { height: 1, opacity: 0 }, 
-					onComplete: () => {
-						shown.hide();
-						shown.removeClass('shown');
-						resolve();
-					},
-				}
-			);
-		} else {
-			resolve();
-		}
-	});
+	content.removeClass('shown');
+	return false;
 }
 
 function showContent(content) {
-	TweenMax.killTweensOf(content);
-	TweenMax.from(content.show().css({ height: 'auto', opacity: 1 }), 0.5, { css: { height: 1, opacity: 0 } });
 	content.addClass('shown');
+	return true;
 }
 
 function setupHelp() {
 	const allHelpContents = $('.helpContent');
 
 	$('.help').each((i, el) => {
+		let content;
+		let shown = false;
 		$(el).on('click.jsorrery', (e) => {
 			e.preventDefault();
-			let content = el.dataset.content;
 			if (!content) {
 				content = allHelpContents.filter(`#${el.dataset.for}`);
-				el.dataset.content = content;
 				content.find('.close').on('click.jsorrery', () => {
-					hideContent(content);
+					shown = hideContent(content);
 				});
 			}
-
-			const onHidden = hideContent(allHelpContents);
-			onHidden.then(() => {
-				showContent(content);
-			});
+			// console.log(content);
+			hideContent(allHelpContents);
+			shown = shown ? hideContent(content) : showContent(content);
 		});
 	});
 }
@@ -103,26 +84,25 @@ export default {
 
 	addBtn(labelParam, id, callback, key) {
 		removeControl(id);
-		const label = BTNS_LABELS[id] || labelParam;
-		let labelOff;
-		let labelOn;
-		if (label instanceof Array) {
-			labelOff = label[0];
-			labelOn = label[1];
+		const classNames = BTNS_CLASS[id];
+		let classOff;
+		let classOn;
+		if (classNames instanceof Array) {
+			classOff = classNames[0];
+			classOn = classNames[1];
 		} else {
-			labelOff = label;
+			classOff = classNames;
 		}
+		const label = classOff ? '&nbsp;' : labelParam;
 		let status = false;
-		const btn = controls[id] = $(`<button id="${id}">${labelOff}</button>`).appendTo(getContainer(id));
+
+		const btn = controls[id] = $(`<button class="${classOff}" id="${id}">${label}</button>`).appendTo(getContainer(id));
 		btn.on('click.jsorrery', (e) => {
 			e.stopPropagation();
 			callback();
 			status = !status;
-			if (status && labelOn) {
-				btn.html(labelOn);
-			} else {
-				btn.html(labelOff);
-			} 
+			const targetClass = (status && classOn) || classOff;
+			btn.attr('class', targetClass);
 		});
 
 		if (key) {
@@ -240,7 +220,7 @@ export default {
 
 		const min = (options && options.min) || 1;
 		const max = (options && options.max) || 100;
-		const step = (options && options.step) || min;
+		const step = (options && options.step) || 1;
 
 		const slider = $(`<input type ="range" min="${min}" max="${max}" step="${step}" value ="${defaultVal}"/>`).appendTo(container);
 

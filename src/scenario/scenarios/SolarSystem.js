@@ -29,5 +29,5 @@ export default {
 	defaultGuiSettings: { 
 		planetScale: 10,
 	},
-	help: 'This scenario shows all the planets of the Solar System.',
+	help: 'This scenario shows all the planets of the Solar System. This includes Pluto, because Pluto will always be a planet in my heart.',
 };

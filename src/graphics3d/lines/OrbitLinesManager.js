@@ -67,6 +67,7 @@ export default {
 			}/**/
 
 		} else {
+			this.resetAllOrbits();
 			this.showAllOrbits();
 			this.hideAllEcliptics();
 		}

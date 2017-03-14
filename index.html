@@ -12,12 +12,7 @@
 		<meta property="og:url" content=" " />
 
 		<link href='http://fonts.googleapis.com/css?family=Quattrocento' rel='stylesheet' type='text/css'>
-		<script>
-			window.GreenSockGlobals = window.GreenSockGlobals || {};
-			window.THREE = window.THREE || {};
-
-		</script>
-
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
 	</head>
 	<body>
 		<nav>
@@ -26,27 +21,27 @@
 					<div id="startCont" class="inputContainer"></div>
 				</label>
 				<label id="scenarioLabel">
-					<div>Scenario <span class="help" data-for="helpScenario">&#59140;</span></div>
+					<div>Scenario <span class="help fa fa-question-circle" data-for="helpScenario">&nbsp;</span></div>
 					<div id="scenarioCont" class="inputContainer"></div>
 				</label>
 				<label id="dateLabel">
-					<div>Date <span class="help" data-for="helpDate">&#59140;</span></div>
+					<div>Date <span class="help fa fa-question-circle" data-for="helpDate">&nbsp;</span></div>
 					<div id="dateCont" class="inputContainer"></div>
 				</label>
 				<label id="povLabel">
-					<div>Point of view <span class="help" data-for="helpLookFrom">&#59140;</span></div>
+					<div>Point of view <span class="help fa fa-question-circle" data-for="helpLookFrom">&nbsp;</span></div>
 					<div id="lookFromCont" class="inputContainer"></div>
 				</label>
 				<label id="lookatLabel">
-					<div>Look at <span class="help" data-for="helpLookAt">&#59140;</span></div>
+					<div>Look at <span class="help fa fa-question-circle" data-for="helpLookAt">&nbsp;</span></div>
 					<div id="lookAtCont" class="inputContainer"></div>
 				</label>
 				<label id="planetScaleLabel">
-					<div>Planet Scale <span class="valDisplay"></span>x <span class="help" data-for="helpScale">&#59140;</span></div>
+					<div>Planet Scale <span class="valDisplay"></span>x <span class="help fa fa-question-circle" data-for="helpScale">&nbsp;</span></div>
 					<div id="planetScaleCont" class="inputContainer"></div>
 				</label>
 				<label id="deltaTLabel">
-					<div>Animation speed <span class="help" data-for="helpDeltaT">&#59140;</span></div>
+					<div>Animation speed <span class="help fa fa-question-circle" data-for="helpDeltaT">&nbsp;</span></div>
 					<div id="deltaTCont" class="inputContainer"></div>
 				</label>
 
@@ -65,41 +60,41 @@
 
 
 		<div class="helpContent" id="helpScenario">
-			<a class="close">&#10062;</a>
+			<a class="close fa fa-close">&nbsp;</a>
 			<h2>Scenario</h2>
 			<p>The available scenarios are in fact collections of numbers that describe celestial bodies and their position. These numbers are coming, for the most part, from Nasa's websites. Their accuracy is quite impressive, more than enough for the context of this simulation. The picture that you see on any given date represents what the real Solar System looked like on that date.</p>
 		</div>
 		<div class="helpContent" id="helpDate">
-			<a class="close">&#10062;</a>
+			<a class="close fa fa-close">&nbsp;</a>
 			<h2>Date</h2>
 			<p>The <a href="http://en.wikipedia.org/wiki/Orbital_elements" target="_blank">orbital elements</a> of the planets are used to calculate their original position when picking a date. These calculations produce a very good approximation of the positions : you can compare the stars and constellations that you see in the background from other sources, provided that you place the point of view on The Earth.</p>
 			<p>Some scenarios are set to be animated by calculating positions from the orbital elements, but in some cases the velocity of each planet is derived from these calculations so that the positions are no longer calculated from the elements, but from the gravity that is acting between the different bodies. The calculation of these forces is also an approximation using a Quadratic integration, and its precision decays over time. This decay is more pronounced in some scenarios.</p>
 			<p>You can find on the internet the dates of celestial events, for example eclipses or lunar phases, and check if you can observe them in this simulation.</p>
 		</div>
 		<div class="helpContent" id="helpLookFrom">
-			<a class="close">&#10062;</a>
+			<a class="close fa fa-close">&nbsp;</a>
 			<h2>Point of view</h2>
 			<p>This option makes it possible to place the camera at the position of a planet of your choice, so you'd see the other planets from the point of view of the chosen one. From there you can zoom by scrolling.</p>
 			<p>The Free Camera is a camera that floats into space, and that you can move by scrolling and dragging. This camera always revolve around a point specified in the "look at" option field.</p>
 		</div>
 		<div class="helpContent" id="helpLookAt">
-			<a class="close">&#10062;</a>
+			<a class="close fa fa-close">&nbsp;</a>
 			<h2>Look at</h2>
 			<p>You can make your selected camera look at a planet of your choice, so that it always will be centered in your viewport.</p>
 			<p>If you place the camera from the viewpoint of a planet and look at another one, the latter's path will be traced relative to the former's position. This feature is useful to observe the <a href="http://en.wikipedia.org/wiki/Apparent_retrograde_motion" target="_blank">apparent retrograde motion</a> of the planets relative to the Earth.</p>
 		</div>
 		<div class="helpContent" id="helpScale">
-			<a class="close">&#10062;</a>
+			<a class="close fa fa-close">&nbsp;</a>
 			<h2>Planet scale</h2>
 			<p>When the scale is at 1x, the planets sizes are in 1:1 scale to the size of the orbits, and of the universe. Since the distances in the Solar System are so huge, we can't even see the planets at this scale, so I made it possible to make the planets larger to see them more easily. I left the possibility to view them at their real size, because I feel it gives a better hint about the vastness of our Solar System.</p>
 		</div>
 		<div class="helpContent" id="helpDeltaT">
-			<a class="close">&#10062;</a>
+			<a class="close fa fa-close">&nbsp;</a>
 			<h2>Speed</h2>
 			<p>Move the slider to change animation speed. Depending on the scenario, precision of positions can decay with increased speed.</p>
 		</div>
 		<div class="helpContent" id="helpCredits">
-			<a class="close">&#10062;</a>
+			<a class="close fa fa-close">&nbsp;</a>
 			<h2>Credits</h2>
 			<p>
 				<a href="http://la-grange.ca"><img src="img/logo-la-grange.png"></a>
@@ -132,7 +127,7 @@
 			</div>
 		</div>
 
-		<div id="credits" class="help" data-for="helpCredits">credits</div>
+		<div id="credits" class="help fa fa-question-circle" data-for="helpCredits">credits</div>
 		<script src="dist/bundle.js"></script>
 
 	</body>

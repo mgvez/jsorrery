@@ -39,5 +39,5 @@ export default {
 	defaultGuiSettings: { 
 		planetScale: 10,
 	},
-	help: "This scenario shows all the planets of the Solar System plus dwarf planets. Also included is Halley's comet, but its orbit is an approximation, as it is perturbed by the planet's masses.",
+	help: "This scenario shows all the planets of the Solar System plus dwarf planets. Also included is Halley's comet, but its orbit is an approximation, as I was not able to find its accurate orbital elements.",
 };

@@ -114,7 +114,7 @@ export default {
 	},
 
 	draw() {
-		
+		console.log('draw');
 		this.bodies3d.forEach(drawBody);
 
 		//after all bodies have been positionned, update camera matrix (as camera might be attached to a body)

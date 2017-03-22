@@ -4,8 +4,9 @@ import RingGeometry2 from 'three/RingGeometry2';
 import Labels from 'graphics2d/Labels';
 import ResourceLoader from 'loaders/ResourceLoader';
 import Dimensions from 'graphics3d/Dimensions';
-import { KM, DEG_TO_RAD, CIRCLE } from 'constants';
+import { KM, DEG_TO_RAD, RAD_TO_DEG, CIRCLE } from 'constants';
 import { getUniverse } from 'JSOrrery';
+import Gui from 'gui/Gui';
 
 export default {
 
@@ -118,12 +119,26 @@ export default {
 	},
 
 	addCamera(name, camera) {
+		if (this.celestial.name === 'earth' && name === 'pov') {
+			console.log(name);
+			console.log(this.getPlanetSize());
+			console.log(this.celestial.radius * KM);
+			Gui.addSlider('posz', { min: 1, max: this.celestial.radius * KM, initial: 1 }, val => {
+				console.log(val);
+				this.cameras[name].position.z = Dimensions.getScaled(2698453);
+				this.cameras[name].position.x = Dimensions.getScaled(val);
+				const angle = Math.asin(val / (this.celestial.radius * KM)) * RAD_TO_DEG;
+				console.log(angle);
+				getUniverse().getScene().draw();
+			});
+		}
 		this.root.add(camera);
 		this.cameras = this.cameras || {};
 		this.cameras[name] = camera;
 	},
 
 	getCamera(name) {
+		console.log(name);
 		return this.cameras && this.cameras[name];
 	},
 	

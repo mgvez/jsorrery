@@ -20,7 +20,7 @@ export default function(body3d) {
 		mat
 	);
 	//console.log(this.celestial.name+' size ',radius, ' m');
-	body3d.planet.add(sphere);
+	body3d.root.add(sphere);
 
 	function posCam() {
 		//this.celestial.radius * KM
@@ -28,9 +28,24 @@ export default function(body3d) {
 		// body3d.cameras[name].position.x = Dimensions.getScaled(lat);
 		// const angle = Math.asin(lat / (body3d.celestial.radius * KM)) * RAD_TO_DEG;
 		console.log(lng, lat);
-		const a = new Euler(-lat * DEG_TO_RAD, (Number(lng) + 90) * DEG_TO_RAD, 0, 'YXZ');
-		const pos = new Vector3(0, 0, body3d.getPlanetSize());	
+		const parsedLat = Number(lat) * DEG_TO_RAD;
+		const parsedLng = (Number(lng) - 180) * DEG_TO_RAD
+			+ ((getUniverse().currentTime / body3d.celestial.sideralDay) * CIRCLE);
+		
+		//- body3d.celestial.tilt)
+		const a = new Euler(
+			parsedLat,
+			0,
+			parsedLng,
+			'ZYX'
+		);
+		const pos = new Vector3(
+			0,
+			body3d.getPlanetSize(),
+			0
+		);	
 		pos.applyEuler(a);
+		pos.applyEuler(new Euler(-body3d.celestial.tilt * DEG_TO_RAD, 0, 0, 'XYZ'));
 		sphere.position.copy(pos);
 		getUniverse().getScene().draw();
 	}

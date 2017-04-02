@@ -1,6 +1,6 @@
 
 import { Color } from 'three';
-import { AU, SIDERAL_DAY, NM_TO_KM } from 'constants';
+import { AU, SIDERAL_DAY, NM_TO_KM, CIRCLE } from 'constants';
 
 export const earth = {
 	title: 'The Earth',
@@ -13,6 +13,7 @@ export const earth = {
 		specular: new Color('grey'),
 	},
 	sideralDay: SIDERAL_DAY,
+	baseMapRotation: 3 * CIRCLE / 4,
 	tilt: 23 + (26 / 60) + (21 / 3600),
 	orbit: {
 		base: {

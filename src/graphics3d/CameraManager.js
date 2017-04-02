@@ -7,6 +7,7 @@ import OrbitLinesManager from 'graphics3d/lines/OrbitLinesManager';
 import ExportValues from 'gui/ExportValues';
 import Gui, { LOOKFROM_ID, LOOKAT_ID } from 'gui/Gui';
 import { DEG_TO_RAD } from 'constants';
+import GeoCam from 'graphics3d/GeoCam';
 
 const DEFAULT_FOV = 45;
 const MAX_FOV = 90;
@@ -201,6 +202,10 @@ export default {
 		orbital.position.set(0, -1, body3d.getPlanetStageSize() * 200);
 
 		body3d.addCamera(ORBITAL_CAMERA_TYPE, orbital);
+
+		if (body3d.celestial.name === 'earth') {
+			body3d.geoCam = new GeoCam(body3d);
+		}
 
 		bodies3d[body3d.celestial.name] = body3d;
 	},

@@ -119,26 +119,14 @@ export default {
 	},
 
 	addCamera(name, camera) {
-		if (this.celestial.name === 'earth' && name === 'pov') {
-			console.log(name);
-			console.log(this.getPlanetSize());
-			console.log(this.celestial.radius * KM);
-			Gui.addSlider('posz', { min: 1, max: this.celestial.radius * KM, initial: 1 }, val => {
-				console.log(val);
-				this.cameras[name].position.z = Dimensions.getScaled(2698453);
-				this.cameras[name].position.x = Dimensions.getScaled(val);
-				const angle = Math.asin(val / (this.celestial.radius * KM)) * RAD_TO_DEG;
-				console.log(angle);
-				getUniverse().getScene().draw();
-			});
-		}
+		
 		this.root.add(camera);
 		this.cameras = this.cameras || {};
 		this.cameras[name] = camera;
 	},
 
 	getCamera(name) {
-		console.log(name);
+		// console.log(name);
 		return this.cameras && this.cameras[name];
 	},
 	
@@ -148,7 +136,7 @@ export default {
 		this.root.position.copy(pos);
 
 		if (this.celestial.sideralDay) {
-			const curRotation = (getUniverse().epochTime / this.celestial.sideralDay) * CIRCLE;
+			const curRotation = (getUniverse().currentTime / this.celestial.sideralDay) * CIRCLE;
 			this.planet.rotation.y = (this.celestial.baseMapRotation || 0) + curRotation;
 		}
 

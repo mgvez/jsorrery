@@ -4,30 +4,22 @@ import { KM, DEG_TO_RAD, RAD_TO_DEG, CIRCLE } from 'constants';
 import { getUniverse } from 'JSOrrery';
 import Gui from 'gui/Gui';
 
-export default function GeoPos(body3d) {
-	// console.log(name);
-	// console.log(body3d.getPlanetSize());
-	// console.log(body3d.celestial.radius * KM);
-	let lat = 45;
-	let lng = -73;
+export default function GeoPos(body3d, target) {
+	let lat = 45.5088400;//36.9664;//31
+	let lng = -73.5878100;//-87.6709;//-62
 
-	const mat = new MeshPhongMaterial({ color: 0xffffff });
-	const radius = body3d.getPlanetSize() * 0.01;
+	const mat = new MeshPhongMaterial({ color: 0xffffff, emissive: 0xff9911 });
+	const radius = body3d.getPlanetSize() * 0.1;
 	const segments = 50;
 	const rings = 50;
 	const sphere = new Mesh(
 		new SphereGeometry(radius, segments, rings),
 		mat
 	);
-	//console.log(this.celestial.name+' size ',radius, ' m');
 	body3d.root.add(sphere);
 
 	this.update = () => {
-		//this.celestial.radius * KM
-		// body3d.cameras[name].position.z = Dimensions.getScaled(2698453);
-		// body3d.cameras[name].position.x = Dimensions.getScaled(lat);
-		// const angle = Math.asin(lat / (body3d.celestial.radius * KM)) * RAD_TO_DEG;
-		console.log(lng, lat);
+		// console.log(lng, lat);
 		const parsedLat = Number(lat) * DEG_TO_RAD;
 		const parsedLng = (Number(lng) - 180) * DEG_TO_RAD
 			+ ((getUniverse().currentTime / body3d.celestial.sideralDay) * CIRCLE);
@@ -46,7 +38,10 @@ export default function GeoPos(body3d) {
 		);	
 		pos.applyEuler(a);
 		pos.applyEuler(new Euler(-body3d.celestial.tilt * DEG_TO_RAD, 0, 0, 'XYZ'));
-		sphere.position.copy(pos);
+		sphere.position.copy(pos.clone().multiplyScalar(5));
+		target.position.copy(pos);
+		if (!getUniverse().isPlaying()) getUniverse().getScene().draw();
+
 	};
 
 	Gui.addSlider('lat', { min: -90, max: 90, initial: lat }, val => {

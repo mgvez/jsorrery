@@ -208,8 +208,7 @@ export default {
 
 		//on the earth, position the camera at specific lon/lat
 		if (body3d.celestial.name === 'earth') {
-			// pov.geoPos = new GeoPos(body3d);
-			orbital.geoPos = new GeoPos(body3d);
+			pov.geoPos = new GeoPos(body3d, pov);
 		}
 
 		bodies3d[body3d.celestial.name] = body3d;

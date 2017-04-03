@@ -4,7 +4,7 @@ import { KM, DEG_TO_RAD, RAD_TO_DEG, CIRCLE } from 'constants';
 import { getUniverse } from 'JSOrrery';
 import Gui from 'gui/Gui';
 
-export default function(body3d) {
+export default function GeoPos(body3d) {
 	// console.log(name);
 	// console.log(body3d.getPlanetSize());
 	// console.log(body3d.celestial.radius * KM);
@@ -22,7 +22,7 @@ export default function(body3d) {
 	//console.log(this.celestial.name+' size ',radius, ' m');
 	body3d.root.add(sphere);
 
-	function posCam() {
+	this.update = () => {
 		//this.celestial.radius * KM
 		// body3d.cameras[name].position.z = Dimensions.getScaled(2698453);
 		// body3d.cameras[name].position.x = Dimensions.getScaled(lat);
@@ -47,16 +47,15 @@ export default function(body3d) {
 		pos.applyEuler(a);
 		pos.applyEuler(new Euler(-body3d.celestial.tilt * DEG_TO_RAD, 0, 0, 'XYZ'));
 		sphere.position.copy(pos);
-		getUniverse().getScene().draw();
-	}
+	};
 
 	Gui.addSlider('lat', { min: -90, max: 90, initial: lat }, val => {
 		lat = val;
-		posCam();
+		this.update();
 	});
 	Gui.addSlider('lng', { min: -180, max: 180, initial: lng }, val => {
 		lng = val;
-		posCam();
+		this.update();
 	});
-	posCam();
+	this.update();
 }

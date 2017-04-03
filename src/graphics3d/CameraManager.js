@@ -7,7 +7,7 @@ import OrbitLinesManager from 'graphics3d/lines/OrbitLinesManager';
 import ExportValues from 'gui/ExportValues';
 import Gui, { LOOKFROM_ID, LOOKAT_ID } from 'gui/Gui';
 import { DEG_TO_RAD } from 'constants';
-import GeoCam from 'graphics3d/GeoCam';
+import GeoPos from 'graphics3d/GeoPos';
 
 const DEFAULT_FOV = 45;
 const MAX_FOV = 90;
@@ -76,6 +76,9 @@ function updateCamera() {
 	const lookFromBody = bodies3d[viewSettings.lookFrom];
 	const lookAtBody = bodies3d[viewSettings.lookAt];
 	const controls = currentCamera.jsorrery && currentCamera.jsorrery.controls;
+
+	if (currentCamera.geoPos) currentCamera.geoPos.update();
+	
 	if (controls) {
 		controls.update();
 	} else if (viewSettings.lookFrom) {
@@ -203,8 +206,10 @@ export default {
 
 		body3d.addCamera(ORBITAL_CAMERA_TYPE, orbital);
 
+		//on the earth, position the camera at specific lon/lat
 		if (body3d.celestial.name === 'earth') {
-			body3d.geoCam = new GeoCam(body3d);
+			// pov.geoPos = new GeoPos(body3d);
+			orbital.geoPos = new GeoPos(body3d);
 		}
 
 		bodies3d[body3d.celestial.name] = body3d;

@@ -5,8 +5,8 @@ import { getUniverse } from 'JSOrrery';
 import Gui from 'gui/Gui';
 
 export default function GeoPos(body3d, target) {
-	let lat = 45.5088400;//36.9664;//31
-	let lng = -73.5878100;//-87.6709;//-62
+	let lat = 36.9664;//31
+	let lng = -87.6709;//-62
 
 	const mat = new MeshPhongMaterial({ color: 0xffffff, emissive: 0xff9911 });
 	const radius = body3d.getPlanetSize() * 0.1;

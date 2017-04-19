@@ -12,7 +12,7 @@ export default {
 
 		this.orbitalElements = Object.create(OrbitalElements);
 		this.orbitalElements.setName(this.name);
-		this.orbitalElements.setDefaultOrbit(this.orbit, this.orbitCalculator);
+		this.orbitalElements.setDefaultOrbit(this.orbit, this.orbitCalculator, this.positionCalculator);
 		//console.log(this.name, this.position, this.velocity);
 	},
 
@@ -32,10 +32,19 @@ export default {
 	},
 
 	setPositionFromDate(epochTime) {
-		// console.log(epochTime);
 		const currentEpochTime = this.currentEpochTime = this.getEpochTime(epochTime);
-		this.position = this.isCentral ? new Vector3() : this.orbitalElements.getPositionFromElements(this.orbitalElements.calculateElements(currentEpochTime));
+		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(currentEpochTime);
+
+		//test elp82
+		if (this.name === 'moon') {
+			console.log(this.name, (epochTime / (3600 * 24)) + 2451545);
+			console.log(this.position);
+			// this.position = new Vector3(-317536.85838439886 * 1000, 193961.30268682967 * 1000, 2751.9566813206825 * 1000);//largest
+			// this.position = new Vector3(-317489.9302622072 * 1000, 194031.6856288669 * 1000, 2744.1381542970303 * 1000);//start total
+		}
+
 		this.relativePosition = this.position.clone();
+		// console.log(this.relativePosition);
 		this.absvelocity = null;
 		this.relvelocity = null;
 	},
@@ -103,19 +112,24 @@ export default {
 		let step;
 		let total = 0;
 		let angleToPrevious;
-
+		// console.log(this.name);
 		const multiplyer = isFuture ? 1 : -1;
 		const arrayAction = isFuture ? 'push' : 'unshift';
 		for (let i = 0; total < 360; i++) {
+			// console.log(total);
+			
 			point = this.calculatePosition(startTime + (multiplyer * incr * i));
-			//if(this.name=='moon')console.log(startTime+(incr*i));
+			// if (this.name === 'moon') console.log('inc', startTime, (multiplyer * incr * i));
+
 			if (lastPoint) {
+				// if (this.name === 'moon') throw new Error('ok');
 				angle = point.angleTo(lastPoint) * RAD_TO_DEG;
 				//make sure we do not go over 360.5 
 				if (angle > 1.3 || ((angle + total) > 360.5)) {
 					for (let j = 0; j < angle; j++) {
 						step = (incr * (i - 1)) + ((incr / angle) * j);
 						point = this.calculatePosition(startTime + (multiplyer * step));
+						
 						//when finishing the circle try to avoid going too far over 360 (break after first point going over 360)
 						if (total > 358) {
 							angleToPrevious = point.angleTo(points[0]) * RAD_TO_DEG;

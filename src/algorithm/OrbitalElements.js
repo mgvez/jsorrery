@@ -49,12 +49,13 @@ function solveKeplerLaguerreConwayHyp(e, M) {
 }
 
 export default {
-	setDefaultOrbit(orbitalElements, calculator) {
+	setDefaultOrbit(orbitalElements, calculator, positionCalculator) {
 		this.orbitalElements = orbitalElements;
 		if (orbitalElements && orbitalElements.epoch) {
 			this.epochCorrection = getUniverse().getEpochTime(orbitalElements.epoch);
 		}
 		this.calculator = calculator;
+		this.positionCalculator = positionCalculator;
 	},
 
 	setName(name) {
@@ -96,6 +97,7 @@ export default {
 
 	calculatePosition(timeEpoch) {
 		if (!this.orbitalElements) return new Vector3(0, 0, 0);
+		if (this.positionCalculator) return this.positionCalculator(timeEpoch);
 		const computed = this.calculateElements(timeEpoch);
 		return this.getPositionFromElements(computed);
 	},
@@ -214,7 +216,7 @@ export default {
 	},
 
 	getPositionFromElements(computed) {
-
+		if (computed.x) return computed;
 		if (!computed) return new Vector3(0, 0, 0);
 
 		const a1 = new Euler(computed.tilt || 0, 0, computed.o, 'XYZ');

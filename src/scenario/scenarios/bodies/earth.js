@@ -1,6 +1,7 @@
 
 import { Color } from 'three';
 import { AU, SIDERAL_DAY, NM_TO_KM, CIRCLE } from 'constants';
+import { VSOP } from './earth/VSOP-earth';
 
 export const earth = {
 	title: 'The Earth',
@@ -15,6 +16,7 @@ export const earth = {
 	sideralDay: SIDERAL_DAY,
 	baseMapRotation: 3 * CIRCLE / 4,
 	tilt: 23 + (26 / 60) + (21 / 3600),
+	positionCalculator: VSOP,
 	orbit: {
 		base: {
 			a: 1.00000261 * AU,

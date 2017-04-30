@@ -9,7 +9,7 @@ export default function GeoPos(body3d, target) {
 	let lng = -87.6709;//-62
 
 	const mat = new MeshPhongMaterial({ color: 0xffffff, emissive: 0xff9911 });
-	const radius = body3d.getPlanetSize() * 0.1;
+	const radius = body3d.getPlanetSize() * 0.01;
 	const segments = 50;
 	const rings = 50;
 	const sphere = new Mesh(
@@ -38,7 +38,7 @@ export default function GeoPos(body3d, target) {
 		);	
 		pos.applyEuler(a);
 		pos.applyEuler(new Euler(-body3d.celestial.tilt * DEG_TO_RAD, 0, 0, 'XYZ'));
-		sphere.position.copy(pos.clone().multiplyScalar(5));
+		sphere.position.copy(pos.clone().multiplyScalar(1.1));
 		target.position.copy(pos);
 		if (!getUniverse().isPlaying()) getUniverse().getScene().draw();
 

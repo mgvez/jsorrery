@@ -95,9 +95,9 @@ export default {
 		
 	},
 
-	calculatePosition(timeEpoch) {
+	calculatePosition(timeEpoch, isApproximate) {
 		if (!this.orbitalElements) return new Vector3(0, 0, 0);
-		if (this.positionCalculator) return this.positionCalculator(timeEpoch);
+		if (this.positionCalculator && !isApproximate) return this.positionCalculator(timeEpoch);
 		const computed = this.calculateElements(timeEpoch);
 		return this.getPositionFromElements(computed);
 	},

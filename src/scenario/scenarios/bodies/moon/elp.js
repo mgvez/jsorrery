@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Vector3 } from 'three';
-import { J2000 } from 'constants';
+import { J2000, KM } from 'constants';
 /*-----------------------------------------------------------------------
 *
 *     Reference : Bureau des Logitudes - MCTJCGF9502.
@@ -251,7 +251,7 @@ function getData(n) {
 export function ELP82B(epochTime, maxiter = 0, prec = 0) {
 	
 	const tjj = (epochTime / (3600 * 24)) + 2451545;
-	console.log(epochTime, tjj);
+	// console.log(epochTime, tjj);
 
 	const pre = [0, 0, 0, 0];
 	const t = [0, 0, 0, 0, 0, 0];
@@ -445,7 +445,7 @@ export function ELP82B(epochTime, maxiter = 0, prec = 0) {
 		r[3] = -pw * x1 + qw * x2 + (pw2 + qw2 - 1) * x3;
 		// console.timeEnd('end');
 		
-		return new Vector3(r[1] * 1000, r[2] * 1000, r[3] * 1000);
+		return new Vector3(r[1] * KM, r[2] * KM, r[3] * KM);
 	}
 
 	return doLoop(1); 

@@ -14,7 +14,7 @@ export const earth = {
 		specular: new Color('grey'),
 	},
 	sideralDay: SIDERAL_DAY,
-	//time from where rotations/tilt are computed
+	//time from where rotation is computed: the solstice before system's reference time (J2000)
 	zeroTime: (J2000 - new Date('1999-12-22T07:44:00.000Z')) / (YEAR * DAY * 1000),
 	baseMapRotation: 3 * CIRCLE / 4,
 	tilt: 23 + (26 / 60) + (21 / 3600),

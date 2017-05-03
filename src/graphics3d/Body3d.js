@@ -135,6 +135,7 @@ export default {
 
 		if (this.celestial.sideralDay) {
 			this.planet.rotation.y = (this.celestial.baseMapRotation || 0) + this.celestial.getCurrentRotation();
+			// console.log(this.planet.rotation.y);
 		}
 
 		if (this.tracer) this.tracer.draw(pos);

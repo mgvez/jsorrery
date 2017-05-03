@@ -43,7 +43,8 @@ export const moon = {
 	},
 	customInitialize() {
 		if (this.relativeTo !== 'earth') return;
-		this.baseMapRotation = this.getMapRotation(this.getAngleTo('earth'));
+		this.baseMapRotation = this.getMapRotation(this.getAngleTo('earth')) - this.getCurrentRotation();
+		// console.log(this.baseMapRotation);
 		this.nextCheck = this.sideralDay;
 	},
 	customAfterTick(time) {

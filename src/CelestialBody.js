@@ -89,6 +89,11 @@ export default {
 		}
 	},
 
+	//gets current rotation of body around its axis
+	getCurrentRotation() {
+		return (getUniverse().currentTime / this.sideralDay + (this.zeroTime || 0)) * CIRCLE;
+	},
+
 	beforeMove() {},
 	afterMove() {},
 

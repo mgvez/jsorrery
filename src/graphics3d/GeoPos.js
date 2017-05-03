@@ -1,6 +1,5 @@
-import { Vector3, Euler, Quaternion, Mesh, SphereGeometry, MeshPhongMaterial } from 'three';
-import Dimensions from 'graphics3d/Dimensions';
-import { KM, DEG_TO_RAD, RAD_TO_DEG, CIRCLE } from 'constants';
+import { Vector3, Euler, Mesh, SphereGeometry, MeshPhongMaterial } from 'three';
+import { DEG_TO_RAD } from 'constants';
 import { getUniverse } from 'JSOrrery';
 import Gui from 'gui/Gui';
 
@@ -9,7 +8,7 @@ export default function GeoPos(body3d, target) {
 	let lng = -87.6709;//-62
 
 	const mat = new MeshPhongMaterial({ color: 0xffffff, emissive: 0xff9911 });
-	const radius = body3d.getPlanetSize() * 0.01;
+	const radius = body3d.getPlanetSize() * 0.002;
 	const segments = 50;
 	const rings = 50;
 	const sphere = new Mesh(
@@ -21,10 +20,7 @@ export default function GeoPos(body3d, target) {
 	this.update = () => {
 		// console.log(lng, lat);
 		const parsedLat = Number(lat) * DEG_TO_RAD;
-		const parsedLng = (Number(lng) - 180) * DEG_TO_RAD
-			+ ((getUniverse().currentTime / body3d.celestial.sideralDay) * CIRCLE);
-		
-		//- body3d.celestial.tilt)
+		const parsedLng = (Number(lng) - 180) * DEG_TO_RAD + body3d.celestial.getCurrentRotation();
 		const a = new Euler(
 			parsedLat,
 			0,
@@ -38,7 +34,7 @@ export default function GeoPos(body3d, target) {
 		);	
 		pos.applyEuler(a);
 		pos.applyEuler(new Euler(-body3d.celestial.tilt * DEG_TO_RAD, 0, 0, 'XYZ'));
-		sphere.position.copy(pos.clone().multiplyScalar(1.1));
+		sphere.position.copy(pos.clone().multiplyScalar(1.01));
 		target.position.copy(pos);
 		if (!getUniverse().isPlaying()) getUniverse().getScene().draw();
 

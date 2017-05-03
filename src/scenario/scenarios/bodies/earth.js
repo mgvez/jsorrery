@@ -1,6 +1,6 @@
 
 import { Color } from 'three';
-import { AU, SIDERAL_DAY, NM_TO_KM, CIRCLE } from 'constants';
+import { AU, SIDERAL_DAY, NM_TO_KM, CIRCLE, J2000, YEAR, DAY } from 'constants';
 import { VSOP } from './earth/VSOP-earth';
 
 export const earth = {
@@ -14,6 +14,8 @@ export const earth = {
 		specular: new Color('grey'),
 	},
 	sideralDay: SIDERAL_DAY,
+	//time from where rotations/tilt are computed
+	zeroTime: (J2000 - new Date('1999-12-22T07:44:00.000Z')) / (YEAR * DAY * 1000),
 	baseMapRotation: 3 * CIRCLE / 4,
 	tilt: 23 + (26 / 60) + (21 / 3600),
 	positionCalculator: VSOP,

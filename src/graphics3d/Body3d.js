@@ -4,9 +4,7 @@ import RingGeometry2 from 'three/RingGeometry2';
 import Labels from 'graphics2d/Labels';
 import ResourceLoader from 'loaders/ResourceLoader';
 import Dimensions from 'graphics3d/Dimensions';
-import { KM, DEG_TO_RAD, RAD_TO_DEG, CIRCLE } from 'constants';
-import { getUniverse } from 'JSOrrery';
-import Gui from 'gui/Gui';
+import { KM, DEG_TO_RAD } from 'constants';
 
 export default {
 
@@ -136,8 +134,7 @@ export default {
 		this.root.position.copy(pos);
 
 		if (this.celestial.sideralDay) {
-			const curRotation = (getUniverse().currentTime / this.celestial.sideralDay) * CIRCLE;
-			this.planet.rotation.y = (this.celestial.baseMapRotation || 0) + curRotation;
+			this.planet.rotation.y = (this.celestial.baseMapRotation || 0) + this.celestial.getCurrentRotation();
 		}
 
 		if (this.tracer) this.tracer.draw(pos);

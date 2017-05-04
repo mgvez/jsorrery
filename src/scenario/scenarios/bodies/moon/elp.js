@@ -37,81 +37,6 @@ import { J2000, KM } from 'constants';
 *-----------------------------------------------------------------------
 */
 
-// import { ELP1 } from './data/ELP1';
-// import { ELP2 } from './data/ELP2';
-// import { ELP3 } from './data/ELP3';
-// import { ELP4 } from './data/ELP4';
-// import { ELP5 } from './data/ELP5';
-// import { ELP6 } from './data/ELP6';
-// import { ELP7 } from './data/ELP7';
-// import { ELP8 } from './data/ELP8';
-// import { ELP9 } from './data/ELP9';
-// import { ELP10 } from './data/ELP10';
-// import { ELP11 } from './data/ELP11';
-// import { ELP12 } from './data/ELP12';
-// import { ELP13 } from './data/ELP13';
-// import { ELP14 } from './data/ELP14';
-// import { ELP15 } from './data/ELP15';
-// import { ELP16 } from './data/ELP16';
-// import { ELP17 } from './data/ELP17';
-// import { ELP18 } from './data/ELP18';
-// import { ELP19 } from './data/ELP19';
-// import { ELP20 } from './data/ELP20';
-// import { ELP21 } from './data/ELP21';
-// import { ELP22 } from './data/ELP22';
-// import { ELP23 } from './data/ELP23';
-// import { ELP24 } from './data/ELP24';
-// import { ELP25 } from './data/ELP25';
-// import { ELP26 } from './data/ELP26';
-// import { ELP27 } from './data/ELP27';
-// import { ELP28 } from './data/ELP28';
-// import { ELP29 } from './data/ELP29';
-// import { ELP30 } from './data/ELP30';
-// import { ELP31 } from './data/ELP31';
-// import { ELP32 } from './data/ELP32';
-// import { ELP33 } from './data/ELP33';
-// import { ELP34 } from './data/ELP34';
-// import { ELP35 } from './data/ELP35';
-// import { ELP36 } from './data/ELP36';
-
-// const elp = {};
-// elp.ELP1 = ELP1;
-// elp.ELP2 = ELP2;
-// elp.ELP3 = ELP3;
-// elp.ELP4 = ELP4;
-// elp.ELP5 = ELP5;
-// elp.ELP6 = ELP6;
-// elp.ELP7 = ELP7;
-// elp.ELP8 = ELP8;
-// elp.ELP9 = ELP9;
-// elp.ELP10 = ELP10;
-// elp.ELP11 = ELP11;
-// elp.ELP12 = ELP12;
-// elp.ELP13 = ELP13;
-// elp.ELP14 = ELP14;
-// elp.ELP15 = ELP15;
-// elp.ELP16 = ELP16;
-// elp.ELP17 = ELP17;
-// elp.ELP18 = ELP18;
-// elp.ELP19 = ELP19;
-// elp.ELP20 = ELP20;
-// elp.ELP21 = ELP21;
-// elp.ELP22 = ELP22;
-// elp.ELP23 = ELP23;
-// elp.ELP24 = ELP24;
-// elp.ELP25 = ELP25;
-// elp.ELP26 = ELP26;
-// elp.ELP27 = ELP27;
-// elp.ELP28 = ELP28;
-// elp.ELP29 = ELP29;
-// elp.ELP30 = ELP30;
-// elp.ELP31 = ELP31;
-// elp.ELP32 = ELP32;
-// elp.ELP33 = ELP33;
-// elp.ELP34 = ELP34;
-// elp.ELP35 = ELP35;
-// elp.ELP36 = ELP36;
-
 const cpi = Math.PI;
 const cpi2 = 2 * cpi;
 const pis2 = cpi / 2;
@@ -275,29 +200,19 @@ export function ELP82B(epochTime, maxiter = 0, prec = 0) {
 
 		if (ific === maxiter) return coordinates();
 
-		// console.log('before', ific, r);
 		if (ific <= 3) {
-			//   if (ific.ge.1.and.ific.le.3) go to 200
 			return mainProblem(ific);
 		} else if (ific <= 9) {
-			//   if (ific.ge.4.and.ific.le.9) go to 300
 			return figTidesRel(ific);
 		} else if (ific <= 21) {
-			//   if (ific.ge.10.and.ific.le.21) go to 400
 			return planetaryPerturbations(ific);
 		} else if (ific <= 36) {
-			//   if (ific.ge.22.and.ific.le.36) go to 300
 			return figTidesRel(ific);
-			
 		} else {
-			//   if (ific.gt.36) go to 500
 			return coordinates();
 		}
 	}
 
-	/*
-	*     Main problem.
-	*/
 	function mainProblem(ific) {
 		
 		const data = getData(ific);

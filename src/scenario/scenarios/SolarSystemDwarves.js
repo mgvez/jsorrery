@@ -17,7 +17,7 @@ import { haumea } from './bodies/haumea';
 
 export default {
 	name: 'SolarSystemDwarves',
-	title: 'Solar System with dwarves',
+	title: 'Solar System with dwarf planets',
 	commonBodies: [
 		sun,
 		mercury,

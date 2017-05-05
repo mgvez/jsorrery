@@ -153,7 +153,7 @@ export default {
 	},
 
 	getPosition(pos) {
-		const curPosition = (pos && pos.clone()) || this.celestial.getPosition();
+		const curPosition = (pos && pos.clone()) || this.celestial.getPosition(this.maxPrecision);
 		return Dimensions.getScaled(curPosition);
 	},
 

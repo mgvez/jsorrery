@@ -12,7 +12,7 @@ export default {
 		this.setOrbitLines();
 
 		//retrieves n vertices to draw orbit points since last tick. Needed for pertrbed orbits, whose path changes for each revolution
-		if (this.celestial.osculatingOrbit) {
+		if (this.celestial.perturbedOrbit) {
 			this.computeVerticesInDeltaT = (n) => {
 				const dt = Ticker.getDeltaT();
 				const curTime = getUniverse().currentTime - dt;
@@ -54,8 +54,8 @@ export default {
 				// console.log(this.eclipticLine);
 			}/**/
 
-			//if we need to compute the osculating orbit, i.e. if this body's orbit is heavily perturbed, we recompute the path at each revolution
-			if (this.celestial.osculatingOrbit && this.celestial.showSolidOrbit) {
+			//if this body's orbit is heavily perturbed, we recompute the path at each revolution
+			if (this.celestial.perturbedOrbit && this.celestial.showSolidOrbit) {
 				this.celestial.setOnRevolution(() => this.recalculateOrbitLine(false));
 			}
 
@@ -63,8 +63,8 @@ export default {
 	},
 
 	recalculateOrbitLine(isForced) {
-		if (!isForced && !this.celestial.osculatingOrbit) return;
-		//console.log('recalculate '+this.celestial.name+' perturbed:'+this.celestial.osculatingOrbit);
+		if (!isForced && !this.celestial.perturbedOrbit) return;
+		//console.log('recalculate '+this.celestial.name+' perturbed:'+this.celestial.perturbedOrbit);
 		const orbitVertices = this.celestial.getOrbitVertices(this.celestial.showSolidOrbit);
 		if (orbitVertices) {
 			const wasAdded = this.orbitLine.added;

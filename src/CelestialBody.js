@@ -14,6 +14,9 @@ export default {
 		this.orbitalElements.setName(this.name);
 		this.orbitalElements.setDefaultOrbit(this.orbit, this.orbitCalculator, this.positionCalculator);
 		//console.log(this.name, this.position, this.velocity);
+
+		//we normally use regular precision for computing position, but in certain cases, bodies have a very precise position calculation, but it is slow. We use it only when needed, that is when we are observing a body from another one (e.g. to see eclipses)
+		this.maxPrecision = false;
 	},
 
 	reset() {
@@ -33,7 +36,7 @@ export default {
 
 	setPositionFromDate(epochTime) {
 		const currentEpochTime = this.currentEpochTime = this.getEpochTime(epochTime);
-		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(currentEpochTime);
+		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(currentEpochTime, this.maxPrecision);
 
 		this.relativePosition = this.position.clone();
 		// console.log(this.relativePosition);
@@ -177,8 +180,9 @@ export default {
 		this.onRevolution = cb;
 	},
 
-	calculatePosition(t, maxPrecision) {
-		return this.orbitalElements.calculatePosition(t, maxPrecision);
+	calculatePosition(t) {
+
+		return this.orbitalElements.calculatePosition(t);
 	},
 
 	getPosition() {

@@ -66,7 +66,7 @@ export default {
 			
 			lookFromBodyOrbit.showEcliptic();
 
-			if (lookAtBodyOrbit && lookAtBody.celestial.isOrbitAround(lookFromBody.celestial)) {
+			if (lookAtBodyOrbit && lookAtBody.celestial.isOrbitAround(lookFromBody.celestial) && !lookAtBody.celestial.maxPrecision) {
 				lookAtBodyOrbit.showOrbit();
 			}/**/
 

@@ -16,7 +16,7 @@ export const moon = {
 	relativeTo: 'earth',
 	orbitCalculator: MoonRealOrbit,
 	positionCalculator: ELP82B,
-	osculatingOrbit: true,
+	perturbedOrbit: true,
 	orbit: {
 		base: {
 			a: 384400,

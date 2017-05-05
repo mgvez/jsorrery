@@ -15,7 +15,7 @@ export default {
 				const skipComputation = (
 					(bodies[i].mass === 1 && bodies[j].mass === 1)
 					||
-					(bodies[i].osculatingOrbit && bodies[j].osculatingOrbit) 
+					(bodies[i].perturbedOrbit && bodies[j].perturbedOrbit) 
 				);
 				if (!skipComputation) {
 					workVect = this.getGForceBetween(bodies[i].mass, bodies[j].mass, bodies[i].position, bodies[j].position);

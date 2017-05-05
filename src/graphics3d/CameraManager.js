@@ -33,6 +33,10 @@ function toggleCamera() {
 	viewSettings.lookAt = trackOptionSelectors.at.val();
 	disableControls();
 
+	//reset all bodies to use fastest position computation
+	Object.keys(bodies3d).forEach(name => {
+		bodies3d[name].celestial.maxPrecision = false;
+	});
 
 	const lookFromBody = bodies3d[viewSettings.lookFrom];
 	const lookAtBody = bodies3d[viewSettings.lookAt];
@@ -42,12 +46,13 @@ function toggleCamera() {
 	if (lookFromBody) {
 		currentCamera = lookFromBody.getCamera(POV_CAMERA_TYPE);
 		domEl.on('mousewheel', onMouseWheel);
-
+		lookFromBody.celestial.maxPrecision = true;
 		//if we look from a body to another, trace the lookat body's path relative to the pov UNLESS the look target is orbiting to the pov
 		if (lookAtBody && !lookAtBody.celestial.isOrbitAround(lookFromBody.celestial)) {
 			TracerManager.setTraceFrom(lookFromBody, lookAtBody);
 		}
-
+		if (lookAtBody) lookAtBody.celestial.maxPrecision = true;
+		getUniverse().repositionBodies();
 	} else {
 		domEl.off('mousewheel');
 

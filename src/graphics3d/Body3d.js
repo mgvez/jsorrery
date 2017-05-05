@@ -130,7 +130,7 @@ export default {
 	
 	drawMove() {
 		const pos = this.getPosition();
-		// console.log(pos, this.celestial.name);
+		// if (this.celestial.name === 'moon') console.log(pos, this.celestial.name);
 		this.root.position.copy(pos);
 
 		if (this.celestial.sideralDay) {

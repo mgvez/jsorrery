@@ -159,15 +159,15 @@ export default {
 	},
 
 	toggleOptions(selectName, toToggle, isShow) {
-		const options = selects[selectName].options;
-		const toggleFcn = isShow ? 'removeClass' : 'addClass';
-		const curVal = selects[selectName].input.val();
-		if (!isShow && !~toToggle.indexOf(curVal)) {
-			selects[selectName].input.val('');
-		}
-		toToggle.forEach((optId) => {
-			if (options[optId]) options[optId][toggleFcn]('disabled');
-		});
+		// const options = selects[selectName].options;
+		// const toggleFcn = isShow ? 'removeClass' : 'addClass';
+		// const curVal = selects[selectName].input.val();
+		// if (!isShow && ~toToggle.indexOf(curVal)) {
+		// 	selects[selectName].input.val('');
+		// }
+		// toToggle.forEach((optId) => {
+		// 	if (options[optId]) options[optId][toggleFcn]('disabled');
+		// });
 	},
 
 	addDate(onChange) {

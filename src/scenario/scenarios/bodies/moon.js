@@ -36,15 +36,15 @@ export const moon = {
 		},
 	},
 	getMapRotation(angle) {
-		if (angle > 0) {
-			return angle - Math.PI;
+		const circled = angle % Math.PI;
+		if (circled > 0) {
+			return circled;
 		}
-		return angle + Math.PI;
+		return Math.PI + circled;
 	},
 	customInitialize() {
 		if (this.relativeTo !== 'earth') return;
-		this.baseMapRotation = this.getMapRotation(this.getAngleTo('earth')) - this.getCurrentRotation();
-		// console.log(this.baseMapRotation);
+		this.baseMapRotation = this.getMapRotation(this.getAngleTo('earth') - this.getCurrentRotation());
 		this.nextCheck = this.sideralDay;
 	},
 	customAfterTick(time) {
@@ -52,8 +52,9 @@ export const moon = {
 		//when a sideral day has passed, make sure that the near side is still facing the earth. Since the moon's orbit is heavily disturbed, some imprecision occurs in its orbit, and its duration is not always the same, especially in an incomplete scenario (where there are no sun/planets). Therefore, a correction is brought to the base map rotation, tweened so that is is not jerky.
 		if (time >= this.nextCheck) {
 			this.nextCheck += this.sideralDay;
+			const rot = this.getMapRotation(this.getAngleTo('earth') - this.getCurrentRotation());
 			TweenMax.to(this, 2, {
-				baseMapRotation: this.getMapRotation(this.getAngleTo('earth')),
+				baseMapRotation: rot,
 				ease: Sine.easeInOut,
 			});
 		}

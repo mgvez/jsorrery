@@ -3,21 +3,26 @@ import { DEG_TO_RAD } from 'constants';
 import { getUniverse } from 'JSOrrery';
 import Gui from 'gui/Gui';
 
+const debugPos = false;
+
 export default function GeoPos(body3d, target) {
 
 	//home sweet home
 	let lat = 46.8139;
 	let lng = -71.2080;
 
-	const mat = new MeshPhongMaterial({ color: 0xffffff, emissive: 0xff9911 });
-	const radius = body3d.getPlanetSize() * 0.002;
-	const segments = 50;
-	const rings = 50;
-	const sphere = new Mesh(
-		new SphereGeometry(radius, segments, rings),
-		mat
-	);
-	body3d.root.add(sphere);
+	let sphere;
+	if (debugPos) {
+		const mat = new MeshPhongMaterial({ color: 0xffffff, emissive: 0xff9911 });
+		const radius = body3d.getPlanetSize() * 0.002;
+		const segments = 50;
+		const rings = 50;
+		sphere = new Mesh(
+			new SphereGeometry(radius, segments, rings),
+			mat
+		);
+		body3d.root.add(sphere);
+	}
 
 	this.update = () => {
 		// console.log(lng, lat);
@@ -36,7 +41,7 @@ export default function GeoPos(body3d, target) {
 		);	
 		pos.applyEuler(a);
 		pos.applyEuler(new Euler(-body3d.celestial.tilt * DEG_TO_RAD, 0, 0, 'XYZ'));
-		sphere.position.copy(pos.clone().multiplyScalar(1.01));
+		if (sphere) sphere.position.copy(pos.clone().multiplyScalar(1.01));
 		target.position.copy(pos);
 		getUniverse().requestDraw();
 

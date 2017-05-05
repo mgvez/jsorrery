@@ -77,7 +77,7 @@ function updateCamera() {
 	const lookAtBody = bodies3d[viewSettings.lookAt];
 	const controls = currentCamera.jsorrery && currentCamera.jsorrery.controls;
 
-	if (currentCamera.geoPos) currentCamera.geoPos.update();
+	if (currentCamera.geoPos && getUniverse().isPlaying) currentCamera.geoPos.update();
 	
 	if (controls) {
 		controls.update();
@@ -178,11 +178,14 @@ export default {
 	},
 
 	putDefaults(settings) {
-		//console.log(settings);
+		// console.log(settings);
 		if (settings) {
-			currentCamera.position.x = Number(settings.x) || 0;
-			currentCamera.position.y = Number(settings.y) || 0;
-			currentCamera.position.z = Number(settings.z) || 0;
+			//if geoposition of cam, the gui will force initial settings
+			if (!currentCamera.geoPos) {
+				currentCamera.position.x = Number(settings.x) || 0;
+				currentCamera.position.y = Number(settings.y) || 0;
+				currentCamera.position.z = Number(settings.z) || 0;
+			}
 			currentCamera.fov = Number(settings.fov) || DEFAULT_FOV;
 			currentCamera.updateProjectionMatrix();
 		}
@@ -207,7 +210,7 @@ export default {
 		body3d.addCamera(ORBITAL_CAMERA_TYPE, orbital);
 
 		//on the earth, position the camera at specific lon/lat
-		if (body3d.celestial.name === 'earth') {
+		if (body3d.celestial.hasGeoposCam) {
 			pov.geoPos = new GeoPos(body3d, pov);
 		}
 

@@ -48,11 +48,11 @@ export default {
 		this.root.add(light);/**/
 
 		if (!stats) {
-			// stats = new Stats();
-			// const st = stats.domElement.style;
-			// st.top = 'auto';
-			// st.bottom = 0;
-			// $('body').append(stats.domElement);
+			stats = new Stats();
+			const st = stats.domElement.style;
+			st.top = 'auto';
+			st.bottom = 0;
+			$('body').append(stats.domElement);
 		}
 
 		this.container.append(renderer.domElement);
@@ -114,7 +114,7 @@ export default {
 	},
 
 	draw() {
-
+		// console.log('draw');
 		this.bodies3d.forEach(drawBody);
 
 		//after all bodies have been positionned, update camera matrix (as camera might be attached to a body)

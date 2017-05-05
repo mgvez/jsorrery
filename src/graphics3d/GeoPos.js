@@ -4,8 +4,10 @@ import { getUniverse } from 'JSOrrery';
 import Gui from 'gui/Gui';
 
 export default function GeoPos(body3d, target) {
-	let lat = 36.9664;//31
-	let lng = -87.6709;//-62
+
+	//home sweet home
+	let lat = 46.8139;
+	let lng = -71.2080;
 
 	const mat = new MeshPhongMaterial({ color: 0xffffff, emissive: 0xff9911 });
 	const radius = body3d.getPlanetSize() * 0.002;
@@ -36,7 +38,7 @@ export default function GeoPos(body3d, target) {
 		pos.applyEuler(new Euler(-body3d.celestial.tilt * DEG_TO_RAD, 0, 0, 'XYZ'));
 		sphere.position.copy(pos.clone().multiplyScalar(1.01));
 		target.position.copy(pos);
-		if (!getUniverse().isPlaying()) getUniverse().getScene().draw();
+		getUniverse().requestDraw();
 
 	};
 
@@ -49,4 +51,5 @@ export default function GeoPos(body3d, target) {
 		this.update();
 	});
 	this.update();
+
 }

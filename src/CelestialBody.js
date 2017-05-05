@@ -177,8 +177,8 @@ export default {
 		this.onRevolution = cb;
 	},
 
-	calculatePosition(t, isApproximate) {
-		return this.orbitalElements.calculatePosition(t, isApproximate);
+	calculatePosition(t, maxPrecision) {
+		return this.orbitalElements.calculatePosition(t, maxPrecision);
 	},
 
 	getPosition() {

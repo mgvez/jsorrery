@@ -139,9 +139,6 @@ export default {
 		}
 
 		if (this.tracer) this.tracer.draw(pos);
-		
-		// if (this.celestial.name === 'moon' && this.orbitLines) this.orbitLines.draw(Dimensions.getScaled(this.celestial.getRelativePosition()));
-		// if (this.orbitLines) this.orbitLines.draw(pos);
 		if (this.orbitLines) this.orbitLines.draw(Dimensions.getScaled(this.celestial.getRelativePosition()));
 		return pos;
 	},

@@ -19,6 +19,7 @@ export const earth = {
 	baseMapRotation: 3 * CIRCLE / 4,
 	tilt: 23 + (26 / 60) + (21 / 3600),
 	positionCalculator: VSOP,
+	hasGeoposCam: true,
 	orbit: {
 		base: {
 			a: 1.00000261 * AU,

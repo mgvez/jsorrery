@@ -43,6 +43,7 @@ export default {
 		
 		this.playing = false;
 		this.epochTime = 0;
+		this.drawRequested = false;
 
 		this.date = Gui.getDate() || new Date();
 		this.currentTime = this.startEpochTime = this.getEpochTime(this.date);
@@ -245,10 +246,14 @@ export default {
 			this.showDate();
 		} else {
 			this.scene.updateCamera();
+			if (this.drawRequested) this.scene.draw();
 		}
-
+		this.drawRequested = false;
 		window.requestAnimationFrame(this.ticker);
-		
+	},
+
+	requestDraw() {
+		this.drawRequested = true;
 	},
 
 	getScene() {

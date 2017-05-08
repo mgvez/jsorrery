@@ -37,6 +37,8 @@ import { J2000, KM } from 'constants';
 *-----------------------------------------------------------------------
 */
 
+
+
 const cpi = Math.PI;
 const cpi2 = 2 * cpi;
 const pis2 = cpi / 2;
@@ -365,3 +367,12 @@ export function ELP82B(epochTime, maxiter = 0, prec = 0) {
 
 	return doLoop(1); 
 }
+
+let n = 0;
+for (let i = 1; i <= 36; i++) {
+	const elp = getData(i);
+	n = elp.reduce((tot, cur) => {
+		return tot + cur.length;
+	}, n);
+}
+console.log(n);

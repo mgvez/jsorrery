@@ -36,10 +36,24 @@ export default {
 
 	setPositionFromDate(epochTime) {
 		const currentEpochTime = this.currentEpochTime = this.getEpochTime(epochTime);
-		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(currentEpochTime, this.maxPrecision);
+		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(currentEpochTime, this.maxPrecision || true);
 
 		this.relativePosition = this.position.clone();
-		// console.log(this.relativePosition);
+		if (this.name === 'earth' || this.name === 'sun') {
+			// getUniverse().stop();
+			if (this.lastPos) {
+				const dist = this.position.clone().sub(this.lastPos).length();
+				console.log(dist);
+			}
+			console.log(this.position.length() / 1000000000);
+			// console.log(this.name, 'x', this.position.x / this.position.length());
+			// console.log(this.name, 'y', this.position.y / this.position.length());
+			// console.log(this.name, 'z', this.position.z / this.position.length());
+			console.log(this.name, 'x abs', this.position.x / 1000);
+			console.log(this.name, 'y abs', this.position.y / 1000);
+			console.log(this.name, 'z abs', this.position.z / 1000);
+		}
+		this.lastPos = this.position.clone();
 		this.absvelocity = null;
 		this.relvelocity = null;
 	},

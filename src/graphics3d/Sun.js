@@ -66,7 +66,7 @@ export default {
 	},
 
 	setFlareSize(sunSizeRatio, screenH) {
-		//console.log(sunSizeRatio);
-		this.flareParams.size = sunSizeRatio * screenH * 20;
+		// console.log(sunSizeRatio);
+		this.flareParams.size = sunSizeRatio * screenH * 30;
 	},
 };

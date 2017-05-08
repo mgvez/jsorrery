@@ -204,6 +204,7 @@ nav {
 	width: 100%;
 	background: rgba(0, 0, 0, 0.3);
 	border-bottom:1px $widgetBorderCol solid;
+	// display:none;
 
 	.help {
 		//position:absolute;
@@ -588,4 +589,15 @@ nav {
 	&:hover{
 		color:#fff;
 	}
+}
+
+#dashboard {
+	position:absolute;
+	z-index:500;
+	top:0;
+	left:0;
+	width: 100%;
+	background: rgba(0, 0, 0, 0.3);
+	border-bottom:1px $widgetBorderCol solid;
+
 }

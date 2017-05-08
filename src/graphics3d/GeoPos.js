@@ -1,5 +1,5 @@
 import { Vector3, Euler, Mesh, SphereGeometry, MeshPhongMaterial } from 'three';
-import { DEG_TO_RAD } from 'constants';
+import { DEG_TO_RAD, CIRCLE } from 'constants';
 import { getUniverse } from 'JSOrrery';
 import Gui from 'gui/Gui';
 
@@ -10,6 +10,8 @@ export default function GeoPos(body3d, target) {
 	//home sweet home
 	let lat = 46.8139;
 	let lng = -71.2080;
+	let lastLat;
+	let lastLng;
 
 	let sphere;
 	if (debugPos) {
@@ -25,9 +27,13 @@ export default function GeoPos(body3d, target) {
 	}
 
 	this.update = () => {
-		// console.log(lng, lat);
+		if (lng === lastLng && lat === lastLat) return;
+		console.log(lng, lat);
+		lastLat = lat;
+		lastLng = lng;
 		const parsedLat = Number(lat) * DEG_TO_RAD;
-		const parsedLng = (Number(lng) - 180) * DEG_TO_RAD + body3d.celestial.getCurrentRotation();
+		const parsedLng = (((Number(lng) - 180) * DEG_TO_RAD + body3d.celestial.getCurrentRotation()) % CIRCLE);//0.85 * DEG_TO_RAD + 
+		// console.log(parsedLng);
 		const a = new Euler(
 			parsedLat,
 			0,

@@ -1,6 +1,7 @@
 
 import $ from 'jquery';
 import ExportValues from './ExportValues';
+import InputDate from './InputDate';
 
 const FA = 'fa ';
 const BTNS_CLASS = {
@@ -11,15 +12,13 @@ const BTNS_CLASS = {
 
 const controls = {};
 const selects = {};
-let dateDisplay;
-let date;
 
 function removeControl(elId) {
 	const el = controls[elId];
 	if (el) el.remove();
 }
 
-function getContainer(id) {
+export function getContainer(id) {
 	return $(`#${id}Cont`);
 }
 
@@ -171,43 +170,15 @@ export default {
 	},
 
 	addDate(onChange) {
-		if (!dateDisplay) {
-			dateDisplay = $('<input>').appendTo(getContainer(DATE_ID));
-		}
-
-		let curDate;
-		dateDisplay.off('change').on('change.jsorrery', () => {
-			let newDate = new Date(dateDisplay.val());
-			if (isNaN(newDate.getTime())) {
-				newDate = new Date();
-			}
-			if (curDate !== newDate) {
-				this.setDate(newDate);
-				onChange();
-			}
-			curDate = newDate;
-		});
-
-		let defaultDate = this.defaultSettings[DATE_ID];
-		if (defaultDate) {
-			defaultDate = new Date(defaultDate);
-			this.setDate(defaultDate);
-		}
-
-		return dateDisplay;
+		InputDate.init(onChange, this.defaultSettings[DATE_ID]);
 	},
 
 	setDate(d) {
-		date = d;
-		if (d) {
-			const dStr = d.toISOString();
-			ExportValues.setVal(DATE_ID, dStr);
-			if (dateDisplay) dateDisplay.val(dStr);
-		}
+		InputDate.setDate(d);
 	},
 
 	getDate() {
-		return date;
+		return InputDate.getDate();
 	},
 
 	addSlider(id, options, onChange) {

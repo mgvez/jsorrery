@@ -145,7 +145,7 @@ export default {
 	setBarycenter() {
 		const central = this.centralBody;
 		
-		if (!this.usePhysics || central.isStill || this.scenario.useBarycenter === false) return;
+		// if (!this.usePhysics || central.isStill || this.scenario.useBarycenter === false) return;
 		let massRatio;
 		const massCenter = {
 			mass: 0,
@@ -165,7 +165,7 @@ export default {
 		massRatio = massCenter.mass / central.mass;
 		central.setVelocity(massCenter.momentum.multiplyScalar(massRatio * -1));
 		central.position = massCenter.pos.clone().multiplyScalar(massRatio * -1);
-
+		// console.log(central.position);
 		this.bodies.forEach((b) => {
 			if (b === central || (b.relativeTo && b.relativeTo !== central.name)) return;
 			b.addToAbsoluteVelocity(central.getAbsoluteVelocity());

@@ -28,7 +28,7 @@ export default function GeoPos(body3d, target) {
 
 	this.update = () => {
 		if (lng === lastLng && lat === lastLat) return;
-		console.log(lng, lat);
+		// console.log(lng, lat);
 		lastLat = lat;
 		lastLng = lng;
 		const parsedLat = Number(lat) * DEG_TO_RAD;

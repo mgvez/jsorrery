@@ -12,11 +12,11 @@ export default {
 
 		this.orbitalElements = Object.create(OrbitalElements);
 		this.orbitalElements.setName(this.name);
-		this.orbitalElements.setDefaultOrbit(this.orbit, this.orbitCalculator, this.positionCalculator);
+		this.orbitalElements.setDefaultOrbit(this.orbit, this.osculatingElementsCalculator, this.positionCalculator);
 		//console.log(this.name, this.position, this.velocity);
 
 		//we normally use regular precision for computing position, but in certain cases, bodies have a very precise position calculation, but it is slow. We use it only when needed, that is when we are observing a body from another one (e.g. to see eclipses)
-		this.maxPrecision = false;
+		this.maxPrecision = this.maxPrecision || false;
 	},
 
 	reset() {
@@ -39,23 +39,11 @@ export default {
 		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(currentEpochTime, this.maxPrecision || true);
 
 		this.relativePosition = this.position.clone();
-		if (this.name === 'earth' || this.name === 'sun') {
-			// getUniverse().stop();
-			if (this.lastPos) {
-				const dist = this.position.clone().sub(this.lastPos).length();
-				console.log(dist);
-			}
-			console.log(this.position.length() / 1000000000);
-			// console.log(this.name, 'x', this.position.x / this.position.length());
-			// console.log(this.name, 'y', this.position.y / this.position.length());
-			// console.log(this.name, 'z', this.position.z / this.position.length());
-			console.log(this.name, 'x abs', this.position.x / 1000);
-			console.log(this.name, 'y abs', this.position.y / 1000);
-			console.log(this.name, 'z abs', this.position.z / 1000);
-		}
+		
 		this.lastPos = this.position.clone();
 		this.absvelocity = null;
 		this.relvelocity = null;
+		return this.position;
 	},
 	
 	getAngleTo(bodyName) {

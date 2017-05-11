@@ -1,6 +1,6 @@
 import { TweenMax, Sine } from 'gsap';
 import { DAY } from 'constants';
-import MoonRealOrbit from './MoonRealOrbit';
+import MoonRealOrbit from './moon/OsculatingOrbit';
 import { ELP82B } from './moon/elp';
 
 export const moon = {
@@ -14,9 +14,9 @@ export const moon = {
 	tilt: 1.5424,
 	fov: 1,
 	relativeTo: 'earth',
-	orbitCalculator: MoonRealOrbit,
+	osculatingElementsCalculator: MoonRealOrbit,
 	positionCalculator: ELP82B,
-	perturbedOrbit: true,
+	useCustomComputation: true,
 	orbit: {
 		base: {
 			a: 384400,

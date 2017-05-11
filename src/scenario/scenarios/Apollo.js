@@ -16,7 +16,7 @@ const epoch = apolloTLIOrbit.epoch;
 //apollo 11, 14 work better with moon position always calculated from elements
 //apollo 13, 17 don't work at all
 //I chose to use the way it works better for each mission. Even if it seems like cheating, the goal of the simulation is to show an approximation of the free return trajectory, and it does not pretend to be as accurate as Nasa could get it. All the numbers involved come from different sources, and I don't know how accurate they are anyway, so better show something plausible instead of seeking perfect accuracy. 
-const perturbedOrbit = [8, 11, 14].indexOf(Number(apolloNumber)) > -1;
+const useCustomComputation = [8, 11, 14].indexOf(Number(apolloNumber)) > -1;
 
 const apolloBase = {
 	title: `Apollo ${apolloNumber}`,
@@ -102,7 +102,7 @@ export default {
 		
 		},
 		moon: {
-			perturbedOrbit,
+			useCustomComputation,
 			showSolidOrbit: true,
 		},
 		apolloTLI: Object.assign({},

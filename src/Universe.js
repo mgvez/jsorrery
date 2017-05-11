@@ -79,7 +79,6 @@ export default {
 	kill() {
 		//kills the animation callback
 		this.killed = true;
-		this.dateDisplay.off('.jsorrery');
 		Gui.setDate(null);
 		if (!this.scene) return;
 		this.scene.kill();

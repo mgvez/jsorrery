@@ -53,14 +53,12 @@ export default function GeoPos(body3d, target) {
 
 	};
 
-	Gui.addSlider('lat', { min: -90, max: 90, initial: lat }, val => {
-		lat = val;
+	Gui.addGeoloc({ lat, lng }, val => {
+		lat = val.lat;
+		lng = val.lng;
 		this.update();
 	});
-	Gui.addSlider('lng', { min: -180, max: 180, initial: lng }, val => {
-		lng = val;
-		this.update();
-	});
+
 	this.update();
 
 }

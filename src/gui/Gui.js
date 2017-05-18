@@ -2,6 +2,18 @@
 import $ from 'jquery';
 import ExportValues from './ExportValues';
 import InputDate from './InputDate';
+import InputGeoCoord from './InputGeoCoord';
+import InputSelect from './InputSelect';
+
+export const PLANET_SCALE_ID = 'planetScale';
+export const SCENARIO_ID = 'scenario';
+export const START_ID = 'start';
+export const SHARE_ID = 'share';
+export const DATE_ID = 'date';
+export const LOOKAT_ID = 'lookAt';
+export const LOOKFROM_ID = 'lookFrom';
+export const DELTA_T_ID = 'deltaT';
+export const GEOLOC_ID = 'geoloc';
 
 const FA = 'fa ';
 const BTNS_CLASS = {
@@ -9,17 +21,22 @@ const BTNS_CLASS = {
 	start: [FA + 'fa-play-circle', FA + 'fa-pause-circle'],
 };
 
+let defaultSettings;
+let defaultCallbacks;
 
 const controls = {};
-const selects = {};
+
+function getContainer(id) {
+	return $(`#${id}Cont`);
+}
 
 function removeControl(elId) {
 	const el = controls[elId];
 	if (el) el.remove();
 }
 
-export function getContainer(id) {
-	return $(`#${id}Cont`);
+function addControl(elId, el) {
+	controls[elId] = el;
 }
 
 function getLabel(id) {
@@ -56,23 +73,6 @@ function setupHelp() {
 		});
 	});
 }
-
-function listClicked(id, selector, clickedOption, input) {
-	const val = clickedOption.data('value');
-	selector.display.html(clickedOption.html());
-	input.val(val).trigger('change');
-	ExportValues.setVal(id, val);
-}
-
-
-export const PLANET_SCALE_ID = 'planetScale';
-export const SCENARIO_ID = 'scenario';
-export const START_ID = 'start';
-export const SHARE_ID = 'share';
-export const DATE_ID = 'date';
-export const LOOKAT_ID = 'lookAt';
-export const LOOKFROM_ID = 'lookFrom';
-export const DELTA_T_ID = 'deltaT';
 
 export default {
 	init() {
@@ -114,77 +114,34 @@ export default {
 
 	addDropdown(id, callback) {
 		removeControl(id);
-		const dropdownContainer = getContainer(id).empty().addClass('dropdown');
-		const dropdownDisplay = $('<div class="display">').appendTo(dropdownContainer);
-		const selector = selects[id] = {
-			input: $(`<input id="${id}_inp">`).on('change.jsorrery', callback),
-			display: dropdownDisplay,
-			list: $(`<ul id="${id}">`).appendTo(dropdownContainer),
-			options: {},
-		};
-
-		controls[id] = selector.list;
-		const input = selector.input;
-
-		selects[id].clickHandler = (e) => {
-			listClicked(id, selector, $(e.currentTarget), input);
-		};
-
-		return selects[id].input;
-	},
-
-	addOption(selectName, label, val, isSelected) {
-		const sel = selects[selectName];
-		if (!sel) return;
-
-		const option = sel.options[val] = $(`<li data-value="${val}">${label}</li>`);
-		option.on('click.jsorrery', sel.clickHandler);
-
-		if (sel.list.children().length === 0) {
-			sel.input.val(val);
-			sel.display.html(label);
-			ExportValues.setVal(selectName, val);
-		}
-
-		option.appendTo(sel.list);
-
-		const defaultVal = this.defaultSettings && this.defaultSettings[selectName];
-		if (isSelected || defaultVal === val) {
-			this.pushDefaultsCallbacks(() => {
-				listClicked(selectName, sel, option, sel.input);
-			});
-		}
-
-	},
-
-	toggleOptions(selectName, toToggle, isShow) {
-		// const options = selects[selectName].options;
-		// const toggleFcn = isShow ? 'removeClass' : 'addClass';
-		// const curVal = selects[selectName].input.val();
-		// if (!isShow && ~toToggle.indexOf(curVal)) {
-		// 	selects[selectName].input.val('');
-		// }
-		// toToggle.forEach((optId) => {
-		// 	if (options[optId]) options[optId][toggleFcn]('disabled');
-		// });
+		const sel = new InputSelect(id, defaultSettings[id], callback);
+		const widget = sel.getWidget();
+		addControl(id, widget);
+		getContainer(id).empty().addClass('dropdown').append(widget);
+		return sel;
 	},
 
 	addDate(onChange) {
-		InputDate.init(onChange, this.defaultSettings[DATE_ID]);
+		InputDate.init(onChange, defaultSettings[DATE_ID]);
+		InputDate.getWidget().appendTo(getContainer(DATE_ID));
+		return InputDate;
+	},
+	
+	addGeoloc(originalValues, onChange) {
+		InputGeoCoord.init(defaultSettings[GEOLOC_ID] || originalValues, onChange);
+		InputGeoCoord.getWidget().appendTo(getContainer(GEOLOC_ID).show());
+		return InputGeoCoord;
 	},
 
-	setDate(d) {
-		InputDate.setDate(d);
-	},
-
-	getDate() {
-		return InputDate.getDate();
+	removeGeoloc() {
+		InputGeoCoord.sleep();
+		getContainer(GEOLOC_ID).hide();
 	},
 
 	addSlider(id, options, onChange) {
 		removeControl(id);
 		const container = getContainer(id);
-		const defaultVal = Number(this.defaultSettings[id]) || (options && options.initial) || 1;
+		const defaultVal = Number(defaultSettings[id]) || (options && options.initial) || 1;
 		const valDisplay = getLabel(id).find('.valDisplay').text(defaultVal);
 
 		const min = (options && options.min) || 1;
@@ -218,27 +175,20 @@ export default {
 		return slider;
 	},
 
-	remove(id) {
-		removeControl(id);
-	},
-
 	pushDefaultsCallbacks(callback) {
-		this.defaultCallbacks = this.defaultCallbacks || [];
-		this.defaultCallbacks.push(callback);
+		defaultCallbacks = defaultCallbacks || [];
+		defaultCallbacks.push(callback);
 	},
 
 	putDefaults() {
-		if (!this.defaultCallbacks) return;
-		this.defaultCallbacks.forEach(callback => callback());
-		this.defaultCallbacks.length = 0;
+		if (!defaultCallbacks) return;
+		defaultCallbacks.forEach(callback => callback());
+		defaultCallbacks.length = 0;
 	},
 
-	getDefaultCameraPos() {
-
-	},
-
-	setDefaults(defaultSettings) {
+	//default settings for GUI when loading a scenario / a page
+	setDefaults(v) {
 		//console.log(defaultSettings);
-		this.defaultSettings = defaultSettings;
+		defaultSettings = v;
 	},
 };

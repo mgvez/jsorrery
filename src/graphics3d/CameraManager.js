@@ -70,7 +70,7 @@ function toggleCamera() {
 		}
 	}
 
-	Gui.toggleOptions(LOOKAT_ID, [...toggling_at_options, viewSettings.lookAt], !!lookFromBody);
+	trackOptionSelectors.at.toggleOptions([...toggling_at_options, viewSettings.lookAt], !!lookFromBody);
 
 	ExportValues.setCamera(currentCamera);
 
@@ -178,15 +178,15 @@ export default {
 			at: Gui.addDropdown(LOOKAT_ID, toggleCamera),
 		};
 		
-		Gui.addOption(LOOKFROM_ID, 'Free camera', 'orbital');
-		Gui.addOption(LOOKAT_ID, 'System', 'universe');
+		trackOptionSelectors.from.addOption('Free camera', 'orbital');
+		trackOptionSelectors.at.addOption('System', 'universe');
 
 		if (getUniverse().getBody().name === 'sun') {
-			Gui.addOption(LOOKAT_ID, 'Night (away from the sun)', 'night');
+			trackOptionSelectors.at.addOption('Night (away from the sun)', 'night');
 		}
 		
-		Gui.addOption(LOOKAT_ID, 'Direction of velocity', 'front');
-		Gui.addOption(LOOKAT_ID, 'Inverse direction of velocity', 'back');
+		trackOptionSelectors.at.addOption('Direction of velocity', 'front');
+		trackOptionSelectors.at.addOption('Inverse direction of velocity', 'back');
 
 	},
 
@@ -205,8 +205,8 @@ export default {
 	},
 
 	addBody(body3d) {				
-		Gui.addOption(LOOKFROM_ID, body3d.celestial.title, body3d.celestial.name);
-		Gui.addOption(LOOKAT_ID, body3d.celestial.title, body3d.celestial.name);
+		trackOptionSelectors.from.addOption(body3d.celestial.title, body3d.celestial.name);
+		trackOptionSelectors.at.addOption(body3d.celestial.title, body3d.celestial.name);
 
 		function getCamPos() {
 			return body3d.root.localToWorld(this.position.clone());
@@ -245,8 +245,6 @@ export default {
 	},
 
 	kill() {
-		Gui.remove(LOOKAT_ID);
-		Gui.remove(LOOKFROM_ID);
 		if (domEl) domEl.off('mousewheel');
 
 		allCameras.forEach(cam => {

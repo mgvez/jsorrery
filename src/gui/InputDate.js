@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import ExportValues from './ExportValues';
-import { DATE_ID, getContainer } from './Gui';
+import { DATE_ID } from './Gui';
 
 let inp;
 let date;
@@ -9,7 +9,7 @@ export default {
 
 	init(onChange, defaultDate) {
 		if (!inp) {
-			inp = $('<input>').appendTo(getContainer(DATE_ID));
+			inp = $('<input>');
 		}
 
 		let curDate;
@@ -29,6 +29,10 @@ export default {
 			this.setDate(new Date(defaultDate));
 		}
 
+	},
+
+	getWidget() {
+		return inp;
 	},
 	
 	setDate(d) {

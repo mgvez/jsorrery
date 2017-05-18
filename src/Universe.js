@@ -34,7 +34,7 @@ export default {
 		this.dateDisplay = Gui.addDate(() => {
 			this.playing = false;
 			this.epochTime = 0;
-			this.currentTime = this.startEpochTime = this.getEpochTime(Gui.getDate());
+			this.currentTime = this.startEpochTime = this.getEpochTime(this.dateDisplay.getDate());
 			this.repositionBodies();
 			this.scene.onDateReset();
 		});
@@ -45,7 +45,7 @@ export default {
 		this.epochTime = 0;
 		this.drawRequested = false;
 
-		this.date = Gui.getDate() || new Date();
+		this.date = this.dateDisplay.getDate() || new Date();
 		this.currentTime = this.startEpochTime = this.getEpochTime(this.date);
 		
 		this.createBodies(scenario);
@@ -79,7 +79,7 @@ export default {
 	kill() {
 		//kills the animation callback
 		this.killed = true;
-		Gui.setDate(null);
+		this.dateDisplay.setDate(null);
 		if (!this.scene) return;
 		this.scene.kill();
 		this.centralBody = null;
@@ -230,7 +230,7 @@ export default {
 
 	showDate() {
 		this.date.setTime(J2000.getTime() + (this.currentTime * 1000));
-		Gui.setDate(this.date);
+		this.dateDisplay.setDate(this.date);
 	},
 
 	tick() {

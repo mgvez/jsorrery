@@ -203,7 +203,6 @@ export default {
 		CameraManager.kill();
 		OrbitLinesManager.kill();
 		TracerManager.kill();
-		Gui.remove(PLANET_SCALE_ID);
 		this.container.remove();
 	},
 

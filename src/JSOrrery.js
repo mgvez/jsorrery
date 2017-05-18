@@ -38,6 +38,7 @@ function loadScenario(name, defaultParams) {
 	}
 
 	const scenarioConfig = ScenarioLoader.get(name);
+	console.error('----' + name);
 
 	if (activeScenario) {
 		activeScenario.kill();
@@ -73,7 +74,7 @@ export default function jsOrrery() {
 	const scenarios = ScenarioLoader.getList();
 	const scenarioChanger = Gui.addDropdown(SCENARIO_ID, () => {
 		Preloader.show();
-		loadScenario(scenarioChanger.val());
+		loadScenario(scenarioChanger.getValue());
 	});
 	
 	Gui.addBtn(SHARE_ID, SHARE_ID, () => {
@@ -95,7 +96,7 @@ export default function jsOrrery() {
 
 	//add scenarios to dropdown
 	scenarios.forEach((scenario, idx) => {
-		Gui.addOption(SCENARIO_ID, scenario.title, scenario.name, idx === defaultScenario);
+		scenarioChanger.addOption(scenario.title, scenario.name, idx === defaultScenario);
 	});
 
 	const scenarioHelpContainer = $('#helpScenario');

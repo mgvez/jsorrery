@@ -1,6 +1,7 @@
 
-import { Color } from 'three';
-import { AU, SIDERAL_DAY, NM_TO_KM, CIRCLE, J2000, YEAR, DAY } from 'constants';
+import { Color, Euler } from 'three';
+import { getUniverse } from 'JSOrrery';
+import { AU, SIDERAL_DAY, NM_TO_KM, CIRCLE, J2000, YEAR, DAY, RAD_TO_DEG, DEG_TO_RAD } from 'constants';
 import { VSOP } from './earth/VSOP-earth';
 
 export const earth = {
@@ -24,6 +25,15 @@ export const earth = {
 	positionCalculator: VSOP,
 	hasGeoposCam: true,
 	maxPrecision: true,
+	
+	//tilt is oriented by taking into account precession of equinoxes
+	getTilt(xCorrection = 0) {
+		const nYears = getUniverse().currentTime / (YEAR * DAY);
+		const precession = (nYears / 26000) * CIRCLE;
+		// console.log(precession * RAD_TO_DEG);
+		return new Euler(xCorrection - this.tilt * DEG_TO_RAD, -precession, 0, 'YZX');
+	},
+
 	orbit: {
 		base: {
 			a: 1.00000261 * AU,

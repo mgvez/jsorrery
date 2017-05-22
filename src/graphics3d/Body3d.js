@@ -1,10 +1,10 @@
 
-import { Object3D, MeshPhongMaterial, Mesh, SphereGeometry, MeshLambertMaterial, DoubleSide } from 'three';
+import { Object3D, MeshPhongMaterial, Mesh, SphereGeometry, MeshLambertMaterial, DoubleSide, Euler, Quaternion } from 'three';
 import RingGeometry2 from 'three/RingGeometry2';
 import Labels from 'graphics2d/Labels';
 import ResourceLoader from 'loaders/ResourceLoader';
 import Dimensions from 'graphics3d/Dimensions';
-import { KM, DEG_TO_RAD } from 'constants';
+import { KM, DEG_TO_RAD, QUARTER_CIRCLE } from 'constants';
 
 export default {
 
@@ -95,9 +95,7 @@ export default {
 			
 		}
 		
-		let tilt = Math.PI / 2;
-		if (this.celestial.tilt) tilt -= this.celestial.tilt * DEG_TO_RAD;
-		this.planet.rotation.x = tilt;				
+		this.planet.rotation.copy(this.celestial.getTilt(QUARTER_CIRCLE));
 
 		this.root.add(this.planet);
 		return this.planet;
@@ -134,8 +132,12 @@ export default {
 		this.root.position.copy(pos);
 
 		if (this.celestial.sideralDay) {
-			this.planet.rotation.y = (this.celestial.baseMapRotation || 0) + this.celestial.getCurrentRotation();
+			// this.planet.rotation.y = (this.celestial.baseMapRotation || 0) + this.celestial.getCurrentRotation();
 			// console.log(this.planet.rotation.y);
+			const qTilt = new Quaternion().setFromEuler(this.celestial.getTilt(QUARTER_CIRCLE));
+			const qRot = new Quaternion().setFromEuler(new Euler(0, (this.celestial.baseMapRotation || 0) + this.celestial.getCurrentRotation()), 0, 'XYZ');
+			const q = new Quaternion().multiplyQuaternions(qTilt, qRot);
+			this.planet.setRotationFromQuaternion(q);
 		}
 
 		if (this.tracer) this.tracer.draw(pos);

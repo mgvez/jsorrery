@@ -1,5 +1,5 @@
 
-import { Vector3 } from 'three';
+import { Vector3, Euler } from 'three';
 import OrbitalElements from 'algorithm/OrbitalElements';
 import { J2000, RAD_TO_DEG, CIRCLE } from 'constants';
 import { getUniverse } from 'JSOrrery';
@@ -89,6 +89,11 @@ export default {
 	//gets current rotation of body around its axis
 	getCurrentRotation() {
 		return (getUniverse().currentTime / this.sideralDay + (this.zeroTime || 0)) * CIRCLE;
+	},
+
+	//returns euler angle of tilt (default if none set in scenario)
+	getTilt(xCorr) {
+		return new Euler(xCorr, 0, 0, 'YZX');
 	},
 
 	beforeMove() {},

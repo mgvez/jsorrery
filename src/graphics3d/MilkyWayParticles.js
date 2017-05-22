@@ -65,6 +65,7 @@ function drawConstellations() {
 			const orbitGeom = new Geometry();
 			orbitGeom.vertices = [fromPoint, toPoint];
 			const line = new Line(orbitGeom, material);
+			line.frustumCulled = false;
 			rendered.add(line);
 		});
 	});

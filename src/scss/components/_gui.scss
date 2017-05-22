@@ -1,0 +1,272 @@
+
+
+@mixin inputBox($bg : $inputBg){
+	background: $bg;
+	border: 1px $inputBorderCol solid;
+	color:white;
+}
+
+
+nav#gui {
+	position:absolute;
+	z-index:1;
+	top:0;
+	left:0;
+	height: 100%;
+	width: 200px;
+	padding:0 20px;
+	background: rgba(0, 0, 0, 0.5);
+	border-right:1px $widgetBorderCol solid;
+	// display:none;
+	overflow:hidden;
+
+	transition: all 0.5s;
+
+	&.collapsed {
+		height: 40px;
+	}
+
+	&.faded {
+		opacity: 0.5;
+	}
+
+	#navCollapse {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		height: 20px;
+		width:100%;
+		cursor:pointer;
+		background: red;
+	}
+
+	.help {
+		//position:absolute;
+		top:-2px;
+		display:inline-block;
+		font-size:11px;
+		line-height:inherit;
+		height:18px;
+		width:18px;
+		margin-left:3px;
+		font-weight:normal;
+		cursor:pointer;
+		opacity:0.7;
+		&:hover{
+			opacity:1;
+		}
+	}
+
+
+	
+	label {
+		visibility: hidden;
+		position:relative;
+		margin: 0px 8px;
+		height: $menuH;
+		
+		&.shown {
+			visibility: visible;
+		}
+	
+		& > div{
+			display:block;
+			font-weight:bold;
+		}
+		
+		.inputContainer{
+			position:relative;
+			min-height: 20px;
+		}
+	}
+
+	.dropdown{
+
+		.display, li{
+			cursor:pointer;
+			overflow:hidden;
+			width:100%;
+		}
+		
+
+		ul{
+			list-style-type:none;
+			margin:0;
+			padding:0;
+			font-weight:normal;
+			position:absolute;
+			display:none;
+
+			@include inputBox(rgba(25, 25, 25, 1));
+			z-index:1000;
+
+			li{
+				margin:0;
+				padding: 3px 8px;
+				border-bottom: 1px black solid;
+				white-space: nowrap;
+				
+
+				&.selected{
+					@include inputBox();
+				}
+
+				&:hover, &.selected{
+					font-weight:bold;
+					color:#fff;
+				}
+
+				&.disabled{
+					font-weight:normal;
+					color:$txCol;
+					opacity:0.4;
+				}
+			}
+		}
+
+		&:hover{
+			ul{
+				display:block;
+			}
+		}
+	}
+
+
+	input, button {
+		&:focus {outline:0;}
+	}
+
+	input {
+		font-size:12px;
+		font-family:$formFont;
+		width: 100%;
+	}
+
+	input, .display{
+		@include inputBox();
+		padding:1px 3px;
+		margin: 2px 0 0 0;
+	}
+
+	button{
+		background:transparent;
+		color: white;
+		border:0;
+		opacity: 0.7;
+		font-size:22px;
+		// line-height:22px;
+		text-align:center;
+		height: 32px;
+		width:32px;
+		margin-top:6px;
+		cursor:pointer;
+		transition-duration: 0.5s;
+		&:hover{
+			opacity: 1;
+		}
+	}
+
+
+	//styles from http://danielstern.ca/range.css
+	input[type=range] {
+	-webkit-appearance: none;
+	width: 100%;
+	margin: 4.5px 0;
+	border:0;
+	}
+	input[type=range]:focus {
+	outline: none;
+	}
+	input[type=range]::-webkit-slider-runnable-track {
+	width: 100%;
+	height: 1px;
+	cursor: pointer;
+
+	background: #333333;
+	border-radius: 0px;
+	border: 0;
+	}
+	input[type=range]::-webkit-slider-thumb {
+
+	border: 0;
+	height: 10px;
+	width: 10px;
+	border-radius: 5px;
+	background: #333333;
+	cursor: pointer;
+	-webkit-appearance: none;
+	margin-top: -4.5px;
+	}
+	input[type=range]:focus::-webkit-slider-runnable-track {
+	background: #404040;
+	}
+	input[type=range]::-moz-range-track {
+	width: 100%;
+	height: 1px;
+	cursor: pointer;
+	box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+	background: #333333;
+	border-radius: 0px;
+	border: 0px solid #010101;
+	}
+	input[type=range]::-moz-range-thumb {
+	box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+	border: 0px solid #000000;
+	height: 10px;
+	width: 10px;
+	border-radius: 5px;
+	background: #333333;
+	cursor: pointer;
+	}
+	input[type=range]::-ms-track {
+	width: 100%;
+	height: 1px;
+	cursor: pointer;
+	background: transparent;
+	border-color: transparent;
+	color: transparent;
+	}
+	input[type=range]::-ms-fill-lower {
+	background: #262626;
+	border: 0px solid #010101;
+	border-radius: 0px;
+	box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+	}
+	input[type=range]::-ms-fill-upper {
+	background: #333333;
+	border: 0px solid #010101;
+	border-radius: 0px;
+	box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+	}
+	input[type=range]::-ms-thumb {
+	box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+	border: 0px solid #000000;
+	height: 10px;
+	width: 10px;
+	border-radius: 5px;
+	background: #333333;
+	cursor: pointer;
+	height: 1px;
+	}
+	input[type=range]:focus::-ms-fill-lower {
+	background: #333333;
+	}
+	input[type=range]:focus::-ms-fill-upper {
+	background: #404040;
+	}
+
+
+	#shareWidget{
+		background: rgba(0, 0, 0, 1);
+		display:none;
+
+		input#shareUrl{
+			margin:6px 0;
+		}
+
+		#social{
+
+		}
+	}
+
+}

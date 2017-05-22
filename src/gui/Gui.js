@@ -1,9 +1,11 @@
 
 import $ from 'jquery';
-import ExportValues from './ExportValues';
+import TweenMax from 'gsap';
 import InputDate from './InputDate';
 import InputGeoCoord from './InputGeoCoord';
 import InputSelect from './InputSelect';
+import InputSlider from './InputSlider';
+import InputButton from './InputButton';
 
 export const PLANET_SCALE_ID = 'planetScale';
 export const SCENARIO_ID = 'scenario';
@@ -15,42 +17,64 @@ export const LOOKFROM_ID = 'lookFrom';
 export const DELTA_T_ID = 'deltaT';
 export const GEOLOC_ID = 'geoloc';
 
-const FA = 'fa ';
-const BTNS_CLASS = {
-	share: FA + 'fa-share-alt',
-	start: [FA + 'fa-play-circle', FA + 'fa-pause-circle'],
-};
-
 let defaultSettings;
 let defaultCallbacks;
-
-const controls = {};
+let gui;
 
 function getContainer(id) {
 	return $(`#${id}Cont`);
-}
-
-function removeControl(elId) {
-	const el = controls[elId];
-	if (el) el.remove();
-}
-
-function addControl(elId, el) {
-	controls[elId] = el;
 }
 
 function getLabel(id) {
 	return $(`#${id}Label`);
 }
 
+function hideGuiElement(id) {
+	return getLabel(id).removeClass('shown');
+}
+
+function emptyContainer(id) {
+	getContainer(id).empty();
+}
+
+function addWidget(id, widget, classes) {
+	const c = getContainer(id);
+	getLabel(id).show().addClass('shown');
+	if (classes) c.addClass('dropdown');
+	c.append(widget);
+}
+
+function setOnChange(id, defaultOnChange) {
+	const label = getLabel(id).find('.valDisplay');
+	return (val) => {
+		if (label.length) label.text(val);
+		if (defaultOnChange) defaultOnChange(val);
+	};
+}
+
 function hideContent(content) {
-	content.removeClass('shown');
+	TweenMax.killTweensOf(content);
+	TweenMax.to(content, 0.3, {
+		opacity: 0, 
+		onComplete() {
+			content.hide();
+		}
+	});
 	return false;
 }
 
 function showContent(content) {
-	content.addClass('shown');
+	TweenMax.killTweensOf(content);
+	content.show();
+	TweenMax.to(content, 0.3, {
+		opacity: 1, 
+	});
 	return true;
+}
+
+function fadeGui(hasHelpShown) {
+	const navToggleAction = hasHelpShown ? 'addClass' : 'removeClass';
+	gui[navToggleAction]('faded');
 }
 
 function setupHelp() {
@@ -60,119 +84,79 @@ function setupHelp() {
 		let content;
 		let shown = false;
 		$(el).on('click.jsorrery', (e) => {
-			e.preventDefault();
+			
 			if (!content) {
 				content = allHelpContents.filter(`#${el.dataset.for}`);
-				content.find('.close').on('click.jsorrery', () => {
+				const close = content.find('.close');
+
+				close.on('click.jsorrery', () => {
 					shown = hideContent(content);
+					fadeGui(shown);
 				});
 			}
 			// console.log(content);
-			hideContent(allHelpContents);
+			hideContent(allHelpContents.not(content));
 			shown = shown ? hideContent(content) : showContent(content);
+			fadeGui(shown);
 		});
 	});
 }
 
+
 export default {
 	init() {
+		gui = $('nav#gui');
 		setupHelp();
+		const collapser = $('#navCollapse');
+		collapser.on('click.jsorrery', () => {
+			gui.toggleClass('collapsed');
+		});
 	},
 
-	addBtn(labelParam, id, callback, key) {
-		removeControl(id);
-		const classNames = BTNS_CLASS[id];
-		let classOff;
-		let classOn;
-		if (classNames instanceof Array) {
-			classOff = classNames[0];
-			classOn = classNames[1];
-		} else {
-			classOff = classNames;
-		}
-		const label = classOff ? '&nbsp;' : labelParam;
-		let status = false;
-
-		const btn = controls[id] = $(`<button class="${classOff}" id="${id}">${label}</button>`).appendTo(getContainer(id));
-		btn.on('click.jsorrery', (e) => {
-			e.stopPropagation();
-			callback();
-			status = !status;
-			const targetClass = (status && classOn) || classOff;
-			btn.attr('class', targetClass);
-		});
-
-		if (key) {
-			const keyCode = key.toUpperCase().charCodeAt(0);
-			$(window).on('keyup.jsorrery', (e) => {
-				// console.log(e.keyCode, keyCode);
-				// console.log(String.fromCharCode(e.keyCode), String.fromCharCode(keyCode));
-				if (e.keyCode === keyCode) btn.trigger('click');
-			});
-		}
+	addBtn(labelTx, id, onClick, key) {
+		emptyContainer(id);
+		const btn = new InputButton(labelTx, id, onClick, key);
+		const widget = btn.getWidget();
+		addWidget(id, widget);
 	},
 
 	addDropdown(id, callback) {
-		removeControl(id);
+		emptyContainer(id);		
 		const sel = new InputSelect(id, defaultSettings[id], callback);
 		const widget = sel.getWidget();
-		addControl(id, widget);
-		getContainer(id).empty().addClass('dropdown').append(widget);
+		addWidget(id, widget, 'dropdown');
+		
 		return sel;
 	},
 
+	addSlider(id, options, onChange) {
+		emptyContainer(id);		
+		const defaultVal = Number(defaultSettings[id]) || (options && options.initial) || 1;
+		const slider = new InputSlider(id, defaultVal, setOnChange(id, onChange), options);
+		const widget = slider.getWidget();
+		addWidget(id, widget);
+	},
+
 	addDate(onChange) {
-		InputDate.init(onChange, defaultSettings[DATE_ID]);
-		InputDate.getWidget().appendTo(getContainer(DATE_ID));
+		emptyContainer(DATE_ID);
+		InputDate.init(setOnChange(DATE_ID, onChange), defaultSettings[DATE_ID]);
+		addWidget(DATE_ID, InputDate.getWidget());
 		return InputDate;
 	},
 	
 	addGeoloc(originalValues, onChange) {
-		InputGeoCoord.init(defaultSettings[GEOLOC_ID] || originalValues, onChange);
-		InputGeoCoord.getWidget().appendTo(getContainer(GEOLOC_ID).show());
+		emptyContainer(GEOLOC_ID);
+		console.log(defaultSettings[GEOLOC_ID]);
+		console.log(originalValues);
+		InputGeoCoord.init(defaultSettings[GEOLOC_ID] || originalValues, setOnChange(GEOLOC_ID, onChange));
+		addWidget(GEOLOC_ID, InputGeoCoord.getWidget());
+		
 		return InputGeoCoord;
 	},
 
 	removeGeoloc() {
 		InputGeoCoord.sleep();
-		getContainer(GEOLOC_ID).hide();
-	},
-
-	addSlider(id, options, onChange) {
-		removeControl(id);
-		const container = getContainer(id);
-		const defaultVal = Number(defaultSettings[id]) || (options && options.initial) || 1;
-		const valDisplay = getLabel(id).find('.valDisplay').text(defaultVal);
-
-		const min = (options && options.min) || 1;
-		const max = (options && options.max) || 100;
-		const step = (options && options.step) || 1;
-
-		const slider = $(`<input type ="range" min="${min}" max="${max}" step="${step}" value ="${defaultVal}"/>`).appendTo(container);
-
-		slider.off('input').on('input.jsorrery', () => {
-			const val = slider.val();
-			valDisplay.text(val);
-			ExportValues.setVal(id, val);
-			onChange(val);
-		});
-
-		function setSlideValue(val) {
-			slider.val(val);
-		}
-
-		controls[id] = slider;
-
-		if (defaultVal) {
-			this.pushDefaultsCallbacks(() => {
-				setSlideValue(defaultVal);
-				onChange(defaultVal);
-			});
-		}
-
-		ExportValues.setVal(id, defaultVal);
-
-		return slider;
+		hideGuiElement(GEOLOC_ID);
 	},
 
 	pushDefaultsCallbacks(callback) {
@@ -188,7 +172,7 @@ export default {
 
 	//default settings for GUI when loading a scenario / a page
 	setDefaults(v) {
-		//console.log(defaultSettings);
+		// console.log(defaultSettings);
 		defaultSettings = v;
 	},
 };

@@ -23,56 +23,53 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
 	</head>
 	<body>
-		<div id="dashboard">
+		<nav id="gui">
+			<label id="startLabel">
+				<div id="startCont" class="inputContainer"></div>
+			</label>
+			<label id="scenarioLabel">
+				<div>Scenario <span class="help fa fa-question-circle" data-for="helpScenario">&nbsp;</span></div>
+				<div id="scenarioCont" class="inputContainer"></div>
+			</label>
+			<label id="dateLabel">
+				<div>Date <span class="help fa fa-question-circle" data-for="helpDate">&nbsp;</span></div>
+				<div id="dateCont" class="inputContainer"></div>
+			</label>
+			<label id="lookFromLabel">
+				<div>Point of view <span class="help fa fa-question-circle" data-for="helpLookFrom">&nbsp;</span></div>
+				<div id="lookFromCont" class="inputContainer"></div>
+			</label>
+			<label id="lookAtLabel">
+				<div>Look at <span class="help fa fa-question-circle" data-for="helpLookAt">&nbsp;</span></div>
+				<div id="lookAtCont" class="inputContainer"></div>
+			</label>
+			<label id="planetScaleLabel">
+				<div>Planet Scale <span class="valDisplay"></span>x <span class="help fa fa-question-circle" data-for="helpScale">&nbsp;</span></div>
+				<div id="planetScaleCont" class="inputContainer"></div>
+			</label>
+			<label id="deltaTLabel">
+				<div>Animation speed <span class="help fa fa-question-circle" data-for="helpDeltaT">&nbsp;</span></div>
+				<div id="deltaTCont" class="inputContainer"></div>
+			</label>
+
+			<label id="geolocLabel">
+				<div>Lat/Lng</div>
+				<div id="geolocCont" class="inputContainer"></div>
+			</label>
+
+			<label id="shareLabel">
+				<div id="shareCont" class="inputContainer"></div>
+			</label>
 			
-		</div>
-		<nav>
-			<div id="gui">
-				<label id="startLabel">
-					<div id="startCont" class="inputContainer"></div>
-				</label>
-				<label id="scenarioLabel">
-					<div>Scenario <span class="help fa fa-question-circle" data-for="helpScenario">&nbsp;</span></div>
-					<div id="scenarioCont" class="inputContainer"></div>
-				</label>
-				<label id="dateLabel">
-					<div>Date <span class="help fa fa-question-circle" data-for="helpDate">&nbsp;</span></div>
-					<div id="dateCont" class="inputContainer"></div>
-				</label>
-				<label id="povLabel">
-					<div>Point of view <span class="help fa fa-question-circle" data-for="helpLookFrom">&nbsp;</span></div>
-					<div id="lookFromCont" class="inputContainer"></div>
-				</label>
-				<label id="lookatLabel">
-					<div>Look at <span class="help fa fa-question-circle" data-for="helpLookAt">&nbsp;</span></div>
-					<div id="lookAtCont" class="inputContainer"></div>
-				</label>
-				<label id="planetScaleLabel">
-					<div>Planet Scale <span class="valDisplay"></span>x <span class="help fa fa-question-circle" data-for="helpScale">&nbsp;</span></div>
-					<div id="planetScaleCont" class="inputContainer"></div>
-				</label>
-				<label id="deltaTLabel">
-					<div>Animation speed <span class="help fa fa-question-circle" data-for="helpDeltaT">&nbsp;</span></div>
-					<div id="deltaTCont" class="inputContainer"></div>
-				</label>
-
-				<label id="geolocLabel">
-					<div>Lat/Lng</div>
-					<div id="geolocCont" class="inputContainer"></div>
-				</label>
-
-				<label id="shareLabel">
-					<div id="shareCont" class="inputContainer"></div>
-				</label>
-				
-				<div id="shareWidget">
-					Direct link url
-					<input type="text" id="shareUrl">
-					<div id="social">
-						<div id="twitterShare" data-via="lagrange_mtl"></div>
-					</div>
+			<div id="shareWidget">
+				Direct link url
+				<input type="text" id="shareUrl">
+				<div id="social">
+					<div id="twitterShare" data-via="lagrange_mtl"></div>
 				</div>
 			</div>
+
+			<div id="navCollapse"></div>
 		</nav>
 		
 

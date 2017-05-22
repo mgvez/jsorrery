@@ -14,6 +14,11 @@ export default class {
 		return `${this.lat.toFixed(4)}, ${this.lng.toFixed(4)}`;
 	}
 
+	setValue({ lat, lng }) {
+		this.lat = lat;
+		this.lng = lng;
+	}
+
 	setFromString(str) {
 		// console.log(str);
 		//40° 26′ 46″ N 79° 58′ 56″ W.

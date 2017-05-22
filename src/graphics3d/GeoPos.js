@@ -12,6 +12,8 @@ export default function GeoPos(body3d, target) {
 	let lng = -71.2080;
 	let lastLat;
 	let lastLng;
+	let lastTime;
+
 
 	let sphere;
 	if (debugPos) {
@@ -27,10 +29,12 @@ export default function GeoPos(body3d, target) {
 	}
 
 	this.update = () => {
-		if (lng === lastLng && lat === lastLat) return;
+		const time = getUniverse().currentTime;
+		if (lng === lastLng && lat === lastLat && time === lastTime) return;
 		// console.log(lng, lat);
 		lastLat = lat;
 		lastLng = lng;
+		lastTime = time;
 		const parsedLat = Number(lat) * DEG_TO_RAD;
 		const parsedLng = (((Number(lng) - 180) * DEG_TO_RAD + body3d.celestial.getCurrentRotation()) % CIRCLE);//0.85 * DEG_TO_RAD + 
 		// console.log(parsedLng);
@@ -50,15 +54,19 @@ export default function GeoPos(body3d, target) {
 		if (sphere) sphere.position.copy(pos.clone().multiplyScalar(1.01));
 		target.position.copy(pos);
 		getUniverse().requestDraw();
-
 	};
 
-	Gui.addGeoloc({ lat, lng }, val => {
-		lat = val.lat;
-		lng = val.lng;
+	this.activate = () => {
+		Gui.addGeoloc({ lat, lng }, val => {
+			lat = val.lat;
+			lng = val.lng;
+			this.update();
+		});
 		this.update();
-	});
+	};
 
-	this.update();
+	this.deactivate = () => {
+		Gui.removeGeoloc();
+	};
 
 }

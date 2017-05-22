@@ -3,25 +3,29 @@ import GeoCoord from 'utils/GeoCoord';
 import ExportValues from './ExportValues';
 import { GEOLOC_ID } from './Gui';
 
-let inp;
+const inp = $('<input>');
 let loc;
 
 export default {
 
-	init(defaultVals, onChange) {
-		if (!inp) {
-			inp = $('<input>');
+	init(defaultVals, onChangeCallback) {
+		loc = new GeoCoord();
+		if (typeof defaultVals === 'string') {
+			loc.setFromString(defaultVals);			
+		} else {
+			loc.setValue(defaultVals);
 		}
-
-		loc = new GeoCoord(defaultVals.lat, defaultVals.lng);
 		inp.val(loc.getString());
 
-		inp.off('change').on('change.jsorrery', () => {
+		function onChange() {
 			loc.setFromString(inp.val());
 			inp.val(loc.getString());		
-			onChange(loc.getLoc());
-			ExportValues.setVal(GEOLOC_ID, loc.getLoc());
-		});
+			onChangeCallback(loc.getLoc());
+			ExportValues.setVal(GEOLOC_ID, loc.getString());
+		}
+		
+		inp.off('change').on('change.jsorrery', onChange);
+		onChange();
 	},
 
 	sleep() {

@@ -38,7 +38,6 @@ function loadScenario(name, defaultParams) {
 	}
 
 	const scenarioConfig = ScenarioLoader.get(name);
-	console.error('----' + name);
 
 	if (activeScenario) {
 		activeScenario.kill();

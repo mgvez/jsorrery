@@ -18,7 +18,7 @@ export const earth = {
 	//solar noon at J2000 was 12:03:18, azimut at 12:00 was 179.15
 	//I have found that 1999-12-22T07:30:30.000Z aligns with the X axis, even if 1999-12-22T07:44:00.000Z is the solstice
 	//2000-03-20T07:26:28.000Z aligns with the Y axis, even though most sources cite 7:35 as the equinox
-	zeroTime: (J2000 - new Date('1999-12-22T07:30:30.000Z')) / (YEAR * DAY * 1000),
+	zeroTime: (J2000 - new Date('1999-12-22T07:44:30.000Z')) / (YEAR * DAY * 1000),
 	baseMapRotation: 3 * CIRCLE / 4,
 	tilt: 23 + (26 / 60) + (21 / 3600),
 	positionCalculator: VSOP,

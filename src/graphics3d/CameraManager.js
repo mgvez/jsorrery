@@ -35,10 +35,13 @@ function setPrecision(val) {
 }
 
 function toggleCamera() {
-	viewSettings.lookFrom = trackOptionSelectors.from.val();
-	viewSettings.lookAt = trackOptionSelectors.at.val();
+	viewSettings.lookFrom = trackOptionSelectors.from.getValue();
+	viewSettings.lookAt = trackOptionSelectors.at.getValue();
 	disableControls();
 
+	//deactivate geopos GUI
+	if (currentCamera && currentCamera.geoPos) currentCamera.geoPos.deactivate();
+	
 	//reset all bodies to use fastest position computation
 	setPrecision(false);
 
@@ -53,11 +56,12 @@ function toggleCamera() {
 		//when looking from a body, we need max precision as a minor change in position changes the expected output (e.g. a bodie's position against the stars)
 		setPrecision(true);
 		
-		lookFromBody.celestial.maxPrecision = true;
 		//if we look from a body to another, trace the lookat body's path relative to the pov UNLESS the look target is orbiting to the pov
 		if (lookAtBody && !lookAtBody.celestial.isOrbitAround(lookFromBody.celestial)) {
 			TracerManager.setTraceFrom(lookFromBody, lookAtBody);
 		}
+
+		if (currentCamera.geoPos) currentCamera.geoPos.activate();
 
 		getUniverse().repositionBodies();
 	} else {
@@ -90,7 +94,7 @@ function updateCamera() {
 	const lookAtBody = bodies3d[viewSettings.lookAt];
 	const controls = currentCamera.jsorrery && currentCamera.jsorrery.controls;
 
-	if (currentCamera.geoPos && getUniverse().isPlaying) currentCamera.geoPos.update();
+	if (currentCamera.geoPos) currentCamera.geoPos.update();
 	
 	if (controls) {
 		controls.update();

@@ -36,7 +36,7 @@ export default {
 
 	setPositionFromDate(epochTime) {
 		const currentEpochTime = this.currentEpochTime = this.getEpochTime(epochTime);
-		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(currentEpochTime, this.maxPrecision || true);
+		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(currentEpochTime, this.maxPrecision);
 
 		this.relativePosition = this.position.clone();
 		

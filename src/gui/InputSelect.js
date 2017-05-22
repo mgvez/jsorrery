@@ -33,7 +33,7 @@ export default class InputSelect {
 
 		if (isSelected || this.defaultVal === val) {
 			Gui.pushDefaultsCallbacks(() => {
-				this.listClicked(this.input);
+				this.listClicked(option);
 			});
 		}
 

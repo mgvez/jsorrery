@@ -24,7 +24,6 @@ export const earth = {
 	tilt: 23 + (26 / 60) + (21 / 3600),
 	positionCalculator: VSOP,
 	hasGeoposCam: true,
-	maxPrecision: true,
 	
 	//tilt is oriented by taking into account precession of equinoxes
 	getTilt(xCorrection = 0) {

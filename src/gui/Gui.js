@@ -12,6 +12,7 @@ export const SCENARIO_ID = 'scenario';
 export const START_ID = 'start';
 export const SHARE_ID = 'share';
 export const DATE_ID = 'date';
+export const DATE_DISPLAY_ID = 'dateDisplay';
 export const LOOKAT_ID = 'lookAt';
 export const LOOKFROM_ID = 'lookFrom';
 export const DELTA_T_ID = 'deltaT';
@@ -39,7 +40,7 @@ function emptyContainer(id) {
 
 function addWidget(id, widget, classes) {
 	const c = getContainer(id);
-	getLabel(id).show().addClass('shown');
+	getLabel(id).addClass('shown');
 	if (classes) c.addClass('dropdown');
 	c.append(widget);
 }
@@ -106,9 +107,19 @@ export default {
 	init() {
 		gui = $('nav#gui');
 		setupHelp();
+
 		const collapser = $('#navCollapse');
+		const collapsedClass = 'collapsed';
+		const collapserUpClass = 'fa-angle-double-up';
+		const collapserDownClass = 'fa-angle-double-down';
+
 		collapser.on('click.jsorrery', () => {
-			gui.toggleClass('collapsed');
+			gui.toggleClass(collapsedClass);
+			if (gui.hasClass(collapsedClass)) {
+				collapser.addClass(collapserDownClass).removeClass(collapserUpClass);
+			} else {
+				collapser.addClass(collapserUpClass).removeClass(collapserDownClass);
+			}
 		});
 	},
 

@@ -6,15 +6,26 @@
 	color:white;
 }
 
+#status {
+	height: 40px;
+	padding: 10px 20px;
+	display:flex;
+	align-items: center;
+	div {
+		flex-grow: 2;
+		&#dateDisplay {
+			height:10px;
+		}
+	}
+}
 
 nav#gui {
 	position:absolute;
 	z-index:1;
-	top:0;
 	left:0;
+	top:0;
 	height: 100%;
-	width: 200px;
-	padding:0 20px;
+	width: 250px;
 	background: rgba(0, 0, 0, 0.5);
 	border-right:1px $widgetBorderCol solid;
 	// display:none;
@@ -23,7 +34,7 @@ nav#gui {
 	transition: all 0.5s;
 
 	&.collapsed {
-		height: 40px;
+		height: 80px;
 	}
 
 	&.faded {
@@ -37,7 +48,17 @@ nav#gui {
 		height: 20px;
 		width:100%;
 		cursor:pointer;
-		background: red;
+		border-top: 1px $widgetBorderCol solid;
+		border-bottom: 1px $widgetBorderCol solid;
+		background: darken($widgetBorderCol, 10);
+		text-align:center;
+		line-height: 20px;
+		font-size: 20px;
+		color: $widgetBorderCol;
+		&:hover {
+			color: white;
+			
+		}
 	}
 
 	.help {
@@ -60,13 +81,14 @@ nav#gui {
 
 	
 	label {
-		visibility: hidden;
+		display: none;
 		position:relative;
-		margin: 0px 8px;
+		margin: 5px 8px;
+		padding:0 20px;
 		height: $menuH;
 		
 		&.shown {
-			visibility: visible;
+			display: block;
 		}
 	
 		& > div{
@@ -153,16 +175,18 @@ nav#gui {
 		color: white;
 		border:0;
 		opacity: 0.7;
-		font-size:22px;
+		font-size:18px;
 		// line-height:22px;
 		text-align:center;
 		height: 32px;
 		width:32px;
-		margin-top:6px;
 		cursor:pointer;
 		transition-duration: 0.5s;
 		&:hover{
 			opacity: 1;
+		}
+		&#start {
+			font-size:32px;
 		}
 	}
 

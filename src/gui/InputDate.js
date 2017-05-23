@@ -1,8 +1,9 @@
 import $ from 'jquery';
 import ExportValues from './ExportValues';
-import { DATE_ID } from './Gui';
+import { DATE_ID, DATE_DISPLAY_ID } from './Gui';
 
 let inp;
+let display;
 let date;
 
 export default {
@@ -11,6 +12,8 @@ export default {
 		if (!inp) {
 			inp = $('<input>');
 		}
+
+		display = $(`#${DATE_DISPLAY_ID}`);
 
 		let curDate;
 		inp.off('change').on('change.jsorrery', () => {
@@ -41,6 +44,7 @@ export default {
 			const dStr = d.toISOString();
 			ExportValues.setVal(DATE_ID, dStr);
 			if (inp) inp.val(dStr);
+			if (display) display.text(dStr);
 		}
 	},
 

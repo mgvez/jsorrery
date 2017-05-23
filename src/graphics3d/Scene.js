@@ -48,11 +48,11 @@ export default {
 		this.root.add(light);/**/
 
 		if (!stats) {
-			stats = new Stats();
-			const st = stats.domElement.style;
-			st.top = 'auto';
-			st.bottom = 0;
-			$('body').append(stats.domElement);
+			// stats = new Stats();
+			// const st = stats.domElement.style;
+			// st.top = 'auto';
+			// st.bottom = 0;
+			// $('body').append(stats.domElement);
 		}
 
 		this.container.append(renderer.domElement);

@@ -4,23 +4,43 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="author" content="Martin Vézina, La Grange">
-		<title>jsOrrery - Javascript Solar System Simulator</title>
+		<title>Eclipse 2017 - jsOrrery Javascript Solar System Simulator</title>
 		<style>
 			body {
 				opacity: 0;
 			}
 		</style>
-		<meta property="og:title" content="jsOrrery - Solar System Simulator" /> 
-		<meta property="og:image" content="https://mgvez.github.io/jsorrery/img/jsorrery_likefb.jpg" />
+		<meta property="og:title" content="Eclipse 2017 - jsOrrery Solar System Simulator" /> 
+		<meta property="og:image" content="https://mgvez.github.io/jsorrery/img/jsorrery-likefb-eclipse.jpg" />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
-		<meta property="og:description" content="See the Solar System in your browser with jsOrrery, a Javascript / WebGL orbital mechanics simulator." />
+		<meta property="og:description" content="See 2017's eclipse from any location on the Earth in your browser with jsOrrery, a Javascript / WebGL orbital mechanics simulator." />
 		<meta property="og:url" content="https://mgvez.github.io/jsorrery/" />
 		<meta name="twitter:creator" content="@m_vezina" />
 		<meta property="fb:app_id" content="400609246982045" />
 		<link rel="canonical" href="https://mgvez.github.io/jsorrery/" />
 		<link href='http://fonts.googleapis.com/css?family=Quattrocento' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+
+		<script>
+			(function(ns) {
+
+				ns.defaults = {
+					scenario: 'InnerSolarSystem',
+					date: '2017-08-21T17:40:00.000Z',
+					planetScale: 1,
+					lookFrom: 'earth',
+					lookAt: 'moon',
+					deltaT: 20,
+					geoloc: '36.9664, -87.6709',
+					cameraSettings: {
+						fov: 2.5,
+					},
+				};
+
+			}(window.jsOrrery = window.jsOrrery || {}));
+		</script>
+
 	</head>
 	<body>
 		<nav id="gui">

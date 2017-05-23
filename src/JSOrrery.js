@@ -6,13 +6,13 @@ import Universe from 'Universe';
 import Preloader from 'gui/Preloader';
 import ScenarioLoader from 'scenario/Loader';
 
-function getQueryString() {
+function getInitialSettings() {
 	const parts = window.location.search.substr(1).split('&');
 	const qstr = parts.reduce((carry, part) => {
 		const pair = part.split('=');
 		carry[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
 		return carry;
-	}, {});
+	}, (window.jsOrrery && window.jsOrrery.defaults) || {});
 
 	if (typeof qstr.cx !== 'undefined') {
 		qstr.cameraSettings = {
@@ -21,10 +21,6 @@ function getQueryString() {
 			z: qstr.cz,
 			fov: qstr.fov,
 		};
-		delete qstr.cx;
-		delete qstr.cy;
-		delete qstr.cz;
-		delete qstr.fov;
 	} 
 
 	return qstr;
@@ -67,7 +63,7 @@ export default function jsOrrery() {
 	Preloader.remove();
 	Gui.init();
 
-	const defaultParams = Object.assign({}, getQueryString());
+	const defaultParams = Object.assign({}, getInitialSettings());
 	Gui.setDefaults(defaultParams);
 
 	const scenarios = ScenarioLoader.getList();

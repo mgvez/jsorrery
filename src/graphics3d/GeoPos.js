@@ -31,12 +31,12 @@ export default function GeoPos(body3d, target) {
 	this.update = () => {
 		const time = getUniverse().currentTime;
 		if (lng === lastLng && lat === lastLat && time === lastTime) return;
-		console.log(lng, lat);
+		// console.log(lng, lat);
 		lastLat = lat;
 		lastLng = lng;
 		lastTime = time;
 		const parsedLat = Number(lat) * DEG_TO_RAD;
-		const parsedLng = (((Number(lng) - 180) * DEG_TO_RAD + body3d.celestial.getCurrentRotation()) % CIRCLE);//0.85 * DEG_TO_RAD + 
+		const parsedLng = (((Number(lng) - 180) * DEG_TO_RAD + body3d.celestial.getCurrentRotation()) % CIRCLE);
 		// console.log(parsedLng);
 		const a = new Euler(
 			parsedLat,
@@ -50,7 +50,6 @@ export default function GeoPos(body3d, target) {
 			0
 		);	
 		pos.applyEuler(a);
-		// pos.applyEuler(new Euler(-body3d.celestial.tilt * DEG_TO_RAD, 0, 0, 'XYZ'));
 		pos.applyEuler(body3d.celestial.getTilt());
 		if (sphere) sphere.position.copy(pos.clone().multiplyScalar(1.01));
 		target.position.copy(pos);

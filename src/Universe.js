@@ -144,7 +144,7 @@ export default {
 	setBarycenter() {
 		const central = this.centralBody;
 		
-		// if (!this.usePhysics || central.isStill || this.scenario.useBarycenter === false) return;
+		if (!this.usePhysics || central.isStill || this.scenario.useBarycenter === false) return;
 		let massRatio;
 		const massCenter = {
 			mass: 0,

@@ -83,8 +83,7 @@ function setupHelp() {
 	$('.help').each((i, el) => {
 		let content;
 		let shown = false;
-		$(el).on('click.jsorrery', (e) => {
-			
+		$(el).on('click.jsorrery', () => {
 			if (!content) {
 				content = allHelpContents.filter(`#${el.dataset.for}`);
 				const close = content.find('.close');
@@ -146,8 +145,8 @@ export default {
 	
 	addGeoloc(originalValues, onChange) {
 		emptyContainer(GEOLOC_ID);
-		console.log(defaultSettings[GEOLOC_ID]);
-		console.log(originalValues);
+		// console.log(defaultSettings[GEOLOC_ID]);
+		// console.log(originalValues);
 		InputGeoCoord.init(defaultSettings[GEOLOC_ID] || originalValues, setOnChange(GEOLOC_ID, onChange));
 		addWidget(GEOLOC_ID, InputGeoCoord.getWidget());
 		

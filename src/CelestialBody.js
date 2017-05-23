@@ -122,13 +122,9 @@ export default {
 		const multiplyer = isFuture ? 1 : -1;
 		const arrayAction = isFuture ? 'push' : 'unshift';
 		for (let i = 0; total < 360; i++) {
-			// console.log(total);
-			
 			point = this.calculatePosition(startTime + (multiplyer * incr * i));
-			// if (this.name === 'moon') console.log('inc', startTime, (multiplyer * incr * i));
 
 			if (lastPoint) {
-				// if (this.name === 'moon') throw new Error('ok');
 				angle = point.angleTo(lastPoint) * RAD_TO_DEG;
 				//make sure we do not go over 360.5 
 				if (angle > 1.3 || ((angle + total) > 360.5)) {
@@ -152,7 +148,7 @@ export default {
 					lastPoint = point;
 					continue;
 				}
-				total += angle;					
+				total += angle;
 			}
 			points[arrayAction](point);
 			lastPoint = point;

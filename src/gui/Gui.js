@@ -100,6 +100,11 @@ function setupHelp() {
 			fadeGui(shown);
 		});
 	});
+	//default open help on load page, if any
+	const defaultHelpOpen = window.jsOrrery && window.jsOrrery.defaults && window.jsOrrery.defaults.showHelp;
+	if (defaultHelpOpen) {
+		$(`.help[data-for="${defaultHelpOpen}"]`).trigger('click');
+	}
 }
 
 

@@ -196,7 +196,7 @@ a{
 
 }
 
-.close{
+.close {
 	cursor:pointer;
 	position:absolute;
 	top: 10px;
@@ -207,6 +207,14 @@ a{
 	&:hover{
 		color:#fff;
 	}
+
+	&.inflow{
+		font-size:inherit;
+		position:auto;
+		right: auto;
+		top: auto;
+	}
+
 }
 
 

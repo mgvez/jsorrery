@@ -4,23 +4,44 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="author" content="Martin Vézina, La Grange">
-		<title>jsOrrery - Javascript Solar System Simulator</title>
+		<title>Eclipse 2017 - jsOrrery Javascript Solar System Simulator</title>
 		<style>
 			body {
 				opacity: 0;
 			}
 		</style>
-		<meta property="og:title" content="jsOrrery - Solar System Simulator" /> 
-		<meta property="og:image" content="https://mgvez.github.io/jsorrery/img/jsorrery_likefb.jpg" />
+		<meta property="og:title" content="Eclipse 2017 - jsOrrery Solar System Simulator" /> 
+		<meta property="og:image" content="https://mgvez.github.io/jsorrery/img/jsorrery-likefb-eclipse.jpg" />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
-		<meta property="og:description" content="See the Solar System in your browser with jsOrrery, a Javascript / WebGL orbital mechanics simulator." />
+		<meta property="og:description" content="See 2017's eclipse from any location on the Earth in your browser with jsOrrery, a Javascript / WebGL orbital mechanics simulator." />
 		<meta property="og:url" content="https://mgvez.github.io/jsorrery/" />
 		<meta name="twitter:creator" content="@m_vezina" />
 		<meta property="fb:app_id" content="400609246982045" />
 		<link rel="canonical" href="https://mgvez.github.io/jsorrery/" />
 		<link href='http://fonts.googleapis.com/css?family=Quattrocento' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+
+		<script>
+			(function(ns) {
+
+				ns.defaults = {
+					scenario: 'InnerSolarSystem',
+					date: '2017-08-21T17:40:00.000Z',
+					planetScale: 1,
+					lookFrom: 'earth',
+					lookAt: 'moon',
+					deltaT: 20,
+					geoloc: '36.9664, -87.6709',
+					cameraSettings: {
+						fov: 2.5,
+					},
+					showHelp: 'helpEclipse',
+				};
+
+			}(window.jsOrrery = window.jsOrrery || {}));
+		</script>
+
 	</head>
 	<body>
 		<nav id="gui">
@@ -136,6 +157,15 @@
 				<li>And of course, many thanks to <a href="http://www.mrdoob.com/">Mr Doob</a> for the excellent <a href="http://threejs.org/">three.js</a></li>
 			</ul>
 		</div>
+		<div class="helpContent" id="helpEclipse">
+			<a class="close fa fa-close">&nbsp;</a>
+			<h2>jsOrrery - Eclipse 2017</h2>
+			<p>You will now see the most accurate representation of the total solar eclipse of August 21, 2017 I was able to achieve.</p>
+			<p>In this scenario, the viewer is positioned on the surface of the Earth at the greatest eclipse, that is somewhere near Louisville, Kentucky, about 45 minutes before the event. Feel free to input your own geolocation, in decimal degrees, in the appropriate field in the GUI on the left of the screen. You can then hit the play button to view the eclipse's progress over time.</p>
+			<p>In order to view the eclipse, I have to use complex integrations involving a few hundred thousand terms, which is run at every frame of the animation. Because of the complexity involved, the animation will run slowly on most machines. Very slowly on some machines... but it's the price to pay to have an accurate simulation!</p>
+			<p>For more information, please read my post describing the process I went through in order to be able to see the eclipses. The project itself is available on Github at <a href="https://github.com/mgvez/jsorrery">https://github.com/mgvez/jsorrery</a></p>
+
+		</div>
 			
 		<div id="preload">
 			<div class="orbit"><div class="planet"></div></div>
@@ -145,7 +175,10 @@
 			</div>
 		</div>
 
-		<div id="credits" class="help fa fa-question-circle" data-for="helpCredits">credits</div>
+		<div id="credits">
+			<span class="help fa fa-question-circle" data-for="helpCredits"> credits</span>
+			<span class="help fa fa-question-circle" data-for="helpEclipse"> eclipse</span>
+		</div>
 		<script src="data/elp.js"></script>		
 		<script src="dist/bundle.js"></script>
 	<script type="text/javascript">

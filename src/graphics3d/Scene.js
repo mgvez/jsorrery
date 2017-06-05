@@ -6,13 +6,12 @@ import { Stats } from 'utils/ThreeExamples';// eslint-disable-line
 
 import Body3D from 'graphics3d/Body3d';
 import MilkyWay from 'graphics3d/MilkyWayParticles';
-import Sun from 'graphics3d/Sun';
-import { getUniverse } from 'JSOrrery';
 import CameraManager from 'graphics3d/CameraManager';
 import OrbitLinesManager from 'graphics3d/lines/OrbitLinesManager';
 import TracerManager from 'graphics3d/lines/TracerManager';
 import Dimensions from 'graphics3d/Dimensions';
 import Screenshot from 'graphics3d/Screenshot';
+import { ExternalSun } from 'graphics3d/Sun';
 import Labels from 'graphics2d/Labels';
 import Gui, { PLANET_SCALE_ID } from 'gui/Gui';
 import { IS_CAPTURE, DEG_TO_RAD, KM } from 'constants';
@@ -21,14 +20,14 @@ let stats;
 let renderer;
 
 function drawBody(b) {
-	b.drawMove();
+	b.draw();
 }
 
 export default {
 	createStage(scenario) {
 
 		this.bodies3d = [];
-
+		this.bodyScale = 1;
 		this.container = $(`<div id="universe" width="${this.width}" height="${this.height}">`).appendTo('body');
 		this.root = new Scene();				
 
@@ -62,6 +61,7 @@ export default {
 			this.bodies3d.forEach(body3d => {
 				body3d.setScale(val);
 			});
+			this.bodyScale = val;
 			this.draw();
 		});
 
@@ -82,18 +82,6 @@ export default {
 		const milkyway = this.milkyway = Object.create(MilkyWay);
 		milkyway.init(this.stageSize * 6);
 		this.root.add(milkyway.getDisplayObject());
-	},
-
-
-	setSun() {
-
-		const sun = this.sun = Object.create(Sun);
-		sun.init();
-		const hasCelestial = this.centralBody && this.centralBody.name === 'sun';
-		sun.setLight(hasCelestial);
-			
-		this.root.add(sun.getDisplayObject());
-
 	},
 
 	/*
@@ -119,24 +107,14 @@ export default {
 
 		//after all bodies have been positionned, update camera matrix (as camera might be attached to a body)
 		CameraManager.updateCameraMatrix();
-		const camPos = (CameraManager.getCamera().getAbsolutePos && CameraManager.getCamera().getAbsolutePos()) || CameraManager.getCamera().position;
+		const camPos = CameraManager.getCameraPosition();
 
-		//move sun, if its not a body shown. This assumes that the central body, if it has an orbit, revolves around the sun
-		if (this.sun && this.centralBody && this.centralBody.orbit) {
-			const pos = this.centralBody.calculatePosition(getUniverse().currentTime);
-			pos.setLength(this.stageSize * 4).negate();
-			this.sun.setPosition(pos);
-		} else if (this.sun) {
-			const sunPos = this.centralBody.getBody3D().getPosition();
-			this.sun.setPosition(sunPos);/**/
-			this.sun.setFlarePosition(camPos.clone().sub(sunPos).multiplyScalar(0.2));/**/
-			this.sun.setFlareSize(this.centralBody.getBody3D().getScreenSizeRatio(camPos, CameraManager.getCamera().fov), this.height);/**/
-		}
-
-		TracerManager.draw();
+		TracerManager.draw(camPos);
 
 		//center the milkyway to the camera position, to make it look infinite
 		if (this.milkyway) this.milkyway.setPosition(camPos);
+
+		if (this.sun) this.sun.draw(camPos);
 
 		renderer.render(this.root, CameraManager.getCamera());
 
@@ -165,20 +143,34 @@ export default {
 		this.draw();
 	},
 
+
 	addBody(celestialBody) {
-		const body3d = Object.create(Body3D);
-		// console.log(celestialBody);
-		body3d.init(celestialBody);
+
+		let body3d;
+		if (celestialBody.createCustomDisplayObject) {
+			body3d = celestialBody.createCustomDisplayObject();
+		} else {
+			body3d = new Body3D(celestialBody);		
+		}
+
 		this.bodies3d.push(body3d);
-		body3d.setParentDisplayObject(this.root);
-		
-		CameraManager.addBody(body3d);
+		this.root.add(body3d.getDisplayObject());
+
 		OrbitLinesManager.addBody(body3d);
 		TracerManager.addBody(body3d);
+		CameraManager.addBody(body3d);		
 	},
 
 	getRoot() {
 		return this.root;
+	},
+
+	getSize() {
+		return this.stageSize;
+	},
+
+	getAspectRatio() {
+		return this.width / this.height;
 	},
 
 	setCentralBody(centralBody) {
@@ -195,8 +187,16 @@ export default {
 			body3d.maxScale = (maxDim / (body3d.celestial.radius * KM));
 			maxScaleVal = maxScaleVal > body3d.maxScale ? maxScaleVal : body3d.maxScale;
 		});
-		//console.log(maxScaleVal);
-		this.setSun();
+
+		//if central body is not the sun, it means that it is supposed to revolve around the sun, but that the sun os not part of this simulation (because it is not the central body). Therefore, we have to add a sun outside of the simulation.
+		if (this.centralBody.name === 'sun') {
+			this.sun = central3d;
+		} else {
+			this.sun = new ExternalSun(centralBody);
+			this.root.add(this.sun.getDisplayObject());
+		}
+	
+
 	},
 
 	kill() {

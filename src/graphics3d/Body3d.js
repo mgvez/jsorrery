@@ -6,15 +6,16 @@ import ResourceLoader from 'loaders/ResourceLoader';
 import Dimensions from 'graphics3d/Dimensions';
 import { KM, DEG_TO_RAD, QUARTER_CIRCLE } from 'constants';
 
-export default {
 
-	init(celestialBody) {
+export default class Body3D {
+
+	constructor(celestialBody) {
 		this.root = new Object3D();
 		this.celestial = celestialBody;
 		//max delta T to show rotation. If deltaT is larger than that, planet would spin too fast, so don't show sideral day
 		this.maxDeltaForSideralDay = this.celestial.sideralDay && this.celestial.sideralDay / 20;
 
-		this.setPlanet();
+		this.setDisplayObject();
 
 		//make this display object available from the celestial body
 		this.celestial.getBody3D = () => {
@@ -22,28 +23,23 @@ export default {
 		};
 
 		Labels.addPlanetLabel(this.celestial.title || this.celestial.name, this);
-	},
 
-	addEventLabel() {},
+
+	}
 
 	getDisplayObject() {
 		return this.root;
-	},
-
-	setParentDisplayObject(object3d) {
-		this.parentContainer = object3d;
-		this.parentContainer.add(this.root);
-	},
+	}
 
 	setTracer(tracer) {
 		this.tracer = tracer;
-	},
+	}
 
 	setOrbitLines(orbitLines) {
 		this.orbitLines = orbitLines;
-	},
+	}
 
-	setPlanet() {
+	setDisplayObject() {
 		const map = this.celestial.map;
 		const matOptions = {};
 		let onMaterialReady;
@@ -99,34 +95,35 @@ export default {
 
 		this.root.add(this.planet);
 		return this.planet;
-	},
+	}
 
 	setScale(scaleVal) {
 		if (this.maxScale && this.maxScale < scaleVal) return;
-		this.planet.scale.set(scaleVal, scaleVal, scaleVal);
-	},
+		this.scale = scaleVal;
+		this.planet.scale.set(this.scale, this.scale, this.scale);
+	}
 
 	getPlanetSize() {
 		return Dimensions.getScaled(this.celestial.radius * KM);
-	},
+	}
 
 	getPlanetStageSize() {
-		return this.getPlanetSize() * this.planet.scale.x;
-	},
+		return this.getPlanetSize() * (this.scale || 1);
+	}
 
 	addCamera(name, camera) {
 		
 		this.root.add(camera);
 		this.cameras = this.cameras || {};
 		this.cameras[name] = camera;
-	},
+	}
 
 	getCamera(name) {
 		// console.log(name);
 		return this.cameras && this.cameras[name];
-	},
+	}
 	
-	drawMove() {
+	draw() {
 		const pos = this.getPosition();
 		// if (this.celestial.name === 'moon') console.log(pos, this.celestial.name);
 		this.root.position.copy(pos);
@@ -143,7 +140,7 @@ export default {
 		if (this.tracer) this.tracer.draw(pos);
 		if (this.orbitLines) this.orbitLines.draw(Dimensions.getScaled(this.celestial.getRelativePosition()));
 		return pos;
-	},
+	}
 
 	getScreenSizeRatio(camPos, fov) {
 		const sz = this.getPlanetStageSize();
@@ -152,14 +149,15 @@ export default {
 
 		const height = 2 * Math.tan((fov * DEG_TO_RAD) / 2) * dist; // visible height, see http://stackoverflow.com/questions/13350875/three-js-width-of-view/13351534#13351534
 		return sz / height;
-	},
+	}
 
 	getPosition(pos) {
 		const curPosition = (pos && pos.clone()) || this.celestial.getPosition(this.maxPrecision);
 		return Dimensions.getScaled(curPosition);
-	},
+	}
 
 	getName() {
 		return this.celestial.name;
-	},
-};
+	}
+
+}

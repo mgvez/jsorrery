@@ -40,7 +40,7 @@ function getPlanetLabelCallback(el, body3d) {
 
 	return (camPos, fov) => {
 		screenCoords = toScreenCoords(body3d.getPosition(), camPos, fov);
-		// console.log(screenCoords && screenCoords.x);
+		// console.log(camPos.x, body3d.getPosition().x, body3d.celestial.name);
 		if (screenCoords) {
 			const alpha = 1 / screenCoords.z; 
 			el.css({ transform: `translate(${screenCoords.x}px, ${screenCoords.y}px) scale(${screenCoords.z})`, opacity: alpha }).show();

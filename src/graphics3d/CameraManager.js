@@ -169,7 +169,7 @@ export default {
 			fov: fov || DEFAULT_FOV,
 			aspect,
 			near: 0.001,
-			far: stageSize * 5,
+			far: 2000000, ///stageSize * 10,
 		};
 
 		globalCamera = getNewCamera(true);
@@ -212,8 +212,12 @@ export default {
 		trackOptionSelectors.from.addOption(body3d.celestial.title, body3d.celestial.name);
 		trackOptionSelectors.at.addOption(body3d.celestial.title, body3d.celestial.name);
 
-		function getCamPos() {
-			return body3d.root.localToWorld(this.position.clone());
+		function getCamPos(dbg) {
+			if (dbg) {
+				// console.log(this.position.clone());
+				// console.log(body3d.getDisplayObject().position.clone());
+			}
+			return body3d.getDisplayObject().localToWorld(this.position.clone());
 		}
 
 		const pov = getNewCamera();
@@ -242,6 +246,10 @@ export default {
 	getCamera() {
 		if (typeof viewSettings.lookFrom === 'undefined') toggleCamera();
 		return currentCamera;
+	},
+
+	getCameraPosition() {
+		return (this.getCamera().getAbsolutePos && this.getCamera().getAbsolutePos(true)) || this.getCamera().position;
 	},
 
 	updateCameraMatrix() {

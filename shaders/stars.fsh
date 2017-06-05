@@ -4,7 +4,6 @@ uniform sampler2D starTexture;
 
 varying vec3 vColor;
 
-
 void main() {
 
 	vec4 mixColor = vec4( color * vColor, 1 );

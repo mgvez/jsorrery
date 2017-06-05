@@ -2,11 +2,12 @@
 const THREE = require('three');
 
 window.THREE = THREE;
-// console.log(THREE);
 
 require('three.Projector');
 require('three.OrbitControls');
-require('three.Stats');
+require('three/examples/js/SkyShader.js');
+
+export const Sky = window.THREE.Sky;
 
 export const Projector = window.THREE.Projector;
 export const OrbitControls = window.THREE.OrbitControls;

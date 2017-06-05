@@ -106,7 +106,7 @@ function generateStars(shaders, stars, starTexture, size) {
 		} else {
 			//starVect.size = 2;
 			// starColor = lightenDarkenColor(starColor, ((1 / mag) ** 0.8));
-			starColor = lightenDarkenColor(starColor, ((1 / mag) ** 0.8));
+			starColor = lightenDarkenColor(starColor, ((1 / mag) ** 0.9));
 		}			
 		/**/
 
@@ -136,7 +136,7 @@ function generateStars(shaders, stars, starTexture, size) {
 		vertexShader: shaders.vertex,
 		fragmentShader: shaders.fragment,
 		blending: AdditiveBlending,
-		transparent:	true,
+		transparent: false,
 	});
 
 	const particleSystem = new Points(geometry, shaderMaterial);

@@ -213,7 +213,7 @@ void main() {
 	vec3 color = vec3(total);
 	color += disc;
 	//tint color
-	color = color * vec3(1.3, 1.0, 0.7);
+	color = color * vec3(1.3, 1.03, 0.6);
 	// color = color * vec3(0.96, 1.0, 1.2);
 
 	gl_FragColor = vec4(color, color.r);

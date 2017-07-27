@@ -98,9 +98,15 @@ export default {
 	calculatePosition(timeEpoch, maxPrecision) {
 		if (!this.orbitalElements) return new Vector3(0, 0, 0);
 		//position calculators are very slow, we use them only when requested
-		if (this.positionCalculator && maxPrecision) return this.positionCalculator(timeEpoch);
+		if (this.positionCalculator && maxPrecision) {
+			const pos = this.positionCalculator(timeEpoch);
+			// console.log(this.name, pos.x, pos.y, pos.z);
+			return pos;
+		}
 		const computed = this.calculateElements(timeEpoch);
-		return this.getPositionFromElements(computed);
+		const pos = this.getPositionFromElements(computed);
+		// console.log(this.name, pos.x, pos.y, pos.z);		
+		return pos;
 	},
 
 	solveEccentricAnomaly(e, M) {

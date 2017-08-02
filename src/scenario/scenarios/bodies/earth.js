@@ -28,7 +28,7 @@ export const earth = {
 	
 	//tilt is oriented by taking into account precession of equinoxes
 	getTilt(xCorrection = 0) {
-		const nYears = getUniverse().currentTime / (YEAR * DAY);
+		const nYears = getUniverse().getCurrentTime() / (YEAR * DAY);
 		const precession = (nYears / 26000) * CIRCLE;
 		return new Euler(xCorrection - this.tilt * DEG_TO_RAD, -precession, 0, 'YZX');
 	},

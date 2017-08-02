@@ -15,7 +15,7 @@ export default {
 		if (this.celestial.useCustomComputation) {
 			this.computeVerticesInDeltaT = (n) => {
 				const dt = Ticker.getDeltaT();
-				const curTime = getUniverse().currentTime - dt;
+				const curTime = getUniverse().getCurrentTime() - dt;
 				const inc = dt / n;
 				const v = [];
 				for (let i = 0; i < n; i++) {

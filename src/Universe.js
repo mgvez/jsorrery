@@ -5,13 +5,14 @@
 
 import { Vector3 } from 'three';
 
-import { USE_PHYSICS_BY_DEFAULT, DEFAULT_CALCULATIONS_PER_TICK, KM, J2000 } from 'constants';
+import { USE_PHYSICS_BY_DEFAULT, DEFAULT_CALCULATIONS_PER_TICK, KM, J2000, DAY } from 'constants';
 import Labels from 'graphics2d/Labels';
 import Scene from 'graphics3d/Scene';
 import ResourceLoader from 'loaders/ResourceLoader';
 import Ticker from 'algorithm/Ticker';
 import CelestialBody from 'CelestialBody';
 import Gui, { START_ID, DELTA_T_ID } from 'gui/Gui';
+import { getJD, getEpochSeconds } from 'utils/JD';
 
 export default {
 	init(scenario, qstrSettings) {
@@ -33,8 +34,7 @@ export default {
 
 		this.dateDisplay = Gui.addDate(() => {
 			this.playing = false;
-			this.epochTime = 0;
-			this.currentTime = this.startEpochTime = this.getEpochTime(this.dateDisplay.getDate());
+			this.setJD(getJD(this.dateDisplay.getDate()));
 			this.repositionBodies();
 			this.scene.onDateReset();
 		});
@@ -42,11 +42,10 @@ export default {
 		this.ticker = () => this.tick();
 		
 		this.playing = false;
-		this.epochTime = 0;
 		this.drawRequested = false;
 
 		this.date = this.dateDisplay.getDate() || new Date();
-		this.currentTime = this.startEpochTime = this.getEpochTime(this.date);
+		this.setJD(getJD(this.date));
 		
 		this.createBodies(scenario);
 		this.scene = Object.create(Scene);
@@ -236,8 +235,7 @@ export default {
 	tick() {
 		if (this.killed) return;
 		if (this.playing) {
-			this.epochTime += Ticker.getDeltaT();
-			this.currentTime = this.startEpochTime + this.epochTime;
+			this.setJD(this.currentJD + (Ticker.getDeltaT() / DAY));
 			Ticker.tick(this.usePhysics, this.currentTime);
 			
 			this.scene.updateCamera();
@@ -259,9 +257,19 @@ export default {
 		return this.scene;
 	},
 
+	setJD(jd) {
+		this.currentJD = jd;
+		this.currentTime = getEpochSeconds(this.currentJD);
+	},
+
+	getCurrentTime() {
+		return this.currentTime;
+	},
+
 	getEpochTime(userDate) {
-		const reqDate = userDate || new Date();
-		return ((reqDate - J2000) / 1000);
+		return getJ2000Time(userDate || new Date());
+		// const reqDate = userDate || new Date();
+		// return ((reqDate - J2000) / 1000);
 	},
 
 	isPlaying() {

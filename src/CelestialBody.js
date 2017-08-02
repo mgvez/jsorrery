@@ -71,7 +71,7 @@ export default {
 		}
 		if (this.customInitialize) this.customInitialize();
 		
-		if (this.customAfterTick) this.customAfterTick(getUniverse().epochTime, getUniverse().date);
+		if (this.customAfterTick) this.customAfterTick(getUniverse().getCurrentTime(), getUniverse().date);
 	},
 
 	positionRelativeTo() {
@@ -88,7 +88,7 @@ export default {
 
 	//gets current rotation of body around its axis
 	getCurrentRotation() {
-		return (getUniverse().currentTime / this.sideralDay + (this.zeroTime || 0)) * CIRCLE;
+		return (getUniverse().getCurrentTime() / this.sideralDay + (this.zeroTime || 0)) * CIRCLE;
 	},
 
 	//returns euler angle of tilt (default if none set in scenario)
@@ -105,7 +105,7 @@ export default {
 	*/
 	getOrbitVertices(isFuture) {
 
-		const startTime = this.getEpochTime(getUniverse().currentTime);
+		const startTime = this.getEpochTime(getUniverse().getCurrentTime());
 		const elements = this.orbitalElements.calculateElements(startTime);
 		const period = this.orbitalElements.calculatePeriod(elements, this.relativeTo);
 
@@ -175,7 +175,7 @@ export default {
 				if (this.onRevolution) this.onRevolution();
 			}
 		}
-		if (this.customAfterTick) this.customAfterTick(getUniverse().epochTime, getUniverse().date, deltaT);
+		if (this.customAfterTick) this.customAfterTick(getUniverse().getCurrentTime(), getUniverse().date, deltaT);
 
 	},
 

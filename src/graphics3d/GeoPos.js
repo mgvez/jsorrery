@@ -29,7 +29,7 @@ export default function GeoPos(body3d, target) {
 	}
 
 	this.update = () => {
-		const time = getUniverse().currentTime;
+		const time = getUniverse().getCurrentTime();
 		if (lng === lastLng && lat === lastLat && time === lastTime) return;
 		// console.log(lng, lat);
 		lastLat = lat;

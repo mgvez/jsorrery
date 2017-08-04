@@ -2,7 +2,7 @@
 import { Object3D, MeshPhongMaterial, Mesh, SphereGeometry, MeshLambertMaterial, DoubleSide, Euler, Quaternion } from 'three';
 import RingGeometry2 from '../three/RingGeometry2';
 import Labels from '../graphics2d/Labels';
-import ResourceLoader from '../oaders/ResourceLoader';
+import ResourceLoader from '../loaders/ResourceLoader';
 import Dimensions from './Dimensions';
 import { KM, DEG_TO_RAD, QUARTER_CIRCLE } from '../constants';
 

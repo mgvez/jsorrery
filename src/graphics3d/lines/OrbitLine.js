@@ -3,7 +3,7 @@
 import { LineBasicMaterial, BufferGeometry, Geometry, Line, BufferAttribute, VertexColors } from 'three';
 import Dimensions from '../Dimensions';
 import DebugPoint from '../utils/DebugPoint';
-import { darken, hexToRgb, rgbToHex } from '../../ColorUtils';
+import { darken, hexToRgb, rgbToHex } from '../../utils/ColorUtils';
 import { IS_SCREENSHOT, IS_CAPTURE, QUARTER_CIRCLE } from '../../constants';
 
 

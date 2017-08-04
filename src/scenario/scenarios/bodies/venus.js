@@ -1,5 +1,5 @@
 
-import { AU } from 'constants';
+import { AU } from '../../../constants';
 
 export const venus = {
 	title: 'Venus',

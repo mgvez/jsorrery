@@ -2,19 +2,19 @@
 
 import $ from 'jquery';
 import { Scene, WebGLRenderer, AmbientLight } from 'three';
-import { Stats } from 'utils/ThreeExamples';// eslint-disable-line
+import { Stats } from '../utils/ThreeExamples';// eslint-disable-line
 
-import Body3D from 'graphics3d/Body3d';
-import MilkyWay from 'graphics3d/MilkyWayParticles';
-import CameraManager from 'graphics3d/CameraManager';
-import OrbitLinesManager from 'graphics3d/lines/OrbitLinesManager';
-import TracerManager from 'graphics3d/lines/TracerManager';
-import Dimensions from 'graphics3d/Dimensions';
-import Screenshot from 'graphics3d/Screenshot';
-import { ExternalSun } from 'graphics3d/Sun';
-import Labels from 'graphics2d/Labels';
-import Gui, { PLANET_SCALE_ID } from 'gui/Gui';
-import { IS_CAPTURE, DEG_TO_RAD, KM } from 'constants';
+import Body3D from './Body3d';
+import MilkyWay from './MilkyWayParticles';
+import CameraManager from './CameraManager';
+import OrbitLinesManager from './lines/OrbitLinesManager';
+import TracerManager from './lines/TracerManager';
+import Dimensions from './Dimensions';
+import Screenshot from './Screenshot';
+import { ExternalSun } from './Sun';
+import Labels from '../graphics2d/Labels';
+import Gui, { PLANET_SCALE_ID } from '../gui/Gui';
+import { IS_CAPTURE, DEG_TO_RAD, KM } from '../constants';
 		
 let stats;
 let renderer;

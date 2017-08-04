@@ -1,8 +1,8 @@
 
 import { Color, Euler, Vector3 } from 'three';
-import { getUniverse } from 'JSOrrery';
-import { AU, SIDERAL_DAY, NM_TO_KM, CIRCLE, YEAR, DAY, DEG_TO_RAD } from 'constants';
-import { J2000Date, getDeltaT } from 'utils/JD';
+import { getUniverse } from '../../../JSOrrery';
+import { AU, SIDERAL_DAY, NM_TO_KM, CIRCLE, YEAR, DAY, DEG_TO_RAD } from '../../../constants';
+import { J2000Date, getDeltaT } from '../../../utils/JD';
 import { VSOP } from './earth/VSOP-earth';
 
 //time from where rotation is computed: the solstice before system's reference time (J2000)

@@ -1,6 +1,6 @@
 
-import Labels from 'graphics2d/Labels';
-import { getUniverse } from 'JSOrrery';
+import Labels from '../../graphics2d/Labels';
+import { getUniverse } from '../../JSOrrery';
 import { getMissionFromName } from './NasaNumbers';
 import { earth } from './bodies/earth';
 import { moon } from './bodies/moon';

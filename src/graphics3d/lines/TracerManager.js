@@ -2,8 +2,8 @@
 	Controls the trace of a body relative to another. Traces are not orbit lines, they are the path trace of a body relative to another
 */
 
-import Tracer from 'graphics3d/lines/Tracer';
-import { getUniverse } from 'JSOrrery';
+import Tracer from './Tracer';
+import { getUniverse } from '../../JSOrrery';
 
 //number of tracing vertices. It was previously taken directly from the orbit's size, but a constant number is more convenient
 const N_VERTICES = 1000;

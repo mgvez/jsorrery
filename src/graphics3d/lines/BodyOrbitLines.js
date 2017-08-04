@@ -1,7 +1,7 @@
 
-import { getUniverse } from 'JSOrrery';
-import OrbitLine from 'graphics3d/lines/OrbitLine';
-import Ticker from 'algorithm/Ticker';
+import { getUniverse } from '../../JSOrrery';
+import OrbitLine from '../lines/OrbitLine';
+import Ticker from '../../algorithm/Ticker';
 
 export default {
 			

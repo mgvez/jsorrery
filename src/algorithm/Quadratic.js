@@ -1,6 +1,6 @@
 
-import MoveAlgorithm from 'algorithm/MoveAlgorithm';
-import Gravity from 'algorithm/Gravity';
+import MoveAlgorithm from './MoveAlgorithm';
+import Gravity from './Gravity';
 
 
 const Quadratic = Object.create(MoveAlgorithm);

@@ -1,7 +1,7 @@
 /**
 	source for calculations http://www.braeunig.us/apollo/apollo11-TLI.htm
 */
-import { DEG_TO_RAD, RAD_TO_DEG, FT_TO_M, KM, CIRCLE, DAY } from 'constants';
+import { DEG_TO_RAD, RAD_TO_DEG, FT_TO_M, KM, CIRCLE, DAY } from '../../constants';
 import { earth } from './bodies/earth';
 
 

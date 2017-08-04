@@ -1,11 +1,11 @@
-import ResourceLoader from 'loaders/ResourceLoader';
+import ResourceLoader from '../loaders/ResourceLoader';
 import { Vector3, ShaderMaterial, Object3D, PlaneGeometry, Mesh, PointLight, DirectionalLight } from 'three';
-import Dimensions from 'graphics3d/Dimensions';
-import { KM, DEG_TO_RAD } from 'constants';
-import CameraManager from 'graphics3d/CameraManager';
-import { getUniverse } from 'JSOrrery';
-import Body3D from 'graphics3d/Body3d';
-import { radius as sunRadius } from 'scenario/scenarios/bodies/sun';
+import Dimensions from './Dimensions';
+import { KM, DEG_TO_RAD } from '../constants';
+import CameraManager from './CameraManager';
+import { getUniverse } from '../JSOrrery';
+import Body3D from './Body3d';
+import { radius as sunRadius } from '../scenario/scenarios/bodies/sun';
 
 
 class SunCorona {

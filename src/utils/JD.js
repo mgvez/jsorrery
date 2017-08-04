@@ -1,5 +1,5 @@
 
-import { J2000, DAY } from 'constants';
+import { J2000, DAY } from '../constants';
 
 const gregorianReform = new Date('1582-10-15T00:00:00.000Z');
 

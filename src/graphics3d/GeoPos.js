@@ -1,7 +1,7 @@
 import { Vector3, Euler, Mesh, SphereGeometry, MeshPhongMaterial } from 'three';
-import { DEG_TO_RAD, CIRCLE } from 'constants';
-import { getUniverse } from 'JSOrrery';
-import Gui from 'gui/Gui';
+import { DEG_TO_RAD, CIRCLE } from '../constants';
+import { getUniverse } from '../JSOrrery';
+import Gui from '../gui/Gui';
 
 const debugPos = false;
 

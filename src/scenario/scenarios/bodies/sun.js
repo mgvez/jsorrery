@@ -1,6 +1,6 @@
 
 import { Color } from 'three';
-import Sun from 'graphics3d/Sun';
+import Sun from '../../../graphics3d/Sun';
 
 export const radius = 6.96342e5;
 

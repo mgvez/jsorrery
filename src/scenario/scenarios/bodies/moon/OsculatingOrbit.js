@@ -1,5 +1,5 @@
 
-import { DEG_TO_RAD, RAD_TO_DEG } from 'constants';
+import { DEG_TO_RAD, RAD_TO_DEG } from '../../../../constants';
 
 export default function(t) {
 

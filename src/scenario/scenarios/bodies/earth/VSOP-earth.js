@@ -1,5 +1,5 @@
 import { Vector3 } from 'three';
-import { AU, KM } from 'constants';
+import { AU, KM } from '../../../../constants';
 
 function Earth_X0(time) {
 	const cos = Math.cos;

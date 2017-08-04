@@ -2,7 +2,7 @@
 	Controls the display/hiding of orbit lines depending on the camera that is active
 */
 
-import BodyOrbitLines from 'graphics3d/lines/BodyOrbitLines';
+import BodyOrbitLines from './BodyOrbitLines';
 
 export default {
 	/**

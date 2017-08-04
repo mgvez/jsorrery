@@ -1,10 +1,10 @@
 
 import $ from 'jquery';
-import Gui, { SCENARIO_ID, SHARE_ID } from 'gui/Gui';
-import Sharer from 'gui/Sharer';
-import Universe from 'Universe';
-import Preloader from 'gui/Preloader';
-import ScenarioLoader from 'scenario/Loader';
+import Gui, { SCENARIO_ID, SHARE_ID } from './gui/Gui';
+import Sharer from './gui/Sharer';
+import Universe from './Universe';
+import Preloader from './gui/Preloader';
+import ScenarioLoader from './scenario/Loader';
 
 function getInitialSettings() {
 	const parts = window.location.search.substr(1).split('&');

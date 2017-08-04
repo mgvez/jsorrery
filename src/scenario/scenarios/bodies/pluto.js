@@ -1,5 +1,5 @@
 
-import { AU } from 'constants';
+import { AU } from '../../../constants';
 
 export const pluto = {
 	title: 'Pluto',

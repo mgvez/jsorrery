@@ -1,5 +1,5 @@
 import { Vector3 } from 'three';
-import { G } from 'constants';
+import { G } from '../constants';
 
 export default {
 	/**

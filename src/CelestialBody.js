@@ -1,9 +1,9 @@
 
 import { Vector3, Euler } from 'three';
-import OrbitalElements from 'algorithm/OrbitalElements';
-import { RAD_TO_DEG, CIRCLE } from 'constants';
-import { getUniverse } from 'JSOrrery';
-import { getJ2000SecondsFromDate } from 'utils/JD';
+import OrbitalElements from './algorithm/OrbitalElements';
+import { RAD_TO_DEG, CIRCLE } from './constants';
+import { getUniverse } from './JSOrrery';
+import { getJ2000SecondsFromDate } from './utils/JD';
 
 
 export default {

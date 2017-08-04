@@ -3,7 +3,7 @@
 Corrections have been added to element's altitude to compensate for imprecisions in parameters, so as to fit mechanical orbit to orbital elements.
 
 */
-import { DAY } from 'constants';
+import { DAY } from '../../constants';
 import { earth } from './bodies/earth';
 import { Mercury7, Mercury8 } from './NasaNumbers';
 

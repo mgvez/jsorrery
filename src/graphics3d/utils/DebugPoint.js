@@ -1,6 +1,6 @@
 
 import { MeshBasicMaterial, Mesh, SphereGeometry, ArrowHelper } from 'three';
-import { getUniverse } from 'JSOrrery';
+import { getUniverse } from '../../JSOrrery';
 
 const points = [];
 const arrows = [];

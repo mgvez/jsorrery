@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import GeoCoord from 'utils/GeoCoord';
+import GeoCoord from '../utils/GeoCoord';
 import ExportValues from './ExportValues';
 import { GEOLOC_ID } from './Gui';
 

@@ -1,13 +1,13 @@
 
 import { Vector3, PerspectiveCamera } from 'three';
-import { OrbitControls } from 'utils/ThreeExamples';
-import { getUniverse } from 'JSOrrery';
-import TracerManager from 'graphics3d/lines/TracerManager';
-import OrbitLinesManager from 'graphics3d/lines/OrbitLinesManager';
-import ExportValues from 'gui/ExportValues';
-import Gui, { LOOKFROM_ID, LOOKAT_ID } from 'gui/Gui';
-import { DEG_TO_RAD } from 'constants';
-import GeoPos from 'graphics3d/GeoPos';
+import { OrbitControls } from '../utils/ThreeExamples';
+import { getUniverse } from '../JSOrrery';
+import TracerManager from './lines/TracerManager';
+import OrbitLinesManager from './lines/OrbitLinesManager';
+import ExportValues from '../gui/ExportValues';
+import Gui, { LOOKFROM_ID, LOOKAT_ID } from '../gui/Gui';
+import { DEG_TO_RAD } from '../constants';
+import GeoPos from './GeoPos';
 
 const DEFAULT_FOV = 45;
 const MAX_FOV = 90;

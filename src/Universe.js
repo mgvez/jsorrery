@@ -12,7 +12,7 @@ import ResourceLoader from 'loaders/ResourceLoader';
 import Ticker from 'algorithm/Ticker';
 import CelestialBody from 'CelestialBody';
 import Gui, { START_ID, DELTA_T_ID } from 'gui/Gui';
-import { getJD, getEpochSeconds } from 'utils/JD';
+import { getJD, getJ2000SecondsFromJD, getDateFromJD } from 'utils/JD';
 
 export default {
 	init(scenario, qstrSettings) {
@@ -44,8 +44,8 @@ export default {
 		this.playing = false;
 		this.drawRequested = false;
 
-		this.date = this.dateDisplay.getDate() || new Date();
-		this.setJD(getJD(this.date));
+		const date = this.dateDisplay.getDate() || new Date();
+		this.setJD(getJD(date));
 		
 		this.createBodies(scenario);
 		this.scene = Object.create(Scene);
@@ -228,8 +228,7 @@ export default {
 	},
 
 	showDate() {
-		this.date.setTime(J2000.getTime() + (this.currentTime * 1000));
-		this.dateDisplay.setDate(this.date);
+		this.dateDisplay.setDate(this.getCurrentDate());
 	},
 
 	tick() {
@@ -259,17 +258,17 @@ export default {
 
 	setJD(jd) {
 		this.currentJD = jd;
-		this.currentTime = getEpochSeconds(this.currentJD);
+		console.log(this.currentJD);
+		this.currentDate = getDateFromJD(this.currentJD);
+		this.currentTime = getJ2000SecondsFromJD(this.currentJD);
 	},
 
 	getCurrentTime() {
 		return this.currentTime;
 	},
 
-	getEpochTime(userDate) {
-		return getJ2000Time(userDate || new Date());
-		// const reqDate = userDate || new Date();
-		// return ((reqDate - J2000) / 1000);
+	getCurrentDate() {
+		return this.currentDate;
 	},
 
 	isPlaying() {

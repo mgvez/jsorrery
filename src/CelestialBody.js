@@ -1,8 +1,10 @@
 
 import { Vector3, Euler } from 'three';
 import OrbitalElements from 'algorithm/OrbitalElements';
-import { J2000, RAD_TO_DEG, CIRCLE } from 'constants';
+import { RAD_TO_DEG, CIRCLE } from 'constants';
 import { getUniverse } from 'JSOrrery';
+import { getJ2000SecondsFromDate } from 'utils/JD';
+
 
 export default {
 	init() {
@@ -29,7 +31,7 @@ export default {
 	//if epoch start is not j2000, get epoch time from j2000 epoch time
 	getEpochTime(epochTime) {
 		if (this.epoch) {
-			return epochTime - ((this.epoch.getTime() - J2000) / 1000);
+			return epochTime - (getJ2000SecondsFromDate(this.epoch));
 		}
 		return epochTime;
 	},
@@ -71,7 +73,7 @@ export default {
 		}
 		if (this.customInitialize) this.customInitialize();
 		
-		if (this.customAfterTick) this.customAfterTick(getUniverse().getCurrentTime(), getUniverse().date);
+		if (this.customAfterTick) this.customAfterTick(getUniverse().getCurrentTime(), getUniverse().getCurrentDate());
 	},
 
 	positionRelativeTo() {
@@ -88,7 +90,7 @@ export default {
 
 	//gets current rotation of body around its axis
 	getCurrentRotation() {
-		return (getUniverse().getCurrentTime() / this.sideralDay + (this.zeroTime || 0)) * CIRCLE;
+		return (getUniverse().getCurrentTime() / this.sideralDay + ((this.getZeroTime && this.getZeroTime()) || 0)) * CIRCLE;
 	},
 
 	//returns euler angle of tilt (default if none set in scenario)
@@ -175,7 +177,7 @@ export default {
 				if (this.onRevolution) this.onRevolution();
 			}
 		}
-		if (this.customAfterTick) this.customAfterTick(getUniverse().getCurrentTime(), getUniverse().date, deltaT);
+		if (this.customAfterTick) this.customAfterTick(getUniverse().getCurrentTime(), getUniverse().getCurrentDate(), deltaT);
 
 	},
 

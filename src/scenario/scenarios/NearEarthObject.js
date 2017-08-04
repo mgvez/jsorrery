@@ -9,7 +9,8 @@ radius: km
 
 import Promise from 'bluebird';
 import $ from 'jquery';
-import { J2000, AU } from 'constants';
+import { AU } from 'constants';
+import { getJ2000SecondsFromDate, J2000Date } from 'utils/JD';
 import { moon } from './bodies/moon';
 import { sun } from './bodies/sun';
 import { mercury } from './bodies/mercury';
@@ -83,8 +84,8 @@ function onObjectLoaded(res) {
 	// console.log(res);
 	const { name, orbital_data } = res;
 
-	const tsSinceJ2000 = (Number(orbital_data.epoch_osculation) - 2451545) * (60 * 60 * 24 * 1000);
-	const epochTime = J2000.getTime() + tsSinceJ2000;
+	const tsSinceJ2000 = getJ2000SecondsFromDate(orbital_data.epoch_osculation);
+	const epochTime = J2000Date() + tsSinceJ2000;
 	const epoch = new Date(epochTime);
 	return Object.assign({
 		name,

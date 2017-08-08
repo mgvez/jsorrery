@@ -11,7 +11,8 @@ export function getJD(date) {
 }
 
 export function getJ2000SecondsFromJD(jd) {
-	return (jd - J2000) * DAY;
+	// console.log(jd - J2000);
+	return (Number(jd) - J2000) * DAY;
 }
 
 export function getDateFromJD(jd) {

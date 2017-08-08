@@ -10,7 +10,7 @@ import Labels from './graphics2d/Labels';
 import Scene from './graphics3d/Scene';
 import ResourceLoader from './loaders/ResourceLoader';
 import Ticker from './algorithm/Ticker';
-import CelestialBody from 'CelestialBody';
+import CelestialBody from './CelestialBody';
 import Gui, { START_ID, DELTA_T_ID } from './gui/Gui';
 import { getJD, getJ2000SecondsFromJD, getDateFromJD } from './utils/JD';
 
@@ -258,7 +258,7 @@ export default {
 
 	setJD(jd) {
 		this.currentJD = jd;
-		console.log(this.currentJD);
+		// console.log(this.currentJD);
 		this.currentDate = getDateFromJD(this.currentJD);
 		this.currentTime = getJ2000SecondsFromJD(this.currentJD);
 	},

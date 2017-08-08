@@ -3,7 +3,7 @@ import { Vector3, Euler } from 'three';
 import OrbitalElements from './algorithm/OrbitalElements';
 import { RAD_TO_DEG, CIRCLE } from './constants';
 import { getUniverse } from './JSOrrery';
-import { getJ2000SecondsFromDate } from './utils/JD';
+import { getJ2000SecondsFromJD } from './utils/JD';
 
 
 export default {
@@ -28,16 +28,8 @@ export default {
 		this.previousPosition = null;
 	},
 
-	//if epoch start is not j2000, get epoch time from j2000 epoch time
-	getEpochTime(epochTime) {
-		if (this.epoch) {
-			return epochTime - (getJ2000SecondsFromDate(this.epoch));
-		}
-		return epochTime;
-	},
-
 	setPositionFromDate(epochTime) {
-		const currentEpochTime = this.currentEpochTime = this.getEpochTime(epochTime);
+		const currentEpochTime = this.currentEpochTime = epochTime;
 		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(currentEpochTime, this.maxPrecision);
 
 		this.relativePosition = this.position.clone();
@@ -106,8 +98,8 @@ export default {
 	isFuture indicate if we want the elements for future orbit or for passed orbit (it changes for perturbed orbits)
 	*/
 	getOrbitVertices(isFuture) {
-
-		const startTime = this.getEpochTime(getUniverse().getCurrentTime());
+		console.log(this.currentEpochTime);
+		const startTime = getUniverse().getCurrentTime();
 		const elements = this.orbitalElements.calculateElements(startTime);
 		const period = this.orbitalElements.calculatePeriod(elements, this.relativeTo);
 

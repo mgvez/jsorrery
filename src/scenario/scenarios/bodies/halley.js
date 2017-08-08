@@ -1,5 +1,6 @@
 
 import { AU } from '../../../constants';
+import { getJD } from '../../../utils/JD';
 
 export const halley = {
 	title: 'Halley\'s Comet',
@@ -7,8 +8,8 @@ export const halley = {
 	mass: 2.2e14,
 	radius: 50,
 	color: '#999999',
-	epoch: new Date('1994-02-17T00:00:00.000Z'),
 	orbit: {
+		epoch: getJD(new Date('1994-02-17T00:00:00.000Z')),
 		base: {
 			a: 17.8341442925537 * AU,
 			e: 0.967142908462304,

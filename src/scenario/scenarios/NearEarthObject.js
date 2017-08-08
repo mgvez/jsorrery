@@ -10,7 +10,6 @@ radius: km
 import Promise from 'bluebird';
 import $ from 'jquery';
 import { AU } from '../../constants';
-import { getJ2000SecondsFromDate, J2000Date } from '../../utils/JD';
 import { moon } from './bodies/moon';
 import { sun } from './bodies/sun';
 import { mercury } from './bodies/mercury';
@@ -83,15 +82,12 @@ function loadNeo(neoData) {
 function onObjectLoaded(res) {
 	// console.log(res);
 	const { name, orbital_data } = res;
-
-	const tsSinceJ2000 = getJ2000SecondsFromDate(orbital_data.epoch_osculation);
-	const epochTime = J2000Date() + tsSinceJ2000;
-	const epoch = new Date(epochTime);
+	
 	return Object.assign({
 		name,
 		title: name,
 		orbit: {
-			epoch,
+			epoch: Number(orbital_data.epoch_osculation),
 			base: {
 				a: Number(orbital_data.semi_major_axis) * AU,
 				e: Number(orbital_data.eccentricity),

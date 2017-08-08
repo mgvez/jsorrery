@@ -3,7 +3,7 @@ import { Vector3, Euler, Quaternion } from 'three';
 
 import { sinh, sign, cosh } from './Math';
 import { getUniverse } from '../JSOrrery';
-import { getJ2000SecondsFromDate } from '../utils/JD';
+import { getJ2000SecondsFromJD } from '../utils/JD';
 import { G, CENTURY, DAY, KM, DEG_TO_RAD, CIRCLE, AU } from '../constants';
 
 function solveEccentricAnomaly(f, x0, maxIter) {
@@ -53,7 +53,7 @@ export default {
 	setDefaultOrbit(orbitalElements, calculator, positionCalculator) {
 		this.orbitalElements = orbitalElements;
 		if (orbitalElements && orbitalElements.epoch) {
-			this.epochCorrection = getJ2000SecondsFromDate(orbitalElements.epoch);
+			this.epochCorrection = getJ2000SecondsFromJD(orbitalElements.epoch);
 		}
 		this.calculator = calculator;
 		this.positionCalculator = positionCalculator;

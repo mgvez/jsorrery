@@ -87,7 +87,7 @@ export class ExternalSun {
 	}
 
 	draw(camPos) {
-		const sunPos = this.centralCelestialBody.calculatePosition(getUniverse().getCurrentTime());
+		const sunPos = this.centralCelestialBody.calculatePosition(getUniverse().getCurrentJD());
 		sunPos.setLength(getUniverse().getScene().getSize() * 4).negate();
 		this.root.position.copy(sunPos);
 		this.corona.draw(camPos, sunPos);

@@ -2,6 +2,7 @@
 import { getUniverse } from '../../JSOrrery';
 import OrbitLine from '../lines/OrbitLine';
 import Ticker from '../../algorithm/Ticker';
+import { DAY } from '../../constants';
 
 export default {
 			
@@ -14,13 +15,13 @@ export default {
 		//retrieves n vertices to draw orbit points since last tick. Needed for pertrbed orbits, whose path changes for each revolution
 		if (this.celestial.useCustomComputation) {
 			this.computeVerticesInDeltaT = (n) => {
-				const dt = Ticker.getDeltaT();
-				const curTime = getUniverse().getCurrentTime() - dt;
+				const dt = Ticker.getDeltaT() / DAY;
+				const startJd = getUniverse().getCurrentJD() - dt;
 				const inc = dt / n;
 				const v = [];
 				for (let i = 0; i < n; i++) {
-					const t = curTime + (i * inc);
-					v.push(this.celestial.calculatePosition(t));
+					const jd = startJd + (i * inc);
+					v.push(this.celestial.calculatePosition(jd));
 				}
 				return v;
 			};

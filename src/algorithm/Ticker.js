@@ -4,6 +4,7 @@ number of calculations of gravity per tick. Adding more calculation has the effe
 */
 
 import Quadratic from './Quadratic';
+import { DAY } from '../constants';
 
 let calculationsPerTick = 1;
 let actualCalculationsPerTick = 1;
@@ -23,26 +24,26 @@ function setDT() {
 	secondsPerTick = deltaTIncrement * actualCalculationsPerTick;
 }
 
-function moveByGravity(epochTime) {
+function moveByGravity(jd) {
 	for (let t = 1; t <= actualCalculationsPerTick; t++) {
-		integration.moveBodies(epochTime + (t * deltaTIncrement), deltaTIncrement);
+		integration.moveBodies(jd + (t * deltaTIncrement) / DAY, deltaTIncrement);
 	}
 }
 
-function moveByElements(epochTime) {
+function moveByElements(jd) {
 	// console.log(bodies.length);
 	for (let i = 0; i < bodies.length; i++) {
-		bodies[i].setPositionFromDate(epochTime);
+		bodies[i].setPositionFromJD(jd);
 	}
 }
 
 export default {
 	
-	tick(computePhysics, epochTime) {
+	tick(computePhysics, jd) {
 		if (computePhysics) {
-			moveByGravity(epochTime - secondsPerTick);
+			moveByGravity(jd - (secondsPerTick / DAY));
 		} else {
-			moveByElements(epochTime);
+			moveByElements(jd);
 		}
 
 		for (let i = 0; i < bodies.length; i++) {

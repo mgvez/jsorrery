@@ -63,18 +63,18 @@ export default {
 		this.name = name;
 	},
 
-	calculateVelocity(timeEpoch, relativeTo) {
+	calculateVelocity(jd, relativeTo) {
 		if (!this.orbitalElements) return new Vector3(0, 0, 0);
 
 		let eclipticVelocity;
 		
 		if (!relativeTo) {
-			const pos1 = this.calculatePosition(timeEpoch);
-			const pos2 = this.calculatePosition(timeEpoch + 60);
+			const pos1 = this.calculatePosition(jd);
+			const pos2 = this.calculatePosition(jd + 60 / DAY);
 			eclipticVelocity = pos2.sub(pos1).multiplyScalar(1 / 60);
 		} else {
 			//vis viva to calculate speed (not velocity, i.e not a vector)
-			const el = this.calculateElements(timeEpoch);
+			const el = this.calculateElements(jd);
 			const speed = Math.sqrt(G * getUniverse().getBody(relativeTo).mass * ((2 / (el.r)) - (1 / (el.a))));
 
 			//now calculate velocity orientation, that is, a vector tangent to the orbital ellipse
@@ -96,15 +96,15 @@ export default {
 		
 	},
 
-	calculatePosition(timeEpoch, maxPrecision) {
+	calculatePosition(jd, maxPrecision) {
 		if (!this.orbitalElements) return new Vector3(0, 0, 0);
 		//position calculators are very slow, we use them only when requested
 		if (this.positionCalculator && maxPrecision) {
-			const pos = this.positionCalculator(timeEpoch);
+			const pos = this.positionCalculator(jd);
 			console.log(this.name, pos.x, pos.y, pos.z);
 			return pos;
 		}
-		const computed = this.calculateElements(timeEpoch);
+		const computed = this.calculateElements(jd);
 		const pos = this.getPositionFromElements(computed);
 		// console.log(this.name, pos.x, pos.y, pos.z);
 
@@ -127,7 +127,8 @@ export default {
 		return solveEccentricAnomaly(solveKeplerLaguerreConwayHyp(e, M), E, 30);
 	},
 
-	calculateElements(timeEpoch, forcedOrbitalElements) {
+	calculateElements(jd, forcedOrbitalElements) {
+
 		if (!forcedOrbitalElements && !this.orbitalElements) return null;
 
 		const orbitalElements = forcedOrbitalElements || this.orbitalElements;
@@ -154,7 +155,7 @@ export default {
 		Pn	Longitude of the ascending node precession period (mean value)
 
 		*/
-		let correctedTimeEpoch = timeEpoch;
+		let correctedTimeEpoch = getJ2000SecondsFromJD(jd);
 		if (this.epochCorrection) {
 			correctedTimeEpoch -= this.epochCorrection;
 		}

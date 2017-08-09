@@ -1,7 +1,7 @@
 
 import { Color, Euler, Vector3 } from 'three';
 import { getUniverse } from '../../../JSOrrery';
-import { AU, SIDERAL_DAY, NM_TO_KM, CIRCLE, YEAR, DAY, DEG_TO_RAD } from '../../../constants';
+import { J2000, AU, SIDERAL_DAY, NM_TO_KM, CIRCLE, YEAR, DAY, DEG_TO_RAD } from '../../../constants';
 import { J2000Date, getDeltaT } from '../../../utils/JD';
 import { VSOP } from './earth/VSOP-earth';
 
@@ -11,7 +11,8 @@ import { VSOP } from './earth/VSOP-earth';
 //2000-03-20T07:26:28.000Z aligns with the Y axis, even though most sources cite 7:35 as the equinox
 // see https://eclipse.gsfc.nasa.gov/SEpath/deltat.html for DeltaT
 const solstice = new Date('1999-12-22T07:44:30.000Z');
-const baseZeroTime = (((J2000Date - solstice) / 1000) + getDeltaT(solstice)) / (YEAR * DAY);// + getDeltaT(solstice);
+//1 = 1 rotation
+const baseRotation = (((J2000Date - solstice) / 1000) / (YEAR * DAY)) - (getDeltaT(solstice) / DAY);
 
 export const earth = {
 	title: 'The Earth',
@@ -26,8 +27,10 @@ export const earth = {
 	},
 	sideralDay: SIDERAL_DAY,
 	
-	getZeroTime: () => {
-		return baseZeroTime - (getDeltaT(getUniverse().getCurrentDate()) / (YEAR * DAY));
+	getRotationCorrection() {
+		// console.log(getDeltaT(getUniverse().getCurrentDate()), baseRotation, getDeltaT(getUniverse().getCurrentDate()) / (DAY));
+		return baseRotation + (getDeltaT(getUniverse().getCurrentDate()) / DAY);
+		// return baseRotation; 
 	},
 	baseMapRotation: 3 * CIRCLE / 4,
 	tilt: 23 + (26 / 60) + (21 / 3600),
@@ -36,7 +39,9 @@ export const earth = {
 	
 	//tilt is oriented by taking into account precession of equinoxes
 	getTilt(xCorrection = 0) {
-		const nYears = getUniverse().getCurrentTime() / (YEAR * DAY);
+		const nYears = ((this.currentJD || 0) - J2000) / YEAR;
+		// console.log(xCorrection, nYears);
+		// console.log(this.tilt);
 		const precession = (nYears / 25800) * CIRCLE;
 		return new Euler(xCorrection - this.tilt * DEG_TO_RAD, -precession, 0, 'YZX');
 	},

@@ -3,7 +3,7 @@ import { DEG_TO_RAD, CIRCLE } from '../constants';
 import { getUniverse } from '../JSOrrery';
 import Gui from '../gui/Gui';
 
-const debugPos = false;
+const debugPos = true;
 
 export default function GeoPos(body3d, target) {
 
@@ -29,7 +29,7 @@ export default function GeoPos(body3d, target) {
 	}
 
 	this.update = () => {
-		const time = getUniverse().getCurrentTime();
+		const time = getUniverse().getCurrentJ2000Time();
 		if (lng === lastLng && lat === lastLat && time === lastTime) return;
 		// console.log(lng, lat);
 		lastLat = lat;

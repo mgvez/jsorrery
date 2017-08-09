@@ -74,6 +74,6 @@ export function getDeltaT(date) {
 		const u = y / 100;
 		dt = 10583.6 - 1014.41 * u + 33.78311 * (u ** 2) - 5.952053 * (u ** 3) - 0.1798452 * (u ** 4) + 0.022174192 * (u ** 5) + 0.0090316521 * (u ** 6);
 	}
-	console.log(dt);
+	// console.log(dt);
 	return dt;
 }

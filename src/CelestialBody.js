@@ -1,7 +1,7 @@
 
 import { Vector3, Euler } from 'three';
 import OrbitalElements from './algorithm/OrbitalElements';
-import { RAD_TO_DEG, CIRCLE } from './constants';
+import { RAD_TO_DEG, CIRCLE, DAY, J2000 } from './constants';
 import { getUniverse } from './JSOrrery';
 import { getJ2000SecondsFromJD } from './utils/JD';
 
@@ -28,9 +28,10 @@ export default {
 		this.previousPosition = null;
 	},
 
-	setPositionFromDate(epochTime) {
-		const currentEpochTime = this.currentEpochTime = epochTime;
-		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(currentEpochTime, this.maxPrecision);
+	setPositionFromJD(jd) {
+		this.currentJD = jd;
+		console.log(jd, this.maxPrecision);
+		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(jd, this.maxPrecision);
 
 		this.relativePosition = this.position.clone();
 		
@@ -65,7 +66,7 @@ export default {
 		}
 		if (this.customInitialize) this.customInitialize();
 		
-		if (this.customAfterTick) this.customAfterTick(getUniverse().getCurrentTime(), getUniverse().getCurrentDate());
+		if (this.customAfterTick) this.customAfterTick(getUniverse().getCurrentJ2000Time(), getUniverse().getCurrentDate());
 	},
 
 	positionRelativeTo() {
@@ -82,7 +83,11 @@ export default {
 
 	//gets current rotation of body around its axis
 	getCurrentRotation() {
-		return (getUniverse().getCurrentTime() / this.sideralDay + ((this.getZeroTime && this.getZeroTime()) || 0)) * CIRCLE;
+		const rot = ((this.currentJD - J2000) / (this.sideralDay / DAY));
+		const rotCorr = (this.getRotationCorrection && this.getRotationCorrection()) || 0;
+		// console.log(this.name, rot, rotCorr);
+		return (rot + rotCorr) * CIRCLE;
+		// + ((this.getZeroTime && this.getZeroTime()) || 0)) * CIRCLE;
 	},
 
 	//returns euler angle of tilt (default if none set in scenario)
@@ -98,8 +103,8 @@ export default {
 	isFuture indicate if we want the elements for future orbit or for passed orbit (it changes for perturbed orbits)
 	*/
 	getOrbitVertices(isFuture) {
-		console.log(this.currentEpochTime);
-		const startTime = getUniverse().getCurrentTime();
+
+		const startTime = this.currentJD;
 		const elements = this.orbitalElements.calculateElements(startTime);
 		const period = this.orbitalElements.calculatePeriod(elements, this.relativeTo);
 
@@ -116,7 +121,7 @@ export default {
 		const multiplyer = isFuture ? 1 : -1;
 		const arrayAction = isFuture ? 'push' : 'unshift';
 		for (let i = 0; total < 360; i++) {
-			point = this.calculatePosition(startTime + (multiplyer * incr * i));
+			point = this.calculatePosition(startTime + (multiplyer * incr * i) / DAY);
 
 			if (lastPoint) {
 				angle = point.angleTo(lastPoint) * RAD_TO_DEG;
@@ -124,7 +129,7 @@ export default {
 				if (angle > 1.3 || ((angle + total) > 360.5)) {
 					for (let j = 0; j < angle; j++) {
 						step = (incr * (i - 1)) + ((incr / angle) * j);
-						point = this.calculatePosition(startTime + (multiplyer * step));
+						point = this.calculatePosition(startTime + (multiplyer * step) / DAY);
 						
 						//when finishing the circle try to avoid going too far over 360 (break after first point going over 360)
 						if (total > 358) {
@@ -169,7 +174,7 @@ export default {
 				if (this.onRevolution) this.onRevolution();
 			}
 		}
-		if (this.customAfterTick) this.customAfterTick(getUniverse().getCurrentTime(), getUniverse().getCurrentDate(), deltaT);
+		if (this.customAfterTick) this.customAfterTick(getUniverse().getCurrentJ2000Time(), getUniverse().getCurrentDate(), deltaT);
 
 	},
 
@@ -177,9 +182,8 @@ export default {
 		this.onRevolution = cb;
 	},
 
-	calculatePosition(t) {
-
-		return this.orbitalElements.calculatePosition(t);
+	calculatePosition(jd) {
+		return this.orbitalElements.calculatePosition(jd);
 	},
 
 	getPosition() {
@@ -209,7 +213,7 @@ export default {
 	//velocity relative to central body for this object's orbit
 	getRelativeVelocity() {
 		if (this.relvelocity) return this.relvelocity.clone();
-		this.relvelocity = this.isCentral ? new Vector3() : this.orbitalElements.calculateVelocity(this.currentEpochTime, this.relativeTo);
+		this.relvelocity = this.isCentral ? new Vector3() : this.orbitalElements.calculateVelocity(this.currentJD, this.relativeTo);
 		return this.relvelocity.clone();
 	},
 	//return true/false if this body is orbiting the requested body

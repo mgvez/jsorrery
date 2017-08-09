@@ -14,6 +14,7 @@ import CelestialBody from './CelestialBody';
 import Gui, { START_ID, DELTA_T_ID } from './gui/Gui';
 import { getJD, getJ2000SecondsFromJD, getDateFromJD } from './utils/JD';
 
+
 export default {
 	init(scenario, qstrSettings) {
 		ResourceLoader.reset();
@@ -123,7 +124,7 @@ export default {
 				body.mass = 1;
 			}
 			body.init();
-			body.setPositionFromDate(this.currentTime);
+			body.setPositionFromJD(this.currentJD);
 		});
 
 		this.setBarycenter();
@@ -181,11 +182,11 @@ export default {
 
 		this.bodies.forEach(body => {
 			body.reset();
-			body.setPositionFromDate(this.currentTime);
+			body.setPositionFromJD(this.currentJD);
 			// console.log(body.name);
 		});
 
-		Ticker.tick(false, this.currentTime);
+		Ticker.tick(false, this.currentJD);
 
 		this.setBarycenter();
 
@@ -235,7 +236,7 @@ export default {
 		if (this.killed) return;
 		if (this.playing) {
 			this.setJD(this.currentJD + (Ticker.getDeltaT() / DAY));
-			Ticker.tick(this.usePhysics, this.currentTime);
+			Ticker.tick(this.usePhysics, this.currentJD);
 			
 			this.scene.updateCamera();
 			this.scene.draw();
@@ -260,11 +261,15 @@ export default {
 		this.currentJD = jd;
 		// console.log(this.currentJD);
 		this.currentDate = getDateFromJD(this.currentJD);
-		this.currentTime = getJ2000SecondsFromJD(this.currentJD);
+		this.currentJ2000Time = getJ2000SecondsFromJD(this.currentJD);
 	},
 
-	getCurrentTime() {
-		return this.currentTime;
+	getCurrentJ2000Time() {
+		return this.currentJ2000Time;
+	},
+
+	getCurrentJD() {
+		return this.currentJD;
 	},
 
 	getCurrentDate() {

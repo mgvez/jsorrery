@@ -1,12 +1,13 @@
 
 import MoveAlgorithm from './MoveAlgorithm';
 import Gravity from './Gravity';
+import { DAY } from '../constants';
 
 
 const Quadratic = Object.create(MoveAlgorithm);
 
 Quadratic.name = 'Quadratic';
-Quadratic.moveBodies = function moveBodies(epochTime, deltaT) {
+Quadratic.moveBodies = function moveBodies(jd, deltaT) {
 
 	this.computeDeltaT(deltaT);
 
@@ -24,7 +25,7 @@ Quadratic.moveBodies = function moveBodies(epochTime, deltaT) {
 			b.beforeMove(deltaT);
 
 			if (b.calculateFromElements) {
-				b.setPositionFromDate(epochTime + (this.halfDeltaT));
+				b.setPositionFromJD(jd + (this.halfDeltaT / DAY));
 			} else {
 				n[i] = {};
 				n[i].accel = [
@@ -50,7 +51,7 @@ Quadratic.moveBodies = function moveBodies(epochTime, deltaT) {
 		b = this.bodies[i];
 		if (!b.isStill) {
 			if (b.calculateFromElements) {
-				b.setPositionFromDate(epochTime + deltaT);
+				b.setPositionFromJD(jd + deltaT / DAY);
 			} else {
 				n[i].accel.push(b.force.clone().multiplyScalar(b.invMass));
 

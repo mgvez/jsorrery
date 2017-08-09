@@ -175,11 +175,12 @@ function getData(n) {
 	return window.elp && window.elp[fic];
 }
 
-export function ELP82B(epochTime, maxiter = 0, prec = 0) {
+export function ELP82B(jd, maxiter = 0, prec = 0) {
 	
-	const tjj = (epochTime / (3600 * 24)) + 2451545;
+	const tjj = jd;
+	// const tjj = (epochTime / (3600 * 24)) + 2451545;
 	// const tjj = getJD(epochTime);
-	console.log(tjj);
+	// console.log(tjj);
 
 	const pre = [0, 0, 0, 0];
 	const t = [0, 0, 0, 0, 0, 0];

@@ -233,6 +233,10 @@ export default {
 		//on the earth, position the camera at specific lon/lat
 		if (body3d.celestial.hasGeoposCam) {
 			pov.geoPos = new GeoPos(body3d, pov);
+
+			// pov.geoPos.activate();	
+			// setPrecision(true);
+
 		}
 
 		bodies3d[body3d.celestial.name] = body3d;

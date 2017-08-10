@@ -7,6 +7,22 @@ const UNIX_EPOCH_JULIAN_DATE = 2440587.5;
 const UNIX_EPOCH_JULIAN_DAY = 2440587;
 
 export function getJD(date) {
+	// const M = date.getUTCMonth() + 1;
+	// const d = date.getUTCDate();
+	// const a = Math.floor((14 - M) / 12);
+	// const y = date.getUTCFullYear() + 4800 - a;
+	// const m = M + 12 * a - 3; 
+	// let jdn;
+	// //gregorian
+	// if (date >= gregorianReform) {
+	// 	jdn = d + Math.floor((153 * m + 2) / 5) + (365 * y) + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+	// //julian
+	// } else {
+	// 	jdn = d + Math.floor((153 * m + 2) / 5) + (365 * y) + Math.floor(y / 4) - 32083;
+	// }
+	
+	// const t = ((date.getUTCHours() - 12) / 24) + (date.getUTCMinutes() / 1440) + (date.getUTCSeconds() / 86400);
+	// return jdn + t;
 	return (((+date) / 1000) / DAY) + UNIX_EPOCH_JULIAN_DATE;
 }
 

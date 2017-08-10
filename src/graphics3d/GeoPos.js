@@ -18,7 +18,7 @@ export default function GeoPos(body3d, target) {
 	let sphere;
 	if (debugPos) {
 		const mat = new MeshPhongMaterial({ color: 0xffffff, emissive: 0xff9911 });
-		const radius = body3d.getPlanetSize() * 0.002;
+		const radius = body3d.getPlanetSize() * 0.008;
 		const segments = 50;
 		const rings = 50;
 		sphere = new Mesh(

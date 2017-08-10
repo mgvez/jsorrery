@@ -180,9 +180,5 @@ export function VSOP(jd) {
 	r[k] %= dpi;
 	if (r[k] < 0) r[k] += dpi;
 	
-
-	const v = new Vector3(r[1] * AU * KM, r[2] * AU * KM, r[3] * AU * KM);
-	console.log(v);
-	return v;
-
+	return new Vector3(r[1] * AU * KM, r[2] * AU * KM, r[3] * AU * KM);
 }

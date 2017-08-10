@@ -157,9 +157,10 @@ export function VSOP(jd) {
 		// console.log(it, ic);
 		for (let i = 0; i < n; i++) {
 
-			const a = series[i][16];
-			const b = series[i][17];
-			const c = series[i][18];
+			const a = series[i][0];
+			const b = series[i][1];
+			const c = series[i][2];
+			
 			// console.log(series[i].length);
 
 			if (Math.abs(a) < p) {

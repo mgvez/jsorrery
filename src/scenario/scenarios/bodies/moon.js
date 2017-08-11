@@ -18,6 +18,7 @@ export const moon = {
 	positionCalculator: ELP82B,
 	useCustomComputation: true,
 	orbit: {
+		tilt: false,
 		base: {
 			a: 384400,
 			e: 0.0554,

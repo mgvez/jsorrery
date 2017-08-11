@@ -3,13 +3,14 @@ import Labels from '../../graphics2d/Labels';
 import { getMissionFromName } from './NasaNumbers';
 import { earth } from './bodies/earth';
 import { moon } from './bodies/moon';
+import { getDateFromJD } from '../../utils/JD';
 
 
 const g = window.location.search.match(/apollo=([0-9]+)/);
 const apolloNumber = (g && g[1]) || '8';
 // const apolloEarthOrbit = getMissionFromName(`Apollo${apolloNumber}`).getNumbers('earth');
 const apolloTLIOrbit = getMissionFromName(`Apollo${apolloNumber}`).getNumbers('TLI');
-const epoch = apolloTLIOrbit.epoch;
+const epoch = getDateFromJD(apolloTLIOrbit.orbit.epoch);
 
 //apollo 8, 10, 12, 15, 16 work better with moon position calculated from physics
 //apollo 11, 14 work better with moon position always calculated from elements

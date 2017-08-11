@@ -3,6 +3,7 @@
 */
 import { DEG_TO_RAD, RAD_TO_DEG, FT_TO_M, KM, CIRCLE, DAY } from '../../constants';
 import { earth } from './bodies/earth';
+import { getJD } from '../../utils/JD';
 
 
 //source: http://www.csgnetwork.com/siderealjuliantimecalc.html
@@ -123,11 +124,11 @@ function getMissionNumbers(orbitType = 'earth') {
 		celestLongAscNode += 145;
 		celestLongAscNode = celestLongAscNode%360;
 	}/**/
-
+	// console.log(epoch, a / KM);
 	return {
-		epoch,
 		relativeTo: 'earth',
 		orbit: {
+			epoch: getJD(epoch),
 			base: {
 				a: a / KM,
 				e,

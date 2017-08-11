@@ -3,7 +3,7 @@ import { Vector3, Euler, Quaternion } from 'three';
 
 import { sinh, sign, cosh } from './Math';
 import { getJ2000SecondsFromJD } from '../utils/JD';
-import { G, CENTURY, DAY, KM, DEG_TO_RAD, CIRCLE, AU } from '../constants';
+import { G, CENTURY, DAY, KM, DEG_TO_RAD, CIRCLE, AU, J2000 } from '../constants';
 
 function solveEccentricAnomaly(f, x0, maxIter) {
 		
@@ -52,7 +52,7 @@ export default {
 	setDefaultOrbit(orbitalElements, calculator, positionCalculator) {
 		this.orbitalElements = orbitalElements;
 		if (orbitalElements && orbitalElements.epoch) {
-			this.epochCorrection = getJ2000SecondsFromJD(orbitalElements.epoch);
+			this.epochOffsetFromJ2000 = getJ2000SecondsFromJD(orbitalElements.epoch);
 		}
 		this.calculator = calculator;
 		this.positionCalculator = positionCalculator;
@@ -99,7 +99,7 @@ export default {
 		
 	},
 
-	calculatePosition(jd, maxPrecision) {
+	calculatePosition(jd, maxPrecision, isDbg) {
 		if (!this.orbitalElements) return new Vector3(0, 0, 0);
 		//position calculators are very slow, we use them only when requested
 		if (this.positionCalculator && maxPrecision) {
@@ -107,9 +107,10 @@ export default {
 			// console.log(this.name, pos.x, pos.y, pos.z);
 			return pos;
 		}
-		const computed = this.calculateElements(jd);
+		const computed = this.calculateElements(jd, isDbg);
 		const pos = this.getPositionFromElements(computed);
-		// console.log(this.name, pos.x, pos.y, pos.z);
+		if (isDbg) console.log(this.name, pos.x, pos.y, pos.z, jd);		
+
 
 		return pos;
 	},
@@ -130,7 +131,7 @@ export default {
 		return solveEccentricAnomaly(solveKeplerLaguerreConwayHyp(e, M), E, 30);
 	},
 
-	calculateElements(jd) {
+	calculateElements(jd, isDbg) {
 
 		if (!this.orbitalElements) return null;
 
@@ -159,12 +160,14 @@ export default {
 
 		*/
 		let correctedTimeEpoch = getJ2000SecondsFromJD(jd);
-		if (this.epochCorrection) {
-			correctedTimeEpoch -= this.epochCorrection;
+		if (isDbg) console.log(correctedTimeEpoch, this.epochOffsetFromJ2000);		
+		if (this.epochOffsetFromJ2000) {
+			correctedTimeEpoch -= this.epochOffsetFromJ2000;
 		}
 		const tDays = correctedTimeEpoch / DAY;
 		const T = tDays / CENTURY;
-		//console.log(T);
+		if (isDbg) console.log(T, correctedTimeEpoch);
+
 		let computed = {
 			t: correctedTimeEpoch,
 		};
@@ -219,8 +222,8 @@ export default {
 
 		computed.r = computed.pos.length();
 		computed.v = Math.atan2(computed.pos.y, computed.pos.x);
-		//if orbital elements are computed relative to a body, we need to tilt the orbit according to this body's tilt (for example satellites around the earth)
-		if (this.relativeTo && this.relativeTo.tilt) {
+		//if orbital elements are computed relative to a body, we need to tilt the orbit according to this body's tilt (for example satellites around the earth) Some though are positionned relative to another, but oriented relative to the universe
+		if (this.orbitalElements.tilt !== false && this.relativeTo && this.relativeTo.tilt) {
 			computed.tilt = -this.relativeTo.tilt * DEG_TO_RAD;
 		}
 		return computed;

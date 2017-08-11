@@ -30,7 +30,7 @@ export default {
 	setPositionFromJD(jd) {
 		this.currentJD = jd;
 		// console.log(jd, this.maxPrecision);
-		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(jd, this.maxPrecision, true);
+		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(jd, this.maxPrecision);
 
 		this.relativePosition = this.position.clone();
 		

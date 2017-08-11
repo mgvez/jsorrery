@@ -63,7 +63,6 @@ function toggleCamera() {
 
 		if (currentCamera.geoPos) currentCamera.geoPos.activate();
 
-		universe.repositionBodies();
 	} else {
 		domEl.off('mousewheel');
 
@@ -73,6 +72,7 @@ function toggleCamera() {
 			if (currentCamera.jsorrery && currentCamera.jsorrery.controls) currentCamera.jsorrery.controls.enabled = true;
 		}
 	}
+	universe.repositionBodies();
 
 	trackOptionSelectors.at.toggleOptions([...toggling_at_options, viewSettings.lookAt], !!lookFromBody);
 

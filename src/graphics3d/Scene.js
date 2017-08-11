@@ -32,7 +32,7 @@ export default {
 		this.bodyScale = 1;
 		this.container = $(`<div id="universe" width="${this.width}" height="${this.height}">`).appendTo('body');
 		this.root = new Scene();
-		
+
 		DebugPoint.setContainer(this.root);
 
 		renderer = renderer || new WebGLRenderer({
@@ -121,7 +121,6 @@ export default {
 		if (this.sun) this.sun.draw(camPos);
 
 		renderer.render(this.root, CameraManager.getCamera());
-
 		if (this.screenshot) this.screenshot.capture();
 
 		//place planets labels. We need the camera position relative to the world in order to compute planets screen sizes, and hide/show labels depending on it

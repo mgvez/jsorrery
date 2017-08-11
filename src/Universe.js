@@ -37,7 +37,6 @@ export default {
 			this.playing = false;
 			this.setJD(getJD(this.dateDisplay.getDate()));
 			this.repositionBodies();
-			this.scene.onDateReset();
 		});
 
 		this.ticker = () => this.tick();
@@ -191,6 +190,8 @@ export default {
 			// console.log(body.name);
 		});
 
+		this.scene.onDateReset();
+
 		Ticker.tick(false, this.currentJD);
 
 		this.setBarycenter();
@@ -238,6 +239,7 @@ export default {
 	},
 
 	tick() {
+
 		if (this.killed) return;
 		if (this.playing) {
 			this.setJD(this.currentJD + (Ticker.getDeltaT() / DAY));
@@ -267,6 +269,7 @@ export default {
 		// console.log(this.currentJD);
 		this.currentDate = getDateFromJD(this.currentJD);
 		this.currentJ2000Time = getJ2000SecondsFromJD(this.currentJD);
+		this.drawRequested = true;
 	},
 
 	getCurrentJ2000Time() {

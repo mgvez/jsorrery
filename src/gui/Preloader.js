@@ -1,5 +1,6 @@
 
 import { TweenMax } from 'gsap';
+import Promise from 'bluebird';
 
 let preloader;
 function getNode() {
@@ -11,19 +12,25 @@ function getNode() {
 export default {
 	
 	remove() {
-		TweenMax.to(getNode(), 0.5, {
-			opacity: 0,
-			onComplete() {
-				getNode().style.display = 'none';
-			},
+		const node = getNode();
+		if (!node) return Promise.resolve();
+		return new Promise(resolve => {
+			TweenMax.to(node, 0.5, {
+				opacity: 0,
+				onComplete() {
+					node.style.display = 'none';
+					resolve();
+				},
+			});
 		});
 	},
 
 	show() {
-		const p = getNode();
-		TweenMax.killTweensOf(p);
-		p.style.display = 'block';
-		TweenMax.to(p, 0.5, { opacity: 1 });
+		const node = getNode();
+		if (!node) return;
+		TweenMax.killTweensOf(node);
+		node.style.display = 'block';
+		TweenMax.to(node, 0.5, { opacity: 1 });
 	},
 
 };

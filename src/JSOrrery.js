@@ -56,8 +56,10 @@ export function loadScenario(scenarioConfig, defaultParams) {
 	} else {
 		onSceneReady = getSceneReady();
 	}
-	onSceneReady.then(Preloader.remove).catch((e) => {
+	return onSceneReady.then(() => Preloader.remove()).catch((e) => {
 		console.log(e);	// eslint-disable-line
+	}).then(() => {
+		return activeScenario;
 	});
 }
 

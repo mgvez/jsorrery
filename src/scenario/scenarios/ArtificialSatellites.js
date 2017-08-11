@@ -21,8 +21,8 @@ export default {
 			mass: 84,
 			radius: 2,
 			color: '#ffffff',
+			relativeTo: 'earth',
 			orbit: {
-				relativeTo: 'earth',
 				base: {
 					a: ((earth.radius * 2) + 228 + 947) / 2,
 					e: 0.0517,
@@ -46,8 +46,8 @@ export default {
 			mass: 1224.7,
 			radius: 2,
 			color: '#ffffff',
+			relativeTo: 'earth',
 			orbit: {
-				relativeTo: 'earth',
 				base: {
 					a: ((earth.radius * 2) + 159 + 265) / 2,
 					e: 0.00804,
@@ -73,7 +73,7 @@ export default {
 				radius: 2,
 				color: '#ffffff',
 			},
-			Mercury7.getNumbers('earth')
+			Mercury7.getNumbers()
 		),
 		mercury8: Object.assign(
 			{
@@ -82,15 +82,15 @@ export default {
 				radius: 2,
 				color: '#ffffff',
 			},
-			Mercury8.getNumbers('earth')
+			Mercury8.getNumbers()
 		),
 		hubble: {
 			title: 'Hubble ST',
 			mass: 11110,
 			radius: 2,
 			color: '#ffaa00',
+			relativeTo: 'earth',
 			orbit: {
-				relativeTo: 'earth',
 				base: {
 					a: (earth.radius + 11 + 586.47),
 					e: 0.00172,
@@ -115,8 +115,8 @@ export default {
 			mass: 1,
 			radius: 2,
 			color: '#00aaff',
+			relativeTo: 'earth',
 			orbit: {
-				relativeTo: 'earth',
 				base: {
 					a: ((earth.radius * 2) + 161 + 259.4) / 2,
 					e: 0.0003,

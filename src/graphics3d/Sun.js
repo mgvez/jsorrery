@@ -3,17 +3,14 @@ import ResourceLoader from '../loaders/ResourceLoader';
 import Dimensions from './Dimensions';
 import { KM, DEG_TO_RAD } from '../constants';
 import CameraManager from './CameraManager';
-import { getUniverse } from '../JSOrrery';
 import Body3D from './Body3d';
 import { radius as sunRadius } from '../scenario/scenarios/bodies/sun';
 
 
 class SunCorona {
-	constructor() {
+	constructor(scene) {
 		this.root = new Object3D();
 		this.sunSize = Dimensions.getScaled(sunRadius * KM);
-
-		const scene = getUniverse().getScene();
 		const geoSize = scene.getSize() * 0.4;
 		
 		const uniforms = {
@@ -74,11 +71,11 @@ class SunCorona {
 
 //creates a fake sun, for scenarios where the sun is not part of the setup
 export class ExternalSun {
-	constructor(centralCelestialBody) {
+	constructor(centralCelestialBody, universe) {
 		this.root = new Object3D();
+		this.universe = universe;
 		this.centralCelestialBody = centralCelestialBody;
-
-		this.corona = new SunCorona();
+		this.corona = new SunCorona(universe.getScene());
 		this.corona.scale = 3;
 		this.corona.sunSize = 10;
 		this.root.add(new DirectionalLight(0xFFFFFF, 1));
@@ -87,8 +84,8 @@ export class ExternalSun {
 	}
 
 	draw(camPos) {
-		const sunPos = this.centralCelestialBody.calculatePosition(getUniverse().getCurrentJD());
-		sunPos.setLength(getUniverse().getScene().getSize() * 4).negate();
+		const sunPos = this.centralCelestialBody.calculatePosition(this.universe.getCurrentJD());
+		sunPos.setLength(this.universe.getScene().getSize() * 4).negate();
 		this.root.position.copy(sunPos);
 		this.corona.draw(camPos, sunPos);
 		
@@ -103,12 +100,12 @@ export default class Sun extends Body3D {
 	
 	draw(camPos) {
 		if (!camPos) return;
-		const sunPos = this.celestial.getPosition();
+		const sunPos = Dimensions.getScaled(this.celestial.getPosition());
 		this.corona.draw(camPos, sunPos);
 	}
 
 	setDisplayObject() {
-		this.corona = new SunCorona();
+		this.corona = new SunCorona(this.celestial.universe.getScene());
 		this.root.add(new PointLight(0xFFFFFF));
 		this.root.add(this.corona.root);
 	}
@@ -120,10 +117,5 @@ export default class Sun extends Body3D {
 	getDisplayObject() {
 		return this.root;
 	}
-
-	setPosition(pos) {
-		this.root.position.copy(pos);
-	}
-
 
 }

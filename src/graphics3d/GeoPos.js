@@ -1,6 +1,6 @@
 import { Vector3, Euler, Mesh, SphereGeometry, MeshPhongMaterial } from 'three';
 import { DEG_TO_RAD, CIRCLE } from '../constants';
-import { getUniverse } from '../JSOrrery';
+import { getJ2000SecondsFromJD } from '../utils/JD';
 import Gui from '../gui/Gui';
 
 const debugPos = true;
@@ -14,6 +14,7 @@ export default function GeoPos(body3d, target) {
 	let lastLng;
 	let lastTime;
 
+	const universe = body3d.celestial.universe;
 
 	let sphere;
 	if (debugPos) {
@@ -29,7 +30,7 @@ export default function GeoPos(body3d, target) {
 	}
 
 	this.update = () => {
-		const time = getUniverse().getCurrentJ2000Time();
+		const time = getJ2000SecondsFromJD(body3d.celestial.currentJD);
 		if (lng === lastLng && lat === lastLat && time === lastTime) return;
 		// console.log(lng, lat);
 		lastLat = lat;
@@ -53,7 +54,7 @@ export default function GeoPos(body3d, target) {
 		pos.applyEuler(body3d.celestial.getTilt());
 		if (sphere) sphere.position.copy(pos.clone().multiplyScalar(1.01));
 		target.position.copy(pos);
-		getUniverse().requestDraw();
+		universe.requestDraw();
 	};
 
 	this.activate = () => {

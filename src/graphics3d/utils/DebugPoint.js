@@ -1,9 +1,9 @@
 
 import { MeshBasicMaterial, Mesh, SphereGeometry, ArrowHelper } from 'three';
-import { getUniverse } from '../../JSOrrery';
 
 const points = [];
 const arrows = [];
+let container;
 
 export default {
 	
@@ -15,7 +15,7 @@ export default {
 		);
 		p.position.copy(pos);
 
-		getUniverse().getScene().getRoot().add(p);
+		container.add(p);
 		points.push(p);
 		return points.length - 1;
 
@@ -23,21 +23,25 @@ export default {
 
 	removeAll() {
 		points.forEach(p => {
-			getUniverse().getScene().getRoot().remove(p);
+			container.remove(p);
 		});
 		points.length = 0;
 		arrows.forEach(p => {
-			getUniverse().getScene().getRoot().remove(p);
+			container.remove(p);
 		});
 		arrows.length = 0;
 	},
 	
 	addArrow(pos, dir, l = 20, color = 0x666666) {
 		if (!dir || !pos) return;
-		getUniverse().getScene().getRoot().remove(this.vel);		
+		container.remove(this.vel);		
 		const a = new ArrowHelper(dir.clone().normalize(), pos.clone(), l, color);
-		getUniverse().getScene().getRoot().add(a);
+		container.add(a);
 		arrows.push(a);
-	}
+	},
+
+	setContainer(c) {
+		container = c;
+	},
 
 };

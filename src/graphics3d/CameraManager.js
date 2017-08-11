@@ -1,7 +1,6 @@
 
 import { Vector3, PerspectiveCamera } from 'three';
 import { OrbitControls } from '../utils/ThreeExamples';
-import { getUniverse } from '../JSOrrery';
 import TracerManager from './lines/TracerManager';
 import OrbitLinesManager from './lines/OrbitLinesManager';
 import ExportValues from '../gui/ExportValues';
@@ -25,6 +24,7 @@ let currentCamera;
 let allCameras;
 let cameraParams;
 let scene;
+let universe;
 let domEl;
 
 
@@ -63,7 +63,7 @@ function toggleCamera() {
 
 		if (currentCamera.geoPos) currentCamera.geoPos.activate();
 
-		getUniverse().repositionBodies();
+		universe.repositionBodies();
 	} else {
 		domEl.off('mousewheel');
 
@@ -83,7 +83,7 @@ function toggleCamera() {
 
 	updateCamera();
 	// scene.draw();
-	getUniverse().requestDraw();
+	universe.requestDraw();
 }
 
 function updateCamera() {
@@ -127,7 +127,7 @@ function onMouseWheel(event, delta) {
 }
 
 function onControlsUpdate() {
-	if (!getUniverse().isPlaying()) scene.draw();
+	if (!universe.isPlaying()) scene.draw();
 }
 
 function getDistanceFromFov(dimToSee, fov) {
@@ -159,8 +159,9 @@ function disableControls() {
 }
 
 export default {
-	init(sceneParam, aspect, fov, stageSize, container) {
+	init(sceneParam, aspect, fov, stageSize, container, universeParam) {
 		scene = sceneParam;
+		universe = universeParam;
 		domEl = container;
 		allCameras = [];
 		bodies3d = {};
@@ -185,7 +186,7 @@ export default {
 		trackOptionSelectors.from.addOption('Free camera', 'orbital');
 		trackOptionSelectors.at.addOption('System', 'universe');
 
-		if (getUniverse().getBody().name === 'sun') {
+		if (universe.getBody().name === 'sun') {
 			trackOptionSelectors.at.addOption('Night (away from the sun)', 'night');
 		}
 		

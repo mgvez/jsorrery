@@ -1,8 +1,7 @@
 
 // import $ from 'jquery';
 import { Color, Euler, Vector3 } from 'three';
-import { getUniverse } from '../../../JSOrrery';
-import { J2000, AU, SIDERAL_DAY, NM_TO_KM, CIRCLE, YEAR, DAY, DEG_TO_RAD } from '../../../constants';
+import { J2000, AU, SIDEREAL_DAY, NM_TO_KM, CIRCLE, YEAR, DAY, DEG_TO_RAD } from '../../../constants';
 import { J2000Date, getDeltaT } from '../../../utils/JD';
 import { VSOP } from './earth/VSOP-earth';
 
@@ -27,11 +26,11 @@ export const earth = {
 	material: {
 		specular: new Color('grey'),
 	},
-	sideralDay: SIDERAL_DAY,
+	sideralDay: SIDEREAL_DAY,
 	
 	getRotationCorrection() {
-		// console.log(getDeltaT(getUniverse().getCurrentDate()));
-		const dt = getDeltaT(getUniverse().getCurrentDate());
+		const dt = getDeltaT(this.universe.getCurrentDate());
+		// console.log(dt);
 		return baseRotation - (dt / DAY);
 	},
 	baseMapRotation: 3 * CIRCLE / 4,

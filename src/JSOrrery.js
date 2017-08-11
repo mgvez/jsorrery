@@ -27,13 +27,16 @@ function getInitialSettings() {
 }
 
 let activeScenario;
-function loadScenario(name, defaultParams) {
+function loadScenarioFromName(name, defaultParams) {
 	if (activeScenario && name === activeScenario.name) {
 		Preloader.remove();
 		return;
 	}
-
 	const scenarioConfig = ScenarioLoader.get(name);
+	loadScenario(scenarioConfig, defaultParams);
+}
+
+export function loadScenario(scenarioConfig, defaultParams) {
 
 	if (activeScenario) {
 		activeScenario.kill();
@@ -69,7 +72,7 @@ export default function jsOrrery() {
 	const scenarios = ScenarioLoader.getList();
 	const scenarioChanger = Gui.addDropdown(SCENARIO_ID, () => {
 		Preloader.show();
-		loadScenario(scenarioChanger.getValue());
+		loadScenarioFromName(scenarioChanger.getValue());
 	});
 	
 	Gui.addBtn(SHARE_ID, SHARE_ID, () => {
@@ -97,9 +100,5 @@ export default function jsOrrery() {
 	const scenarioHelpContainer = $('#helpScenario');
 	scenarioHelpContainer.append(help);
 
-	loadScenario(scenarios[defaultScenario].name, defaultParams);
-}
-
-export function getUniverse() {
-	return activeScenario;
+	loadScenarioFromName(scenarios[defaultScenario].name, defaultParams);
 }

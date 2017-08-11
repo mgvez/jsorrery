@@ -26,7 +26,7 @@ export const DAY = 60 * 60 * 24;
 export const YEAR = 365.25;
 //duration in days
 export const CENTURY = 100 * YEAR;
-export const SIDERAL_DAY = 3600 * 23.9344696;
+export const SIDEREAL_DAY = 3600 * 23.9344696;
 
 // export const J2000 = new Date('2000-01-01T12:00:00-00:00');
 export const J2000 = 2451545;

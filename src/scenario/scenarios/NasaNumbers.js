@@ -47,7 +47,7 @@ function getLongAtLocalSideralTime(dateGMT, longitude) {
 
 
 const GM = 3.986005e14;
-function getMissionNumbers(orbitType) {
+function getMissionNumbers(orbitType = 'earth') {
 
 	//see http://www.braeunig.us/apollo/apollo11-TLI.htm
 
@@ -126,8 +126,8 @@ function getMissionNumbers(orbitType) {
 
 	return {
 		epoch,
+		relativeTo: 'earth',
 		orbit: {
-			relativeTo: 'earth',
 			base: {
 				a: a / KM,
 				e,

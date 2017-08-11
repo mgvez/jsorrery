@@ -2,18 +2,17 @@
 import { Vector3, Euler } from 'three';
 import OrbitalElements from './algorithm/OrbitalElements';
 import { RAD_TO_DEG, CIRCLE, DAY, J2000 } from './constants';
-import { getUniverse } from './JSOrrery';
-import { getJ2000SecondsFromJD } from './utils/JD';
-
 
 export default {
-	init() {
+	init(universe) {
 		this.reset();
 		this.movement = new Vector3();
 		this.invMass = 1 / this.mass;
+		this.universe = universe;
 
 		this.orbitalElements = Object.create(OrbitalElements);
 		this.orbitalElements.setName(this.name);
+		this.orbitalElements.setRelativeTo(this.universe.getBody(this.relativeTo));
 		this.orbitalElements.setDefaultOrbit(this.orbit, this.osculatingElementsCalculator, this.positionCalculator);
 		//console.log(this.name, this.position, this.velocity);
 
@@ -30,7 +29,7 @@ export default {
 
 	setPositionFromJD(jd) {
 		this.currentJD = jd;
-		console.log(jd, this.maxPrecision);
+		// console.log(jd, this.maxPrecision);
 		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(jd, this.maxPrecision);
 
 		this.relativePosition = this.position.clone();
@@ -42,7 +41,7 @@ export default {
 	},
 	
 	getAngleTo(bodyName) {
-		const ref = getUniverse().getBody(bodyName);
+		const ref = this.universe.getBody(bodyName);
 		if (ref) {
 			
 			const eclPos = this.position.clone().sub(ref.getPosition()).normalize();
@@ -66,14 +65,14 @@ export default {
 		}
 		if (this.customInitialize) this.customInitialize();
 		
-		if (this.customAfterTick) this.customAfterTick(getUniverse().getCurrentJ2000Time(), getUniverse().getCurrentDate());
+		if (this.customAfterTick) this.customAfterTick(0);
 	},
 
 	positionRelativeTo() {
 		if (this.relativeTo) {
 
-			const central = getUniverse().getBody(this.relativeTo);
-			if (central && central !== getUniverse().getBody()/**/) {
+			const central = this.universe.getBody(this.relativeTo);
+			if (central && central !== this.universe.getBody()/**/) {
 				this.position.add(central.position);
 				// console.log(this.name + ' pos rel to ' + this.relativeTo);
 				this.addToAbsoluteVelocity(central.getAbsoluteVelocity());
@@ -106,7 +105,7 @@ export default {
 
 		const startTime = this.currentJD;
 		const elements = this.orbitalElements.calculateElements(startTime);
-		const period = this.orbitalElements.calculatePeriod(elements, this.relativeTo);
+		const period = this.orbitalElements.calculatePeriod(elements);
 
 		if (!period) return null;
 
@@ -162,7 +161,7 @@ export default {
 				this.positionRelativeTo();
 			}
 
-			const relativeToPos = getUniverse().getBody(this.relativeTo).getPosition();
+			const relativeToPos = this.universe.getBody(this.relativeTo).getPosition();
 			this.relativePosition.copy(this.position).sub(relativeToPos);
 			this.movement.copy(this.relativePosition).sub(this.previousRelativePosition);
 			this.speed = this.movement.length() / deltaT;
@@ -174,7 +173,7 @@ export default {
 				if (this.onRevolution) this.onRevolution();
 			}
 		}
-		if (this.customAfterTick) this.customAfterTick(getUniverse().getCurrentJ2000Time(), getUniverse().getCurrentDate(), deltaT);
+		if (this.customAfterTick) this.customAfterTick(deltaT);
 
 	},
 
@@ -213,11 +212,15 @@ export default {
 	//velocity relative to central body for this object's orbit
 	getRelativeVelocity() {
 		if (this.relvelocity) return this.relvelocity.clone();
-		this.relvelocity = this.isCentral ? new Vector3() : this.orbitalElements.calculateVelocity(this.currentJD, this.relativeTo);
+		this.relvelocity = this.isCentral ? new Vector3() : this.orbitalElements.calculateVelocity(this.currentJD);
 		return this.relvelocity.clone();
 	},
 	//return true/false if this body is orbiting the requested body
 	isOrbitAround(celestial) {
 		return celestial.name === this.relativeTo;
+	},
+
+	kill() {
+		this.getBody3D = null;
 	},
 };

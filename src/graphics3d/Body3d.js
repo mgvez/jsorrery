@@ -23,8 +23,6 @@ export default class Body3D {
 		};
 
 		Labels.addPlanetLabel(this.celestial.title || this.celestial.name, this);
-
-
 	}
 
 	getDisplayObject() {
@@ -37,6 +35,10 @@ export default class Body3D {
 
 	setOrbitLines(orbitLines) {
 		this.orbitLines = orbitLines;
+	}
+
+	getTraceRelativeToBody() {
+		return this.celestial.universe.getBody(this.celestial.traceRelativeTo || this.celestial.relativeTo);
 	}
 
 	setDisplayObject() {

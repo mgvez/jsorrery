@@ -9,6 +9,7 @@ import MilkyWay from './MilkyWayParticles';
 import CameraManager from './CameraManager';
 import OrbitLinesManager from './lines/OrbitLinesManager';
 import TracerManager from './lines/TracerManager';
+import DebugPoint from './utils/DebugPoint';
 import Dimensions from './Dimensions';
 import Screenshot from './Screenshot';
 import { ExternalSun } from './Sun';
@@ -24,12 +25,15 @@ function drawBody(b) {
 }
 
 export default {
-	createStage(scenario) {
+	createStage(scenario, universe) {
 
+		this.universe = universe;
 		this.bodies3d = [];
 		this.bodyScale = 1;
 		this.container = $(`<div id="universe" width="${this.width}" height="${this.height}">`).appendTo('body');
-		this.root = new Scene();				
+		this.root = new Scene();
+		
+		DebugPoint.setContainer(this.root);
 
 		renderer = renderer || new WebGLRenderer({
 			antialias: true,
@@ -66,7 +70,7 @@ export default {
 		});
 
 		//this.drawAxis();
-		CameraManager.init(this, this.width / this.height, scenario.fov, this.stageSize, this.container);
+		CameraManager.init(this, this.width / this.height, scenario.fov, this.stageSize, this.container, universe);
 		OrbitLinesManager.init(scenario.calculateAll);
 		TracerManager.init(this.root);
 
@@ -192,7 +196,7 @@ export default {
 		if (this.centralBody.name === 'sun') {
 			this.sun = central3d;
 		} else {
-			this.sun = new ExternalSun(centralBody);
+			this.sun = new ExternalSun(centralBody, this.universe);
 			this.root.add(this.sun.getDisplayObject());
 		}
 	

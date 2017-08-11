@@ -51,7 +51,7 @@ export default {
 		this.createBodies(scenario);
 		this.scene = Object.create(Scene);
 		this.calculateDimensions();
-		this.scene.createStage(scenario);
+		this.scene.createStage(scenario, this);
 
 		this.initBodies(scenario);
 		Ticker.setSecondsPerTick(scenario.secondsPerTick.initial);
@@ -84,10 +84,15 @@ export default {
 		this.scene.kill();
 		this.centralBody = null;
 		this.scene = null;
+		this.bodies.forEach(b => b.kill());
 		this.bodies = [];
 		this.bodiesByName = {};
 
 		Labels.kill();
+	},
+
+	getTickerDeltaT() {
+		return Ticker.getDeltaT();
 	},
 
 	createBodies(scenario) {
@@ -123,7 +128,7 @@ export default {
 			if ((typeof scenario.calculateAll === 'undefined' || !scenario.calculateAll) && !body.isCentral) {
 				body.mass = 1;
 			}
-			body.init();
+			body.init(this);
 			body.setPositionFromJD(this.currentJD);
 		});
 

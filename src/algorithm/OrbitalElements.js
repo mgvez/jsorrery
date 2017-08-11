@@ -2,7 +2,6 @@
 import { Vector3, Euler, Quaternion } from 'three';
 
 import { sinh, sign, cosh } from './Math';
-import { getUniverse } from '../JSOrrery';
 import { getJ2000SecondsFromJD } from '../utils/JD';
 import { G, CENTURY, DAY, KM, DEG_TO_RAD, CIRCLE, AU } from '../constants';
 
@@ -63,19 +62,23 @@ export default {
 		this.name = name;
 	},
 
-	calculateVelocity(jd, relativeTo) {
+	setRelativeTo(body) {
+		this.relativeTo = body;
+	},
+
+	calculateVelocity(jd) {
 		if (!this.orbitalElements) return new Vector3(0, 0, 0);
 
 		let eclipticVelocity;
 		
-		if (!relativeTo) {
+		if (!this.relativeTo) {
 			const pos1 = this.calculatePosition(jd);
 			const pos2 = this.calculatePosition(jd + 60 / DAY);
 			eclipticVelocity = pos2.sub(pos1).multiplyScalar(1 / 60);
 		} else {
 			//vis viva to calculate speed (not velocity, i.e not a vector)
 			const el = this.calculateElements(jd);
-			const speed = Math.sqrt(G * getUniverse().getBody(relativeTo).mass * ((2 / (el.r)) - (1 / (el.a))));
+			const speed = Math.sqrt(G * this.relativeTo.mass * ((2 / (el.r)) - (1 / (el.a))));
 
 			//now calculate velocity orientation, that is, a vector tangent to the orbital ellipse
 			const k = el.r / el.a;
@@ -101,7 +104,7 @@ export default {
 		//position calculators are very slow, we use them only when requested
 		if (this.positionCalculator && maxPrecision) {
 			const pos = this.positionCalculator(jd);
-			console.log(this.name, pos.x, pos.y, pos.z);
+			// console.log(this.name, pos.x, pos.y, pos.z);
 			return pos;
 		}
 		const computed = this.calculateElements(jd);
@@ -127,11 +130,11 @@ export default {
 		return solveEccentricAnomaly(solveKeplerLaguerreConwayHyp(e, M), E, 30);
 	},
 
-	calculateElements(jd, forcedOrbitalElements) {
+	calculateElements(jd) {
 
-		if (!forcedOrbitalElements && !this.orbitalElements) return null;
+		if (!this.orbitalElements) return null;
 
-		const orbitalElements = forcedOrbitalElements || this.orbitalElements;
+		const orbitalElements = this.orbitalElements;
 
 		/*
 
@@ -166,7 +169,7 @@ export default {
 			t: correctedTimeEpoch,
 		};
 
-		if (this.calculator && !forcedOrbitalElements) {
+		if (this.calculator) {
 			const realorbit = this.calculator(T);
 			Object.assign(computed, realorbit);
 		} else {
@@ -216,11 +219,9 @@ export default {
 
 		computed.r = computed.pos.length();
 		computed.v = Math.atan2(computed.pos.y, computed.pos.x);
-		if (orbitalElements.relativeTo) {
-			const relativeTo = getUniverse().getBody(orbitalElements.relativeTo);
-			if (relativeTo.tilt) {
-				computed.tilt = -relativeTo.tilt * DEG_TO_RAD;
-			}
+		//if orbital elements are computed relative to a body, we need to tilt the orbit according to this body's tilt (for example satellites around the earth)
+		if (this.relativeTo && this.relativeTo.tilt) {
+			computed.tilt = -this.relativeTo.tilt * DEG_TO_RAD;
 		}
 		return computed;
 	},
@@ -239,12 +240,12 @@ export default {
 		return computed.pos;
 	},
 
-	calculatePeriod(elements, relativeTo) {
+	calculatePeriod(elements) {
 		let period;
 		if (this.orbitalElements && this.orbitalElements.day && this.orbitalElements.day.M) {
 			period = 360 / this.orbitalElements.day.M;
-		} else if (getUniverse().getBody(relativeTo) && getUniverse().getBody(relativeTo).k && elements) {
-			period = 2 * Math.PI * Math.sqrt(((elements.a / (AU * 1000)) ** 3)) / getUniverse().getBody(relativeTo).k;
+		} else if (this.relativeTo && this.relativeTo.k && elements) {
+			period = 2 * Math.PI * Math.sqrt(((elements.a / (AU * 1000)) ** 3)) / this.relativeTo.k;
 		}
 		period *= DAY;//in seconds
 		return period;

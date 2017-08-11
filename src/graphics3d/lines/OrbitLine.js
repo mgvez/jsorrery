@@ -153,7 +153,6 @@ export default {
 			// console.log(angle);
 			//point is not behind. If this happens, we assume that all that came before are behind, since the count starts from begining of line, where the planet was at previous frame. It means though that the planet cannot move more than half a circle per tick.
 			if (angle >= QUARTER_CIRCLE) {
-				// getUniverse().stop(true);
 				return i;
 			}
 			// DebugPoint.add(vertex, 0x55ff00, 1);

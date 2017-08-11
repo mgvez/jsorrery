@@ -1,7 +1,5 @@
 
-import { getUniverse } from '../../JSOrrery';
 import OrbitLine from '../lines/OrbitLine';
-import Ticker from '../../algorithm/Ticker';
 import { DAY } from '../../constants';
 
 export default {
@@ -15,8 +13,8 @@ export default {
 		//retrieves n vertices to draw orbit points since last tick. Needed for pertrbed orbits, whose path changes for each revolution
 		if (this.celestial.useCustomComputation) {
 			this.computeVerticesInDeltaT = (n) => {
-				const dt = Ticker.getDeltaT() / DAY;
-				const startJd = getUniverse().getCurrentJD() - dt;
+				const dt = this.celestial.universe.getTickerDeltaT() / DAY;
+				const startJd = this.celestial.currentJD - dt;
 				const inc = dt / n;
 				const v = [];
 				for (let i = 0; i < n; i++) {
@@ -45,11 +43,12 @@ export default {
 			this.orbitLine.setLine(orbitVertices);
 
 			//does this body revolves around the system's main body? If so, draw its ecliptic
-			if (!this.celestial.relativeTo || this.celestial.relativeTo === getUniverse().getBody().name) {
+			const central = this.celestial.universe.getBody();
+			if (!this.celestial.relativeTo || this.celestial.relativeTo === central.name) {
 				const eclipticVertices = orbitVertices.map(val => val.clone().negate());
 				if (!this.eclipticLine) {
 					this.eclipticLine = Object.create(OrbitLine);
-					this.eclipticLine.init(this.celestial.name, getUniverse().getBody().color, true);
+					this.eclipticLine.init(this.celestial.name, central.color, true);
 				}
 				this.eclipticLine.setLine(eclipticVertices);
 				// console.log(this.eclipticLine);
@@ -108,12 +107,8 @@ export default {
 	//the orbit is drawn around the main body OR the universe (scene)
 	getOrbitContainer() {
 		//return Universe.getScene().getRoot();
-		let thisCentralBody;
-		const centralName = this.celestial.traceRelativeTo || this.celestial.relativeTo;
-		if (centralName) {
-			thisCentralBody = getUniverse().getBody(centralName);
-		}
-		return (thisCentralBody && thisCentralBody.getBody3D().getDisplayObject()) || getUniverse().getScene().getRoot();
+		const thisCentralBody = this.body3d.getTraceRelativeToBody();
+		return (thisCentralBody && thisCentralBody.getBody3D().getDisplayObject()) || this.celestial.universe.getScene().getRoot();
 	},
 
 	draw(pos) {

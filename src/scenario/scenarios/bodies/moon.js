@@ -10,7 +10,7 @@ export const moon = {
 	radius: 1738.1,
 	color: '#aaaaaa',
 	map: './img/moonmap4k_levels.jpg',
-	sideralDay: (27.3215782 * DAY),
+	siderealDay: (27.3215782 * DAY),
 	tilt: 1.5424,
 	fov: 1,
 	relativeTo: 'earth',
@@ -46,14 +46,14 @@ export const moon = {
 	customInitialize() {
 		if (this.relativeTo !== 'earth') return;
 		this.baseMapRotation = this.getMapRotation(this.getAngleTo('earth') - this.getCurrentRotation());
-		this.nextCheck = this.sideralDay;
+		this.nextCheck = this.siderealDay;
 	},
 	customAfterTick() {
 		if (this.relativeTo !== 'earth') return;
 		const time = this.universe.getCurrentJ2000Time();
-		//when a sideral day has passed, make sure that the near side is still facing the earth. Since the moon's orbit is heavily disturbed, some imprecision occurs in its orbit, and its duration is not always the same, especially in an incomplete scenario (where there are no sun/planets). Therefore, a correction is brought to the base map rotation, tweened so that is is not jerky.
+		//when a sidereal day has passed, make sure that the near side is still facing the earth. Since the moon's orbit is heavily disturbed, some imprecision occurs in its orbit, and its duration is not always the same, especially in an incomplete scenario (where there are no sun/planets). Therefore, a correction is brought to the base map rotation, tweened so that is is not jerky.
 		if (time >= this.nextCheck) {
-			this.nextCheck += this.sideralDay;
+			this.nextCheck += this.siderealDay;
 			const rot = this.getMapRotation(this.getAngleTo('earth') - this.getCurrentRotation());
 			TweenMax.to(this, 2, {
 				baseMapRotation: rot,

@@ -8,7 +8,7 @@ export const mars = {
 	radius: 3376,
 	color: '#ff3300',
 	map: './img/mars_1k_color.jpg',
-	sideralDay: 1.025957 * DAY,
+	siderealDay: 1.025957 * DAY,
 	orbit: {
 		base: {
 			a: 1.52371034 * AU,

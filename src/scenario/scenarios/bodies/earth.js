@@ -26,11 +26,11 @@ export const earth = {
 	material: {
 		specular: new Color('grey'),
 	},
-	sideralDay: SIDEREAL_DAY,
+	siderealDay: SIDEREAL_DAY,
 	
 	getRotationCorrection() {
 		const dt = getDeltaT(this.universe.getCurrentDate());
-		// console.log(dt);
+		// console.log(baseRotation, dt / DAY);
 		return baseRotation - (dt / DAY);
 	},
 	baseMapRotation: 3 * CIRCLE / 4,

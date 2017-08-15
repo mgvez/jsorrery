@@ -12,8 +12,8 @@ export default class Body3D {
 	constructor(celestialBody) {
 		this.root = new Object3D();
 		this.celestial = celestialBody;
-		//max delta T to show rotation. If deltaT is larger than that, planet would spin too fast, so don't show sideral day
-		this.maxDeltaForSideralDay = this.celestial.sideralDay && this.celestial.sideralDay / 20;
+		//max delta T to show rotation. If deltaT is larger than that, planet would spin too fast, so don't show sidereal day
+		this.maxDeltaForSiderealDay = this.celestial.siderealDay && this.celestial.siderealDay / 20;
 
 		this.setDisplayObject();
 
@@ -130,7 +130,7 @@ export default class Body3D {
 		// if (this.celestial.name === 'moon') console.log(pos, this.celestial.name);
 		this.root.position.copy(pos);
 
-		if (this.celestial.sideralDay) {
+		if (this.celestial.siderealDay) {
 			// this.planet.rotation.y = (this.celestial.baseMapRotation || 0) + this.celestial.getCurrentRotation();
 			// console.log(this.planet.rotation.y);
 			const qTilt = new Quaternion().setFromEuler(this.celestial.getTilt(QUARTER_CIRCLE));

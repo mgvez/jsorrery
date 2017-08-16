@@ -84,7 +84,7 @@ export default {
 	getCurrentRotation() {
 		const rot = ((this.currentJD - J2000) / (this.siderealDay / DAY));
 		const rotCorr = (this.getRotationCorrection && this.getRotationCorrection()) || 0;
-		console.log(this.name, rot, rotCorr, (rot + rotCorr) % 1);
+		// console.log(this.name, rot, rotCorr, (rot + rotCorr) % 1);
 		return (rot + rotCorr) * CIRCLE;
 		// + ((this.getZeroTime && this.getZeroTime()) || 0)) * CIRCLE;
 	},

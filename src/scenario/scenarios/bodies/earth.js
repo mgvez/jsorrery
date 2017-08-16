@@ -30,7 +30,7 @@ export const earth = {
 	
 	getRotationCorrection() {
 		const dt = getDeltaT(this.universe.getCurrentDate());
-		// console.log(baseRotation, dt / DAY);
+		// console.log(baseRotation, dt);
 		return baseRotation - (dt / DAY);
 	},
 	baseMapRotation: 3 * CIRCLE / 4,
@@ -43,7 +43,6 @@ export const earth = {
 		const nYears = ((this.currentJD || 0) - J2000) / YEAR;
 		// console.log(xCorrection, nYears);
 		const precession = (nYears / 25800) * CIRCLE;
-		// const precession = testTilt;
 		return new Euler(xCorrection - this.tilt * DEG_TO_RAD, 0, -precession, 'ZYX');
 	},
 

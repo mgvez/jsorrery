@@ -104,7 +104,7 @@ export default {
 		//position calculators are very slow, we use them only when requested
 		if (this.positionCalculator && maxPrecision) {
 			const pos = this.positionCalculator(jd);
-			// console.log(this.name, pos.x, pos.y, pos.z);
+			// console.log(this.name, jd, pos.x, pos.y, pos.z);
 			return pos;
 		}
 		const computed = this.calculateElements(jd, isDbg);

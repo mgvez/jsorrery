@@ -88,6 +88,8 @@
 			<p>The <a href="http://en.wikipedia.org/wiki/Orbital_elements" target="_blank">orbital elements</a> of the planets are used to calculate their original position when picking a date. These calculations produce a very good approximation of the positions : you can compare the stars and constellations that you see in the background from other sources, provided that you place the point of view on The Earth.</p>
 			<p>Some scenarios are set to be animated by calculating positions from the orbital elements, but in some cases the velocity of each planet is derived from these calculations so that the positions are no longer calculated from the elements, but from the gravity that is acting between the different bodies. The calculation of these forces is also an approximation using a Quadratic integration, and its precision decays over time. This decay is more pronounced in some scenarios.</p>
 			<p>You can find on the internet the dates of celestial events, for example eclipses or lunar phases, and check if you can observe them in this simulation.</p>
+			<p>Please note that I use the Gregorian calendar for all dates, whereas Nasa use the Julian calendar for dates before the Gregorian reform (before 1582-10-15).</p>
+			<p>It is also worth noting that I use the ELP2000-85 theory to compute the Moon's position, which is not the exact same theory used by Nasa to compute its eclipse canon, so that there are small differences in the position of the Moon, particularly for very ancient dates.</p> 
 		</div>
 		<div class="helpContent" id="helpLookFrom">
 			<a class="close fa fa-close">&nbsp;</a>
@@ -148,7 +150,8 @@
 		</div>
 
 		<div id="credits" class="help fa fa-question-circle" data-for="helpCredits">credits</div>
-		<script src="data/elp.js"></script>		
+		<script src="data/elp.js"></script>	
+		<script src="data/vsop-earth.js"></script>
 		<script src="dist/bundle.js?v=20170605"></script>
 	<script type="text/javascript">
 		/** ANALYTICS */

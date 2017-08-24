@@ -138,6 +138,10 @@ export default {
 		CameraManager.updateCamera();
 	},
 
+	getCamera() {
+		return CameraManager.getCamera();
+	},
+
 	//when the date has changed by the user instead of by the playhead, we need to recalculate the orbits and redraw
 	onDateReset() {
 		this.updateCamera();

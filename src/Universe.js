@@ -210,6 +210,10 @@ export default {
 		return this.bodiesByName[name];
 	},
 
+	getCamera() {
+		return this.scene.getCamera();
+	},
+
 	calculateDimensions() {
 		const centralBodyName = this.getBody().name;
 		//find the largest radius in km among all bodies

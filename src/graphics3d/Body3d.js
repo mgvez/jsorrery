@@ -37,6 +37,10 @@ export default class Body3D {
 		this.orbitLines = orbitLines;
 	}
 
+	getOrbitLines() {
+		return this.orbitLines;
+	}
+
 	getTraceRelativeToBody() {
 		return this.celestial.universe.getBody(this.celestial.traceRelativeTo || this.celestial.relativeTo);
 	}

@@ -205,7 +205,10 @@ export default {
 				currentCamera.position.z = Number(settings.z) || 0;
 			}
 			currentCamera.fov = Number(settings.fov) || DEFAULT_FOV;
+			if (settings.far) currentCamera.far = settings.far;
 			currentCamera.updateProjectionMatrix();
+
+			if (settings.disableControls) disableControls();
 		}
 	},
 

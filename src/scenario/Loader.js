@@ -28,8 +28,11 @@ export function buildScenario(scenario) {
 	if (scenario.commonBodies) {
 		scenario.bodies = scenario.commonBodies.reduce((carry, current) => {
 			const { name } = current;
-			carry[name] = Object.assign({}, current, scenario.bodies[name]);
-			// console.log(name);
+			carry[name] = {
+				...current,
+				...scenario.bodies[name],
+			};
+			carry[name].orbit = carry[name].orbit && JSON.parse(JSON.stringify(carry[name].orbit));
 			return carry;
 		}, scenario.bodies);
 		scenario.commonBodies = null;

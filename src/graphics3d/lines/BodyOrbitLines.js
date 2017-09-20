@@ -117,6 +117,10 @@ export default {
 		}
 	},
 
+	getVertices() {
+		return this.orbitLine && this.orbitLine.orbitVertices;
+	},
+
 	kill() {
 		this.celestial.setOnRevolution(null);
 	},

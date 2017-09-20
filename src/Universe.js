@@ -13,6 +13,7 @@ import Ticker from './algorithm/Ticker';
 import CelestialBody from './CelestialBody';
 import Gui, { START_ID, DELTA_T_ID } from './gui/Gui';
 import { getJD, getJ2000SecondsFromJD, getDateFromJD } from './utils/JD';
+import Dimensions from './graphics3d/Dimensions';
 
 
 export default {
@@ -297,5 +298,9 @@ export default {
 		if (skipRender) return;
 		this.scene.updateCamera();
 		this.scene.draw();
+	},
+
+	getScaledDimension(dim) {
+		return Dimensions.getScaled(dim);
 	},
 };

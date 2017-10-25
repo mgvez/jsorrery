@@ -1,5 +1,6 @@
 
 import { AU } from '../../../constants';
+import { getJD } from '../../../utils/JD';
 
 export const haumea = {
 	title: 'Haumea',
@@ -8,6 +9,7 @@ export const haumea = {
 	radius: 1821.6,
 	color: '#999999',
 	orbit: {
+		epoch: getJD(new Date('2009-01-29T00:00:00.000Z')),	
 		base: {
 			a: 43.11668586903614 * AU,
 			e: 0.1953963724610412,

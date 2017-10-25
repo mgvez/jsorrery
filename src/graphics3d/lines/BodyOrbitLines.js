@@ -64,9 +64,10 @@ export default {
 
 	recalculateOrbitLine(isForced) {
 		if (!isForced && !this.celestial.useCustomComputation) return;
-		//console.log('recalculate '+this.celestial.name+' perturbed:'+this.celestial.useCustomComputation);
+		// console.log('recalculate ' + this.celestial.name + ' perturbed:' + this.celestial.useCustomComputation);
 		const orbitVertices = this.celestial.getOrbitVertices(this.celestial.showSolidOrbit);
 		if (orbitVertices) {
+			// console.log(orbitVertices);
 			const wasAdded = this.orbitLine.added;
 			this.hideOrbit();
 			this.orbitLine.setLine(orbitVertices);

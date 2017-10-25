@@ -8,6 +8,7 @@ export default {
 	scale: 1,
 
 	setLargestDimension(dim) {
+		// console.log(dim);
 		this.scale = 1000 / dim;
 	},
 

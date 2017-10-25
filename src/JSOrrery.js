@@ -41,7 +41,7 @@ export function loadScenario(scenarioConfig, defaultParams) {
 	if (activeScenario) {
 		activeScenario.kill();
 	}
-
+	if (!scenarioConfig) return Promise.resolve(null);
 	activeScenario = Object.create(Universe);
 	// console.log(activeScenario);
 	function getSceneReady() {

@@ -66,7 +66,7 @@ function getEventLabelCallback(el, pos, relativeTo) {
 			Dimensions.getScaled(pos.clone().add(relativeTo.getPosition())),
 			camPos
 		);
-		if (screenCoords) {
+		if (screenCoords && halfSceneW) {
 			angle = ((screenCoords.x - halfSceneW) / halfSceneW) * EVENT_LABEL_MAX_ANGLE;
 			radAngle = angle * DEG_TO_RAD;
 			tipPos = { x: Math.sin(radAngle) * EVENT_LABEL_LINE_H, y: -Math.cos(radAngle) * EVENT_LABEL_LINE_H };
@@ -86,9 +86,6 @@ export default {
 	init() {
 		if (labels) this.kill();
 		labels = [];
-		sceneW = $(window).width();
-		sceneH = $(window).height();
-		halfSceneW = sceneW / 2;
 	},
 
 	addPlanetLabel(title, body3d) {
@@ -108,8 +105,13 @@ export default {
 		});
 	},
 
-	draw(camPos, fov) {
+	draw(camPos, fov, w, h) {
 		// currentCamera.getWorldPosition();
+		if (w !== sceneW || h !== sceneH) {
+			sceneW = w;
+			sceneH = h;
+			halfSceneW = sceneW / 2;
+		}
 		labels.map(positionLabel, { camPos, fov });
 	},
 

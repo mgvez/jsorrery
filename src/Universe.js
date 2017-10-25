@@ -50,7 +50,7 @@ export default {
 		
 		this.createBodies(scenario);
 		this.scene = Object.create(Scene);
-		this.calculateDimensions();
+		this.calculateDimensions(scenario.sceneSize);
 		this.scene.createStage(scenario, this);
 
 		this.initBodies(scenario);
@@ -215,7 +215,7 @@ export default {
 		return this.scene.getCamera();
 	},
 
-	calculateDimensions() {
+	calculateDimensions(sceneSize) {
 		const centralBodyName = this.getBody().name;
 		//find the largest radius in km among all bodies
 		let largestRadius = this.bodies.reduce((memo, body) => {
@@ -235,7 +235,7 @@ export default {
 		//console.log('universe size', largestSMA, ' m');
 		
 		this.size = largestSMA;
-		this.scene.setDimension(largestSMA, smallestSMA, largestRadius);
+		this.scene.setDimension(largestSMA, smallestSMA, sceneSize);
 
 	},
 
@@ -254,8 +254,12 @@ export default {
 			this.scene.draw();
 			this.showDate();
 		} else {
+			// console.log('draw...');
 			this.scene.updateCamera();
-			if (this.drawRequested) this.scene.draw();
+			if (this.drawRequested) {
+				// console.log('draw', this.currentJD);
+				this.scene.draw();
+			}
 		}
 		this.drawRequested = false;
 		window.requestAnimationFrame(this.ticker);
@@ -270,7 +274,7 @@ export default {
 	},
 
 	setJD(jd) {
-		this.currentJD = jd;
+		this.currentJD = Number(jd);
 		// console.log(this.currentJD);
 		this.currentDate = getDateFromJD(this.currentJD);
 		this.currentJ2000Time = getJ2000SecondsFromJD(this.currentJD);

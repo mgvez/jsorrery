@@ -1,5 +1,6 @@
 
 import { AU } from '../../../constants';
+import { getJD } from '../../../utils/JD';
 
 export const makemake = {
 	title: 'Makemake',
@@ -8,6 +9,7 @@ export const makemake = {
 	radius: 1821.6,
 	color: '#999999',
 	orbit: {
+		epoch: getJD(new Date('2009-08-01T00:00:00.000Z')),	
 		base: {
 			a: 45.37454855956828 * AU,
 			e: 0.1626228804111456,

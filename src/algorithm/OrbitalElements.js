@@ -2,7 +2,7 @@
 import { Vector3, Euler, Quaternion } from 'three';
 
 import { sinh, sign, cosh } from './Math';
-import { getJ2000SecondsFromJD } from '../utils/JD';
+import { getJ2000SecondsFromJD, getJD } from '../utils/JD';
 import { G, CENTURY, DAY, KM, DEG_TO_RAD, CIRCLE, AU, J2000 } from '../constants';
 
 function solveEccentricAnomaly(f, x0, maxIter) {
@@ -110,8 +110,6 @@ export default {
 		const computed = this.calculateElements(jd, isDbg);
 		const pos = this.getPositionFromElements(computed);
 		if (isDbg) console.log(this.name, pos.x, pos.y, pos.z, jd);		
-
-
 		return pos;
 	},
 

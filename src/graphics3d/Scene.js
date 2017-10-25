@@ -97,9 +97,9 @@ export default {
 		this.root.add( object );
 	},/**/
 
-	setDimension(largestSMA, smallestSMA) {
-		this.width = window.innerWidth;
-		this.height = window.innerHeight;
+	setDimension(largestSMA, smallestSMA, sceneSize) {
+		this.width = (sceneSize && sceneSize.width) || window.innerWidth;
+		this.height = (sceneSize && sceneSize.height) || window.innerHeight;
 		Dimensions.setLargestDimension(largestSMA);
 		this.stageSize = Dimensions.getScaled(largestSMA);
 		this.smallestSMA = smallestSMA;
@@ -127,7 +127,7 @@ export default {
 		const radFov = CameraManager.getCamera().fov * DEG_TO_RAD;
 		// camPos = CameraManager.getCamera().position.clone();
 		// camPos.applyMatrix4(CameraManager.getCamera().matrixWorld);
-		Labels.draw(camPos, radFov);
+		Labels.draw(camPos, radFov, this.width, this.height);
 
 		/**/
 		if (stats) stats.update();

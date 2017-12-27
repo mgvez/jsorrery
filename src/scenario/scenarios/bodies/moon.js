@@ -44,11 +44,13 @@ export const moon = {
 		return Math.PI + circled;
 	},
 	customInitialize() {
+
 		if (this.relativeTo !== 'earth') return;
 		this.baseMapRotation = this.getMapRotation(this.getAngleTo('earth') - this.getCurrentRotation());
 		this.nextCheck = this.siderealDay;
 	},
 	customAfterTick() {
+		
 		if (this.relativeTo !== 'earth') return;
 		const time = this.universe.getCurrentJ2000Time();
 		//when a sidereal day has passed, make sure that the near side is still facing the earth. Since the moon's orbit is heavily disturbed, some imprecision occurs in its orbit, and its duration is not always the same, especially in an incomplete scenario (where there are no sun/planets). Therefore, a correction is brought to the base map rotation, tweened so that is is not jerky.

@@ -102,7 +102,7 @@ export default {
 		},
 		moon: {
 			useCustomComputation,
-			showSolidOrbit: true,
+			showSolidOrbit: false,
 		},
 		apolloTLI: Object.assign({},
 			apolloTLI,

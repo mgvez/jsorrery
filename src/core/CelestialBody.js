@@ -82,11 +82,9 @@ export default {
 
 	//gets current rotation of body around its axis
 	getCurrentRotation() {
-		const rot = ((this.currentJD - J2000) / (this.siderealDay / DAY));
+		const rot = ((this.universe.getCurrentJD() - J2000) / (this.siderealDay / DAY));
 		const rotCorr = (this.getRotationCorrection && this.getRotationCorrection()) || 0;
-		// console.log(this.name, rot, rotCorr, (rot + rotCorr) % 1);
 		return (rot + rotCorr) * CIRCLE;
-		// + ((this.getZeroTime && this.getZeroTime()) || 0)) * CIRCLE;
 	},
 
 	//returns euler angle of tilt (default if none set in scenario)

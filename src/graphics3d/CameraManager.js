@@ -167,6 +167,7 @@ export default class CameraManager {
 				if (this.currentCamera.jsorrery && this.currentCamera.jsorrery.controls) this.currentCamera.jsorrery.controls.enabled = true;
 			}
 		}
+		
 		this.universe.repositionBodies();
 
 		this.trackOptionSelectors.at.toggleOptions([...toggling_at_options, this.viewSettings.lookAt], !!lookFromBody);

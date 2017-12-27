@@ -49,7 +49,7 @@ export default class Universe {
 		this.dateDisplay = Gui.addDate(() => {
 			this.playing = false;
 			this.setJD(getJD(this.dateDisplay.getDate()));
-			this.repositionBodies();
+			this.repositionBodies(true);
 		});
 
 		this.ticker = () => this.tick();
@@ -187,14 +187,15 @@ export default class Universe {
 			//if central body's mass is way bigger than the object, we assume that the central body is the center of rotation. Otherwise, it's the barycenter
 			if (central.mass / b.mass > 10e10) {
 				b.position.add(central.position);
-			} else if (b.relativeTo === central.name) {
-				b.relativeTo = false;
 			}
 		});
 	}
 
-	repositionBodies() {
+	repositionBodies(forceReposition) {
 		// console.log(this.bodies);
+
+		//if we reposition bodies on camera change, we don't reset if scenario is physics based (orbital elements are only used for initial pos)
+		if (!forceReposition && this.scenario.calculateAll) return false;
 
 		this.bodies.forEach(body => {
 			body.reset();

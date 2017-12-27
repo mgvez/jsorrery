@@ -101,7 +101,7 @@ if (isProduction) {
 		}),
 		new ExtractTextPlugin('jsorrery.css'),
 		new CopyWebpackPlugin([
-			{ from: assetsPath + '/**/*' }
+			{ from: assetsPath }
 		])
 	);
 

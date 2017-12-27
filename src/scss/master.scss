@@ -33,7 +33,7 @@ $menuH : 45px;
 
 
 
-body {
+body#jsorrery {
 	opacity: 1;
 	margin:0;
 	padding:0;
@@ -43,36 +43,68 @@ body {
 	background: black;
 	overflow:hidden;
 	 -webkit-font-smoothing: antialiased;
+
+	h1, h2{
+		font-family:$titleFont;
+		font-weight:normal;
+	}
+	
+	a{
+		color:#fff;
+	}
+
+	.helpContent{
+
+		position:absolute;
+		top:0;
+		left:0;
+		z-index:150;
+		background: rgba(0, 0, 0, 0.8);
+		width : 60%;
+		min-width:400px;
+		max-height: 80%;
+		padding: 0;
+		border-bottom: 1px #222 solid;
+		font-family:$textFont;
+		font-size: 16px;
+		letter-spacing: 0.5px;
+		line-height: 1.8em;
+		color:#aaa;
+		text-align:justify;
+		overflow-y:scroll;
+		opacity: 0;
+		display:none;
+		padding: 80px 20%;
+	
+		h2{
+			color:#fff;
+			text-shadow: 0 0 2px #555;
+		}
+	
+	}
+	
+	.close {
+		cursor:pointer;
+		position:absolute;
+		top: 10px;
+		right:10px;
+		border:0;
+		font-size:22px;
+		transition-duration: 0.5s;
+		&:hover{
+			color:#fff;
+		}
+	
+		&.inflow{
+			font-size:inherit;
+			position:auto;
+			right: auto;
+			top: auto;
+		}
+	
+	}
+	
 }
-
-
-
-h1, h2{
-	font-family:$titleFont;
-	font-weight:normal;
-}
-
-a{
-	color:#fff;
-}
-
-
-		
-
-::-webkit-scrollbar {
-	width:5px;
-	background:#000;
-}
-::-webkit-scrollbar-button {
-}
-::-webkit-scrollbar-track        { /* 3 */ }
-::-webkit-scrollbar-track-piece  { /* 4 */ }
-::-webkit-scrollbar-thumb {
-	background:#333;
-}
-::-webkit-scrollbar-corner       { /* 6 */ }
-::-webkit-resizer                { /* 7 */ }
-
 
 #credits{
 	position:absolute;
@@ -161,60 +193,6 @@ a{
 		#fpsText { color: #aaa !important; }
 		#fpsGraph { display: none; }
 	}
-}
-
-
-
-
-.helpContent{
-
-	position:absolute;
-	top:0;
-	left:0;
-	z-index:150;
-	background: rgba(0, 0, 0, 0.8);
-	width : 60%;
-	min-width:400px;
-	max-height: 80%;
-	padding: 0;
-	border-bottom: 1px #222 solid;
-	font-family:$textFont;
-	font-size: 16px;
-	letter-spacing: 0.5px;
-	line-height: 1.8em;
-	color:#aaa;
-	text-align:justify;
-	overflow-y:scroll;
-	opacity: 0;
-	display:none;
-	padding: 80px 20%;
-
-	h2{
-		color:#fff;
-		text-shadow: 0 0 2px #555;
-	}
-
-}
-
-.close {
-	cursor:pointer;
-	position:absolute;
-	top: 10px;
-	right:10px;
-	border:0;
-	font-size:22px;
-	transition-duration: 0.5s;
-	&:hover{
-		color:#fff;
-	}
-
-	&.inflow{
-		font-size:inherit;
-		position:auto;
-		right: auto;
-		top: auto;
-	}
-
 }
 
 

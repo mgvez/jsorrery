@@ -1,6 +1,5 @@
 
 
-import $ from 'jquery';
 import { Scene, WebGLRenderer, AmbientLight } from 'three';
 import { Stats } from '../utils/ThreeExamples';// eslint-disable-line
 
@@ -24,15 +23,22 @@ function drawBody(b) {
 	b.draw();
 }
 
-export default {
-	createStage(scenario, universe) {
+export default class JSOrreryScene {
+	createStage(rootElement, scenario, universe) {
+
+		this.width = (scenario.sceneSize && scenario.sceneSize.width) || rootElement.offsetWidth;
+		this.height = (scenario.sceneSize && scenario.sceneSize.height) || rootElement.offsetHeight;
 
 		this.universe = universe;
 		this.bodies3d = [];
 		this.bodyScale = 1;
-		this.container = $(`<div id="universe" width="${this.width}" height="${this.height}">`).appendTo('body');
-		this.root = new Scene();
+		this.container = document.createElement('div');
+		this.container.id = 'universe';
+		this.container.style.width = `${this.width}px`;
+		this.container.style.height = `${this.height}px`;
+		rootElement.appendChild(this.container);
 
+		this.root = new Scene();
 		DebugPoint.setContainer(this.root);
 
 		renderer = renderer || new WebGLRenderer({
@@ -58,7 +64,7 @@ export default {
 			// $('body').append(stats.domElement);
 		}
 
-		this.container.append(renderer.domElement);
+		this.container.appendChild(renderer.domElement);
 		
 		//planet scale
 		Gui.addSlider(PLANET_SCALE_ID, { min: 1, max: 100, initial: (scenario.forcedGuiSettings && scenario.forcedGuiSettings.scale) || 10 }, val => {
@@ -76,17 +82,17 @@ export default {
 
 		this.setMilkyway();
 
-	},
+	}
 
 	setCameraDefaults(settings) {
 		CameraManager.putDefaults(settings);
-	},
+	}
 
 	setMilkyway() {
 		const milkyway = this.milkyway = Object.create(MilkyWay);
 		milkyway.init(this.stageSize * 6);
 		this.root.add(milkyway.getDisplayObject());
-	},
+	}
 
 	/*
 	drawAxis(){
@@ -98,12 +104,11 @@ export default {
 	},/**/
 
 	setDimension(largestSMA, smallestSMA, sceneSize) {
-		this.width = (sceneSize && sceneSize.width) || window.innerWidth;
-		this.height = (sceneSize && sceneSize.height) || window.innerHeight;
+
 		Dimensions.setLargestDimension(largestSMA);
 		this.stageSize = Dimensions.getScaled(largestSMA);
 		this.smallestSMA = smallestSMA;
-	},
+	}
 
 	draw() {
 		// console.log('draw');
@@ -131,16 +136,16 @@ export default {
 
 		/**/
 		if (stats) stats.update();
-	},
+	}
 
 	//camera might move and/or look at a different point depending on bodies movements
 	updateCamera() {
 		CameraManager.updateCamera();
-	},
+	}
 
 	getCamera() {
 		return CameraManager.getCamera();
-	},
+	}
 
 	//when the date has changed by the user instead of by the playhead, we need to recalculate the orbits and redraw
 	onDateReset() {
@@ -148,7 +153,7 @@ export default {
 		OrbitLinesManager.resetAllOrbits();
 		TracerManager.resetTrace();
 		this.draw();
-	},
+	}
 
 
 	addBody(celestialBody) {
@@ -166,19 +171,20 @@ export default {
 		OrbitLinesManager.addBody(body3d);
 		TracerManager.addBody(body3d);
 		CameraManager.addBody(body3d);		
-	},
+	}
 
 	getRoot() {
 		return this.root;
-	},
+	}
 
 	getSize() {
 		return this.stageSize;
-	},
+	}
 
 	getAspectRatio() {
 		return this.width / this.height;
-	},
+	}
+
 
 	setCentralBody(centralBody) {
 		this.centralBody = centralBody;
@@ -199,18 +205,18 @@ export default {
 		if (this.centralBody.name === 'sun') {
 			this.sun = central3d;
 		} else {
-			this.sun = new ExternalSun(centralBody, this.universe);
+			this.sun = new ExternalSun(centralBody, this.getAspectRatio(), this.stageSize);
 			this.root.add(this.sun.getDisplayObject());
 		}
 	
 
-	},
+	}
 
 	kill() {
 		CameraManager.kill();
 		OrbitLinesManager.kill();
 		TracerManager.kill();
 		this.container.remove();
-	},
+	}
 
 };

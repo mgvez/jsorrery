@@ -1,4 +1,5 @@
 
+import $ from 'jquery';
 import { Vector3, PerspectiveCamera } from 'three';
 import { OrbitControls } from '../utils/ThreeExamples';
 import TracerManager from './lines/TracerManager';
@@ -162,7 +163,7 @@ export default {
 	init(sceneParam, aspect, fov, stageSize, container, universeParam) {
 		scene = sceneParam;
 		universe = universeParam;
-		domEl = container;
+		domEl = $(container);
 		allCameras = [];
 		bodies3d = {};
 		viewSettings = {};
@@ -176,7 +177,7 @@ export default {
 		globalCamera = getNewCamera(true);
 		globalCamera.position.set(0, -1, getDistanceFromFov(stageSize, globalCamera.fov));
 
-		scene.root.add(globalCamera);
+		scene.getRoot().add(globalCamera);
 
 		trackOptionSelectors = {
 			from: Gui.addDropdown(LOOKFROM_ID, toggleCamera),

@@ -2,17 +2,22 @@
 import { TweenMax } from 'gsap';
 import Promise from 'bluebird';
 
-let preloader;
-function getNode() {
-	if (preloader) return preloader;
-	preloader = document.getElementById('preload');
-	return preloader;
-}
 
-export default {
+
+export default class Preloader {
 	
+	constructor(rootElement) {
+		let preloader;
+		this.getNode = function() {
+			if (preloader) return preloader;
+			preloader = rootElement.getElementsByClassName('preload');
+			preloader = preloader && preloader[0];
+			return preloader;
+		}
+	}
+
 	remove() {
-		const node = getNode();
+		const node = this.getNode();
 		if (!node) return Promise.resolve();
 		return new Promise(resolve => {
 			TweenMax.to(node, 0.5, {
@@ -23,14 +28,13 @@ export default {
 				},
 			});
 		});
-	},
+	}
 
 	show() {
-		const node = getNode();
+		const node = this.getNode();
 		if (!node) return;
 		TweenMax.killTweensOf(node);
 		node.style.display = 'block';
 		TweenMax.to(node, 0.5, { opacity: 1 });
-	},
-
+	}
 };

@@ -8,13 +8,12 @@ import { radius as sunRadius } from '../scenario/scenarios/bodies/sun';
 
 
 class SunCorona {
-	constructor(scene) {
+	constructor(aspectRatio, stageSize) {
 		this.root = new Object3D();
 		this.sunSize = Dimensions.getScaled(sunRadius * KM);
-		const geoSize = scene.getSize() * 0.4;
-		
+		const geoSize = stageSize * 0.4;
 		const uniforms = {
-			aspectRatio: { type: 'f', value: scene.getAspectRatio() },
+			aspectRatio: { type: 'f', value: aspectRatio },
 			sunPosition: { type: 'v3', value: new Vector3() },
 			sunScreenPos: { type: 'v3', value: new Vector3() },
 			sunSize: { type: 'f', value: 0.0 },
@@ -51,8 +50,7 @@ class SunCorona {
 		// const scaleRatio = (camToSun.length() / this.stageSize) * 0.8;
 
 		const sunScreenPos = sunPos.clone().project(CameraManager.getCamera());
-		// sceneW = $(window).width();
-		// sceneH = $(window).height();
+
 		// this.sky.mesh.scale.set(scaleRatio, scaleRatio, scaleRatio);/**/
 		this.uniforms.sunPosition.value.copy(camToSun.multiplyScalar(-1));
 		
@@ -71,11 +69,11 @@ class SunCorona {
 
 //creates a fake sun, for scenarios where the sun is not part of the setup
 export class ExternalSun {
-	constructor(centralCelestialBody, universe) {
+	constructor(centralCelestialBody, aspectRatio, stageSize) {
 		this.root = new Object3D();
 		this.universe = universe;
 		this.centralCelestialBody = centralCelestialBody;
-		this.corona = new SunCorona(universe.getScene());
+		this.corona = new SunCorona(aspectRatio, stageSize);
 		this.corona.scale = 3;
 		this.corona.sunSize = 10;
 		this.root.add(new DirectionalLight(0xFFFFFF, 1));
@@ -105,7 +103,8 @@ export default class Sun extends Body3D {
 	}
 
 	setDisplayObject() {
-		this.corona = new SunCorona(this.celestial.universe.getScene());
+		const scene = this.celestial.universe.getScene();
+		this.corona = new SunCorona(scene.getAspectRatio(), scene.getSize());
 		this.root.add(new PointLight(0xFFFFFF));
 		this.root.add(this.corona.root);
 	}

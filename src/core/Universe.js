@@ -16,8 +16,23 @@ import { getJD, getJ2000SecondsFromJD, getDateFromJD } from '../utils/JD';
 import Dimensions from '../graphics3d/Dimensions';
 
 
-export default {
-	init(scenario, qstrSettings) {
+export default class Universe {
+
+	constructor(rootElement, scenarioConfig, defaultParams) {
+		//some scenarios need to load data before they are ready
+
+		const getSceneReady = () => {
+			return this.init(rootElement, scenarioConfig, defaultParams);
+		}
+		if (scenarioConfig.load) {
+			this.onSceneReady = scenarioConfig.load().then(getSceneReady);
+		} else {
+			this.onSceneReady = getSceneReady();
+		}
+
+	}
+
+	init(rootElement, scenario, qstrSettings) {
 		ResourceLoader.reset();
 		this.name = scenario.name;
 		this.scenario = scenario;
@@ -49,9 +64,9 @@ export default {
 		this.setJD(getJD(date));
 		
 		this.createBodies(scenario);
-		this.scene = Object.create(Scene);
-		this.calculateDimensions(scenario.sceneSize);
-		this.scene.createStage(scenario, this);
+		this.scene = new Scene();
+		this.calculateDimensions();
+		this.scene.createStage(rootElement, scenario, this);
 
 		this.initBodies(scenario);
 		Ticker.setSecondsPerTick(scenario.secondsPerTick.initial);
@@ -74,7 +89,7 @@ export default {
 
 		return onSceneReady;
 
-	},
+	}
 
 	kill() {
 		//kills the animation callback
@@ -89,11 +104,11 @@ export default {
 		this.bodiesByName = {};
 
 		Labels.kill();
-	},
+	}
 
 	getTickerDeltaT() {
 		return Ticker.getDeltaT();
-	},
+	}
 
 	createBodies(scenario) {
 		
@@ -121,7 +136,7 @@ export default {
 
 		this.centralBody.isCentral = true;
 		// console.log(this.bodies);
-	},
+	}
 
 	initBodies(scenario) {
 		this.bodies.forEach(body => {
@@ -144,7 +159,7 @@ export default {
 		this.scene.setCentralBody(this.centralBody);
 
 		Ticker.setBodies(this.bodies);
-	},
+	}
 	/* balance the system by calculating hte masses of the non-central bodies and placing the central body to balance it.*/
 	setBarycenter() {
 		const central = this.centralBody;
@@ -180,7 +195,7 @@ export default {
 				b.relativeTo = false;
 			}
 		});
-	},
+	}
 
 	repositionBodies() {
 		// console.log(this.bodies);
@@ -201,7 +216,7 @@ export default {
 		this.bodies.forEach(body => {
 			body.afterInitialized(false);
 		});
-	},
+	}
 
 	getBody(name) {
 		// console.log(this);
@@ -209,11 +224,11 @@ export default {
 			return this.centralBody;
 		}
 		return this.bodiesByName[name];
-	},
+	}
 
 	getCamera() {
 		return this.scene.getCamera();
-	},
+	}
 
 	calculateDimensions(sceneSize) {
 		const centralBodyName = this.getBody().name;
@@ -235,13 +250,13 @@ export default {
 		//console.log('universe size', largestSMA, ' m');
 		
 		this.size = largestSMA;
-		this.scene.setDimension(largestSMA, smallestSMA, sceneSize);
+		this.scene.setDimension(largestSMA, smallestSMA);
 
-	},
+	}
 
 	showDate() {
 		this.dateDisplay.setDate(this.getCurrentDate());
-	},
+	}
 
 	tick() {
 
@@ -263,15 +278,15 @@ export default {
 		}
 		this.drawRequested = false;
 		window.requestAnimationFrame(this.ticker);
-	},
+	}
 
 	requestDraw() {
 		this.drawRequested = true;
-	},
+	}
 
 	getScene() {
 		return this.scene;
-	},
+	}
 
 	setJD(jd) {
 		this.currentJD = Number(jd);
@@ -279,32 +294,32 @@ export default {
 		this.currentDate = getDateFromJD(this.currentJD);
 		this.currentJ2000Time = getJ2000SecondsFromJD(this.currentJD);
 		this.drawRequested = true;
-	},
+	}
 
 	getCurrentJ2000Time() {
 		return this.currentJ2000Time;
-	},
+	}
 
 	getCurrentJD() {
 		return this.currentJD;
-	},
+	}
 
 	getCurrentDate() {
 		return this.currentDate;
-	},
+	}
 
 	isPlaying() {
 		return this.playing;
-	},
+	}
 
 	stop(skipRender) {
 		this.playing = false;
 		if (skipRender) return;
 		this.scene.updateCamera();
 		this.scene.draw();
-	},
+	}
 
 	getScaledDimension(dim) {
 		return Dimensions.getScaled(dim);
-	},
+	}
 };

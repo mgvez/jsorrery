@@ -141,7 +141,7 @@
 			</ul>
 		</div>
 			
-		<div id="preload">
+		<div class="preload">
 			<div class="orbit"><div class="planet"></div></div>
 			<div class="title">
 				<h1>jsorrery</h1>
@@ -152,6 +152,12 @@
 		<div id="credits" class="help fa fa-question-circle" data-for="helpCredits">credits</div>
 		<script src="assets/data/elp.js"></script>	
 		<script src="assets/data/vsop-earth.js"></script>
+		<script>
 
+			window.onJsOrreryLoaded = function(JSOrrery){
+				const jsOrrery = new JSOrrery('jsorrery');
+			}
+
+		</script>
 	</body>
 </html>

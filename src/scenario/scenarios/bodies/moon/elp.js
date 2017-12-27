@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Vector3 } from 'three';
-import { KM } from '../../../../constants';
+import { KM } from '../../../../core/constants';
 /*-----------------------------------------------------------------------
 *
 *     Reference : Bureau des Logitudes - MCTJCGF9502.

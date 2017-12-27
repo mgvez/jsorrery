@@ -1,5 +1,5 @@
 
-import { DEG_TO_RAD, RAD_TO_DEG } from '../../../../constants';
+import { DEG_TO_RAD, RAD_TO_DEG } from '../../../../core/constants';
 import { getJ2000SecondsFromJD } from '../../../../utils/JD';
 
 export default function(t) {

@@ -9,7 +9,7 @@ radius: km
 
 import Promise from 'bluebird';
 import $ from 'jquery';
-import { AU } from '../../constants';
+import { AU } from '../../core/constants';
 import { moon } from './bodies/moon';
 import { sun } from './bodies/sun';
 import { mercury } from './bodies/mercury';

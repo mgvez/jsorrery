@@ -8,9 +8,9 @@ See the project live at [orrery.com] (http://orrery.com). Thanks to [@neave] (ht
 Usage
 =====
 
-You can use webpack to display the app in a local environment with `npm start`, which will then make the orrery available at http://localhost:3000
+You can use webpack to display the app in a local environment with `npm start`, which will then make the orrery available at http://localhost:2018
 
-To build the js, you can run webpack directly in the terminal, for example `webpack --config webpack/prod.config.js`. index.html, shaders and img are required to run jsOrrery, and are not built with webpack, only the js is built.
+To build the js, you can run webpack directly in the terminal, for example `env NODE_ENV=production webpack`.
 
 Credits
 -------

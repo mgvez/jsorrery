@@ -5,7 +5,7 @@ import TracerManager from './lines/TracerManager';
 import OrbitLinesManager from './lines/OrbitLinesManager';
 import ExportValues from '../gui/ExportValues';
 import Gui, { LOOKFROM_ID, LOOKAT_ID } from '../gui/Gui';
-import { DEG_TO_RAD } from '../constants';
+import { DEG_TO_RAD } from '../core/constants';
 import GeoPos from './GeoPos';
 
 const DEFAULT_FOV = 45;

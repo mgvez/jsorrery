@@ -3,7 +3,7 @@ import { LineBasicMaterial, Geometry, BufferAttribute, BufferGeometry, Line, Col
 import Promise from 'bluebird';
 
 import Constellations from '../data/Constellations';
-import { DEG_TO_RAD } from '../constants';
+import { DEG_TO_RAD } from '../core/constants';
 import ResourceLoader from '../loaders/ResourceLoader';
 
 let rendered;
@@ -148,7 +148,7 @@ function generateStars(shaders, stars, starTexture, size) {
 
 export default {
 	// dataSrc: './data/milkyway.json',
-	dataSrc: './data/milkyway_heasarc_204k.json',
+	dataSrc: './assets/data/milkyway_heasarc_204k.json',
 	init(size) {
 		
 		// create the particle system
@@ -159,7 +159,7 @@ export default {
 		const onDataLoaded = ResourceLoader.loadJSON(this.dataSrc);
 		const onShaderLoaded = ResourceLoader.loadShaders('stars');
 
-		const starTextureLoader = ResourceLoader.loadTexture('./img/star.png');
+		const starTextureLoader = ResourceLoader.loadTexture('./assets/img/star.png');
 		
 		return Promise.all([onShaderLoaded, onDataLoaded, starTextureLoader]).then(response => {
 			const [shaderResponse, dataResponse, textureResponse] = response;

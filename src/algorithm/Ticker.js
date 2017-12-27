@@ -4,7 +4,7 @@ number of calculations of gravity per tick. Adding more calculation has the effe
 */
 
 import Quadratic from './Quadratic';
-import { DAY } from '../constants';
+import { DAY } from '../core/constants';
 
 let calculationsPerTick = 1;
 let actualCalculationsPerTick = 1;

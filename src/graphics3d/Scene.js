@@ -15,7 +15,7 @@ import Screenshot from './Screenshot';
 import { ExternalSun } from './Sun';
 import Labels from '../graphics2d/Labels';
 import Gui, { PLANET_SCALE_ID } from '../gui/Gui';
-import { IS_CAPTURE, DEG_TO_RAD, KM } from '../constants';
+import { IS_CAPTURE, DEG_TO_RAD, KM } from '../core/constants';
 		
 let stats;
 let renderer;

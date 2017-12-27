@@ -1,7 +1,7 @@
 import { Vector3, ShaderMaterial, Object3D, PlaneGeometry, Mesh, PointLight, DirectionalLight } from 'three';
 import ResourceLoader from '../loaders/ResourceLoader';
 import Dimensions from './Dimensions';
-import { KM, DEG_TO_RAD } from '../constants';
+import { KM, DEG_TO_RAD } from '../core/constants';
 import CameraManager from './CameraManager';
 import Body3D from './Body3d';
 import { radius as sunRadius } from '../scenario/scenarios/bodies/sun';

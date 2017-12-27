@@ -1,7 +1,7 @@
 
 // import $ from 'jquery';
 import { Color, Euler, Vector3 } from 'three';
-import { J2000, AU, SIDEREAL_DAY, NM_TO_KM, CIRCLE, YEAR, DAY, DEG_TO_RAD } from '../../../constants';
+import { J2000, AU, SIDEREAL_DAY, NM_TO_KM, CIRCLE, YEAR, DAY, DEG_TO_RAD } from '../../../core/constants';
 import { J2000Date, getDeltaT } from '../../../utils/JD';
 import { VSOP } from './earth/VSOP-earth';
 
@@ -22,7 +22,7 @@ export const earth = {
 	radius: 3443.9307 * NM_TO_KM,
 	color: '#1F7CDA',
 	//voir https://visibleearth.nasa.gov/view_cat.php?categoryID=1484 pour changer
-	map: './img/earthmap1k_clouds.jpg',
+	map: './assets/img/earthmap1k_clouds.jpg',
 	material: {
 		specular: new Color('grey'),
 	},

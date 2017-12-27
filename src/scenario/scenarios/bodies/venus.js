@@ -1,5 +1,5 @@
 
-import { AU } from '../../../constants';
+import { AU } from '../../../core/constants';
 
 export const venus = {
 	title: 'Venus',
@@ -7,7 +7,7 @@ export const venus = {
 	mass: 4.868e24,
 	radius: 6051,
 	color: '#fda700',
-	map: './img/venusmap.jpg',
+	map: './assets/img/venusmap.jpg',
 	orbit: {
 		base: {
 			a: 0.72333566 * AU,

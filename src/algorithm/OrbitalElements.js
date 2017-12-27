@@ -3,7 +3,7 @@ import { Vector3, Euler, Quaternion } from 'three';
 
 import { sinh, sign, cosh } from './Math';
 import { getJ2000SecondsFromJD, getJD } from '../utils/JD';
-import { G, CENTURY, DAY, KM, DEG_TO_RAD, CIRCLE, AU, J2000 } from '../constants';
+import { G, CENTURY, DAY, KM, DEG_TO_RAD, CIRCLE, AU, J2000 } from '../core/constants';
 
 function solveEccentricAnomaly(f, x0, maxIter) {
 		

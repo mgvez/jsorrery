@@ -4,7 +4,7 @@ import RingGeometry2 from '../three/RingGeometry2';
 import Labels from '../graphics2d/Labels';
 import ResourceLoader from '../loaders/ResourceLoader';
 import Dimensions from './Dimensions';
-import { KM, DEG_TO_RAD, QUARTER_CIRCLE } from '../constants';
+import { KM, DEG_TO_RAD, QUARTER_CIRCLE } from '../core/constants';
 
 
 export default class Body3D {

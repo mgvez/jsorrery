@@ -10,7 +10,7 @@ export const sun = {
 	mass: 1.9891e30,
 	radius,
 	color: '#ffff00',
-	map: './img/sunmap.jpg',
+	map: './assets/img/sunmap.jpg',
 	k: 0.01720209895, //gravitational constant (μ)
 	material: {
 		emissive: new Color(0xdddd33),

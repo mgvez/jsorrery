@@ -1,5 +1,5 @@
 
-import { AU } from '../../../constants';
+import { AU } from '../../../core/constants';
 
 export const saturn = {
 	title: 'Saturn',
@@ -7,12 +7,12 @@ export const saturn = {
 	mass: 5.6846e26,
 	radius: 58232,
 	color: '#ffcc99',
-	map: './img/saturnmap.jpg',
+	map: './assets/img/saturnmap.jpg',
 	tilt: 26.7,
 	ring: {
 		innerRadius: 74500,
 		outerRadius: 117580,
-		map: './img/saturnrings.png',
+		map: './assets/img/saturnrings.png',
 	},
 	orbit: {
 		base: {

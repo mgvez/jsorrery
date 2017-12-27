@@ -1,5 +1,5 @@
 
-import { AU, DAY } from '../../../constants';
+import { AU, DAY } from '../../../core/constants';
 
 export const mars = {
 	title: 'Mars',
@@ -7,7 +7,7 @@ export const mars = {
 	mass: 6.4185e23,
 	radius: 3376,
 	color: '#ff3300',
-	map: './img/mars_1k_color.jpg',
+	map: './assets/img/mars_1k_color.jpg',
 	siderealDay: 1.025957 * DAY,
 	orbit: {
 		base: {

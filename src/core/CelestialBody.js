@@ -1,6 +1,6 @@
 
 import { Vector3, Euler } from 'three';
-import OrbitalElements from './algorithm/OrbitalElements';
+import OrbitalElements from '../algorithm/OrbitalElements';
 import { RAD_TO_DEG, CIRCLE, DAY, J2000 } from './constants';
 
 export default {

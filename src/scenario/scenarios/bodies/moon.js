@@ -1,5 +1,5 @@
 import { TweenMax, Sine } from 'gsap';
-import { DAY } from '../../../constants';
+import { DAY } from '../../../core/constants';
 import MoonRealOrbit from './moon/OsculatingOrbit';
 import { ELP82B } from './moon/elp';
 
@@ -9,7 +9,7 @@ export const moon = {
 	mass: 7.3477e22,
 	radius: 1738.1,
 	color: '#aaaaaa',
-	map: './img/moonmap4k_levels.jpg',
+	map: './assets/img/moonmap4k_levels.jpg',
 	siderealDay: (27.3215782 * DAY),
 	tilt: 1.5424,
 	fov: 1,

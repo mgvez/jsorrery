@@ -1,8 +1,8 @@
 
 import $ from 'jquery';
-import 'style!./scss/master.scss';
+import 'style-loader!./scss/master.scss';
 
-import jsOrrery from './JSOrrery';
+import jsOrrery from './core/JSOrrery';
 
 //shim jquery plugins
 window.$ = $;

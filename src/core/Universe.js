@@ -6,14 +6,14 @@
 import { Vector3 } from 'three';
 
 import { USE_PHYSICS_BY_DEFAULT, DEFAULT_CALCULATIONS_PER_TICK, KM, J2000, DAY } from './constants';
-import Labels from './graphics2d/Labels';
-import Scene from './graphics3d/Scene';
-import ResourceLoader from './loaders/ResourceLoader';
-import Ticker from './algorithm/Ticker';
+import Labels from '../graphics2d/Labels';
+import Scene from '../graphics3d/Scene';
+import ResourceLoader from '../loaders/ResourceLoader';
+import Ticker from '../algorithm/Ticker';
 import CelestialBody from './CelestialBody';
-import Gui, { START_ID, DELTA_T_ID } from './gui/Gui';
-import { getJD, getJ2000SecondsFromJD, getDateFromJD } from './utils/JD';
-import Dimensions from './graphics3d/Dimensions';
+import Gui, { START_ID, DELTA_T_ID } from '../gui/Gui';
+import { getJD, getJ2000SecondsFromJD, getDateFromJD } from '../utils/JD';
+import Dimensions from '../graphics3d/Dimensions';
 
 
 export default {

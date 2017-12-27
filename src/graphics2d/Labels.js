@@ -1,7 +1,7 @@
 
 import $ from 'jquery';
 
-import { DEG_TO_RAD } from '../constants';
+import { DEG_TO_RAD } from '../core/constants';
 import Dimensions from '../graphics3d/Dimensions';
 import CameraManager from '../graphics3d/CameraManager';
 

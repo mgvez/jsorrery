@@ -1,5 +1,5 @@
 import { Vector3, Euler, Mesh, SphereGeometry, MeshPhongMaterial } from 'three';
-import { DEG_TO_RAD, CIRCLE } from '../constants';
+import { DEG_TO_RAD, CIRCLE } from '../core/constants';
 import { getJ2000SecondsFromJD } from '../utils/JD';
 import Gui from '../gui/Gui';
 

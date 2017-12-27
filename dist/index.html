@@ -21,7 +21,7 @@
 		<link rel="canonical" href="https://mgvez.github.io/jsorrery/" />
 		<link href='http://fonts.googleapis.com/css?family=Quattrocento' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
-	</head>
+	<link href="jsorrery.css" rel="stylesheet"></head>
 	<body>
 		<nav id="gui">
 			
@@ -150,34 +150,8 @@
 		</div>
 
 		<div id="credits" class="help fa fa-question-circle" data-for="helpCredits">credits</div>
-		<script src="data/elp.js"></script>	
-		<script src="data/vsop-earth.js"></script>
-		<script src="dist/bundle.js?v=20170605"></script>
-	<script type="text/javascript">
-		/** ANALYTICS */
-		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		<script src="assets/data/elp.js"></script>	
+		<script src="assets/data/vsop-earth.js"></script>
 
-		  ga('create', 'UA-32778044-3');
-		  ga('send', 'pageview');
-		/** TWITTER */
-		!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
-		
-	</script>
-
-	<script>
-		window.gapiLoaded = (function(ns){
-			ns.gapi = null;
-			return function(){
-				ns.gapi = window.gapi;
-				window.gapi.client.setApiKey('AIzaSyAFDXxg1NPaJdajDzmG29Lj648Ss9S1ORE');
-				window.gapi.client.load('urlshortener', 'v1', function(){});
-			}
-		})(window.jsorrery = window.jsorrery || {});
-	</script>
-	<script src="https://apis.google.com/js/client.js?onload=gapiLoaded"></script>
-
-	</body>
+	<script type="text/javascript" src="jsorrery.js"></script></body>
 </html>

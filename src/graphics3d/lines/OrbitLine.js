@@ -4,7 +4,7 @@ import { LineBasicMaterial, BufferGeometry, Geometry, Line, BufferAttribute, Ver
 import Dimensions from '../Dimensions';
 import DebugPoint from '../utils/DebugPoint';
 import { darken, hexToRgb, rgbToHex } from '../../utils/ColorUtils';
-import { IS_SCREENSHOT, IS_CAPTURE, QUARTER_CIRCLE } from '../../constants';
+import { IS_SCREENSHOT, IS_CAPTURE, QUARTER_CIRCLE } from '../../core/constants';
 
 
 export default {

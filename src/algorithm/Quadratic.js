@@ -1,7 +1,7 @@
 
 import MoveAlgorithm from './MoveAlgorithm';
 import Gravity from './Gravity';
-import { DAY } from '../constants';
+import { DAY } from '../core/constants';
 
 
 const Quadratic = Object.create(MoveAlgorithm);

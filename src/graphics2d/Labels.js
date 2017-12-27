@@ -3,7 +3,6 @@ import $ from 'jquery';
 
 import { DEG_TO_RAD } from '../core/constants';
 import Dimensions from '../graphics3d/Dimensions';
-import CameraManager from '../graphics3d/CameraManager';
 
 const EVENT_LABEL_LINE_H = 100;
 const EVENT_LABEL_MAX_ANGLE = 45;
@@ -17,14 +16,15 @@ function positionLabel(label) {
 
 
 export default class Labels {
-	constructor(rootDomEl) {
+	constructor(rootDomEl, cameraManager) {
 		this.rootDomEl = rootDomEl;
+		this.cameraManager = cameraManager;
 		this.labels = [];
 	}
 
 	//project scene position to 2d screen coordinates. Returns null if position is out of screen.
 	toScreenCoords(pos, camPos, fov) {
-		const cam = CameraManager.getCamera();
+		const cam = this.cameraManager.getCamera();
 		const vector = pos.clone().project(cam);
 		vector.x = (vector.x + 1) / 2 * this.sceneW;
 		vector.y = -(vector.y - 1) / 2 * this.sceneH;

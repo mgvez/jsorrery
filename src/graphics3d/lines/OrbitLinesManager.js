@@ -4,14 +4,14 @@
 
 import BodyOrbitLines from './BodyOrbitLines';
 
-export default {
+export default class OrbitLinesManager {
 	/**
 	 When paths are computed through phisics, orbits are always shown as solid lines, because we cannot recompute them from positions
 	 */
-	init(isForceSolidLines) {
+	constructor(isForceSolidLines) {
 		this.isForceSolidLines = isForceSolidLines;
 		this.orbits = [];
-	},
+	}
 
 	/**
 	Reset the default behavior of every orbit's orbit line (show the orbit, not the ecliptic)
@@ -20,28 +20,28 @@ export default {
 		this.orbits.forEach(orbit => {
 			orbit.hideOrbit();
 		});
-	},
+	}
 	
 	showAllOrbits() {
 		this.orbits.forEach(orbit => {
 			orbit.showOrbit();
 		});
-	},
+	}
 	
 	hideAllEcliptics() {
 		this.orbits.forEach(orbit => {
 			orbit.hideEcliptic();
 		});
-	},
+	}
 
 	findOrbitIndex(name) {
 		return this.orbits.findIndex(testOrbit => testOrbit.getName() === name);
-	},
+	}
 
 	getOrbitFromName(name) {
 		const idx = this.findOrbitIndex(name);
 		return ~idx ? this.orbits[idx] : null;
-	},
+	}
 
 	addBody(body3d) {
 		const orbit = Object.create(BodyOrbitLines);
@@ -53,7 +53,7 @@ export default {
 		} else {
 			this.orbits[idx] = orbit;
 		}
-	},
+	}
 	
 	onCameraChange(lookFromBody, lookAtBody) {
 
@@ -75,17 +75,17 @@ export default {
 			this.showAllOrbits();
 			this.hideAllEcliptics();
 		}
-	},
+	}
 
 	resetAllOrbits() {
 		this.orbits.forEach(orbit => {
 			orbit.recalculateOrbitLine(true);
 		});
-	},
+	}
 
 	kill() {
 		this.orbits.forEach(orbit => {
 			orbit.kill();
 		});
-	},
+	}
 };

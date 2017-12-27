@@ -2,7 +2,6 @@ import { Vector3, ShaderMaterial, Object3D, PlaneGeometry, Mesh, PointLight, Dir
 import ResourceLoader from '../loaders/ResourceLoader';
 import Dimensions from './Dimensions';
 import { KM, DEG_TO_RAD } from '../core/constants';
-import CameraManager from './CameraManager';
 import Body3D from './Body3d';
 import { radius as sunRadius } from '../scenario/scenarios/bodies/sun';
 
@@ -41,20 +40,20 @@ class SunCorona {
 		});
 	}
 
-	draw(camPos, sunPos) {
+	draw(cam, camPos, sunPos) {
 		const camToSun = camPos.clone().sub(sunPos);
 
-		this.mesh.quaternion.copy(CameraManager.getCamera().quaternion);
+		this.mesh.quaternion.copy(cam.quaternion);
 
 		this.mesh.position.copy(camToSun.clone().multiplyScalar(0.1));/**/
 		// const scaleRatio = (camToSun.length() / this.stageSize) * 0.8;
 
-		const sunScreenPos = sunPos.clone().project(CameraManager.getCamera());
+		const sunScreenPos = sunPos.clone().project(cam);
 
 		// this.sky.mesh.scale.set(scaleRatio, scaleRatio, scaleRatio);/**/
 		this.uniforms.sunPosition.value.copy(camToSun.multiplyScalar(-1));
 		
-		const visibleW = Math.tan(DEG_TO_RAD * CameraManager.getCamera().fov / 2) * camToSun.length() * 2;
+		const visibleW = Math.tan(DEG_TO_RAD * cam.fov / 2) * camToSun.length() * 2;
 		const sunScaledSize = this.sunSize * this.scale;
 		const sunScreenRatio = sunScaledSize / visibleW;
 		// console.log(visibleW, CameraManager.getCamera().fov, camToSun.length(), sunScaledSize);
@@ -81,11 +80,11 @@ export class ExternalSun {
 
 	}
 
-	draw(camPos) {
+	draw(cam, camPos) {
 		const sunPos = this.centralCelestialBody.calculatePosition(this.universe.getCurrentJD());
 		sunPos.setLength(this.universe.getScene().getSize() * 4).negate();
 		this.root.position.copy(sunPos);
-		this.corona.draw(camPos, sunPos);
+		this.corona.draw(cam, camPos, sunPos);
 		
 	}
 	
@@ -96,10 +95,10 @@ export class ExternalSun {
 
 export default class Sun extends Body3D {
 	
-	draw(camPos) {
+	draw(cam, camPos) {
 		if (!camPos) return;
 		const sunPos = Dimensions.getScaled(this.celestial.getPosition());
-		this.corona.draw(camPos, sunPos);
+		this.corona.draw(cam, camPos, sunPos);
 	}
 
 	setDisplayObject() {

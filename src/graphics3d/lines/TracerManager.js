@@ -7,18 +7,18 @@ import Tracer from './Tracer';
 //number of tracing vertices. It was previously taken directly from the orbit's size, but a constant number is more convenient
 const N_VERTICES = 1000;
 
-export default {
-	init(containerParam) {
+export default class TracerManager {
+	constructor(containerParam) {
 		this.bodies3d = [];
 		this.container = containerParam;
 		this.activeTracers = [];
-	},
+	}
 
 	setTraceFrom(lookFromBody, lookAtBody) {				
 		this.removeTracers();
 		this.activeTracers.length = 0;
 		this.addTracer(lookAtBody, lookFromBody);
-	},
+	}
 
 	//when date changes by user action, reset active tracers
 	resetTrace() {
@@ -27,7 +27,7 @@ export default {
 			tracer.getNew();
 			this.container.add(tracer.getDisplayObject());
 		});
-	},
+	}
 
 	addTracer(tracingBody, traceFromBody) {
 		if (!tracingBody) return;
@@ -37,7 +37,7 @@ export default {
 		tracer.getNew();
 		this.container.add(tracer.getDisplayObject());
 		this.activeTracers.push(tracer);
-	},
+	}
 
 	removeTracers() {
 		const container = this.container;
@@ -49,7 +49,7 @@ export default {
 			if (!tracer) return;
 			container.remove(tracer.getDisplayObject());
 		});
-	},
+	}
 
 	draw() {
 		if (this.deferredForceTraceBody) {
@@ -59,7 +59,7 @@ export default {
 			});
 			this.deferredForceTraceBody = null;
 		}
-	},
+	}
 
 	addBody(body3d) {
 
@@ -76,8 +76,8 @@ export default {
 			this.deferredForceTraceBody.push(body3d);
 		}
 		
-	},
+	}
 
 	kill() {
-	},
+	}
 };

@@ -38,7 +38,6 @@ export default class JSOrreryScene {
 		this.domEl.style.height = `${this.height}px`;
 		rootDomEl.appendChild(this.domEl);
 
-		this.labels = new Labels(this.domEl); 
 
 		this.root = new Scene();
 		DebugPoint.setContainer(this.root);
@@ -77,17 +76,20 @@ export default class JSOrreryScene {
 			this.draw();
 		});
 
+		this.orbitLinesManager = new OrbitLinesManager(scenario.calculateAll);
+		this.tracerManager = new TracerManager(this.root);
+
 		//this.drawAxis();
-		CameraManager.init(this, this.width / this.height, scenario.fov, this.stageSize, this.domEl, universe);
-		OrbitLinesManager.init(scenario.calculateAll);
-		TracerManager.init(this.root);
+		this.cameraManager = new CameraManager(this, this.width / this.height, scenario.fov, this.stageSize, this.domEl, universe, this.orbitLinesManager, this.tracerManager);
+		this.labels = new Labels(this.domEl, this.cameraManager);
+		
 
 		this.setMilkyway();
 
 	}
 
 	setCameraDefaults(settings) {
-		CameraManager.putDefaults(settings);
+		this.cameraManager.putDefaults(settings);
 	}
 
 	setMilkyway() {
@@ -117,23 +119,22 @@ export default class JSOrreryScene {
 		this.bodies3d.forEach(drawBody);
 
 		//after all bodies have been positionned, update camera matrix (as camera might be attached to a body)
-		CameraManager.updateCameraMatrix();
-		const camPos = CameraManager.getCameraPosition();
+		this.cameraManager.updateCameraMatrix();
+		const camPos = this.cameraManager.getCameraPosition();
 
-		TracerManager.draw(camPos);
+		this.tracerManager.draw(camPos);
 
 		//center the milkyway to the camera position, to make it look infinite
 		if (this.milkyway) this.milkyway.setPosition(camPos);
 
-		if (this.sun) this.sun.draw(camPos);
+		const cam = this.cameraManager.getCamera();
+		if (this.sun) this.sun.draw(cam, camPos);
 
-		renderer.render(this.root, CameraManager.getCamera());
+		renderer.render(this.root, cam);
 		if (this.screenshot) this.screenshot.capture();
 
 		//place planets labels. We need the camera position relative to the world in order to compute planets screen sizes, and hide/show labels depending on it
-		const radFov = CameraManager.getCamera().fov * DEG_TO_RAD;
-		// camPos = CameraManager.getCamera().position.clone();
-		// camPos.applyMatrix4(CameraManager.getCamera().matrixWorld);
+		const radFov = cam.fov * DEG_TO_RAD;
 		this.labels.draw(camPos, radFov, this.width, this.height);
 
 		/**/
@@ -142,18 +143,18 @@ export default class JSOrreryScene {
 
 	//camera might move and/or look at a different point depending on bodies movements
 	updateCamera() {
-		CameraManager.updateCamera();
+		this.cameraManager.updateCamera();
 	}
 
 	getCamera() {
-		return CameraManager.getCamera();
+		return this.cameraManager.getCamera();
 	}
 
 	//when the date has changed by the user instead of by the playhead, we need to recalculate the orbits and redraw
 	onDateReset() {
 		this.updateCamera();
-		OrbitLinesManager.resetAllOrbits();
-		TracerManager.resetTrace();
+		this.orbitLinesManager.resetAllOrbits();
+		this.tracerManager.resetTrace();
 		this.draw();
 	}
 
@@ -172,9 +173,9 @@ export default class JSOrreryScene {
 		this.bodies3d.push(body3d);
 		this.root.add(body3d.getDisplayObject());
 
-		OrbitLinesManager.addBody(body3d);
-		TracerManager.addBody(body3d);
-		CameraManager.addBody(body3d);
+		this.orbitLinesManager.addBody(body3d);
+		this.tracerManager.addBody(body3d);
+		this.cameraManager.addBody(body3d);
 
 	}
 
@@ -226,9 +227,9 @@ export default class JSOrreryScene {
 	}
 
 	kill() {
-		CameraManager.kill();
-		OrbitLinesManager.kill();
-		TracerManager.kill();
+		this.cameraManager.kill();
+		this.orbitLinesManager.kill();
+		this.tracerManager.kill();
 		this.labels.kill();
 		this.domEl.remove();
 	}

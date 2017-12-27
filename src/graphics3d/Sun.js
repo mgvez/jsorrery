@@ -69,7 +69,7 @@ class SunCorona {
 
 //creates a fake sun, for scenarios where the sun is not part of the setup
 export class ExternalSun {
-	constructor(centralCelestialBody, aspectRatio, stageSize) {
+	constructor(centralCelestialBody, universe, aspectRatio, stageSize) {
 		this.root = new Object3D();
 		this.universe = universe;
 		this.centralCelestialBody = centralCelestialBody;

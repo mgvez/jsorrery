@@ -24,19 +24,21 @@ function drawBody(b) {
 }
 
 export default class JSOrreryScene {
-	createStage(rootElement, scenario, universe) {
+	createStage(rootDomEl, scenario, universe) {
 
-		this.width = (scenario.sceneSize && scenario.sceneSize.width) || rootElement.offsetWidth;
-		this.height = (scenario.sceneSize && scenario.sceneSize.height) || rootElement.offsetHeight;
+		this.width = (scenario.sceneSize && scenario.sceneSize.width) || rootDomEl.offsetWidth;
+		this.height = (scenario.sceneSize && scenario.sceneSize.height) || rootDomEl.offsetHeight;
 
 		this.universe = universe;
 		this.bodies3d = [];
 		this.bodyScale = 1;
-		this.container = document.createElement('div');
-		this.container.id = 'universe';
-		this.container.style.width = `${this.width}px`;
-		this.container.style.height = `${this.height}px`;
-		rootElement.appendChild(this.container);
+		this.domEl = document.createElement('div');
+		this.domEl.id = 'universe';
+		this.domEl.style.width = `${this.width}px`;
+		this.domEl.style.height = `${this.height}px`;
+		rootDomEl.appendChild(this.domEl);
+
+		this.labels = new Labels(this.domEl); 
 
 		this.root = new Scene();
 		DebugPoint.setContainer(this.root);
@@ -64,7 +66,7 @@ export default class JSOrreryScene {
 			// $('body').append(stats.domElement);
 		}
 
-		this.container.appendChild(renderer.domElement);
+		this.domEl.appendChild(renderer.domElement);
 		
 		//planet scale
 		Gui.addSlider(PLANET_SCALE_ID, { min: 1, max: 100, initial: (scenario.forcedGuiSettings && scenario.forcedGuiSettings.scale) || 10 }, val => {
@@ -76,7 +78,7 @@ export default class JSOrreryScene {
 		});
 
 		//this.drawAxis();
-		CameraManager.init(this, this.width / this.height, scenario.fov, this.stageSize, this.container, universe);
+		CameraManager.init(this, this.width / this.height, scenario.fov, this.stageSize, this.domEl, universe);
 		OrbitLinesManager.init(scenario.calculateAll);
 		TracerManager.init(this.root);
 
@@ -132,7 +134,7 @@ export default class JSOrreryScene {
 		const radFov = CameraManager.getCamera().fov * DEG_TO_RAD;
 		// camPos = CameraManager.getCamera().position.clone();
 		// camPos.applyMatrix4(CameraManager.getCamera().matrixWorld);
-		Labels.draw(camPos, radFov, this.width, this.height);
+		this.labels.draw(camPos, radFov, this.width, this.height);
 
 		/**/
 		if (stats) stats.update();
@@ -162,19 +164,30 @@ export default class JSOrreryScene {
 		if (celestialBody.createCustomDisplayObject) {
 			body3d = celestialBody.createCustomDisplayObject();
 		} else {
-			body3d = new Body3D(celestialBody);		
+			body3d = new Body3D(celestialBody);
 		}
+
+		this.labels.addPlanetLabel(celestialBody.title || celestialBody.name, body3d);
 
 		this.bodies3d.push(body3d);
 		this.root.add(body3d.getDisplayObject());
 
 		OrbitLinesManager.addBody(body3d);
 		TracerManager.addBody(body3d);
-		CameraManager.addBody(body3d);		
+		CameraManager.addBody(body3d);
+
+	}
+
+	addEventLabel(tx, pos, relativeTo) {
+		this.labels.addEventLabel(tx, pos, relativeTo);	
 	}
 
 	getRoot() {
 		return this.root;
+	}
+
+	getDomEl() {
+		return this.domEl;
 	}
 
 	getSize() {
@@ -205,7 +218,7 @@ export default class JSOrreryScene {
 		if (this.centralBody.name === 'sun') {
 			this.sun = central3d;
 		} else {
-			this.sun = new ExternalSun(centralBody, this.getAspectRatio(), this.stageSize);
+			this.sun = new ExternalSun(centralBody, this.universe, this.getAspectRatio(), this.stageSize);
 			this.root.add(this.sun.getDisplayObject());
 		}
 	
@@ -216,7 +229,8 @@ export default class JSOrreryScene {
 		CameraManager.kill();
 		OrbitLinesManager.kill();
 		TracerManager.kill();
-		this.container.remove();
+		this.labels.kill();
+		this.domEl.remove();
 	}
 
 };

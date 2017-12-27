@@ -6,7 +6,6 @@
 import { Vector3 } from 'three';
 
 import { USE_PHYSICS_BY_DEFAULT, DEFAULT_CALCULATIONS_PER_TICK, KM, J2000, DAY } from './constants';
-import Labels from '../graphics2d/Labels';
 import Scene from '../graphics3d/Scene';
 import ResourceLoader from '../loaders/ResourceLoader';
 import Ticker from '../algorithm/Ticker';
@@ -42,8 +41,6 @@ export default class Universe {
 		
 		this.usePhysics = scenario.usePhysics || USE_PHYSICS_BY_DEFAULT;
 		
-		Labels.init(); 
-
 		//start/stop
 		Gui.addBtn('play', START_ID, () => {
 			this.playing = !this.playing;
@@ -103,7 +100,6 @@ export default class Universe {
 		this.bodies = [];
 		this.bodiesByName = {};
 
-		Labels.kill();
 	}
 
 	getTickerDeltaT() {

@@ -1,5 +1,4 @@
 
-import Labels from '../../graphics2d/Labels';
 import { getMissionFromName } from './NasaNumbers';
 import { earth } from './bodies/earth';
 import { moon } from './bodies/moon';
@@ -45,7 +44,7 @@ const apolloTLI = Object.assign(
 
 			if (!this.data.isOnReturnTrip) {
 				if (!this.data.hasTLILabel && this.relativePosition.x !== 0) {
-					Labels.addEventLabel('Trans Lunar Injection', this.relativePosition.clone(), this.universe.getBody(this.relativeTo));
+					this.universe.getScene().addEventLabel('Trans Lunar Injection', this.relativePosition.clone(), this.universe.getBody(this.relativeTo));
 					this.data.hasTLILabel = true;
 				}
 
@@ -59,7 +58,7 @@ const apolloTLI = Object.assign(
 				if (!this.data.minMoonDist || dist < this.data.minMoonDist) {
 					this.data.minMoonDist = dist;
 				} else if (this.data.lastMoonDist === this.data.minMoonDist) {
-					Labels.addEventLabel('Closest distance to<br>the Moon: ' + Math.round(this.data.minMoonDist) + ' km', this.previousRelativePosition.clone(), this.universe.getBody(this.relativeTo));
+					this.universe.getScene().addEventLabel('Closest distance to<br>the Moon: ' + Math.round(this.data.minMoonDist) + ' km', this.previousRelativePosition.clone(), this.universe.getBody(this.relativeTo));
 					this.data.isOnReturnTrip = true;
 					//Universe.stop();
 				}
@@ -73,7 +72,7 @@ const apolloTLI = Object.assign(
 				if (!this.data.minEarthDist || dist < this.data.minEarthDist) {
 					this.data.minEarthDist = dist;
 				} else if (this.data.lastEarthDist === this.data.minEarthDist && dist < (Math.abs(this.position.clone().sub(this.universe.getBody('moon').position).length()) / 1000)) {
-					Labels.addEventLabel('Closest distance to<br>the Earth: ' + Math.round(this.data.minEarthDist) + ' km<br>Simulation stopped', this.previousRelativePosition.clone(), this.universe.getBody(this.relativeTo));
+					this.universe.getScene().addEventLabel('Closest distance to<br>the Earth: ' + Math.round(this.data.minEarthDist) + ' km<br>Simulation stopped', this.previousRelativePosition.clone(), this.universe.getBody(this.relativeTo));
 					this.universe.stop();
 				}
 

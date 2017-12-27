@@ -86,3 +86,13 @@
         -webkit-transform: perspective(600px) rotateX(65deg) rotateY(25deg) rotateZ(360deg);
     };
 }
+
+@keyframes orbit {
+    0% {
+        -webkit-transform: perspective(600px) rotateX(65deg) rotateY(25deg) rotateZ(0deg);
+    }
+
+    100% {
+        -webkit-transform: perspective(600px) rotateX(65deg) rotateY(25deg) rotateZ(360deg);
+    };
+}

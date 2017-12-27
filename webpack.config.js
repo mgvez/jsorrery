@@ -11,7 +11,8 @@ const isProduction = nodeEnv === 'production';
 
 const jsSourcePath = path.join(__dirname, './src');
 const buildPath = path.join(__dirname, './dist');
-const assetsPath = path.join(__dirname, './assets');
+const assetsDirName = 'assets';
+const assetsPath = path.join(__dirname, './' + assetsDirName);
 const sourcePath = path.join(__dirname, './src');
 
 // Common plugins
@@ -101,7 +102,10 @@ if (isProduction) {
 		}),
 		new ExtractTextPlugin('jsorrery.css'),
 		new CopyWebpackPlugin([
-			{ from: assetsPath }
+			{
+				from: assetsPath,
+				to: buildPath + '/' + assetsDirName,
+			}
 		])
 	);
 

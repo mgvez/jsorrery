@@ -41,6 +41,7 @@ class SunCorona {
 	}
 
 	draw(cam, camPos, sunPos) {
+		if (!this.mesh) return;
 		const camToSun = camPos.clone().sub(sunPos);
 
 		this.mesh.quaternion.copy(cam.quaternion);
@@ -96,6 +97,7 @@ export class ExternalSun {
 export default class Sun extends Body3D {
 	
 	draw(cam, camPos) {
+		// console.log(cam);
 		if (!camPos) return;
 		const sunPos = Dimensions.getScaled(this.celestial.getPosition());
 		this.corona.draw(cam, camPos, sunPos);

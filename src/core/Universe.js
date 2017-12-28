@@ -136,7 +136,7 @@ export default class Universe {
 
 	initBodies(scenario) {
 		this.bodies.forEach(body => {
-			if ((typeof scenario.calculateAll === 'undefined' || !scenario.calculateAll) && !body.isCentral) {
+			if ((typeof scenario.usePhysics === 'undefined' || !scenario.usePhysics) && !body.isCentral) {
 				body.mass = 1;
 			}
 			body.init(this);
@@ -158,6 +158,7 @@ export default class Universe {
 	}
 	/* balance the system by calculating hte masses of the non-central bodies and placing the central body to balance it.*/
 	setBarycenter() {
+
 		const central = this.centralBody;
 		
 		if (!this.usePhysics || central.isStill || this.scenario.useBarycenter === false) return;
@@ -195,7 +196,7 @@ export default class Universe {
 		// console.log(this.bodies);
 
 		//if we reposition bodies on camera change, we don't reset if scenario is physics based (orbital elements are only used for initial pos)
-		if (!forceReposition && this.scenario.calculateAll) return false;
+		if (!forceReposition && this.scenario.usePhysics) return false;
 
 		this.bodies.forEach(body => {
 			body.reset();

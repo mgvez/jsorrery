@@ -61,6 +61,7 @@ export default class CameraManager {
 
 	putDefaults(settings) {
 		// console.log(settings);
+		this.getCamera();
 		if (settings) {
 			//if geoposition of cam, the gui will force initial settings
 			if (!this.currentCamera.geoPos) {

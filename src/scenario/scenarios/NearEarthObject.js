@@ -127,8 +127,6 @@ const cnf = {
 
 		return scenarioReady;
 	},
-	/*calculateAll : true,
-	usePhysics : true,/**/
 	commonBodies: [
 		sun,
 		mercury,

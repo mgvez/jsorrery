@@ -136,7 +136,7 @@ export default {
 	},
 
 	addDropdown(id, callback) {
-		emptyContainer(id);		
+		emptyContainer(id);
 		const sel = new InputSelect(id, defaultSettings[id], callback);
 		const widget = sel.getWidget();
 		addWidget(id, widget, 'dropdown');
@@ -145,7 +145,7 @@ export default {
 	},
 
 	addSlider(id, options, onChange) {
-		emptyContainer(id);		
+		emptyContainer(id);
 		const defaultVal = Number(defaultSettings[id]) || (options && options.initial) || 1;
 		const slider = new InputSlider(id, defaultVal, setOnChange(id, onChange), options);
 		const widget = slider.getWidget();

@@ -8,7 +8,7 @@ export default class Preloader {
 	
 	constructor(rootElement) {
 		let preloader;
-		this.getNode = function() {
+		this.getNode = () => {
 			if (preloader) return preloader;
 			preloader = rootElement.getElementsByClassName('preload');
 			preloader = preloader && preloader[0];

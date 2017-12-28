@@ -18,7 +18,7 @@ export default class InputSelect {
 		return [this.display, this.list];
 	}
 	
-	addOption(label, val, isSelected) {
+	addOption(label, val, isSelected, isAutoExecute = true) {
 
 		const option = this.options[val] = $(`<li data-value="${val}">${label}</li>`);
 		option.on('click.jsorrery', this.clickHandler);
@@ -31,7 +31,7 @@ export default class InputSelect {
 
 		option.appendTo(this.list);
 
-		if (isSelected || this.defaultVal === val) {
+		if (isAutoExecute && (isSelected || this.defaultVal === val)) {
 			Gui.pushDefaultsCallbacks(() => {
 				this.listClicked(option);
 			});

@@ -9,7 +9,6 @@ export default {
 	commonBodies: [moon, earth],
 	secondsPerTick: { min: 3600, max: 3600 * 15, initial: 3600 * 5 },
 	calculationsPerTick: 1000,
-	calculateAll: true,
 	forcedGuiSettings: {
 		scale: 1,
 	},

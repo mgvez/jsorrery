@@ -29,8 +29,8 @@ export default {
 
 	setPositionFromJD(jd) {
 		this.currentJD = jd;
-		// console.log(jd, this.maxPrecision);
-		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(jd, this.maxPrecision, false);
+		// console.log(jd, this.name, this.maxPrecision);
+		this.position = this.isCentral ? new Vector3() : this.orbitalElements.calculatePosition(jd, this.maxPrecision || this.forceMaxPrecision, false);
 
 		this.relativePosition = this.position.clone();
 		
@@ -179,8 +179,8 @@ export default {
 		this.onRevolution = cb;
 	},
 
-	calculatePosition(jd) {
-		return this.orbitalElements.calculatePosition(jd);
+	calculatePosition(jd, maxPrecision) {
+		return this.orbitalElements.calculatePosition(jd, maxPrecision);
 	},
 
 	getPosition() {

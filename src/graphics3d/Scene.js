@@ -76,7 +76,7 @@ export default class JSOrreryScene {
 			this.draw();
 		});
 
-		this.orbitLinesManager = new OrbitLinesManager(scenario.calculateAll);
+		this.orbitLinesManager = new OrbitLinesManager(scenario.usePhysics);
 		this.tracerManager = new TracerManager(this.root);
 
 		//this.drawAxis();

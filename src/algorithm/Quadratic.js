@@ -7,8 +7,7 @@ import { DAY } from '../core/constants';
 const Quadratic = Object.create(MoveAlgorithm);
 
 Quadratic.name = 'Quadratic';
-Quadratic.moveBodies = function moveBodies(jd, deltaT) {
-
+Quadratic.moveBodies = (jd, deltaT) => {
 	this.computeDeltaT(deltaT);
 
 	let i; 
@@ -24,7 +23,7 @@ Quadratic.moveBodies = function moveBodies(jd, deltaT) {
 		if (!b.isStill) {
 			b.beforeMove(deltaT);
 
-			if (b.calculateFromElements) {
+			if (b.calculateFromElements || b.useCustomComputation) {
 				b.setPositionFromJD(jd + (this.halfDeltaT / DAY));
 			} else {
 				n[i] = {};
@@ -50,7 +49,7 @@ Quadratic.moveBodies = function moveBodies(jd, deltaT) {
 	for (i = 0; i < this.bodies.length; i++) {
 		b = this.bodies[i];
 		if (!b.isStill) {
-			if (b.calculateFromElements) {
+			if (b.calculateFromElements || b.useCustomComputation) {
 				b.setPositionFromJD(jd + deltaT / DAY);
 			} else {
 				n[i].accel.push(b.force.clone().multiplyScalar(b.invMass));
@@ -72,7 +71,7 @@ Quadratic.moveBodies = function moveBodies(jd, deltaT) {
 	//find accel at t1
 	for (i = 0; i < this.bodies.length; i++) {
 		b = this.bodies[i];
-		if (!b.isStill && !b.calculateFromElements) {
+		if (!b.isStill && (!b.calculateFromElements && !b.useCustomComputation)) {
 			n[i].accel.push(b.force.clone().multiplyScalar(b.invMass));
 		}
 	}
@@ -85,7 +84,7 @@ Quadratic.moveBodies = function moveBodies(jd, deltaT) {
 	for (i = 0; i < this.bodies.length; i++) {		
 
 		b = this.bodies[i];
-		if (!b.calculateFromElements && !b.isStill) {
+		if ((!b.calculateFromElements && !b.useCustomComputation) && !b.isStill) {
 			c1 = n[i].accel[0].clone().multiplyScalar(-3)
 				.sub(n[i].accel[2])
 				.add(n[i].accel[1].clone().multiplyScalar(4))

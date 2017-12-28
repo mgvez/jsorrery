@@ -41,8 +41,9 @@ export default class JSOrrery {
 		const scenarios = ScenarioLoader.getList();
 		const scenarioChanger = Gui.addDropdown(SCENARIO_ID, () => {
 			this.preloader.show();
+			console.log('gui');
 			this.loadScenarioFromName(scenarioChanger.getValue());
-		});
+		}, false);
 		
 		Gui.addBtn(SHARE_ID, SHARE_ID, () => {
 			Sharer.show();
@@ -61,15 +62,17 @@ export default class JSOrrery {
 			return carry;
 		}, 0);	
 
-		//add scenarios to dropdown
+		//add scenarios to dropdown. Last param prevents callback from being executed on ready, as we already have the correct scenario loaded as default, we don't need to auto reload it when assets are ready.
 		scenarios.forEach((scenario, idx) => {
-			scenarioChanger.addOption(scenario.title, scenario.name, idx === defaultScenario);
+			scenarioChanger.addOption(scenario.title, scenario.name, idx === defaultScenario, false);
 		});
 
 		const scenarioHelpContainer = $('#helpScenario');
 		scenarioHelpContainer.append(help);
 
-		this.loadScenarioFromName(scenarios[defaultScenario].name, defaultParams);
+		this.loadDefaultScenario = () => {
+			this.loadScenarioFromName(scenarios[defaultScenario].name, defaultParams);
+		}
 	}
 
 	loadScenarioFromName(name, defaultParams) {
@@ -88,7 +91,6 @@ export default class JSOrrery {
 		}
 		if (!scenarioConfig) return Promise.resolve(null);
 		this.activeScenario = new Universe(this.rootElement, scenarioConfig, defaultParams);
-
 		return this.activeScenario.onSceneReady.then(() => this.preloader.remove()).catch((e) => {
 			console.log(e);	// eslint-disable-line
 		}).then(() => {

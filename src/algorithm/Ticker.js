@@ -6,71 +6,76 @@ number of calculations of gravity per tick. Adding more calculation has the effe
 import Quadratic from './Quadratic';
 import { DAY } from '../core/constants';
 
-let calculationsPerTick = 1;
-let actualCalculationsPerTick = 1;
-let secondsPerTick = 1;
-let deltaTIncrement = 1;
-let bodies = [];
-let integration;
 
-function setDT() {
-	if (!calculationsPerTick || !secondsPerTick) return;
-	if (secondsPerTick < calculationsPerTick) {
-		actualCalculationsPerTick = secondsPerTick;
-	} else {
-		actualCalculationsPerTick = calculationsPerTick;
+
+
+export default class Ticker {
+
+	constructor() {
+		this.calculationsPerTick = 1;
+		this.actualCalculationsPerTick = 1;
+		this.secondsPerTick = 1;
+		this.deltaTIncrement = 1;
+		this.bodies = [];
+		this.integration = null;
 	}
-	deltaTIncrement = Math.round(secondsPerTick / actualCalculationsPerTick);
-	secondsPerTick = deltaTIncrement * actualCalculationsPerTick;
-}
 
-function moveByGravity(jd) {
-	for (let t = 1; t <= actualCalculationsPerTick; t++) {
-		integration.moveBodies(jd + (t * deltaTIncrement) / DAY, deltaTIncrement);
+	setDT() {
+		if (!this.calculationsPerTick || !this.secondsPerTick) return;
+		if (this.secondsPerTick < this.calculationsPerTick) {
+			this.actualCalculationsPerTick = this.secondsPerTick;
+		} else {
+			this.actualCalculationsPerTick = this.calculationsPerTick;
+		}
+		this.deltaTIncrement = Math.round(this.secondsPerTick / this.actualCalculationsPerTick);
+		this.secondsPerTick = this.deltaTIncrement * this.actualCalculationsPerTick;
 	}
-}
 
-function moveByElements(jd) {
-	// console.log(bodies.length);
-	for (let i = 0; i < bodies.length; i++) {
-		bodies[i].setPositionFromJD(jd);
+	moveByGravity(jd) {
+		for (let t = 1; t <= this.actualCalculationsPerTick; t++) {
+			this.integration.moveBodies(jd + (t * this.deltaTIncrement) / DAY, this.deltaTIncrement);
+		}
 	}
-}
 
-export default {
+	moveByElements(jd) {
+		// console.log(bodies.length);
+		for (let i = 0; i < this.bodies.length; i++) {
+			this.bodies[i].setPositionFromJD(jd);
+		}
+	}
 	
 	tick(computePhysics, jd) {
 		if (computePhysics) {
-			moveByGravity(jd - (secondsPerTick / DAY));
+			this.moveByGravity(jd - (this.secondsPerTick / DAY));
 		} else {
-			moveByElements(jd);
+			this.moveByElements(jd);
 		}
 
-		for (let i = 0; i < bodies.length; i++) {
-			bodies[i].afterTick(secondsPerTick, !computePhysics);
+		for (let i = 0; i < this.bodies.length; i++) {
+			this.bodies[i].afterTick(this.secondsPerTick, !computePhysics);
 		}/**/
 		
-		return secondsPerTick;
-	},
+		return this.secondsPerTick;
+	}
 	
 	setBodies(b) {
-		bodies = [ 
+		this.bodies = [ 
 			...b,
 		];
-		integration = Quadratic.init(bodies);
-	},
+		this.integration = Quadratic.init(this.bodies);
+	}
 	
 	setCalculationsPerTick(n) {
-		calculationsPerTick = n || calculationsPerTick;
-		setDT();
-	},
+		this.calculationsPerTick = n || this.calculationsPerTick;
+		this.setDT();
+	}
 	
 	setSecondsPerTick(s) {
-		secondsPerTick = s;
-		setDT();
-	},
+		this.secondsPerTick = s;
+		this.setDT();
+	}
 
 	getDeltaT() {
-		return secondsPerTick;
-	},
+		return this.secondsPerTick;
+	}
 };

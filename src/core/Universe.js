@@ -35,6 +35,8 @@ export default class Universe {
 		ResourceLoader.reset();
 		this.name = scenario.name;
 		this.scenario = scenario;
+		this.ticker = new Ticker();
+		
 		const initialSettings = Object.assign({}, scenario.defaultGuiSettings, qstrSettings, scenario.forcedGuiSettings);
 		// console.log(initialSettings);
 		Gui.setDefaults(initialSettings);
@@ -51,8 +53,6 @@ export default class Universe {
 			this.setJD(getJD(this.dateDisplay.getDate()));
 			this.repositionBodies(true);
 		});
-
-		this.ticker = () => this.tick();
 		
 		this.playing = false;
 		this.drawRequested = false;
@@ -66,8 +66,8 @@ export default class Universe {
 		this.scene.createStage(rootElement, scenario, this);
 
 		this.initBodies(scenario);
-		Ticker.setSecondsPerTick(scenario.secondsPerTick.initial);
-		Ticker.setCalculationsPerTick(scenario.calculationsPerTick || DEFAULT_CALCULATIONS_PER_TICK);
+		this.ticker.setSecondsPerTick(scenario.secondsPerTick.initial);
+		this.ticker.setCalculationsPerTick(scenario.calculationsPerTick || DEFAULT_CALCULATIONS_PER_TICK);
 		const onSceneReady = ResourceLoader.getOnReady();
 
 		onSceneReady.done(() => {
@@ -81,7 +81,7 @@ export default class Universe {
 		//delta T slider
 		Gui.addSlider(DELTA_T_ID, scenario.secondsPerTick, (val) => {
 			// console.log(val, scenario.secondsPerTick);
-			Ticker.setSecondsPerTick(val);
+			this.ticker.setSecondsPerTick(val);
 		});
 
 		return onSceneReady;
@@ -103,7 +103,7 @@ export default class Universe {
 	}
 
 	getTickerDeltaT() {
-		return Ticker.getDeltaT();
+		return this.ticker.getDeltaT();
 	}
 
 	createBodies(scenario) {
@@ -154,7 +154,7 @@ export default class Universe {
 		
 		this.scene.setCentralBody(this.centralBody);
 
-		Ticker.setBodies(this.bodies);
+		this.ticker.setBodies(this.bodies);
 	}
 	/* balance the system by calculating hte masses of the non-central bodies and placing the central body to balance it.*/
 	setBarycenter() {
@@ -206,7 +206,7 @@ export default class Universe {
 
 		this.scene.onDateReset();
 
-		Ticker.tick(false, this.currentJD);
+		this.ticker.tick(false, this.currentJD);
 
 		this.setBarycenter();
 
@@ -256,12 +256,12 @@ export default class Universe {
 		this.dateDisplay.setDate(this.getCurrentDate());
 	}
 
-	tick() {
+	tick = () => {
 
 		if (this.killed) return;
 		if (this.playing) {
-			this.setJD(this.currentJD + (Ticker.getDeltaT() / DAY));
-			Ticker.tick(this.usePhysics, this.currentJD);
+			this.setJD(this.currentJD + (this.ticker.getDeltaT() / DAY));
+			this.ticker.tick(this.usePhysics, this.currentJD);
 			
 			this.scene.updateCamera();
 			this.scene.draw();
@@ -275,7 +275,7 @@ export default class Universe {
 			}
 		}
 		this.drawRequested = false;
-		window.requestAnimationFrame(this.ticker);
+		window.requestAnimationFrame(this.tick);
 	}
 
 	requestDraw() {

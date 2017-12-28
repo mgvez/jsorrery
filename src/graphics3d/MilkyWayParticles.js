@@ -6,8 +6,7 @@ import Constellations from '../data/Constellations';
 import { DEG_TO_RAD } from '../core/constants';
 import ResourceLoader from '../loaders/ResourceLoader';
 
-let rendered;
-
+const dataSrc = './assets/data/milkyway_heasarc_204k.json';
 
 //keys of the loaded array
 const NAME = 0;
@@ -48,7 +47,7 @@ function lightenDarkenColor(hex, amount) {
 }
 
 
-function drawConstellations() {
+function drawConstellations(rendered) {
 
 	const material = new LineBasicMaterial({
 		color: pxRatio === 1 ? 0x222222 : 0x333333
@@ -71,7 +70,7 @@ function drawConstellations() {
 	});
 }
 
-function generateStars(shaders, stars, starTexture, size) {
+function generateStars(shaders, stars, starTexture, size, rendered) {
 	
 	const geometry = new BufferGeometry();
 	const count = stars.length;
@@ -142,37 +141,36 @@ function generateStars(shaders, stars, starTexture, size) {
 	const particleSystem = new Points(geometry, shaderMaterial);
 	
 	rendered.add(particleSystem);
-	drawConstellations();
+	drawConstellations(rendered);
 
 }
 
-export default {
-	// dataSrc: './data/milkyway.json',
-	dataSrc: './assets/data/milkyway_heasarc_204k.json',
-	init(size) {
+export default class MilkyWay {
+	
+	constructor(size) {
 		
 		// create the particle system
-		rendered = this.displayObj = new Object3D();
+		this.displayObj = new Object3D();
 		//var particleSystem = new Points(particles, pMaterial);
-		rendered.rotation.x = -((23 + (26 / 60) + (21 / 3600)) * DEG_TO_RAD);
+		this.displayObj.rotation.x = -((23 + (26 / 60) + (21 / 3600)) * DEG_TO_RAD);
 
-		const onDataLoaded = ResourceLoader.loadJSON(this.dataSrc);
+		const onDataLoaded = ResourceLoader.loadJSON(dataSrc);
 		const onShaderLoaded = ResourceLoader.loadShaders('stars');
 
 		const starTextureLoader = ResourceLoader.loadTexture('./assets/img/star.png');
 		
-		return Promise.all([onShaderLoaded, onDataLoaded, starTextureLoader]).then(response => {
+		this.onLoaded = Promise.all([onShaderLoaded, onDataLoaded, starTextureLoader]).then(response => {
 			const [shaderResponse, dataResponse, textureResponse] = response;
 			// console.log(dataResponse);
-			generateStars(shaderResponse, dataResponse, textureResponse, size);
+			generateStars(shaderResponse, dataResponse, textureResponse, size, this.displayObj);
 		});
-	},
+	}
 
 	getDisplayObject() {
 		return this.displayObj;
-	},
+	}
 
 	setPosition(pos) {
 		if (this.displayObj) this.displayObj.position.copy(pos);
-	},
+	}
 };

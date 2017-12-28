@@ -7,14 +7,14 @@ import { darken, hexToRgb, rgbToHex } from '../../utils/ColorUtils';
 import { IS_SCREENSHOT, IS_CAPTURE, QUARTER_CIRCLE } from '../../core/constants';
 
 
-export default {
-	init(name, color, isSolid) {
+export default class OrbitLine {
+	constructor(name, color, isSolid) {
 		this.name = name;
 		this.added = false;
 		this.isSolid = isSolid;
 		this.isGradient = !isSolid;
 		this.color = color;
-	},
+	}
 
 	createSolidLine(orbitVertices) {
 		const material = new LineBasicMaterial({
@@ -25,7 +25,7 @@ export default {
 		orbitGeom.vertices = this.orbitVertices;
 
 		return new Line(orbitGeom, material);
-	},
+	}
 
 	createGradientLine(orbitVertices) {
 		const l = orbitVertices.length;
@@ -71,7 +71,7 @@ export default {
 		orbitGeom.addAttribute('color', new BufferAttribute(colors, 3));
 
 		return new Line(orbitGeom, material);
-	},
+	}
 
 	buildPositions() {
 		for (let i = 0; i < this.nVertices; i++) {
@@ -81,16 +81,16 @@ export default {
 			this.positions[n + 1] = v.y;
 			this.positions[n + 2] = v.z;
 		}
-	},
+	}
 
 	setLine(orbitVertices) {
 		this.line = this.isSolid ? this.createSolidLine(orbitVertices) : this.createGradientLine(orbitVertices);
-	},
+	}
 
 	showAllVertices() {
 		DebugPoint.removeAll();
 		this.orbitVertices.forEach(v => DebugPoint.add(v, 0xaaaaaa, 0.01));
-	},
+	}
 
 	updatePos(pos, vel, getNewVertices) {
 
@@ -135,7 +135,7 @@ export default {
 		this.positions[this.nPos + 1] = pos.y;
 		this.positions[this.nPos + 2] = pos.z;
 
-	},
+	}
 	
 
 	getNVerticesBehindPos(pos, vel) {
@@ -158,10 +158,10 @@ export default {
 			// DebugPoint.add(vertex, 0x55ff00, 1);
 		}
 		return null;
-	},
+	}
 
 	getDisplayObject() {
 		return this.line;
-	},
+	}
 
 };

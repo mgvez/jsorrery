@@ -7,8 +7,8 @@ import { IS_SCREENSHOT, IS_CAPTURE } from '../../core/constants';
 const SWITCH_TRESHOLD = 0.005;
 const vNorm = new Vector3(1, 0, 0);
 
-export default {
-	init(color, nVertices, name) {
+export default class Tracer {
+	constructor(color, nVertices, name) {
 		this.name = name;
 		this.color = IS_SCREENSHOT || IS_CAPTURE ? color : rgbToHex(darken(hexToRgb(color), 0.7));
 		this.points = [];
@@ -17,11 +17,11 @@ export default {
 		this.lastMod = 0;
 		this.root = new Object3D();
 		this.tracePosition = new Vector3();
-	},
+	}
 
 	getDisplayObject() {
 		return this.root;
-	},
+	}
 
 	getNew() {
 		
@@ -41,15 +41,15 @@ export default {
 		this.currentVertex = 0;
 		this.initCallback = this.changeVertex.bind(this);
 		this.attachTrace();
-	},
+	}
 
 	detachTrace() {
 		if (this.line) this.root.remove(this.line);
-	},
+	}
 
 	attachTrace() {
 		if (this.line) this.root.add(this.line);
-	},
+	}
 
 	setTraceFrom(traceFromBody) {
 		if (this.traceFrom !== traceFromBody) this.getNew();
@@ -57,13 +57,13 @@ export default {
 		if (!traceFromBody) {
 			this.root.position.set(0, 0, 0);
 		}
-	},
+	}
 
 	changeVertex() {
 		this.lastPathDirection = null;
 		this.switchVertex = this.currentVertex === this.lastVertexIdx;
 		if (this.currentVertex < this.lastVertexIdx) this.currentVertex++;
-	},
+	}
 
 	draw(fromPos) {
 		if (!this.geom) return;
@@ -108,7 +108,7 @@ export default {
 		}
 		this.previousPos = pos;
 					
-	},
+	}
 
 	setTracePos(pos) {
 		if (this.traceFrom) {
@@ -116,6 +116,6 @@ export default {
 			pos.sub(this.traceFrom.getPosition());
 		}
 		return pos;
-	},
+	}
 
 };

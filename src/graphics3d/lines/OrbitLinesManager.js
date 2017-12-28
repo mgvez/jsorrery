@@ -44,8 +44,7 @@ export default class OrbitLinesManager {
 	}
 
 	addBody(body3d) {
-		const orbit = Object.create(BodyOrbitLines);
-		orbit.init(body3d, this.isForceSolidLines);
+		const orbit = new BodyOrbitLines(body3d, this.isForceSolidLines);
 		body3d.setOrbitLines(orbit);
 		const idx = this.findOrbitIndex(body3d.getName());
 		if (!~idx) {

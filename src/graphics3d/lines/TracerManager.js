@@ -67,8 +67,7 @@ export default class TracerManager {
 
 		if (body3d.celestial.isCentral && !body3d.celestial.forceTrace) return;
 
-		const tracer = Object.create(Tracer);
-		tracer.init(body3d.celestial.traceColor || body3d.celestial.color, N_VERTICES, body3d.celestial.name);
+		const tracer = new Tracer(body3d.celestial.traceColor || body3d.celestial.color, N_VERTICES, body3d.celestial.name);
 		body3d.setTracer(tracer);
 
 		if (body3d.celestial.forceTrace) {

@@ -93,8 +93,7 @@ export default class JSOrreryScene {
 	}
 
 	setMilkyway() {
-		const milkyway = this.milkyway = Object.create(MilkyWay);
-		milkyway.init(this.stageSize * 6);
+		const milkyway = this.milkyway = new MilkyWay(this.stageSize * 6);
 		this.root.add(milkyway.getDisplayObject());
 	}
 

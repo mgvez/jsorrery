@@ -1,11 +1,11 @@
 import $ from 'jquery';
 import ExportValues from './ExportValues';
-import Gui from './Gui';
 
 export default class InputSelect {
 
-	constructor(id, defaultVal, callback) {
+	constructor(id, defaultVal, callback, gui) {
 		this.id = id;
+		this.gui = gui;
 		this.input = $(`<input id="${id}_inp">`).on('change.jsorrery', callback);
 		this.display = $('<div class="display">');
 		this.list = $(`<ul id="${id}">`);
@@ -32,7 +32,7 @@ export default class InputSelect {
 		option.appendTo(this.list);
 
 		if (isAutoExecute && (isSelected || this.defaultVal === val)) {
-			Gui.pushDefaultsCallbacks(() => {
+			this.gui.pushDefaultsCallbacks(() => {
 				this.listClicked(option);
 			});
 		}

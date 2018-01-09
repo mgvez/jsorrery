@@ -18,41 +18,6 @@ export const LOOKFROM_ID = 'lookFrom';
 export const DELTA_T_ID = 'deltaT';
 export const GEOLOC_ID = 'geoloc';
 
-let defaultSettings;
-let defaultCallbacks;
-let gui;
-
-function getContainer(id) {
-	return $(`#${id}Cont`);
-}
-
-function getLabel(id) {
-	return $(`#${id}Label`);
-}
-
-function hideGuiElement(id) {
-	return getLabel(id).removeClass('shown');
-}
-
-function emptyContainer(id) {
-	getContainer(id).empty();
-}
-
-function addWidget(id, widget, classes) {
-	const c = getContainer(id);
-	getLabel(id).addClass('shown');
-	if (classes) c.addClass('dropdown');
-	c.append(widget);
-}
-
-function setOnChange(id, defaultOnChange) {
-	const label = getLabel(id).find('.valDisplay');
-	return (val) => {
-		if (label.length) label.text(val);
-		if (defaultOnChange) defaultOnChange(val);
-	};
-}
-
 function hideContent(content) {
 	TweenMax.killTweensOf(content);
 	TweenMax.to(content, 0.3, {
@@ -73,45 +38,10 @@ function showContent(content) {
 	return true;
 }
 
-function fadeGui(hasHelpShown) {
-	const navToggleAction = hasHelpShown ? 'addClass' : 'removeClass';
-	gui[navToggleAction]('faded');
-}
-
-function setupHelp() {
-	const allHelpContents = $('.helpContent');
-
-	$('.help').each((i, el) => {
-		let content;
-		let shown = false;
-		$(el).on('click.jsorrery', () => {
-			if (!content) {
-				content = allHelpContents.filter(`#${el.dataset.for}`);
-				const close = content.find('.close');
-
-				close.on('click.jsorrery', () => {
-					shown = hideContent(content);
-					fadeGui(shown);
-				});
-			}
-			// console.log(content);
-			hideContent(allHelpContents.not(content));
-			shown = shown ? hideContent(content) : showContent(content);
-			fadeGui(shown);
-		});
-	});
-	//default open help on load page, if any
-	const defaultHelpOpen = window.jsOrrery && window.jsOrrery.defaults && window.jsOrrery.defaults.showHelp;
-	if (defaultHelpOpen) {
-		$(`.help[data-for="${defaultHelpOpen}"]`).trigger('click');
-	}
-}
-
-
-export default {
-	init() {
-		gui = $('nav#gui');
-		setupHelp();
+export default class Gui {
+	constructor() {
+		this.gui = $('nav#gui');
+		this.setupHelp();
 
 		const collapser = $('#navCollapse');
 		const collapsedClass = 'collapsed';
@@ -119,75 +49,140 @@ export default {
 		const collapserDownClass = 'fa-angle-double-down';
 
 		collapser.on('click.jsorrery', () => {
-			gui.toggleClass(collapsedClass);
-			if (gui.hasClass(collapsedClass)) {
+			this.gui.toggleClass(collapsedClass);
+			if (this.gui.hasClass(collapsedClass)) {
 				collapser.addClass(collapserDownClass).removeClass(collapserUpClass);
 			} else {
 				collapser.addClass(collapserUpClass).removeClass(collapserDownClass);
 			}
 		});
-	},
+	}
 
 	addBtn(labelTx, id, onClick, key) {
-		emptyContainer(id);
+		this.emptyContainer(id);
 		const btn = new InputButton(labelTx, id, onClick, key);
 		const widget = btn.getWidget();
-		addWidget(id, widget);
-	},
+		this.addWidget(id, widget);
+	}
 
 	addDropdown(id, callback) {
-		emptyContainer(id);
-		const sel = new InputSelect(id, defaultSettings[id], callback);
+		this.emptyContainer(id);
+		const sel = new InputSelect(id, this.defaultSettings[id], callback, this);
 		const widget = sel.getWidget();
-		addWidget(id, widget, 'dropdown');
-		
+		this.addWidget(id, widget, 'dropdown');	
 		return sel;
-	},
+	}
 
 	addSlider(id, options, onChange) {
-		emptyContainer(id);
-		const defaultVal = Number(defaultSettings[id]) || (options && options.initial) || 1;
-		const slider = new InputSlider(id, defaultVal, setOnChange(id, onChange), options);
+		this.emptyContainer(id);
+		const defaultVal = Number(this.defaultSettings[id]) || (options && options.initial) || 1;
+		const slider = new InputSlider(id, defaultVal, this.setOnChange(id, onChange), options, this);
 		const widget = slider.getWidget();
-		addWidget(id, widget);
-	},
+		this.addWidget(id, widget);
+	}
 
 	addDate(onChange) {
-		emptyContainer(DATE_ID);
-		InputDate.init(setOnChange(DATE_ID, onChange), defaultSettings[DATE_ID]);
-		addWidget(DATE_ID, InputDate.getWidget());
+		this.emptyContainer(DATE_ID);
+		InputDate.init(this.setOnChange(DATE_ID, onChange), this.defaultSettings[DATE_ID]);
+		this.addWidget(DATE_ID, InputDate.getWidget());
 		return InputDate;
-	},
+	}
 	
 	addGeoloc(originalValues, onChange) {
-		emptyContainer(GEOLOC_ID);
+		this.emptyContainer(GEOLOC_ID);
 		// console.log(defaultSettings[GEOLOC_ID]);
 		// console.log(originalValues);
-		InputGeoCoord.init(defaultSettings[GEOLOC_ID] || originalValues, setOnChange(GEOLOC_ID, onChange));
-		addWidget(GEOLOC_ID, InputGeoCoord.getWidget());
+		InputGeoCoord.init(this.defaultSettings[GEOLOC_ID] || originalValues, this.setOnChange(GEOLOC_ID, onChange));
+		this.addWidget(GEOLOC_ID, InputGeoCoord.getWidget());
 		
 		return InputGeoCoord;
-	},
+	}
 
 	removeGeoloc() {
 		InputGeoCoord.sleep();
-		hideGuiElement(GEOLOC_ID);
-	},
+		this.hideGuiElement(GEOLOC_ID);
+	}
 
 	pushDefaultsCallbacks(callback) {
-		defaultCallbacks = defaultCallbacks || [];
-		defaultCallbacks.push(callback);
-	},
+		this.defaultCallbacks = this.defaultCallbacks || [];
+		this.defaultCallbacks.push(callback);
+	}
 
 	putDefaults() {
-		if (!defaultCallbacks) return;
-		defaultCallbacks.forEach(callback => callback());
-		defaultCallbacks.length = 0;
-	},
+		if (!this.defaultCallbacks) return;
+		this.defaultCallbacks.forEach(callback => callback());
+		this.defaultCallbacks.length = 0;
+	}
 
 	//default settings for GUI when loading a scenario / a page
 	setDefaults(v) {
 		// console.log(defaultSettings);
-		defaultSettings = v;
-	},
+		this.defaultSettings = v;
+	}
+
+	getContainer(id) {
+		return $(`#${id}Cont`);
+	}
+
+	getLabel(id) {
+		return $(`#${id}Label`);
+	}
+
+	hideGuiElement(id) {
+		return this.getLabel(id).removeClass('shown');
+	}
+
+	emptyContainer(id) {
+		this.getContainer(id).empty();
+	}
+
+	addWidget(id, widget, classes) {
+		const c = this.getContainer(id);
+		this.getLabel(id).addClass('shown');
+		if (classes) c.addClass('dropdown');
+		c.append(widget);
+	}
+
+	setOnChange(id, defaultOnChange) {
+		const label = this.getLabel(id).find('.valDisplay');
+		return (val) => {
+			if (label.length) label.text(val);
+			if (defaultOnChange) defaultOnChange(val);
+		};
+	}
+
+
+	fadeGui(hasHelpShown) {
+		const navToggleAction = hasHelpShown ? 'addClass' : 'removeClass';
+		this.gui[navToggleAction]('faded');
+	}
+
+	setupHelp() {
+		const allHelpContents = $('.helpContent');
+
+		$('.help').each((i, el) => {
+			let content;
+			let shown = false;
+			$(el).on('click.jsorrery', () => {
+				if (!content) {
+					content = allHelpContents.filter(`#${el.dataset.for}`);
+					const close = content.find('.close');
+
+					close.on('click.jsorrery', () => {
+						shown = hideContent(content);
+						fadeGui(shown);
+					});
+				}
+				// console.log(content);
+				hideContent(allHelpContents.not(content));
+				shown = shown ? hideContent(content) : showContent(content);
+				fadeGui(shown);
+			});
+		});
+		//default open help on load page, if any
+		const defaultHelpOpen = window.jsOrrery && window.jsOrrery.defaults && window.jsOrrery.defaults.showHelp;
+		if (defaultHelpOpen) {
+			$(`.help[data-for="${defaultHelpOpen}"]`).trigger('click');
+		}
+	}
 };

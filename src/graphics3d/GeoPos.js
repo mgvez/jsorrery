@@ -1,12 +1,11 @@
 import { Vector3, Euler, Mesh, SphereGeometry, MeshPhongMaterial } from 'three';
 import { DEG_TO_RAD, CIRCLE } from '../core/constants';
 import { getJ2000SecondsFromJD } from '../utils/JD';
-import Gui from '../gui/Gui';
 
 const debugPos = true;
 
-export default function GeoPos(body3d, target) {
-
+export default function GeoPos(body3d, target, gui) {
+	this.gui = gui;
 	//home sweet home
 	let lat = 46.8139;
 	let lng = -71.2080;
@@ -58,7 +57,7 @@ export default function GeoPos(body3d, target) {
 	};
 
 	this.activate = () => {
-		Gui.addGeoloc({ lat, lng }, val => {
+		this.gui.addGeoloc({ lat, lng }, val => {
 			lat = val.lat;
 			lng = val.lng;
 			this.update();
@@ -67,7 +66,7 @@ export default function GeoPos(body3d, target) {
 	};
 
 	this.deactivate = () => {
-		Gui.removeGeoloc();
+		this.gui.removeGeoloc();
 	};
 
 }

@@ -1,5 +1,3 @@
-
-
 import { Scene, WebGLRenderer, AmbientLight } from 'three';
 import { Stats } from '../utils/ThreeExamples';// eslint-disable-line
 
@@ -13,7 +11,7 @@ import Dimensions from './Dimensions';
 import Screenshot from './Screenshot';
 import { ExternalSun } from './Sun';
 import Labels from '../graphics2d/Labels';
-import Gui, { PLANET_SCALE_ID } from '../gui/Gui';
+import { PLANET_SCALE_ID } from '../gui/Gui';
 import { IS_CAPTURE, DEG_TO_RAD, KM } from '../core/constants';
 		
 let stats;
@@ -24,8 +22,7 @@ function drawBody(b) {
 }
 
 export default class JSOrreryScene {
-	createStage(rootDomEl, scenario, universe) {
-
+	createStage(rootDomEl, scenario, gui, universe) {
 		this.width = (scenario.sceneSize && scenario.sceneSize.width) || rootDomEl.offsetWidth;
 		this.height = (scenario.sceneSize && scenario.sceneSize.height) || rootDomEl.offsetHeight;
 
@@ -68,7 +65,7 @@ export default class JSOrreryScene {
 		this.domEl.appendChild(renderer.domElement);
 		
 		//planet scale
-		Gui.addSlider(PLANET_SCALE_ID, { min: 1, max: 100, initial: (scenario.forcedGuiSettings && scenario.forcedGuiSettings.scale) || 10 }, val => {
+		gui.addSlider(PLANET_SCALE_ID, { min: 1, max: 100, initial: (scenario.forcedGuiSettings && scenario.forcedGuiSettings.scale) || 10 }, val => {
 			this.bodies3d.forEach(body3d => {
 				body3d.setScale(val);
 			});
@@ -80,9 +77,8 @@ export default class JSOrreryScene {
 		this.tracerManager = new TracerManager(this.root);
 
 		//this.drawAxis();
-		this.cameraManager = new CameraManager(this, this.width / this.height, scenario.fov, this.stageSize, this.domEl, universe, this.orbitLinesManager, this.tracerManager);
+		this.cameraManager = new CameraManager(this, this.width / this.height, scenario.fov, this.stageSize, this.domEl, universe, this.orbitLinesManager, this.tracerManager, gui);
 		this.labels = new Labels(this.domEl, this.cameraManager);
-		
 
 		this.setMilkyway();
 
@@ -221,7 +217,6 @@ export default class JSOrreryScene {
 			this.sun = new ExternalSun(centralBody, this.universe, this.getAspectRatio(), this.stageSize);
 			this.root.add(this.sun.getDisplayObject());
 		}
-	
 
 	}
 

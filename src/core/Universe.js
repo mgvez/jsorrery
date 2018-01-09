@@ -10,16 +10,16 @@ import Scene from '../graphics3d/Scene';
 import ResourceLoader from '../loaders/ResourceLoader';
 import Ticker from '../algorithm/Ticker';
 import CelestialBody from './CelestialBody';
-import Gui, { START_ID, DELTA_T_ID } from '../gui/Gui';
+import { START_ID, DELTA_T_ID } from '../gui/Gui';
 import { getJD, getJ2000SecondsFromJD, getDateFromJD } from '../utils/JD';
 import Dimensions from '../graphics3d/Dimensions';
 
 
 export default class Universe {
 
-	constructor(rootElement, scenarioConfig, defaultParams) {
+	constructor(rootElement, scenarioConfig, defaultParams, gui) {
 		//some scenarios need to load data before they are ready
-
+		this.gui = gui;
 		const getSceneReady = () => {
 			return this.init(rootElement, scenarioConfig, defaultParams);
 		}
@@ -39,16 +39,16 @@ export default class Universe {
 		
 		const initialSettings = Object.assign({}, scenario.defaultGuiSettings, qstrSettings, scenario.forcedGuiSettings);
 		// console.log(initialSettings);
-		Gui.setDefaults(initialSettings);
+		this.gui.setDefaults(initialSettings);
 		
 		this.usePhysics = scenario.usePhysics || USE_PHYSICS_BY_DEFAULT;
 		
 		//start/stop
-		Gui.addBtn('play', START_ID, () => {
+		this.gui.addBtn('play', START_ID, () => {
 			this.playing = !this.playing;
 		}, 'p');
 
-		this.dateDisplay = Gui.addDate(() => {
+		this.dateDisplay = this.gui.addDate(() => {
 			this.playing = false;
 			this.setJD(getJD(this.dateDisplay.getDate()));
 			this.repositionBodies(true);
@@ -63,7 +63,7 @@ export default class Universe {
 		this.createBodies(scenario);
 		this.scene = new Scene();
 		this.calculateDimensions();
-		this.scene.createStage(rootElement, scenario, this);
+		this.scene.createStage(rootElement, scenario, this.gui, this);
 
 		this.initBodies(scenario);
 		this.ticker.setSecondsPerTick(scenario.secondsPerTick.initial);
@@ -72,14 +72,14 @@ export default class Universe {
 
 		onSceneReady.done(() => {
 			this.showDate();
-			Gui.putDefaults();
+			this.gui.putDefaults();
 			this.scene.setCameraDefaults(initialSettings.cameraSettings);
 			this.scene.draw();
 			this.tick();
 		});
 
 		//delta T slider
-		Gui.addSlider(DELTA_T_ID, scenario.secondsPerTick, (val) => {
+		this.gui.addSlider(DELTA_T_ID, scenario.secondsPerTick, (val) => {
 			// console.log(val, scenario.secondsPerTick);
 			this.ticker.setSecondsPerTick(val);
 		});
@@ -118,7 +118,7 @@ export default class Universe {
 		});
 
 		this.centralBody = this.bodies.reduce((current, candidate) => {
-			return current && current.mass > candidate.mass ? current : candidate;
+			return current && (current.isCentral || current.mass > candidate.mass) ? current : candidate;
 		}, null);
 
 		this.bodiesByName = this.bodies.reduce((byName, body) => {

@@ -33,19 +33,18 @@ export default class JSOrrery {
 		this.preloader = new Preloader(this.rootElement);
 
 		this.preloader.remove();
-		Gui.init();
+		this.gui = new Gui();
 
 		const defaultParams = Object.assign({}, getInitialSettings());
-		Gui.setDefaults(defaultParams);
+		this.gui.setDefaults(defaultParams);
 
 		const scenarios = ScenarioLoader.getList();
-		const scenarioChanger = Gui.addDropdown(SCENARIO_ID, () => {
+		const scenarioChanger = this.gui.addDropdown(SCENARIO_ID, () => {
 			this.preloader.show();
-			console.log('gui');
 			this.loadScenarioFromName(scenarioChanger.getValue());
 		}, false);
 		
-		Gui.addBtn(SHARE_ID, SHARE_ID, () => {
+		this.gui.addBtn(SHARE_ID, SHARE_ID, () => {
 			Sharer.show();
 		});
 		
@@ -90,7 +89,7 @@ export default class JSOrrery {
 			this.activeScenario.kill();
 		}
 		if (!scenarioConfig) return Promise.resolve(null);
-		this.activeScenario = new Universe(this.rootElement, scenarioConfig, defaultParams);
+		this.activeScenario = new Universe(this.rootElement, scenarioConfig, defaultParams, this.gui);
 		return this.activeScenario.onSceneReady.then(() => this.preloader.remove()).catch((e) => {
 			console.log(e);	// eslint-disable-line
 		}).then(() => {

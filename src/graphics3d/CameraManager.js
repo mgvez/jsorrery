@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { Vector3, PerspectiveCamera } from 'three';
 import { OrbitControls } from '../utils/ThreeExamples';
 import ExportValues from '../gui/ExportValues';
-import Gui, { LOOKFROM_ID, LOOKAT_ID } from '../gui/Gui';
+import { LOOKFROM_ID, LOOKAT_ID } from '../gui/Gui';
 import { DEG_TO_RAD } from '../core/constants';
 import GeoPos from './GeoPos';
 
@@ -21,7 +21,8 @@ function getDistanceFromFov(dimToSee, fov) {
 
 
 export default class CameraManager {
-	constructor(sceneParam, aspect, fov, stageSize, container, universeParam, orbitLinesManager, tracerManager) {
+	constructor(sceneParam, aspect, fov, stageSize, container, universeParam, orbitLinesManager, tracerManager, gui) {
+		this.gui = gui;
 		this.scene = sceneParam;
 		this.universe = universeParam;
 		this.domEl = $(container);
@@ -43,8 +44,8 @@ export default class CameraManager {
 		this.scene.getRoot().add(this.globalCamera);
 
 		this.trackOptionSelectors = {
-			from: Gui.addDropdown(LOOKFROM_ID, this.toggleCamera),
-			at: Gui.addDropdown(LOOKAT_ID, this.toggleCamera),
+			from: gui.addDropdown(LOOKFROM_ID, this.toggleCamera),
+			at: gui.addDropdown(LOOKAT_ID, this.toggleCamera),
 		};
 		
 		this.trackOptionSelectors.from.addOption('Free camera', 'orbital');
@@ -101,7 +102,7 @@ export default class CameraManager {
 
 		//on the earth, position the camera at specific lon/lat
 		if (body3d.celestial.hasGeoposCam) {
-			pov.geoPos = new GeoPos(body3d, pov);
+			pov.geoPos = new GeoPos(body3d, pov, this.gui);
 
 			// pov.geoPos.activate();	
 			// this.setPrecision(true);

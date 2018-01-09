@@ -62,7 +62,7 @@ export default class Ticker {
 		this.bodies = [ 
 			...b,
 		];
-		this.integration = Quadratic.init(this.bodies);
+		this.integration = new Quadratic(this.bodies);
 	}
 	
 	setCalculationsPerTick(n) {

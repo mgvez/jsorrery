@@ -1,10 +1,9 @@
 import $ from 'jquery';
 import ExportValues from './ExportValues';
-import Gui from './Gui';
 
 export default class InputSlider {
 
-	constructor(id, defaultVal, onChange, { min = 1, max = 100, step = 1 }) {
+	constructor(id, defaultVal, onChange, { min = 1, max = 100, step = 1 }, gui) {
 
 		this.slider = $(`<input type ="range" min="${min}" max="${max}" step="${step}" value ="${defaultVal}"/>`);
 
@@ -16,7 +15,7 @@ export default class InputSlider {
 
 
 		if (defaultVal) {
-			Gui.pushDefaultsCallbacks(() => {
+			gui.pushDefaultsCallbacks(() => {
 				this.setSlideValue(defaultVal);
 				onChange(defaultVal);
 			});

@@ -53,6 +53,18 @@ export const moon = {
 		
 		if (this.relativeTo !== 'earth') return;
 		const time = this.universe.getCurrentJ2000Time();
+
+		if (this.resetPosAtTick) {
+			const jd = this.universe.getCurrentJD();
+			const byEls = this.orbitalElements.calculatePosition(jd, true);
+			const vel = this.orbitalElements.calculateVelocity(jd);
+			// const byGrav = this.position;
+			// const dst = byEls.distanceTo(byGrav);
+			// console.log(dst / byEls.length());
+			this.setVelocity(vel);
+			this.position = byEls;
+		}
+
 		//when a sidereal day has passed, make sure that the near side is still facing the earth. Since the moon's orbit is heavily disturbed, some imprecision occurs in its orbit, and its duration is not always the same, especially in an incomplete scenario (where there are no sun/planets). Therefore, a correction is brought to the base map rotation, tweened so that is is not jerky.
 		if (time >= this.nextCheck) {
 			this.nextCheck += this.siderealDay;

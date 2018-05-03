@@ -66,7 +66,7 @@ export default class Gui {
 	}
 
 	addDropdown(id, callback) {
-		this.emptyContainer(id);
+		this.emptyContainer(id);		
 		const sel = new InputSelect(id, this.defaultSettings[id], callback, this);
 		const widget = sel.getWidget();
 		this.addWidget(id, widget, 'dropdown');	
@@ -116,7 +116,6 @@ export default class Gui {
 
 	//default settings for GUI when loading a scenario / a page
 	setDefaults(v) {
-		// console.log(defaultSettings);
 		this.defaultSettings = v;
 	}
 

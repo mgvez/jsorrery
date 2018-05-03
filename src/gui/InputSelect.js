@@ -30,10 +30,9 @@ export default class InputSelect {
 		}
 
 		option.appendTo(this.list);
-
-		if (isAutoExecute && (isSelected || this.defaultVal === val)) {
+		if (isSelected || this.defaultVal === val) {
 			this.gui.pushDefaultsCallbacks(() => {
-				this.listClicked(option);
+				this.listClicked(option, isAutoExecute);
 			});
 		}
 
@@ -55,10 +54,10 @@ export default class InputSelect {
 		return this.input.val();
 	}
 
-	listClicked(clickedOption) {
+	listClicked(clickedOption, triggerEvent = true) {
 		const val = clickedOption.data('value');
 		this.display.html(clickedOption.html());
-		this.input.val(val).trigger('change');
+		if (triggerEvent) this.input.val(val).trigger('change');
 		ExportValues.setVal(this.id, val);
 	}
 

@@ -27,7 +27,7 @@ export default class Ticker {
 		} else {
 			this.actualCalculationsPerTick = this.calculationsPerTick;
 		}
-		this.deltaTIncrement = Math.round(this.secondsPerTick / this.actualCalculationsPerTick);
+		this.deltaTIncrement = this.secondsPerTick / this.actualCalculationsPerTick;
 		this.secondsPerTick = this.deltaTIncrement * this.actualCalculationsPerTick;
 	}
 

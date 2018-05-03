@@ -12,7 +12,7 @@ import { VSOP } from './earth/VSOP-earth';
 // see https://eclipse.gsfc.nasa.gov/SEpath/deltat.html for DeltaT
 const solstice = new Date('1999-12-22T07:44:30.000Z');
 //1 = 1 rotation
-const baseRotation = (((J2000Date - solstice) / 1000) / (YEAR * DAY));
+const baseRotation = (((J2000Date - solstice) / 1000) / (YEAR * SIDEREAL_DAY));
 // let testTilt = 0;
 
 export const earth = {
@@ -30,8 +30,9 @@ export const earth = {
 	
 	getRotationCorrection() {
 		const dt = getDeltaT(this.universe.getCurrentDate());
-		// console.log(baseRotation, dt);
-		return baseRotation - (dt / DAY);
+		const r = baseRotation - (dt / DAY);
+		// console.log('rot corr %s', r);
+		return r;
 	},
 	baseMapRotation: 3 * CIRCLE / 4,
 	tilt: 23 + (26 / 60) + (21 / 3600),

@@ -200,7 +200,7 @@ export default class Universe {
 
 		this.bodies.forEach(body => {
 			body.reset();
-			body.setPositionFromJD(this.currentJD);
+			body.setPositionFromJD(this.currentJD, body.orbitalElements && body.orbitalElements.orbitalElements && body.orbitalElements.orbitalElements.dbg);
 			// console.log(body.name);
 		});
 

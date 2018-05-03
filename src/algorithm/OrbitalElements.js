@@ -130,7 +130,6 @@ export default {
 	},
 
 	calculateElements(jd, isDbg) {
-
 		if (!this.orbitalElements) return null;
 
 		const orbitalElements = this.orbitalElements;
@@ -157,14 +156,17 @@ export default {
 		Pn	Longitude of the ascending node precession period (mean value)
 
 		*/
+		if (isDbg) console.log('========================');
 		let correctedTimeEpoch = getJ2000SecondsFromJD(jd);
-		if (isDbg) console.log(correctedTimeEpoch, this.epochOffsetFromJ2000);		
+		if (isDbg) console.log(correctedTimeEpoch, this.epochOffsetFromJ2000);
 		if (this.epochOffsetFromJ2000) {
 			correctedTimeEpoch -= this.epochOffsetFromJ2000;
 		}
+
 		const tDays = correctedTimeEpoch / DAY;
 		const T = tDays / CENTURY;
-		if (isDbg) console.log(T, correctedTimeEpoch);
+		if (isDbg) console.log('jd %s, tDays %s, T %s', jd, tDays, T);
+		if (isDbg) console.log('jd epoch %s', orbitalElements.epoch);
 
 		let computed = {
 			t: correctedTimeEpoch,
@@ -201,23 +203,27 @@ export default {
 			computed.a *= KM;//was in km, set it in m
 		}
 
-
+		if (isDbg) console.log('M %s, e %s, i %s, o %s, w %s', computed.M, computed.e, computed.i, computed.o, computed.w);
 		computed.i *= DEG_TO_RAD;
 		computed.o *= DEG_TO_RAD;
 		computed.w *= DEG_TO_RAD;
 		computed.M *= DEG_TO_RAD;
 
 		computed.E = this.solveEccentricAnomaly(computed.e, computed.M);
-
+		
 		computed.E %= CIRCLE;
 		computed.i %= CIRCLE;
 		computed.o %= CIRCLE;
 		computed.w %= CIRCLE;
 		computed.M %= CIRCLE;
-
+		
 		//in the plane of the orbit
 		computed.pos = new Vector3(computed.a * (Math.cos(computed.E) - computed.e), computed.a * (Math.sqrt(1 - (computed.e * computed.e))) * Math.sin(computed.E));
+		if (isDbg) console.log('E %s, e %s, M %s, i %s', computed.E, computed.e, computed.M, computed.i);
+		if (isDbg) console.log('x %s, y %s, z %s, a %s', computed.pos.x, computed.pos.y, computed.pos.z, computed.a);
+		
 
+		computed.isDbg = isDbg;
 		computed.r = computed.pos.length();
 		computed.v = Math.atan2(computed.pos.y, computed.pos.x);
 		//if orbital elements are computed relative to a body, we need to tilt the orbit according to this body's tilt (for example satellites around the earth) Some though are positionned relative to another, but oriented relative to the universe
@@ -231,6 +237,7 @@ export default {
 		if (computed.x) return computed;
 		if (!computed) return new Vector3(0, 0, 0);
 
+		// const a1 = new Euler(0, 0, computed.o, 'XYZ');
 		const a1 = new Euler(computed.tilt || 0, 0, computed.o, 'XYZ');
 		const q1 = new Quaternion().setFromEuler(a1);
 		const a2 = new Euler(computed.i, 0, computed.w, 'XYZ');
@@ -238,6 +245,8 @@ export default {
 
 		const planeQuat = new Quaternion().multiplyQuaternions(q1, q2);
 		computed.pos.applyQuaternion(planeQuat);
+		const d = computed.pos.clone().normalize();
+		
 		return computed.pos;
 	},
 

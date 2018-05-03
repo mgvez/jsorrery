@@ -6,7 +6,7 @@ import { getDateFromJD } from '../../utils/JD';
 
 
 const g = window.location.search.match(/apollo=([0-9]+)/);
-const apolloNumber = (g && g[1]) || '8';
+const apolloNumber = (g && g[1]) || '16';
 // const apolloEarthOrbit = getMissionFromName(`Apollo${apolloNumber}`).getNumbers('earth');
 const apolloTLIOrbit = getMissionFromName(`Apollo${apolloNumber}`).getNumbers('TLI');
 const epoch = getDateFromJD(apolloTLIOrbit.orbit.epoch);
@@ -16,7 +16,7 @@ const epoch = getDateFromJD(apolloTLIOrbit.orbit.epoch);
 //apollo 13, 17 don't work at all
 //I chose to use the way it works better for each mission. Even if it seems like cheating, the goal of the simulation is to show an approximation of the free return trajectory, and it does not pretend to be as accurate as Nasa could get it. All the numbers involved come from different sources, and I don't know how accurate they are anyway, so better show something plausible instead of seeking perfect accuracy. 
 // const useCustomComputation = [8, 11, 14].indexOf(Number(apolloNumber)) > -1;
-const useCustomComputation = true;
+const useCustomComputation = false;
 
 const apolloBase = {
 	title: `Apollo ${apolloNumber}`,
@@ -102,8 +102,9 @@ export default {
 		},
 		moon: {
 			useCustomComputation,
-			forceMaxPrecision: false,
+			forceMaxPrecision: true,
 			showSolidOrbit: true,
+			resetPosAtTick: true,
 		},
 		apolloTLI: Object.assign({},
 			apolloTLI,

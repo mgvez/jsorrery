@@ -248,7 +248,6 @@ export function ELP82B(jd, maxiter = 0, prec = 0) {
 			r[iv] = r[iv] + x * Math.sin(y);//RADs?
 		});
 		// console.timeEnd('ific'+ific);
-		
 		return doLoop(++ific);
 	}
 
@@ -363,7 +362,6 @@ export function ELP82B(jd, maxiter = 0, prec = 0) {
 		r[2] = pwqw * x1 + qw2 * x2 - qw * x3;
 		r[3] = -pw * x1 + qw * x2 + (pw2 + qw2 - 1) * x3;
 		// console.timeEnd('end');
-		
 		return new Vector3(r[1] * KM, r[2] * KM, r[3] * KM);
 	}
 

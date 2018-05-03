@@ -34,21 +34,9 @@ export default {
 		const exportVals = ExportValues.getExport();
 		const qstr = Object.keys(exportVals).map(key => `${key}=${exportVals[key]}`).join('&');
 		const completeLink = `${baseLink}?${qstr}`;
-		console.log(completeLink);
+		// console.log(completeLink);
 		const onShortened = new Promise(resolve => {
-			if (window.gapi && window.gapi.client.urlshortener) {
-				const request = window.gapi.client.urlshortener.url.insert({
-					resource: {
-						longUrl: completeLink,
-					},
-				});
-				request.execute((response) => {
-					resolve(response.id || completeLink);
-				});
-
-			} else {
-				resolve(completeLink);
-			}
+			resolve(completeLink);
 		});
 
 		onShortened.then(link => {

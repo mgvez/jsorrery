@@ -7,7 +7,8 @@ body#jsorrery {
   color: #aaa;
   background: black;
   overflow: hidden;
-  -webkit-font-smoothing: antialiased; }
+  -webkit-font-smoothing: antialiased;
+  height: 100vh; }
   body#jsorrery h1, body#jsorrery h2 {
     font-family: "Quattrocento", serif;
     font-weight: normal; }
@@ -144,7 +145,7 @@ body#jsorrery {
     #stats #fps #fpsGraph {
       display: none; }
 
-#preload {
+.preload {
   width: 100%;
   height: 100%;
   background: #000;
@@ -152,7 +153,7 @@ body#jsorrery {
   top: 0;
   left: 0;
   z-index: 1000; }
-  #preload .title {
+  .preload .title {
     /*border-top: 1px #240a00 solid;
 		border-bottom: 1px #151d37 solid;/**/
     color: #444;
@@ -163,11 +164,11 @@ body#jsorrery {
     margin: 0 auto;
     margin-top: -45px;
     text-align: center; }
-    #preload .title h1, #preload .title h2 {
+    .preload .title h1, .preload .title h2 {
       cursor: default; }
-    #preload .title h3 {
+    .preload .title h3 {
       color: orange; }
-    #preload .title h1 {
+    .preload .title h1 {
       font-size: 20px;
       letter-spacing: 6px;
       text-transform: uppercase;
@@ -175,11 +176,11 @@ body#jsorrery {
       transition-duration: 1s;
       color: #aaa;
       text-shadow: 0 0 2px #555; }
-    #preload .title h2 {
+    .preload .title h2 {
       font-size: 12px;
       margin: 12px 0;
       letter-spacing: 6px; }
-  #preload .orbit {
+  .preload .orbit {
     width: 200px;
     height: 200px;
     border-radius: 100px;
@@ -190,7 +191,7 @@ body#jsorrery {
     left: 50%;
     margin-left: -100px;
     animation: orbit 2s infinite linear; }
-    #preload .orbit .planet {
+    .preload .orbit .planet {
       width: 6px;
       height: 6px;
       border-radius: 3px;
@@ -198,6 +199,12 @@ body#jsorrery {
       position: absolute;
       top: 97px;
       left: -3px; }
+
+@keyframes orbit {
+  0% {
+    -webkit-transform: perspective(600px) rotateX(65deg) rotateY(25deg) rotateZ(0deg); }
+  100% {
+    -webkit-transform: perspective(600px) rotateX(65deg) rotateY(25deg) rotateZ(360deg); } }
 
 #status {
   height: 40px;

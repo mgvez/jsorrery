@@ -17,7 +17,14 @@ export default {
 
 		let curDate;
 		inp.off('change').on('change.jsorrery', () => {
-			let newDate = new Date(inp.val());
+			const dStr = inp.val();
+			const m = dStr && dStr.trim().match(/(-?\d{1,6})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+			let newDate;
+			if (m) {
+				newDate = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]), Number(m[4]), Number(m[5])));
+			} else {
+				newDate = new Date(dStr);
+			}
 			if (isNaN(newDate.getTime())) {
 				newDate = new Date();
 			}

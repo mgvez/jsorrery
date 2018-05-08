@@ -11,7 +11,7 @@
 			}
 		</style>
 		<meta property="og:title" content="Eclipse 2024 - jsOrrery Solar System Simulator" /> 
-		<meta property="og:image" content="https://mgvez.github.io/jsorrery/img/share-facebook-eclipse2024.jpg" />
+		<meta property="og:image" content="https://mgvez.github.io/jsorrery/assets/img/share-facebook-eclipse2024.jpg" />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
 		<meta property="og:description" content="See 2024's eclipse from any location on the Earth in your browser with jsOrrery, a Javascript / WebGL orbital mechanics simulator." />
@@ -138,9 +138,9 @@
 			<a class="close fa fa-close">&nbsp;</a>
 			<h2>Credits</h2>
 			<p>
-				<a href="http://la-grange.ca"><img src="img/logo-la-grange.png"></a>
+				<a href="http://la-grange.ca"><img src="assets/img/logo-la-grange.png"></a>
 			</p>
-			<p>Programming by <a href="http://lab.la-grange.ca/en/martin-vezina">Martin Vézina</a>, <a href="http://la-grange.ca">La Grange</a>, 2013-2017.</p>
+			<p>Programming by <a href="https://medium.com/@m_vezina">Martin Vézina</a>, <a href="http://la-grange.ca">La Grange</a>, 2013-2017.</p>
 			<a href="https://twitter.com/m_vezina" class="twitter-follow-button" data-show-count="false">Follow @m_vezina</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 			<p>See project on Github at <a href="https://github.com/mgvez/jsorrery">https://github.com/mgvez/jsorrery</a></p>
 
@@ -186,34 +186,29 @@
 			<span class="help fa fa-question-circle" data-for="helpCredits"> credits</span>
 			<span class="help fa fa-question-circle" data-for="helpEclipse"> eclipse</span>
 		</div>
-		<script src="data/elp.js"></script>
-		<script src="data/vsop-earth.js"></script>
-		<script src="dist/bundle.js?v=20170821"></script>
-	<script type="text/javascript">
-		/** ANALYTICS */
-		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		<script src="assets/data/elp.js"></script>
+		<script src="assets/data/vsop-earth.js"></script>
+		<script>
 
-		  ga('create', 'UA-32778044-3');
-		  ga('send', 'pageview');
-		/** TWITTER */
-		!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
-		
-	</script>
-
-	<script>
-		window.gapiLoaded = (function(ns){
-			ns.gapi = null;
-			return function(){
-				ns.gapi = window.gapi;
-				window.gapi.client.setApiKey('AIzaSyAFDXxg1NPaJdajDzmG29Lj648Ss9S1ORE');
-				window.gapi.client.load('urlshortener', 'v1', function(){});
+			window.onJsOrreryLoaded = function(JSOrrery){
+				const jsOrrery = new JSOrrery('jsorrery');
+				jsOrrery.loadDefaultScenario();
 			}
-		})(window.jsorrery = window.jsorrery || {});
-	</script>
-	<script src="https://apis.google.com/js/client.js?onload=gapiLoaded"></script>
 
+		</script>
+		<script type="text/javascript">
+			/** ANALYTICS */
+			  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	
+			  ga('create', 'UA-32778044-3');
+			  ga('send', 'pageview');
+			/** TWITTER */
+			!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+			
+		</script>
+	<script type="text/javascript" src="jsorrery.js"></script>
 	</body>
 </html>

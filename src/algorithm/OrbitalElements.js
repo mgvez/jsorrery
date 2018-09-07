@@ -252,11 +252,14 @@ export default {
 
 	calculatePeriod(elements) {
 		let period;
-		if (this.orbitalElements && this.orbitalElements.day && this.orbitalElements.day.M) {
+		if (this.orbitalElements && this.orbitalElements.cy) {
+			period = 360 / ((this.orbitalElements.cy.l - this.orbitalElements.cy.lp) / CENTURY);
+		} else if (this.orbitalElements && this.orbitalElements.day && this.orbitalElements.day.M) {
 			period = 360 / this.orbitalElements.day.M;
 		} else if (this.relativeTo && this.relativeTo.k && elements) {
 			period = 2 * Math.PI * Math.sqrt(((elements.a / (AU * 1000)) ** 3)) / this.relativeTo.k;
 		}
+		// console.log(period);
 		period *= DAY;//in seconds
 		return period;
 	},

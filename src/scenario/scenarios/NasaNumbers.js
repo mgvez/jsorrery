@@ -1,5 +1,8 @@
 /**
 	source for calculations http://www.braeunig.us/apollo/apollo11-TLI.htm
+
+	https://history.nasa.gov/SP-4029/Apollo_18-24_Translunar_Injection.htm
+	https://www.aerospacengineering.net/determining-orbital-elements/
 */
 import { DEG_TO_RAD, RAD_TO_DEG, FT_TO_M, KM, CIRCLE, DAY } from '../../core/constants';
 import { earth } from './bodies/earth';
@@ -56,7 +59,11 @@ function getMissionNumbers(orbitType = 'earth') {
 	if (!numbers) return null;
 
 	const v = numbers.spaceVel * FT_TO_M;
-	const r = (numbers.altitude * FT_TO_M) + (earth.radius * KM);
+	// const r = (numbers.altitude * FT_TO_M) + (earth.radius * KM);
+
+	const R = 6378166 * 6356784.3 / Math.sqrt(Math.pow(6356784.3 * Math.cos(DEG_TO_RAD * numbers.geoLat), 2) + Math.pow(6378166 * Math.sin(DEG_TO_RAD * numbers.geoLat), 2));
+	const r = (numbers.altitude * FT_TO_M) + R;
+
 	const C = (2 * GM) / (r * (v ** 2));
 
 	const pathAngle = DEG_TO_RAD * numbers.pathAngle;

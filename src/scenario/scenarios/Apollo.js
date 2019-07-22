@@ -6,7 +6,7 @@ import { getDateFromJD } from '../../utils/JD';
 
 
 const g = window.location.search.match(/apollo=([0-9]+)/);
-const apolloNumber = (g && g[1]) || '16';
+const apolloNumber = (g && g[1]) || '11';
 // const apolloEarthOrbit = getMissionFromName(`Apollo${apolloNumber}`).getNumbers('earth');
 const apolloTLIOrbit = getMissionFromName(`Apollo${apolloNumber}`).getNumbers('TLI');
 const epoch = getDateFromJD(apolloTLIOrbit.orbit.epoch);

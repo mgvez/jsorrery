@@ -1,5 +1,6 @@
 
 import { AU } from '../../../core/constants';
+import { VSOP } from '../../../algorithm/VSOP';
 
 export const mercury = {
 	title: 'Mercury',
@@ -8,6 +9,10 @@ export const mercury = {
 	radius: 2439,
 	color: '#588a7b',
 	map: './assets/img/mercurymap.jpg',
+	positionCalculator: (jd) => {
+		// console.log('mercury');
+		return VSOP(jd, window.vsop.mercury);
+	},
 	orbit: { 
 		base: {
 			a: 0.38709927 * AU,

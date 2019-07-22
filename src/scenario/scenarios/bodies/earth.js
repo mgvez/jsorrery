@@ -3,7 +3,7 @@
 import { Color, Euler, Vector3 } from 'three';
 import { J2000, AU, SIDEREAL_DAY, NM_TO_KM, CIRCLE, YEAR, DAY, DEG_TO_RAD } from '../../../core/constants';
 import { J2000Date, getDeltaT } from '../../../utils/JD';
-import { VSOP } from './earth/VSOP-earth';
+import { VSOP } from '../../../algorithm/VSOP';
 
 //time from where rotation is computed: the solstice before system's reference time (J2000)
 //solar noon at J2000 was 12:03:18, azimut at 12:00 was 179.15
@@ -36,7 +36,7 @@ export const earth = {
 	},
 	baseMapRotation: 3 * CIRCLE / 4,
 	tilt: 23 + (26 / 60) + (21 / 3600),
-	positionCalculator: VSOP,
+	positionCalculator: (jd) => VSOP(jd, window.vsop.earth),
 	hasGeoposCam: true,
 	
 	//tilt is oriented by taking into account precession of equinoxes

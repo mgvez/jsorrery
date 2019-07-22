@@ -99,12 +99,12 @@ export default {
 		
 	},
 
-	calculatePosition(jd, maxPrecision, isDbg) {
+	calculatePosition(jd, maxPrecision = true, isDbg = false) {
 		if (!this.orbitalElements) return new Vector3(0, 0, 0);
 		//position calculators are very slow, we use them only when requested
 		if (this.positionCalculator && maxPrecision) {
 			const pos = this.positionCalculator(jd);
-			// console.log(this.name, jd, pos.x, pos.y, pos.z);
+			console.log(this.name, jd, pos.x, pos.y, pos.z);
 			return pos;
 		}
 		const computed = this.calculateElements(jd, isDbg);

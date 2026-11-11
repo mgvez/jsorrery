@@ -6,30 +6,58 @@ See the project live at [orrery.com] (http://orrery.com). Thanks to [@neave] (ht
 
 # Usage
 
-Run `npm run build` to produce the built app in the `dist` directory. The html file is an example of jsOrrery placed in a page. Basically, you link jsOrrery's js and css files in your HTML file and call the app.
-
-As soon as jsOrrery is loaded, it calls a function `window.onJsOrreryLoaded` if it exists, with JSOrrery class as param. JSOrrery is also accessible through the global `window.jsOrrery` variable. To init the app, you just create a new instance.
-
-```
-const jsOrrery = new JSOrrery();
-```
+Run `npm run build` to produce the app in the `dist` directory; its content can be served from any path (e.g. GitHub Pages). `index.html` shows how jsOrrery is placed in a page: it loads the VSOP87 / ELP2000 data scripts, then the app, which renders in `<div id="root">`.
 
 ## Options
 
-If you want to customize how jsOrrery behaves, you can pass a config object to its init method.
+The initial view can be set in the query string (this is what the share link does), for example `?scenario=InnerSolarSystem&date=2017-08-21T18:25:00.000Z&lookFrom=earth&lookAt=moon&geoloc=36.9664,-87.6709&fov=2.5&cx=0&cy=0&cz=0`.
 
-## Building the app
+A page can also set defaults before the app starts (the query string has precedence):
 
-jsOrrery is built with [Vite](https://vite.dev). Requires Node.js 20 or later.
+```html
+<script>
+	window.jsOrrery = {
+		defaults: {
+			scenario: 'InnerSolarSystem',
+			date: '2017-08-21T17:40:00.000Z',
+			planetScale: 1,
+			lookFrom: 'earth',
+			lookAt: 'moon',
+			deltaT: 20,
+			geoloc: '36.9664, -87.6709',
+			cameraSettings: { fov: 2.5 },
+			showHelp: 'helpDate',
+		},
+	};
+</script>
+```
+
+Available settings: `scenario`, `date`, `lookFrom`, `lookAt`, `planetScale`, `deltaT` (seconds of simulation per frame), `geoloc` (observer's position, when looking from the Earth), `cameraSettings` (`x`, `y`, `z`, `fov`) and `showHelp` (`helpScenario`, `helpDate`, `helpLookFrom`, `helpLookAt`, `helpScale`, `helpDeltaT` or `helpCredits`).
+
+## Development
+
+jsOrrery is written in TypeScript, with React for the user interface and three.js for the 3d scene, and built with [Vite](https://vite.dev). Requires Node.js 20 or later.
 
 ```
 npm install
-npm run dev      # dev server at http://localhost:2018
-npm run build    # production build in dist/
-npm run preview  # serve the production build
+npm run dev        # dev server at http://localhost:2018
+npm run build      # type check and production build in dist/
+npm run preview    # serve the production build
+npm test           # regression tests of the simulation
+npm run lint
+npm run typecheck
 ```
 
 Static files (textures, star catalog, shaders, VSOP87 / ELP2000 series) live in `public/assets` and are copied as-is to `dist/assets`.
+
+### Structure
+
+- `src/core`: `Simulation` (bodies, time, gravity integration; runs without display), `Universe` (a simulation in a 3d scene, animated at each frame), `Orrery` (loads scenarios and exposes the GUI's actions), `CelestialBody`.
+- `src/algorithm`: positions from orbital elements, VSOP87, gravity and quadratic integration.
+- `src/scenario`: the scenarios and the bodies' definitions (orbital elements, masses, textures...).
+- `src/graphics3d`, `src/graphics2d`: the three.js scene, cameras, orbit lines, labels.
+- `src/ui`: the React GUI. It reads the state from a small store (`src/state`) that the engine updates, and calls the `Orrery`'s methods.
+- `tests`: the simulation is checked against positions computed by the original JavaScript implementation (see `tests/fixtures/README.md`).
 
 # Credits
 

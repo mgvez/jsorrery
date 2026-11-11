@@ -36,8 +36,13 @@ body#jsorrery .helpContent {
   text-align: justify;
   overflow-y: scroll;
   opacity: 0;
-  display: none;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
   padding: 80px 20%;
+}
+body#jsorrery .helpContent.shown {
+  opacity: 1;
+  visibility: visible;
 }
 body#jsorrery .helpContent h2 {
   color: #fff;
@@ -175,6 +180,11 @@ body#jsorrery .close.inflow {
   top: 0;
   left: 0;
   z-index: 1000;
+  transition: opacity 0.5s, visibility 0.5s;
+}
+.preload.hidden {
+  opacity: 0;
+  visibility: hidden;
 }
 .preload .title {
   /*border-top: 1px #240a00 solid;
@@ -488,7 +498,31 @@ nav#gui input[type=range]:focus::-ms-fill-upper {
 nav#gui #shareWidget {
   background: rgb(0, 0, 0);
   display: none;
+  margin: 0 28px;
+}
+nav#gui #shareWidget.shown {
+  display: block;
+}
+nav#gui #shareWidget #social a {
+  margin-right: 12px;
+  cursor: pointer;
 }
 nav#gui #shareWidget input#shareUrl {
   margin: 6px 0;
+}
+
+/* the 3d scene fills the page, under the GUI */
+#jsorrery-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.help:focus-visible,
+.dropdown li:focus-visible,
+#navCollapse:focus-visible {
+  outline: 1px solid #aaa;
 }

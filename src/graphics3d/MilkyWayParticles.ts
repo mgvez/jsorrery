@@ -1,0 +1,158 @@
+import { LineBasicMaterial, BufferAttribute, BufferGeometry, Line, Color, Object3D, Vector3, ShaderMaterial, AdditiveBlending, Points, type Texture } from 'three';
+
+import Constellations from '../data/Constellations';
+import { DEG_TO_RAD } from '../core/constants';
+import * as ResourceLoader from '../loaders/ResourceLoader';
+import type { Shaders } from '../loaders/ResourceLoader';
+
+const dataSrc = './assets/data/milkyway_heasarc_204k.json';
+
+/** [name, x, y, z, magnitude, spectral type] */
+type StarData = [string, number, number, number, number, string | number];
+
+//keys of the loaded array
+const NAME = 0;
+const X = 1;
+const Y = 2;
+const Z = 3;
+const MAG = 4;
+const SPECT = 5;
+
+const MIN_MAG = -1.44;
+
+const spectralColors = [
+	0xfbf8ff,
+	0xc8d5ff,
+	0xd8e2ff,
+	0xe6ecfc,
+	0xfbf8ff,
+	0xfff4e8,
+	0xffeeda,
+	0xfeead3,
+	0xfccecb,
+	0xebd3da,
+	0xe7dbf3,
+];
+
+const namedStars: Record<string, Vector3> = {};
+
+function getPixelRatio() {
+	return (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
+}
+
+function lightenDarkenColor(hex: number, amount: number) {
+	let col = [hex >> 16, (hex >> 8) & 0x00FF, hex & 0x0000FF];
+	col = col.map(part => {
+		const partTrans = part * amount;
+		return partTrans < 0 ? 0 : (partTrans > 255 ? 255 : partTrans);
+	});
+	return (col[0] | (col[1] << 8) | (col[2] << 16));
+}
+
+function drawConstellations(rendered: Object3D) {
+	const material = new LineBasicMaterial({
+		color: getPixelRatio() === 1 ? 0x222222 : 0x333333,
+	});
+
+	Object.keys(Constellations).forEach(fromName => {
+		const toArr = Constellations[fromName];
+		const fromPoint = namedStars[fromName];
+
+		toArr.forEach(toName => {
+			const toPoint = namedStars[toName];
+			if (!toPoint || !fromPoint) return;
+
+			const orbitGeom = new BufferGeometry().setFromPoints([fromPoint, toPoint]);
+			const line = new Line(orbitGeom, material);
+			line.frustumCulled = false;
+			rendered.add(line);
+		});
+	});
+}
+
+function generateStars(shaders: Shaders, stars: StarData[], starTexture: Texture, size: number, rendered: Object3D) {
+	const geometry = new BufferGeometry();
+	const count = stars.length;
+	const pxRatio = getPixelRatio();
+
+	const positions = new Float32Array(count * 3);
+	const colors = new Float32Array(count * 3);
+	const sizes = new Float32Array(count);
+	for (let i = 0, i3 = 0; i < count; i++, i3 += 3) {
+		const star = stars[i];
+
+		const starVect = new Vector3(star[X], star[Y], star[Z]);
+		if (starVect.x === 0) continue;//dont add the sun
+		starVect.normalize().multiplyScalar(size);
+
+		const mag = (star[MAG] - MIN_MAG) + 1;
+		const name = star[NAME];
+		const spectralType = String(star[SPECT]).toUpperCase();
+		let starColor = (spectralColors as unknown as Record<string, number>)[spectralType] || spectralColors[10];
+		if (name) namedStars[name] = starVect;
+
+		if (mag < 7) {
+			starColor = lightenDarkenColor(starColor, ((1 / mag) ** 0.3));
+		} else {
+			starColor = lightenDarkenColor(starColor, ((1 / mag) ** 0.9));
+		}
+
+		positions[i3 + 0] = starVect.x;
+		positions[i3 + 1] = starVect.y;
+		positions[i3 + 2] = starVect.z;
+
+		const color = new Color(starColor);
+		colors[i3 + 0] = color.r;
+		colors[i3 + 1] = color.g;
+		colors[i3 + 2] = color.b;
+
+		sizes[i] = pxRatio * (1.5 + Math.floor(10 * (1 / mag)) / 10);
+	}
+
+	geometry.setAttribute('position', new BufferAttribute(positions, 3));
+	geometry.setAttribute('customColor', new BufferAttribute(colors, 3));
+	geometry.setAttribute('size', new BufferAttribute(sizes, 1));
+
+	const shaderMaterial = new ShaderMaterial({
+		uniforms: {
+			color: { value: new Color(0xffffff) },
+			starTexture: { value: starTexture },
+		},
+		vertexShader: shaders.vertex,
+		fragmentShader: shaders.fragment,
+		blending: AdditiveBlending,
+		transparent: false,
+	});
+
+	const particleSystem = new Points(geometry, shaderMaterial);
+
+	rendered.add(particleSystem);
+	drawConstellations(rendered);
+}
+
+/** The stars (from the HEASARC catalog) and the constellations, on a sphere that follows the camera */
+export default class MilkyWay {
+	displayObj = new Object3D();
+	onLoaded: Promise<void>;
+
+	constructor(size: number) {
+		this.displayObj.rotation.x = -((23 + (26 / 60) + (21 / 3600)) * DEG_TO_RAD);
+
+		const onDataLoaded = ResourceLoader.loadJSON<StarData[]>(dataSrc);
+		const onShaderLoaded = ResourceLoader.loadShaders('stars');
+
+		const starTextureLoader = ResourceLoader.loadTexture('./assets/img/star.png');
+
+		this.onLoaded = Promise.all([onShaderLoaded, onDataLoaded, starTextureLoader]).then(([shaderResponse, dataResponse, textureResponse]) => {
+			generateStars(shaderResponse, dataResponse, textureResponse, size, this.displayObj);
+		});
+	}
+
+	getDisplayObject() {
+		return this.displayObj;
+	}
+
+	setPosition(pos: Vector3) {
+		this.displayObj.position.copy(pos);
+	}
+}

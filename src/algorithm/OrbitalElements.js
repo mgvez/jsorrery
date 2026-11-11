@@ -103,9 +103,7 @@ export default {
 		if (!this.orbitalElements) return new Vector3(0, 0, 0);
 		//position calculators are very slow, we use them only when requested
 		if (this.positionCalculator && maxPrecision) {
-			const pos = this.positionCalculator(jd);
-			console.log(this.name, jd, pos.x, pos.y, pos.z);
-			return pos;
+			return this.positionCalculator(jd);
 		}
 		const computed = this.calculateElements(jd, isDbg);
 		const pos = this.getPositionFromElements(computed);

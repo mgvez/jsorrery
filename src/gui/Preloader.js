@@ -1,6 +1,4 @@
-
-import { TweenMax } from 'gsap';
-import Promise from 'bluebird';
+import { gsap } from 'gsap';
 
 
 
@@ -20,7 +18,8 @@ export default class Preloader {
 		const node = this.getNode();
 		if (!node) return Promise.resolve();
 		return new Promise(resolve => {
-			TweenMax.to(node, 0.5, {
+			gsap.to(node, {
+				duration: 0.5,
 				opacity: 0,
 				onComplete() {
 					node.style.display = 'none';
@@ -33,8 +32,8 @@ export default class Preloader {
 	show() {
 		const node = this.getNode();
 		if (!node) return;
-		TweenMax.killTweensOf(node);
+		gsap.killTweensOf(node);
 		node.style.display = 'block';
-		TweenMax.to(node, 0.5, { opacity: 1 });
+		gsap.to(node, { duration: 0.5, opacity: 1 });
 	}
 };

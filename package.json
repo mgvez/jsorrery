@@ -2,65 +2,33 @@
   "name": "jsorrery",
   "title": "jsOrrery - Solar System and orbital mechanics simulator",
   "description": "jsOrrery is a Solar System / orbital mechanics simulation, or orrery, that I wrote in WebGL and Javascript. The main feature of jsOrrery is that the planets positions are accurate in regards to the date you set, and it has the consequence that you can observe things that happen in the real Solar System.",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mgvez/jsorrery.git"
   },
-  "scripts": {
-    "start": "node server.js",
-    "lint": "eslint src"
-  },
-  "version": "1.0.0",
   "homepage": "http://la-grange.ca",
   "author": {
     "name": "Martin Vézina",
     "email": "info@la-grange.ca"
   },
-  "devDependencies": {
-    "autoprefixer": "^6.3.7",
-    "babel-core": "^6.11.4",
-    "babel-eslint": "^4.1.8",
-    "babel-loader": "^6.2.4",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-preset-stage-0": "^6.5.0",
-    "babel-preset-stage-1": "^6.5.0",
-    "copy-webpack-plugin": "^4.0.1",
-    "csswring": "^4.2.3",
-    "eslint": "^3.16.1",
-    "eslint-config-airbnb": "^14.0.0",
-    "eslint-loader": "^1.5.0",
-    "eslint-plugin-import": "^2.2.0",
-    "estraverse-fb": "^1.3.1",
-    "express": "^4.14.0",
-    "express-open-in-editor": "^1.2.0",
-    "extract-text-webpack-plugin": "^2.1.2",
-    "html-webpack-plugin": "^2.28.0",
-    "morgan": "^1.7.0",
-    "node-sass": "^4.5.0",
-    "sass-loader": "^6.0.6",
-    "style-loader": "^0.18.2",
-    "url-loader": "^0.5.9",
-    "webpack": "^2.6.1",
-    "webpack-dev-middleware": "^1.10.2",
-    "webpack-dev-server": "^2.4.5",
-    "webpack-hot-middleware": "^2.18.0"
+  "engines": {
+    "node": ">=20"
   },
-  "keywords": [],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
-    "bluebird": "^3.4.1",
-    "css-loader": "^0.26.1",
-    "gsap": "^1.19.0",
-    "jquery": "^3.1.0",
-    "jquery-mousewheel": "^3.1.13",
-    "node-sass": "^4.5.0",
-    "postcss-loader": "^1.3.1",
-    "three": "^0.82.1"
+    "gsap": "3.15.0",
+    "jquery": "3.7.1",
+    "three": "0.186.1"
   },
-  "browser": {
-    "three.Projector": "./node_modules/three/examples/js/renderers/Projector.js",
-    "three.OrbitControls": "./node_modules/three/examples/js/controls/OrbitControls.js",
-    "three.Stats": "./node_modules/three/examples/js/libs/stats.min.js"
+  "devDependencies": {
+    "vite": "6.4.5"
   }
 }

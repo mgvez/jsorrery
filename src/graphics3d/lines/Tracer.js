@@ -1,5 +1,5 @@
 
-import { Vector3, Object3D, LineBasicMaterial, Geometry, Line } from 'three';
+import { Vector3, Object3D, LineBasicMaterial, BufferGeometry, BufferAttribute, Line } from 'three';
 import { darken, hexToRgb, rgbToHex } from '../../utils/ColorUtils';
 import { IS_SCREENSHOT, IS_CAPTURE } from '../../core/constants';
 
@@ -24,18 +24,22 @@ export default class Tracer {
 	}
 
 	getNew() {
-		
+
 		this.detachTrace();
 
 		const material = new LineBasicMaterial({
 			color: this.color,
-			lineWidth: 4,
 		});
 
-		this.geom = new Geometry();
+		//the path is computed on an array of vectors, then copied to the geometry's position buffer
+		this.vertices = [];
 		for (let i = 0; i < this.nVertices; i++) {
-			this.geom.vertices.push(new Vector3(0, 0, 0));
+			this.vertices.push(new Vector3(0, 0, 0));
 		}
+		this.positions = new Float32Array(this.nVertices * 3);
+		this.geom = new BufferGeometry();
+		this.geom.setAttribute('position', new BufferAttribute(this.positions, 3));
+
 		this.line = new Line(this.geom, material);
 		this.line.frustumCulled = false;
 		this.currentVertex = 0;
@@ -65,30 +69,41 @@ export default class Tracer {
 		if (this.currentVertex < this.lastVertexIdx) this.currentVertex++;
 	}
 
+	syncGeometry() {
+		for (let i = 0; i < this.nVertices; i++) {
+			const v = this.vertices[i];
+			const n = i * 3;
+			this.positions[n] = v.x;
+			this.positions[n + 1] = v.y;
+			this.positions[n + 2] = v.z;
+		}
+		this.geom.attributes.position.needsUpdate = true;
+	}
+
 	draw(fromPos) {
 		if (!this.geom) return;
 		const pos = this.setTracePos(fromPos);
-		if (this.geom.vertices[this.currentVertex] && this.geom.vertices[this.currentVertex].distanceTo(pos) === 0) return;
-		this.geom.verticesNeedUpdate = true;
-		
+		const vertices = this.vertices;
+		if (vertices[this.currentVertex] && vertices[this.currentVertex].distanceTo(pos) === 0) return;
+
 		if (this.currentVertex < this.lastVertexIdx) {
 			for (let i = this.currentVertex; i < this.nVertices; i++) {
-				this.geom.vertices[i].copy(pos);
+				vertices[i].copy(pos);
 			}
 		} else {
 			if (this.switchVertex) {
 				for (let i = 0; i < this.lastVertexIdx; i++) {
-					this.geom.vertices[i].copy(this.geom.vertices[i + 1]);
+					vertices[i].copy(vertices[i + 1]);
 				}
 				this.switchVertex = false;
 			}
-			this.geom.vertices[this.lastVertexIdx].copy(pos);
+			vertices[this.lastVertexIdx].copy(pos);
 		}
 
-		const v2 = this.geom.vertices[this.currentVertex - 2]; 
-		const v1 = this.geom.vertices[this.currentVertex - 1]; 
-		const v0 = this.geom.vertices[this.currentVertex];
-		
+		const v2 = vertices[this.currentVertex - 2];
+		const v1 = vertices[this.currentVertex - 1];
+		const v0 = vertices[this.currentVertex];
+
 		if (v1 && v2) {
 
 			if (!this.lastPathDirection) {
@@ -107,7 +122,7 @@ export default class Tracer {
 			this.changeVertex();
 		}
 		this.previousPos = pos;
-					
+		this.syncGeometry();
 	}
 
 	setTracePos(pos) {

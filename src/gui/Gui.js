@@ -1,6 +1,6 @@
 
 import $ from 'jquery';
-import TweenMax from 'gsap';
+import { gsap } from 'gsap';
 import InputDate from './InputDate';
 import InputGeoCoord from './InputGeoCoord';
 import InputSelect from './InputSelect';
@@ -19,9 +19,10 @@ export const DELTA_T_ID = 'deltaT';
 export const GEOLOC_ID = 'geoloc';
 
 function hideContent(content) {
-	TweenMax.killTweensOf(content);
-	TweenMax.to(content, 0.3, {
-		opacity: 0, 
+	gsap.killTweensOf(content);
+	gsap.to(content, {
+		duration: 0.3,
+		opacity: 0,
 		onComplete() {
 			content.hide();
 		}
@@ -30,10 +31,11 @@ function hideContent(content) {
 }
 
 function showContent(content) {
-	TweenMax.killTweensOf(content);
+	gsap.killTweensOf(content);
 	content.show();
-	TweenMax.to(content, 0.3, {
-		opacity: 1, 
+	gsap.to(content, {
+		duration: 0.3,
+		opacity: 1,
 	});
 	return true;
 }
@@ -169,13 +171,13 @@ export default class Gui {
 
 					close.on('click.jsorrery', () => {
 						shown = hideContent(content);
-						fadeGui(shown);
+						this.fadeGui(shown);
 					});
 				}
 				// console.log(content);
 				hideContent(allHelpContents.not(content));
 				shown = shown ? hideContent(content) : showContent(content);
-				fadeGui(shown);
+				this.fadeGui(shown);
 			});
 		});
 		//default open help on load page, if any

@@ -7,9 +7,7 @@ radius: km
 
 */
 
-import Promise from 'bluebird';
-import $ from 'jquery';
-import { AU } from '../../core/constants';
+import { AU }from '../../core/constants';
 import { moon } from './bodies/moon';
 import { sun } from './bodies/sun';
 import { mercury } from './bodies/mercury';
@@ -27,10 +25,17 @@ const baseNEO = {
 const N_TO_SHOW = 10;
 const MIN_DIST = 0.1;
 
-function onLoadError(jqXHR, textStatus, errorThrown) {
+function fetchJSON(url) {
+	return fetch(url).then(response => {
+		if (!response.ok) throw new Error(`Could not load ${url} (${response.status})`);
+		return response.json();
+	});
+}
+
+function onLoadError(error) {
 	alert('Error loading NEO definitions. See console.');// eslint-disable-line
-	console.log(textStatus, errorThrown);// eslint-disable-line
-	console.log(jqXHR);// eslint-disable-line
+	console.log(error);// eslint-disable-line
+	throw error;
 }
 
 function onListLoaded(res) {
@@ -72,11 +77,7 @@ function onListLoaded(res) {
 
 function loadNeo(neoData) {
 	// console.log('load ', neoData.url);
-	return $.ajax({
-		url: neoData.url,
-		dataType: 'json',
-		crossDomain: true,
-	}).then(onObjectLoaded, onLoadError);
+	return fetchJSON(neoData.url).then(onObjectLoaded);
 }
 
 function onObjectLoaded(res) {
@@ -108,19 +109,10 @@ const cnf = {
 	name: 'NEO',
 	title: 'Near Earth Objects',
 	load: () => {
-		if (scenarioReady) return scenarioReady.promise();
-		
-		scenarioReady = $.ajax({
-			// url: 'http://mvezina.com/jsorrery/feed-2017-03-01',
-			url: 'https://mvezina.com/jsorrery/feed-' + (new Date(new Date().getTime() + 24 * 60 * 60 * 1000)).toISOString().substring(0, 10),
-			// url: 'https://api.nasa.gov/neo/rest/v1/feed',
-			// data: {
-			// 	start_date: (new Date()).toISOString().substring(0, 10),
-			// 	api_key: NASA_API,
-			// },
-			dataType: 'json',
-			crossDomain: true,
-		}).then(onListLoaded, onLoadError).then(neos => {
+		if (scenarioReady) return scenarioReady;
+
+		const feedDate = (new Date(new Date().getTime() + 24 * 60 * 60 * 1000)).toISOString().substring(0, 10);
+		scenarioReady = fetchJSON(`https://mvezina.com/jsorrery/feed-${feedDate}`).then(onListLoaded).catch(onLoadError).then(neos => {
 			// console.log(neos);
 			cnf.bodies = Object.assign(cnf.bodies, neos);
 		});

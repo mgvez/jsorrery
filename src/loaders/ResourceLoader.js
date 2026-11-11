@@ -1,8 +1,12 @@
 
 import { TextureLoader } from 'three';
 
-import $ from 'jquery';
-import Promise from 'bluebird';
+function fetchResource(url, type) {
+	return fetch(url).then(response => {
+		if (!response.ok) throw new Error(`Could not load ${url} (${response.status})`);
+		return type === 'json' ? response.json() : response.text();
+	});
+}
 
 const SHADER_PATH = './assets/shaders/';
 const SHADER_TYPES = [
@@ -55,10 +59,7 @@ export default {
 		let onDataLoaded = getCached(dataSrc);
 		if (onDataLoaded) return onDataLoaded;
 
-		onDataLoaded = $.ajax({
-			url: dataSrc,
-			dataType: 'json',
-		});
+		onDataLoaded = fetchResource(dataSrc, 'json');
 
 		allLoaders[dataSrc] = onDataLoaded;
 		currentScenarioLoaders.push(onDataLoaded);
@@ -73,10 +74,7 @@ export default {
 
 		const dfds = SHADER_TYPES.map(shaderType => {
 			const { ext } = shaderType;
-			return $.ajax({
-				url: `${SHADER_PATH}${shader}.${ext}`,
-				dataType: 'text',
-			});
+			return fetchResource(`${SHADER_PATH}${shader}.${ext}`, 'text');
 		});
 
 

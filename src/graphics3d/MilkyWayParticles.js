@@ -1,6 +1,5 @@
 
-import { LineBasicMaterial, Geometry, BufferAttribute, BufferGeometry, Line, Color, Object3D, Vector3, ShaderMaterial, AdditiveBlending, Points } from 'three';
-import Promise from 'bluebird';
+import { LineBasicMaterial, BufferAttribute, BufferGeometry, Line, Color, Object3D, Vector3, ShaderMaterial, AdditiveBlending, Points } from 'three';
 
 import Constellations from '../data/Constellations';
 import { DEG_TO_RAD } from '../core/constants';
@@ -61,8 +60,7 @@ function drawConstellations(rendered) {
 			const toPoint = namedStars[toName];
 			if (!toPoint || !fromPoint) return;
 			
-			const orbitGeom = new Geometry();
-			orbitGeom.vertices = [fromPoint, toPoint];
+			const orbitGeom = new BufferGeometry().setFromPoints([fromPoint, toPoint]);
 			const line = new Line(orbitGeom, material);
 			line.frustumCulled = false;
 			rendered.add(line);
@@ -122,9 +120,9 @@ function generateStars(shaders, stars, starTexture, size, rendered) {
 
 	}
 
-	geometry.addAttribute('position', new BufferAttribute(positions, 3));
-	geometry.addAttribute('customColor', new BufferAttribute(colors, 3));
-	geometry.addAttribute('size', new BufferAttribute(sizes, 1));
+	geometry.setAttribute('position', new BufferAttribute(positions, 3));
+	geometry.setAttribute('customColor', new BufferAttribute(colors, 3));
+	geometry.setAttribute('size', new BufferAttribute(sizes, 1));
 
 	// console.warn('voir exemple: view-source:https://threejs.org/examples/webgl_buffergeometry_custom_attributes_particles.html');
 	const shaderMaterial = new ShaderMaterial({

@@ -70,7 +70,7 @@ export default class Universe {
 		this.ticker.setCalculationsPerTick(scenario.calculationsPerTick || DEFAULT_CALCULATIONS_PER_TICK);
 		const onSceneReady = ResourceLoader.getOnReady();
 
-		onSceneReady.done(() => {
+		onSceneReady.then(() => {
 			this.showDate();
 			this.gui.putDefaults();
 			this.scene.setCameraDefaults(initialSettings.cameraSettings);

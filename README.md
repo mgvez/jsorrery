@@ -6,7 +6,7 @@ See the project live at [orrery.com] (http://orrery.com). Thanks to [@neave] (ht
 
 # Usage
 
-The directory named `dist` contains the built app. The html file is an example of jsOrrery placed in a page. Basically, you link jsOrrery's js and css files in your HTML file and call the app.
+Run `npm run build` to produce the built app in the `dist` directory. The html file is an example of jsOrrery placed in a page. Basically, you link jsOrrery's js and css files in your HTML file and call the app.
 
 As soon as jsOrrery is loaded, it calls a function `window.onJsOrreryLoaded` if it exists, with JSOrrery class as param. JSOrrery is also accessible through the global `window.jsOrrery` variable. To init the app, you just create a new instance.
 
@@ -20,7 +20,16 @@ If you want to customize how jsOrrery behaves, you can pass a config object to i
 
 ## Building the app
 
-You can also use webpack to display the app in a local environment with `npm start`, which will then make the orrery available at http://localhost:2018. To build the js, you can run webpack directly in the terminal, for example `env NODE_ENV=production webpack`.
+jsOrrery is built with [Vite](https://vite.dev). Requires Node.js 20 or later.
+
+```
+npm install
+npm run dev      # dev server at http://localhost:2018
+npm run build    # production build in dist/
+npm run preview  # serve the production build
+```
+
+Static files (textures, star catalog, shaders, VSOP87 / ELP2000 series) live in `public/assets` and are copied as-is to `dist/assets`.
 
 # Credits
 

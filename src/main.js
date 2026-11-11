@@ -1,12 +1,7 @@
 
-import $ from 'jquery';
-import 'style-loader!./scss/master.scss';
+import './styles/jsorrery.css';
 
 import JSOrrery from './core/JSOrrery';
-
-//shim jquery plugins
-window.$ = $;
-require('jquery-mousewheel');
 
 if (!window.WebGLRenderingContext) {
 	const msgCont = (document.querySelectorAll('#preload .title'))[0];

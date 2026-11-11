@@ -1,4 +1,4 @@
-import { TweenMax, Sine } from 'gsap';
+import { gsap } from 'gsap';
 import { DAY } from '../../../core/constants';
 import MoonRealOrbit from './moon/OsculatingOrbit';
 import { ELP82B } from './moon/elp';
@@ -69,9 +69,10 @@ export const moon = {
 		if (time >= this.nextCheck) {
 			this.nextCheck += this.siderealDay;
 			const rot = this.getMapRotation(this.getAngleTo('earth') - this.getCurrentRotation());
-			TweenMax.to(this, 2, {
+			gsap.to(this, {
+				duration: 2,
 				baseMapRotation: rot,
-				ease: Sine.easeInOut,
+				ease: 'sine.inOut',
 			});
 		}
 	},

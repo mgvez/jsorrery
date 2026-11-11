@@ -1,6 +1,6 @@
 
 import $ from 'jquery';
-import { Vector3, PerspectiveCamera } from 'three';
+import { Vector3, PerspectiveCamera, Matrix4 } from 'three';
 import { OrbitControls } from '../utils/ThreeExamples';
 import ExportValues from '../gui/ExportValues';
 import { LOOKFROM_ID, LOOKAT_ID } from '../gui/Gui';
@@ -14,6 +14,17 @@ const POV_CAMERA_TYPE = 'pov';
 
 const toggling_at_options = ['night', 'front', 'back'];
 const lookAt = new Vector3();
+const lookAtMatrix = new Matrix4();
+
+/**
+ Cameras are attached to the bodies they follow, and their targets (from OrbitControls or from the "look at" setting)
+ are expressed in the parent body's space. three.js' Object3D.lookAt() interpreted targets in parent space up to r8x, but
+ now expects world coordinates; this restores the original behaviour for our cameras.
+ */
+function lookAtInParentSpace(target) {
+	lookAtMatrix.lookAt(this.position, target, this.up);
+	this.quaternion.setFromRotationMatrix(lookAtMatrix);
+}
 
 function getDistanceFromFov(dimToSee, fov) {
 	return dimToSee * Math.atan(fov * 2 * DEG_TO_RAD);
@@ -148,7 +159,7 @@ export default class CameraManager {
 
 		if (lookFromBody) {
 			this.currentCamera = lookFromBody.getCamera(POV_CAMERA_TYPE);
-			this.domEl.on('mousewheel', this.onMouseWheel);
+			this.domEl.get(0).addEventListener('wheel', this.onMouseWheel);
 
 			//when looking from a body, we need max precision as a minor change in position changes the expected output (e.g. a bodie's position against the stars)
 			this.setPrecision(true);
@@ -161,9 +172,9 @@ export default class CameraManager {
 			if (this.currentCamera.geoPos) this.currentCamera.geoPos.activate();
 
 		} else {
-			this.domEl.off('mousewheel');
+			this.domEl.get(0).removeEventListener('wheel', this.onMouseWheel);
 
-			//if we want to look from an orbital camera, check if it is to look at a particular body or to the whole system
+			//if we wantto look from an orbital camera, check if it is to look at a particular body or to the whole system
 			if (this.viewSettings.lookFrom === ORBITAL_CAMERA_TYPE) {
 				this.currentCamera = (lookAtBody && lookAtBody.getCamera(ORBITAL_CAMERA_TYPE)) || this.globalCamera;
 				if (this.currentCamera.jsorrery && this.currentCamera.jsorrery.controls) this.currentCamera.jsorrery.controls.enabled = true;
@@ -217,8 +228,10 @@ export default class CameraManager {
 
 	}
 
-	onMouseWheel = (event, delta) => {
-		const deltaDir = delta / Math.abs(delta);
+	onMouseWheel = (event) => {
+		if (!event.deltaY) return;
+		//wheel deltaY is positive when scrolling down (jquery-mousewheel's delta had the opposite sign)
+		const deltaDir = -Math.sign(event.deltaY);
 		this.currentCamera.fov += this.currentCamera.fov * 0.1 * -deltaDir;
 		if (this.currentCamera.fov > MAX_FOV) this.currentCamera.fov = MAX_FOV;
 		this.currentCamera.updateProjectionMatrix();
@@ -233,6 +246,7 @@ export default class CameraManager {
 	getNewCamera(isOrbital) {
 		const cam = new PerspectiveCamera(this.cameraParams.fov, this.cameraParams.aspect, this.cameraParams.near, this.cameraParams.far);
 		cam.up = new Vector3(0, 0, 1);
+		cam.lookAt = lookAtInParentSpace;
 
 		if (isOrbital) {
 			const controls = new OrbitControls(cam, this.domEl.get(0));
@@ -255,7 +269,7 @@ export default class CameraManager {
 	}
 
 	kill() {
-		if (this.domEl) this.domEl.off('mousewheel');
+		if (this.domEl) this.domEl.get(0).removeEventListener('wheel', this.onMouseWheel);
 
 		this.allCameras.forEach(cam => {
 			if (cam.jsorrery && cam.jsorrery.controls) cam.jsorrery.controls.removeEventListener('change', this.onControlsUpdate);

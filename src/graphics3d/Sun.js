@@ -76,7 +76,7 @@ export class ExternalSun {
 		this.corona = new SunCorona(aspectRatio, stageSize);
 		this.corona.scale = 3;
 		this.corona.sunSize = 10;
-		this.root.add(new DirectionalLight(0xFFFFFF, 1));
+		this.root.add(new DirectionalLight(0xFFFFFF, Math.PI));
 		this.root.add(this.corona.root);
 
 	}
@@ -106,7 +106,8 @@ export default class Sun extends Body3D {
 	setDisplayObject() {
 		const scene = this.celestial.universe.getScene();
 		this.corona = new SunCorona(scene.getAspectRatio(), scene.getSize());
-		this.root.add(new PointLight(0xFFFFFF));
+		//no decay (legacy lighting behaviour), intensity scaled by PI to match legacy mode
+		this.root.add(new PointLight(0xFFFFFF, Math.PI, 0, 0));
 		this.root.add(this.corona.root);
 	}
 

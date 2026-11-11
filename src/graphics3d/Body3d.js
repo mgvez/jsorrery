@@ -86,7 +86,6 @@ export default class Body3D {
 
 				//var ringGeometry = new THREE.TorusGeometry(ringSize[1], ringSize[1] - ringSize[0], 2, 40);
 				const ringGeometry = new RingGeometry2(ringSize[1], ringSize[0], 180, 1, 0, Math.PI * 2);
-				ringGeometry.computeFaceNormals();
 
 				const ring = new Mesh(ringGeometry, ringMaterial);
 				ring.rotation.x = -Math.PI / 2;

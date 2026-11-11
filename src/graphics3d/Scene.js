@@ -1,5 +1,4 @@
-import { Scene, WebGLRenderer, AmbientLight } from 'three';
-import { Stats } from '../utils/ThreeExamples';// eslint-disable-line
+import { Scene, WebGLRenderer, AmbientLight, ColorManagement, LinearSRGBColorSpace } from 'three';
 
 import Body3D from './Body3d';
 import MilkyWay from './MilkyWayParticles';
@@ -14,8 +13,10 @@ import Labels from '../graphics2d/Labels';
 import { PLANET_SCALE_ID } from '../gui/Gui';
 import { IS_CAPTURE, DEG_TO_RAD, KM } from '../core/constants';
 		
-let stats;
 let renderer;
+
+//jsOrrery was designed with three.js' legacy (pre r152) color pipeline: no sRGB conversions anywhere.
+ColorManagement.enabled = false;
 
 function drawBody(b) {
 	b.draw();
@@ -44,6 +45,7 @@ export default class JSOrreryScene {
 			preserveDrawingBuffer: true,
 			alpha: true,
 		});
+		renderer.outputColorSpace = LinearSRGBColorSpace;
 
 		if (IS_CAPTURE) this.screenshot = Object.create(Screenshot).init(renderer);
 
@@ -51,16 +53,9 @@ export default class JSOrreryScene {
 		renderer.setSize(this.width, this.height);
 		renderer.setPixelRatio(window.devicePixelRatio);
 
-		const light = new AmbientLight(0x202020);
-		this.root.add(light);/**/
-
-		if (!stats) {
-			// stats = new Stats();
-			// const st = stats.domElement.style;
-			// st.top = 'auto';
-			// st.bottom = 0;
-			// $('body').append(stats.domElement);
-		}
+		//light intensities are multiplied by PI to match three.js' legacy lighting mode (removed in r165)
+		const light = new AmbientLight(0x202020, Math.PI);
+		this.root.add(light);
 
 		this.domEl.appendChild(renderer.domElement);
 		
@@ -131,9 +126,6 @@ export default class JSOrreryScene {
 		//place planets labels. We need the camera position relative to the world in order to compute planets screen sizes, and hide/show labels depending on it
 		const radFov = cam.fov * DEG_TO_RAD;
 		this.labels.draw(camPos, radFov, this.width, this.height);
-
-		/**/
-		if (stats) stats.update();
 	}
 
 	//camera might move and/or look at a different point depending on bodies movements
